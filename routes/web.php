@@ -10,9 +10,11 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/contact', 'contact')->name('client.contact');
     Route::get('/faq', 'faq')->name('client.faq');
 });
+
 // Routes cho giao diện admin
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });
+
