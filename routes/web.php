@@ -9,3 +9,4 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/contact', 'contact')->name('client.contact');
     Route::get('/faq', 'faq')->name('client.faq');
 });
+
