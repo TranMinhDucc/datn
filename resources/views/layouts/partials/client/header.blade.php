@@ -58,10 +58,10 @@
             </div>
 
             <a class='header-logo' href='index.html'>
-                <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo">
             </a>
             <a class='header-widget' href='login.html' title='My Account'>
-                <img src="{{ asset('assets/images/user.png') }}" alt="user">
+                <img src="{{ asset('assets/client/images/user.png') }}" alt="user">
 
                 <span>join</span>
             </a>

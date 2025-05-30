@@ -6,8 +6,8 @@
 
 
     <!--=====================================
-                            PRODUCT VIEW START
-                =======================================-->
+                                PRODUCT VIEW START
+                    =======================================-->
     <div class="modal fade" id="product-view">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -113,13 +113,13 @@
         </div>
     </div>
     <!--=====================================
-                            PRODUCT VIEW END
-                =======================================-->
+                                PRODUCT VIEW END
+                    =======================================-->
 
 
     <!--=====================================
-                            BANNER PART START
-                =======================================-->
+                                BANNER PART START
+                    =======================================-->
     <section class="home-index-slider slider-arrow slider-dots">
         <div class="banner-part banner-1">
             <div class="container">
@@ -181,13 +181,13 @@
         </div>
     </section>
     <!--=====================================
-                            BANNER PART END
-                =======================================-->
+                                BANNER PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            SUGGEST PART START
-                =======================================-->
+                                SUGGEST PART START
+                    =======================================-->
     <section class="section suggest-part">
         <div class="container">
             <ul class="suggest-slider slider-arrow">
@@ -267,7 +267,7 @@
                                     <i class="fas fa-heart"></i>
                                 </button>
                                 <a class='product-image' href='#'>
-                                    <img src="{{ asset('assets/images/product/' . sprintf('%02d', $i) . '.jpg') }}"
+                                    <img src="{{ asset('assets/client/images/product/' . sprintf('%02d', $i) . '.jpg') }}"
                                         alt="product">
                                 </a>
                                 <div class="product-widget">
@@ -326,13 +326,13 @@
     </section>
 
     <!--=====================================
-                            RECENT PART END
-                =======================================-->
+                                RECENT PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            PROMOTION PART START
-                =======================================-->
+                                PROMOTION PART START
+                    =======================================-->
     <div class="section promo-part">
         <div class="container">
             <div class="row">
@@ -345,13 +345,13 @@
         </div>
     </div>
     <!--=====================================
-                            PROMOTION PART END
-                =======================================-->
+                                PROMOTION PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            FEATURED PART START
-                =======================================-->
+                                FEATURED PART START
+                    =======================================-->
     <section class="section feature-part">
         <div class="container">
             <div class="row">
@@ -688,13 +688,13 @@
         </div>
     </section>
     <!--=====================================
-                            FEATURE PART END
-                =======================================-->
+                                FEATURE PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            COUNTDOWN PART START
-                =======================================-->
+                                COUNTDOWN PART START
+                    =======================================-->
     <section class="section countdown-part">
         <div class="container">
             <div class="row align-items-center">
@@ -729,13 +729,13 @@
         </div>
     </section>
     <!--=====================================
-                            COUNTDOWN PART END
-                =======================================-->
+                                COUNTDOWN PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            NEW ITEM PART START
-                =======================================-->
+                                NEW ITEM PART START
+                    =======================================-->
     <section class="section newitem-part">
         <div class="container">
             <div class="row">
@@ -1070,13 +1070,13 @@
         </div>
     </section>
     <!--=====================================
-                            NEW ITEM PART END
-                =======================================-->
+                                NEW ITEM PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            PROMOTION PART START
-                =======================================-->
+                                PROMOTION PART START
+                    =======================================-->
     <div class="section promo-part">
         <div class="container">
             <div class="row">
@@ -1094,13 +1094,13 @@
         </div>
     </div>
     <!--=====================================
-                            PROMOTION PART END
-                =======================================-->
+                                PROMOTION PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            NICHE PART START
-                =======================================-->
+                                NICHE PART START
+                    =======================================-->
     <section class="section niche-part">
         <div class="container">
             <div class="row">
@@ -2691,13 +2691,13 @@
         </div>
     </section>
     <!--=====================================
-                            NICHE PART END
-                =======================================-->
+                                NICHE PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            BRAND PART START
-                =======================================-->
+                                BRAND PART START
+                    =======================================-->
     <section class="section brand-part">
         <div class="container">
             <div class="row">
@@ -2794,13 +2794,13 @@
         </div>
     </section>
     <!--=====================================
-                            BRAND PART END
-                =======================================-->
+                                BRAND PART END
+                    =======================================-->
 
 
     <!--=====================================
-                          TESTIMONIAL PART START
-                =======================================-->
+                              TESTIMONIAL PART START
+                    =======================================-->
     <section class="section testimonial-part">
         <div class="container">
             <div class="row">
@@ -2875,13 +2875,13 @@
         </div>
     </section>
     <!--=====================================
-                           TESTIMONIAL PART END
-                =======================================-->
+                               TESTIMONIAL PART END
+                    =======================================-->
 
 
     <!--=====================================
-                              BLOG PART START
-                =======================================-->
+                                  BLOG PART START
+                    =======================================-->
     <section class="section blog-part">
         <div class="container">
             <div class="row">
@@ -3034,13 +3034,13 @@
         </div>
     </section>
     <!--=====================================
-                              BLOG PART END
-                =======================================-->
+                                  BLOG PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            NEWSLETTER PART START
-                =======================================-->
+                                NEWSLETTER PART START
+                    =======================================-->
     <section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center;">
         <div class="container">
             <div class="row align-items-center">
@@ -3060,13 +3060,13 @@
         </div>
     </section>
     <!--=====================================
-                            NEWSLETTER PART END
-                =======================================-->
+                                NEWSLETTER PART END
+                    =======================================-->
 
 
     <!--=====================================
-                            INTRO PART START
-                =======================================-->
+                                INTRO PART START
+                    =======================================-->
     <section class="intro-part">
         <div class="container">
             <div class="row intro-content">
