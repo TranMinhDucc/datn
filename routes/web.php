@@ -21,10 +21,14 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/faq', 'faq')->name('client.faq');
 });
 
-// Giao diện admin
+
+
+// Routes cho giao diện admin
+
 Route::prefix('admin')->name('admin.')->group(function () {
     // Trang tổng quan
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+
 
 
     // User
