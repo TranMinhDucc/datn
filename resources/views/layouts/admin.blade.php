@@ -64,6 +64,9 @@
             <!--end::Header-->
             <!--begin::Wrapper-->
             <div class="app-wrapper  flex-column flex-row-fluid " id="kt_app_wrapper">
+                   <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+                        @yield('content')
+                    </div>
                 <!--begin::Sidebar-->
                 @include('layouts.partials.admin.sidebar')
                 <!--end::Sidebar-->
@@ -71,9 +74,7 @@
                 <!--begin::Main-->
                 <div class="app-main flex-column flex-row-fluid " id="kt_app_main">
                     <!--begin::Content wrapper-->
-                    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-                        @yield('content')
-                    </div>
+                 
                     <!--end::Content wrapper-->
 
                     <!--begin::Footer-->
@@ -84,6 +85,7 @@
             </div>
             <!--end::Wrapper-->
         </div>
+        
         <!--end::Page-->
     </div>
     <!--end::App-->
@@ -103,6 +105,7 @@
                 style="background-image:url('assets/media/misc/layout/customizer-header-bg.jpg')">
 
                 <!--begin::Card title-->
+                
                 <h3 class="card-title fs-3 fw-bold text-white flex-column m-0">
                     Metronic Builder
 
@@ -12064,7 +12067,7 @@
         <!--end::Modal dialog-->
     </div>
     <!--end::Modal - Invite Friend--> <!--end::Modals-->
-
+  
     <!--begin::Javascript-->
     <script>
         var hostUrl = "assets/index.html";        </script>
