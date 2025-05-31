@@ -57,10 +57,10 @@
                 <button class="header-src"><i class="fas fa-search"></i></button>
             </div>
 
-            <a class='header-logo' href='index.html'>
+            <a class='header-logo' href="{{ route('client.home') }}">
                 <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo">
             </a>
-            <a class='header-widget' href='login.html' title='My Account'>
+            <a class='header-widget' href="{{ route('client.login') }}" title='My Account'>
                 <img src="{{ asset('assets/client/images/user.png') }}" alt="user">
 
                 <span>join</span>
