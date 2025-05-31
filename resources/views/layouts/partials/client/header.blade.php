@@ -31,9 +31,9 @@
             </div>
             <div class="col-md-7 col-lg-4">
                 <ul class="header-top-list">
-                    <li><a href='offer.html'>offers</a></li>
-                    <li><a href='faq.html'>need help</a></li>
-                    <li><a href='contact.html'>contact us</a></li>
+                    <li><a href='{{ route('client.policy') }}'>chính sách</a></li>
+                    <li><a href='{{ route('client.faq') }}'>faqs</a></li>
+                    <li><a href='{{ route('client.contact') }}'>contact</a></li>
                 </ul>
             </div>
         </div>

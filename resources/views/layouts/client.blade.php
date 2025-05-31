@@ -32,6 +32,23 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/index.css') }}">
+
+    <!-- Custom Faq -->
+    <link rel="stylesheet" href="{{ asset('assets/client/css/faq.css') }}">
+
+
+    <!-- Custom Contact -->
+    <link rel="stylesheet" href="{{ asset('assets/client/css/contact.css') }}">
+
+    <!-- Custom Policy -->
+    <link rel="stylesheet" href="{{ asset('assets/client/css/privacy.css') }}">
+
+    <!-- Custom Profile -->
+    <link rel="stylesheet" href="{{ asset('assets/client/css/profile.css') }}">
+    
+    <!-- Custom Wallet -->
+    <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
+
 </head>
 
 <body>

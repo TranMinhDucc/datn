@@ -15,7 +15,7 @@
                             </ul>
                         </li>
                         <li class="navbar-item dropdown-megamenu">
-                            <a class="navbar-link dropdown-arrow" href="#">shop</a>
+                            <a class="navbar-link dropdown-arrow" href="#">sản phẩm</a>
                             <div class="megamenu">
                                 <div class="container">
                                     <div class="row">
@@ -25,7 +25,7 @@
                                                 <ul class="megamenu-list">
                                                     <li><a href='shop-5column.html'>shop 5 column</a></li>
                                                     <li><a href='shop-4column.html'>shop 4 column</a></li>
-                                                    <li><a href='shop-3column.html'>shop 3 column</a></li>
+                                                    <li><a href='{{ route('client.products.index') }}'>shop 3 column</a></li>
                                                     <li><a href='shop-2column.html'>shop 2 column</a></li>
                                                     <li><a href='shop-1column.html'>shop 1 column</a></li>
                                                 </ul>
@@ -202,8 +202,8 @@
                             <ul class="dropdown-position-list">
                                 <li><a href='faq.html'>faqs</a></li>
                                 <li><a href='offer.html'>offers</a></li>
-                                <li><a href='profile.html'>my profile</a></li>
-                                <li><a href='wallet.html'>my wallet</a></li>
+                                <li><a href='{{ route('client.account.profile') }}'>my profile</a></li>
+                                <li><a href='{{ route('client.account.wallet') }}'>my wallet</a></li>
                                 <li><a href='about.html'>about us</a></li>
                                 <li><a href='contact.html'>contact us</a></li>
                                 <li><a href='privacy.html'>privacy policy</a></li>
@@ -602,7 +602,7 @@
                 <ul class="dropdown-list">
                     <li><a href='shop-5column.html'>shop 5 column</a></li>
                     <li><a href='shop-4column.html'>shop 4 column</a></li>
-                    <li><a href='shop-3column.html'>shop 3 column</a></li>
+                    <li><a href='{{ route('client.products.index') }}'>shop 3 column</a></li>
                     <li><a href='shop-2column.html'>shop 2 column</a></li>
                     <li><a href='shop-1column.html'>shop 1 column</a></li>
                 </ul>
