@@ -6,6 +6,7 @@
 
     <!--begin::Logo-->
     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
+
       <a href="{{ route('admin.dashboard') }}">
     <img alt="Logo" src="{{ asset('assets/admin/assets/media/logos/default-dark.svg') }}"
          class="h-25px app-sidebar-logo-default" />
@@ -14,6 +15,7 @@
          class="h-20px app-sidebar-logo-minimize" />
 </a>
         <!--end::Logo image-->
+
 
         <!--begin::Sidebar toggle-->
         <!--begin::Minimized sidebar setup:
@@ -24,7 +26,7 @@
                 4. Add "active" class to to sidebar toggle element with "kt_app_sidebar_toggle" id.
             }
         -->
-       
+
         <!--end::Sidebar toggle-->
     </div>
     <div class="app-sidebar-menu overflow-hidden flex-column-fluid">
@@ -127,3 +129,4 @@
                 <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
                         {{-- href="https://preview.keenthemes.com/html/metronic/docs/getting-started/changelog" --}}
                         target="_blank"><span class="menu-icon"><span
+

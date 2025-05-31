@@ -105,7 +105,6 @@
                 style="background-image:url('assets/media/misc/layout/customizer-header-bg.jpg')">
 
                 <!--begin::Card title-->
-                
                 <h3 class="card-title fs-3 fw-bold text-white flex-column m-0">
                     Metronic Builder
 
@@ -12067,7 +12066,7 @@
         <!--end::Modal dialog-->
     </div>
     <!--end::Modal - Invite Friend--> <!--end::Modals-->
-  
+
     <!--begin::Javascript-->
     <script>
         var hostUrl = "assets/index.html";        </script>
