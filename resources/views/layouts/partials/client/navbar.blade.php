@@ -203,7 +203,7 @@
                                 <li><a href='faq.html'>faqs</a></li>
                                 <li><a href='offer.html'>offers</a></li>
                                 <li><a href='profile.html'>my profile</a></li>
-                                <li><a href='wallet.html'>my wallet</a></li>
+                                <li><a href="{{route('client.wallet')}}">my wallet</a></li>
                                 <li><a href='about.html'>about us</a></li>
                                 <li><a href='contact.html'>contact us</a></li>
                                 <li><a href='privacy.html'>privacy policy</a></li>
@@ -216,16 +216,16 @@
                         <li class="navbar-item dropdown">
                             <a class="navbar-link dropdown-arrow" href="#">authentic</a>
                             <ul class="dropdown-position-list">
-                                <li><a href='login.html'>login</a></li>
-                                <li><a href='register.html'>register</a></li>
-                                <li><a href='reset-password.html'>reset password</a></li>
-                                <li><a href='change-password.html'>change password</a></li>
+                                <li><a href="{{route('client.login')}}">login</a></li>
+                                <li><a href="{{route('client.register')}}">register</a></li>
+                                <li><a href="{{route('client.reset_password')}}"">reset password</a></li>
+                                <li><a href=" {{route('client.reset_password')}}">change password</a></li>
                             </ul>
                         </li>
-                        <li class="navbar-item dropdown">
+                        <li class=" navbar-item dropdown">
                             <a class="navbar-link dropdown-arrow" href="#">blogs</a>
                             <ul class="dropdown-position-list">
-                                <li><a href='blog-grid.html'>blog grid</a></li>
+                                <li><a href="{{route('client.blogs')}}">blog grid</a></li>
                                 <li><a href='blog-standard.html'>blog standard</a></li>
                                 <li><a href='blog-details.html'>blog details</a></li>
                                 <li><a href='blog-author.html'>blog author</a></li>
@@ -438,8 +438,7 @@
                 <div class="cart-action-group">
                     <div class="product-action">
                         <button class="action-minus" title="Quantity Minus"><i class="icofont-minus"></i></button>
-                        <input class="action-input" title="Quantity Number" type="text" name="quantity"
-                            value="1">
+                        <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
                         <button class="action-plus" title="Quantity Plus"><i class="icofont-plus"></i></button>
                     </div>
                     <h6>$56.98</h6>
@@ -459,8 +458,7 @@
                 <div class="cart-action-group">
                     <div class="product-action">
                         <button class="action-minus" title="Quantity Minus"><i class="icofont-minus"></i></button>
-                        <input class="action-input" title="Quantity Number" type="text" name="quantity"
-                            value="1">
+                        <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
                         <button class="action-plus" title="Quantity Plus"><i class="icofont-plus"></i></button>
                     </div>
                     <h6>$56.98</h6>
@@ -480,8 +478,7 @@
                 <div class="cart-action-group">
                     <div class="product-action">
                         <button class="action-minus" title="Quantity Minus"><i class="icofont-minus"></i></button>
-                        <input class="action-input" title="Quantity Number" type="text" name="quantity"
-                            value="1">
+                        <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
                         <button class="action-plus" title="Quantity Plus"><i class="icofont-plus"></i></button>
                     </div>
                     <h6>$56.98</h6>
@@ -501,8 +498,7 @@
                 <div class="cart-action-group">
                     <div class="product-action">
                         <button class="action-minus" title="Quantity Minus"><i class="icofont-minus"></i></button>
-                        <input class="action-input" title="Quantity Number" type="text" name="quantity"
-                            value="1">
+                        <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
                         <button class="action-plus" title="Quantity Plus"><i class="icofont-plus"></i></button>
                     </div>
                     <h6>$56.98</h6>
@@ -522,8 +518,7 @@
                 <div class="cart-action-group">
                     <div class="product-action">
                         <button class="action-minus" title="Quantity Minus"><i class="icofont-minus"></i></button>
-                        <input class="action-input" title="Quantity Number" type="text" name="quantity"
-                            value="1">
+                        <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
                         <button class="action-plus" title="Quantity Plus"><i class="icofont-plus"></i></button>
                     </div>
                     <h6>$56.98</h6>
@@ -641,7 +636,7 @@
             <li>
                 <a class="nav-link dropdown-link" href="#"><i class="icofont-book-alt"></i>blogs</a>
                 <ul class="dropdown-list">
-                    <li><a href='blog-grid.html'>blog grid</a></li>
+                    <li><a href="{{route('client.blogs')}}">blog grid</a></li>
                     <li><a href='blog-standard.html'>blog standard</a></li>
                     <li><a href='blog-details.html'>blog details</a></li>
                     <li><a href='blog-author.html'>blog author</a></li>
