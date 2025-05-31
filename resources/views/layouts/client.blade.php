@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="{{ asset('assets/client/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/index.css') }}">
 
+
     <!-- Custom Faq -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/faq.css') }}">
 
@@ -48,6 +49,10 @@
     
     <!-- Custom Wallet -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/client/css/user-auth.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/client/css/product-details.css') }}">
+
 
 </head>
 
