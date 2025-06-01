@@ -78,9 +78,10 @@
                     <!--end::Content wrapper-->
 
                     <!--begin::Footer-->
-                    @include('layouts.partials.admin.footer')
                     <!--end::Footer-->
                 </div>
+
+                    @include('layouts.partials.admin.footer')
 
             </div>
             <!--end::Wrapper-->
@@ -577,7 +578,7 @@
     <button id="kt_app_layout_builder_toggle" class="btn btn-dark app-layout-builder-toggle lh-1 py-4 "
         title="Metronic Builder" data-bs-custom-class="tooltip-inverse" data-bs-toggle="tooltip"
         data-bs-placement="left" data-bs-dismiss="click" data-bs-trigger="hover">
-        <i class="ki-duotone ki-setting-4 fs-4 me-1"></i> Customize
+          <i class="fa-solid fa-gauge"></i>&nbsp; Customize
     </button>
     <!--end::App settings toggle-->
     <!--begin::Drawers-->
@@ -2017,8 +2018,7 @@
         <!--begin::Prebuilts toggle-->
         <a href="#" data-bs-toggle="modal" data-bs-target="#kt_app_engage_prebuilts_modal"
             class="app-engage-btn hover-dark">
-            <i class="ki-duotone ki-abstract-41 fs-1 pt-1 mb-2"><span class="path1"></span><span
-                    class="path2"></span></i> Prebuilts
+             <i class="fa-solid fa-gauge"></i>&nbsp;Prebuilts
         </a>
         <!--end::Prebuilts toggle-->
 
@@ -2026,23 +2026,21 @@
 
         <!--begin::Get help-->
         <a href="https://devs.keenthemes.com/" target="_blank" class="app-engage-btn hover-primary">
-            <i class="ki-duotone ki-like-shapes fs-1 pt-1 mb-2"><span class="path1"></span><span
-                    class="path2"></span></i> Get Help
+              <i class="fa-solid fa-gauge"></i>&nbsp; Get Help
         </a>
         <!--end::Get help-->
 
         <!--begin::Prebuilts toggle-->
         <a href="https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?irgwc=1&amp;clickid=Qb1XFm3dIxyIUCez3ZXf1X0mUks0kb3cC2sEUQ0&amp;iradid=275988&amp;irpid=1330466&amp;iradtype=ONLINE_TRACKING_LINK&amp;irmptype=mediapartner&amp;mp_value1=&amp;utm_campaign=af_impact_radius_1330466&amp;utm_medium=affiliate&amp;utm_source=impact_radius"
             target="_blank" class="app-engage-btn hover-success">
-            <i class="ki-duotone ki-basket fs-2 pt-1 mb-2"><span class="path1"></span><span class="path2"></span><span
-                    class="path3"></span><span class="path4"></span></i> Buy Now
+              <i class="fa-solid fa-gauge"></i>&nbsp; Buy Now
         </a>
         <!--end::Prebuilts toggle-->
 
         <!--begin::Engage close-->
         <a href="#" id="kt_app_engage_toggle_off"
             class="app-engage-btn app-engage-btn-toggle-off text-hover-primary p-0">
-            <i class="ki-duotone ki-cross fs-2x"><span class="path1"></span><span class="path2"></span></i> </a>
+             <i class="fa-solid fa-gauge"></i>&nbsp; </a>
         <!--end::Engage close-->
 
         <!--begin::Engage close-->

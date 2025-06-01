@@ -7,12 +7,7 @@
         id="kt_app_header_container">
 
         <!--begin::Sidebar mobile toggle-->
-        <div class="d-flex align-items-center d-lg-none ms-n3 me-1 me-md-2" title="Show sidebar menu">
-            <div class="btn btn-icon btn-active-color-primary w-35px h-35px" id="kt_app_sidebar_mobile_toggle">
-                <i class="ki-duotone ki-abstract-14 fs-2 fs-md-1"><span class="path1"></span><span
-                        class="path2"></span></i>
-            </div>
-        </div>
+       
         <!--end::Sidebar mobile toggle-->
 
 
@@ -1730,8 +1725,7 @@
                             id="kt_header_search_toggle">
                             <div
                                 class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px">
-                                <i class="ki-duotone ki-magnifier fs-2"><span class="path1"></span><span
-                                        class="path2"></span></i>
+                                <i class="fa-solid fa-gauge"></i>&nbsp;
                             </div>
                         </div>
                         <!--end::Search toggle-->
@@ -1745,9 +1739,7 @@
                                 <form data-kt-search-element="form" class="w-100 position-relative mb-3"
                                     autocomplete="off">
                                     <!--begin::Icon-->
-                                    <i
-                                        class="ki-duotone ki-magnifier fs-2 text-gray-500 position-absolute top-50 translate-middle-y ms-0"><span
-                                            class="path1"></span><span class="path2"></span></i>
+                                     <i class="fa-solid fa-gauge"></i>&nbsp;
                                     <!--end::Icon-->
 
                                     <!--begin::Input-->
@@ -1767,8 +1759,7 @@
                                     <span
                                         class="search-reset  btn btn-flush btn-active-color-primary position-absolute top-50 end-0 translate-middle-y lh-0 d-none"
                                         data-kt-search-element="clear">
-                                        <i class="ki-duotone ki-cross fs-2 fs-lg-1 me-0"><span
-                                                class="path1"></span><span class="path2"></span></i> </span>
+                                        <i class="fa-solid fa-gauge"></i>&nbsp;</span>
                                     <!--end::Reset-->
 
                                     <!--begin::Toolbar-->
@@ -1778,8 +1769,7 @@
                                         <div data-kt-search-element="preferences-show"
                                             class="btn btn-icon w-20px btn-sm btn-active-color-primary me-1"
                                             data-bs-toggle="tooltip" title="Show search preferences">
-                                            <i class="ki-duotone ki-setting-2 fs-2"><span class="path1"></span><span
-                                                    class="path2"></span></i>
+                                            <i class="fa-solid fa-gauge"></i>&nbsp;
                                         </div>
                                         <!--end::Preferences toggle-->
 
@@ -2574,9 +2564,7 @@
                     <!--begin::Drawer toggle-->
                     <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                         id="kt_activities_toggle">
-                        <i class="ki-duotone ki-messages fs-2"><span class="path1"></span><span
-                                class="path2"></span><span class="path3"></span><span class="path4"></span><span
-                                class="path5"></span></i>
+                         <i class="fa-solid fa-gauge"></i>&nbsp;
                     </div>
                     <!--end::Drawer toggle-->
                 </div>
@@ -2588,8 +2576,7 @@
                     <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end" id="kt_menu_item_wow">
-                        <i class="ki-duotone ki-notification-status fs-2"><span class="path1"></span><span
-                                class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+                         <i class="fa-solid fa-gauge"></i>&nbsp;
                     </div>
 
                     <!--begin::Menu-->
@@ -3187,8 +3174,7 @@
                     <!--begin::Menu wrapper-->
                     <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px position-relative"
                         id="kt_drawer_chat_toggle">
-                        <i class="ki-duotone ki-message-text-2 fs-2"><span class="path1"></span><span
-                                class="path2"></span><span class="path3"></span></i>
+                     <i class="fa-solid fa-gauge"></i>&nbsp;
                         <span
                             class="bullet bullet-dot bg-success h-6px w-6px position-absolute translate-middle top-0 start-50 animation-blink">
                         </span>
@@ -3203,8 +3189,7 @@
                     <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
-                        <i class="ki-duotone ki-element-11 fs-2"><span class="path1"></span><span
-                                class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+                         <i class="fa-solid fa-gauge"></i>&nbsp;
                     </div>
 
                     <!--begin::My apps-->
@@ -3535,10 +3520,7 @@
                         class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                         data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
-                        <i class="ki-duotone ki-night-day theme-light-show fs-1"><span class="path1"></span><span
-                                class="path2"></span><span class="path3"></span><span class="path4"></span><span
-                                class="path5"></span><span class="path6"></span><span class="path7"></span><span
-                                class="path8"></span><span class="path9"></span><span class="path10"></span></i> <i
+                         <i class="fa-solid fa-gauge"></i>&nbsp; <i
                             class="ki-duotone ki-moon theme-dark-show fs-1"><span class="path1"></span><span
                                 class="path2"></span></i></a>
                     <!--begin::Menu toggle-->
