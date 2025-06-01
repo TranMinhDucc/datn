@@ -11,6 +11,22 @@ class HomeController extends Controller
     {
         return view('client.home');
     }
+
+    public function policy()
+    {
+        return view('client.policy');
+    }
+
+    public function contact()
+    {
+        return view('client.contact');
+    }
+
+    public function faq()
+    {
+        return view('client.faq');
+    }
+
     public function login()
     {
         return view('client.auth.login');
