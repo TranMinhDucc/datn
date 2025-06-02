@@ -4,7 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Client\ProductController;
+// use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -38,7 +38,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Trang tổng quan
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-
+//   Route::prefix('dashboard')->name('dashboard.')->group(function () {
+//         Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');
+//         // Route::get('/create', [UserController::class, 'create'])->name('create');
+//         // Route::post('/', [UserController::class, 'store'])->name('store');
+//         // Route::get('/{user}', [UserController::class, 'show'])->name('show');
+//         // Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+//         // Route::put('/{user}', [UserController::class, 'update'])->name('update');
+//         // Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+//     });
 
     // User
     Route::prefix('users')->name('users.')->group(function () {
@@ -147,5 +155,7 @@ Route::prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [AccountController::class, 'wallet'])->name('wallet');
     Route::get('/orders', [AccountController::class, 'orders'])->name('orders');
     Route::get('/password', [AccountController::class, 'password'])->name('password');
+
+});
 
 });

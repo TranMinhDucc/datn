@@ -11,11 +11,11 @@ class ProductController extends Controller
     {
         // Lấy danh sách sản phẩm, có thể dùng paginate
         
-        return view('client.products.index');
+        // return view('client.products.index');
     }
 
     public function show($id)
     {
-         return view('client.products.show');
+        //  return view('client.products.show');
     }
 }
