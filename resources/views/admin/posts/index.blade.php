@@ -12687,7 +12687,7 @@
 				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
 			}
 		})();
-	}
+	}XR
 	else {
 		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
 	}
@@ -12696,5 +12696,5 @@
 </body>
     <!--end::Body-->
 
-<!-- Mirrored from preview.keenthemes.com/metronic8/demo1/apps/projects/list.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 May 2025 04:33:29 GMT -->
+<!-- Mirrored from preview.keenthemes.com/metronic8/demo1/apps/projects/list.html by HTTrack Website Copier/3.x [&CO'2014], Fri, 30 May 2025 04:33:29 GMT -->
 @endsection

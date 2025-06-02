@@ -6264,13 +6264,13 @@
                                             class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
                                     <div class="menu-sub menu-sub-accordion"><!--begin:Menu item-->
                                         <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                                href="/metronic8/demo1/apps/user-management/users/list.html"><span
+                                                href="{{route('admin.reviews.index')}}"><span
                                                     class="menu-bullet"><span
                                                         class="bullet bullet-dot"></span></span><span
                                                     class="menu-title">Users List</span></a><!--end:Menu link--></div>
                                         <!--end:Menu item--><!--begin:Menu item-->
                                         <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                                href="/metronic8/demo1/apps/user-management/users/view.html"><span
+                                                href="{{route('admin.statuses.index')}}"><span
                                                     class="menu-bullet"><span
                                                         class="bullet bullet-dot"></span></span><span
                                                     class="menu-title">View User</span></a><!--end:Menu link--></div>
@@ -6447,7 +6447,7 @@
                                     class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
                             <div class="menu-sub menu-sub-accordion"><!--begin:Menu item-->
                                 <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                        href="/metronic8/demo1/apps/chat/private.html"><span
+                                        href="{{route('admin.orders.index')}}"><span
                                             class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                             class="menu-title">Private Chat</span></a><!--end:Menu link--></div>
                                 <!--end:Menu item--><!--begin:Menu item-->
