@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\SigninController;
 
 // Giao diện client
 Route::controller(HomeController::class)->group(function () {
@@ -37,6 +38,7 @@ Route::controller(HomeController::class)->group(function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     // Trang tổng quan
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/signin', [SigninController::class, 'index'])->name('signin.index');
 
 //   Route::prefix('dashboard')->name('dashboard.')->group(function () {
 //         Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');

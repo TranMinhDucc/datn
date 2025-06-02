@@ -5271,13 +5271,13 @@
                                             class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
                                     <div class="menu-sub menu-sub-accordion menu-active-bg"><!--begin:Menu item-->
                                         <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                                href="/metronic8/demo1/authentication/layouts/corporate/sign-in.html"><span
+                                                href="{{ route('admin.signin.index') }}"><span
                                                     class="menu-bullet"><span
                                                         class="bullet bullet-dot"></span></span><span
                                                     class="menu-title">Sign-in</span></a><!--end:Menu link--></div>
                                         <!--end:Menu item--><!--begin:Menu item-->
                                         <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                                href="/metronic8/demo1/authentication/layouts/corporate/sign-up.html"><span
+                                                href="{{ route('admin.signin.index') }}"><span
                                                     class="menu-bullet"><span
                                                         class="bullet bullet-dot"></span></span><span
                                                     class="menu-title">Sign-up</span></a><!--end:Menu link--></div>
