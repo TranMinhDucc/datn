@@ -5047,7 +5047,7 @@
                                             class="menu-title">Default</span></a><!--end:Menu link--></div>
                                 <!--end:Menu item--><!--begin:Menu item-->
                                 <div class="menu-item"><!--begin:Menu link--><a class="menu-link"
-                                        href="/metronic8/demo1/dashboards/ecommerce.html"><span
+                                        href="{{ route('admin.dashboard') }}"><span
                                             class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                             class="menu-title">eCommerce</span></a><!--end:Menu link--></div>
                                 <!--end:Menu item--><!--begin:Menu item-->
