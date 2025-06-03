@@ -624,6 +624,24 @@
                                         <div class="menu-item">
                                             <!--begin:Menu link--><a
                                                 class="menu-link"
+                                                href="{{ route('admin.banners.index') }}"
+                                                ><span class="menu-icon"
+                                                    ><i
+                                                        class="fa-solid fa-images fs-4"
+                                                        ><span
+                                                            class="path1"
+                                                        ></span
+                                                        ><span
+                                                            class="path2"
+                                                        ></span></i></span
+                                                ><span class="menu-title"
+                                                    >Banner</span
+                                                ></a
+                                            ><!--end:Menu link-->
+                                        </div>
+                                        <div class="menu-item">
+                                            <!--begin:Menu link--><a
+                                                class="menu-link"
                                                 href="{{ route('admin.categories.index') }}"
                                                 ><span class="menu-icon"
                                                     ><i

@@ -49,6 +49,8 @@ Route::prefix('admin')->group(function () {
     // Security
     // Route::get('/ip-blocks', [IpBlockController::class, 'index'])->name('admin.ip-block');
 
+    // Banner
+    Route::resource('banners', BannerController::class)->names('admin.banners');
     // Products & Services
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('products', ProductController::class)->names('admin.products');
