@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product; 
+
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-   public function index()
+     public function index()
     {
-        $products = Product::all();
-        return view('admin.products.index', compact('products'));
+        return view('admin.products.index');
     }
 
     /**
@@ -21,7 +20,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+         return view('admin.products.create');
     }
 
     /**

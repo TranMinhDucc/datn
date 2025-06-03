@@ -14,7 +14,9 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
 
 // Giao diện client
@@ -35,129 +37,43 @@ Route::controller(HomeController::class)->group(function () {
 
 // Routes cho giao diện admin
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    // Trang tổng quan
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/signin', [SigninController::class, 'index'])->name('signin.index');
+// Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
+Route::prefix('admin')->group(function () {
 
-//   Route::prefix('dashboard')->name('dashboard.')->group(function () {
-//         Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');
-//         // Route::get('/create', [UserController::class, 'create'])->name('create');
-//         // Route::post('/', [UserController::class, 'store'])->name('store');
-//         // Route::get('/{user}', [UserController::class, 'show'])->name('show');
-//         // Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-//         // Route::put('/{user}', [UserController::class, 'update'])->name('update');
-//         // Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-//     });
+    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // User
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        // Route::get('/create', [UserController::class, 'create'])->name('create');
-        // Route::post('/', [UserController::class, 'store'])->name('store');
-        // Route::get('/{user}', [UserController::class, 'show'])->name('show');
-        // Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-        // Route::put('/{user}', [UserController::class, 'update'])->name('update');
-        // Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-    });
+    // Main
+    // Route::get('/history', [HistoryController::class, 'index'])->name('admin.history');
+    // Route::get('/automation', [AutomationController::class, 'index'])->name('admin.automation');
 
-    // Categories
-    Route::prefix('categories')->name('categories.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
-        // Route::get('/create', [CategoryController::class, 'create'])->name('create');
-        // Route::post('/', [CategoryController::class, 'store'])->name('store');
-        // Route::get('/{category}', [CategoryController::class, 'show'])->name('show');
-        // Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-        // Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
-        // Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
-    });
+    // Security
+    // Route::get('/ip-blocks', [IpBlockController::class, 'index'])->name('admin.ip-block');
 
-    // Posts
-    Route::prefix('posts')->name('posts.')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('index');
-        // Route::get('/create', [PostController::class, 'create'])->name('create');
-        // Route::post('/', [PostController::class, 'store'])->name('store');
-        // Route::get('/{post}', [PostController::class, 'show'])->name('show');
-        // Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
-        // Route::put('/{post}', [PostController::class, 'update'])->name('update');
-        // Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
-    });
+    // Products & Services
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
+    Route::resource('products', ProductController::class)->names('admin.products');
+    // Route::get('/products/api', [ApiConnectionController::class, 'index'])->name('admin.api');
+    // Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders');
+    // Route::get('/accounts/sold', [AccountController::class, 'sold'])->name('admin.accounts.sold');
+    // Route::get('/accounts/in-stock', [AccountController::class, 'stock'])->name('admin.accounts.stock');
 
-    // Products
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('index');
-        // Route::get('/create', [ProductController::class, 'create'])->name('create');
-        // Route::post('/', [ProductController::class, 'store'])->name('store');
-        // Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-        // Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
-        // Route::put('/{product}', [ProductController::class, 'update'])->name('update');
-        // Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
-    });
+    // Users & Roles
+    Route::resource('users', UserController::class)->names('admin.users');
+    // Route::resource('roles', RoleController::class)->names('admin.roles');
 
-    // Reviews
-    Route::prefix('reviews')->name('reviews.')->group(function () {
-        Route::get('/', [ReviewController::class, 'index'])->name('index');
-        // Route::get('/create', [ReviewController::class, 'create'])->name('create');
-        // Route::post('/', [ReviewController::class, 'store'])->name('store');
-        // Route::get('/{review}', [ReviewController::class, 'show'])->name('show');
-        // Route::get('/{review}/edit', [ReviewController::class, 'edit'])->name('edit');
-        // Route::put('/{review}', [ReviewController::class, 'update'])->name('update');
-        // Route::delete('/{review}', [ReviewController::class, 'destroy'])->name('destroy');
-    });
+    // Topup & Campaigns
+    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
+    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
+    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
 
-    // Payment Banks
-    Route::prefix('payment-banks')->name('payment_banks.')->group(function () {
-        Route::get('/', [PaymentBankController::class, 'index'])->name('index');
-        // Route::get('/create', [PaymentBankController::class, 'create'])->name('create');
-        // Route::post('/', [PaymentBankController::class, 'store'])->name('store');
-        // Route::get('/{payment_bank}', [PaymentBankController::class, 'show'])->name('show');
-        // Route::get('/{payment_bank}/edit', [PaymentBankController::class, 'edit'])->name('edit');
-        // Route::put('/{payment_bank}', [PaymentBankController::class, 'update'])->name('update');
-        // Route::delete('/{payment_bank}', [PaymentBankController::class, 'destroy'])->name('destroy');
-    });
-    Route::prefix('banners')->name('banners.')->group(function () {
-    Route::get('/', [BannerController::class, 'index'])->name('index');
-    // Route::get('/create', [BannerController::class, 'create'])->name('create');
-    // Route::post('/', [BannerController::class, 'store'])->name('store');
-    // Route::get('/{id}', [BannerController::class, 'show'])->name('show');
-    // Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('edit');
-    // Route::put('/{id}', [BannerController::class, 'update'])->name('update');
-    // Route::delete('/{id}', [BannerController::class, 'destroy'])->name('destroy');
-});
+    // Marketing
+    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
+    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
+    // Route::resource('posts', PostController::class)->names('admin.posts');
 
-// Status routes
-Route::prefix('statuses')->name('statuses.')->group(function () {
-    Route::get('/', [StatusController::class, 'index'])->name('index');
-    // Route::get('/create', [StatusController::class, 'create'])->name('create');
-    // Route::post('/', [StatusController::class, 'store'])->name('store');
-    // Route::get('/{id}', [StatusController::class, 'show'])->name('show');
-    // Route::get('/{id}/edit', [StatusController::class, 'edit'])->name('edit');
-    // Route::put('/{id}', [StatusController::class, 'update'])->name('update');
-    // Route::delete('/{id}', [StatusController::class, 'destroy'])->name('destroy');
-});
-// Order routes
-Route::prefix('orders')->name('orders.')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('index');
-    // Route::get('/create', [OrderController::class, 'create'])->name('create');
-    // Route::post('/', [OrderController::class, 'store'])->name('store');
-    // Route::get('/{id}', [OrderController::class, 'show'])->name('show');
-    // Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('edit');
-    // Route::put('/{id}', [OrderController::class, 'update'])->name('update');
-    // Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy');
-});
-
-
-Route::prefix('products')->name('client.products.')->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/{id}', [ProductController::class, 'show'])->name('show');
-});
-
-Route::prefix('account')->name('client.account.')->group(function () {
-    Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
-    Route::get('/wallet', [AccountController::class, 'wallet'])->name('wallet');
-    Route::get('/orders', [AccountController::class, 'orders'])->name('orders');
-    Route::get('/password', [AccountController::class, 'password'])->name('password');
-
-});
-
+    // System Settings
+    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 });
