@@ -193,9 +193,10 @@
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container  container-xxl ">
                 <!--begin::Form-->
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
-                data-kt-redirect="{{ route('admin.products.index') }}">
+                <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
+                    data-kt-redirect="{{ route('admin.products.update', $product->id) }}">
                     @csrf
+                    @method('PUT')
                     <!--begin::Aside column-->
                     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                         <!--begin::Thumbnail settings-->
@@ -225,10 +226,11 @@
                                 </style>
                                 <!--end::Image input placeholder-->
 
-                                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                                    data-kt-image-input="true">
+                                <div class="image-input image-input-outline image-input-placeholder mb-3"
+                                    data-kt-image-input="true" style="background-image: url('{{ asset($product->images) }}')">
                                     <!--begin::Preview existing avatar-->
-                                    <div class="image-input-wrapper w-150px h-150px"></div>
+                                     <div class="image-input-wrapper w-125px h-125px"
+                                        style="background-image: url('{{ asset($product->images) }}')"></div>
                                     <!--end::Preview existing avatar-->
 
                                     <!--begin::Label-->
@@ -295,8 +297,14 @@
                                 <select name="status" class="form-select mb-2" data-control="select2" data-hide-search="true"
                                     data-placeholder="Select an option" id="kt_ecommerce_add_product_status_select">
                                     <option></option>
-                                    <option value="1" selected>Show</option>
-                                    <option value="0">Hide</option>
+                                    <option value="1"
+                                        {{ old('status', $product->status) == 1 ? 'selected' : '' }}
+                                        >Show
+                                    </option>
+                                    <option value="0"
+                                        {{ old('status', $product->status) == 0 ? 'selected' : '' }}
+                                        >Hide
+                                    </option>
                                 </select>
                                 <!--end::Select2-->
 
@@ -340,7 +348,10 @@
                                     data-allow-clear="true">
                                     <option></option>
                                     @foreach ($categories as $category)
-                                        <option value="{{$category->id}}">{{$category->name}}</option>
+                                        <option value="{{$category->id}}"
+                                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                            {{$category->name}}
+                                        </option>
                                     @endforeach
                                 </select>
                                 <!--end::Select2-->
@@ -481,7 +492,7 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="name" class="form-control mb-2"
-                                                    placeholder="Product name" value="" />
+                                                    placeholder="Product name" value="{{ old('name', $product->name) }}" />
                                                 <!--end::Input-->
 
                                                 <!--begin::Description-->
@@ -499,7 +510,7 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="code" class="form-control mb-2"
-                                                    placeholder="Product code" value="" />
+                                                    placeholder="Product code" value="{{ old('code', $product->code) }}" />
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Input group-->
@@ -511,9 +522,12 @@
                                                 <!--end::Label-->
 
                                                 <!--begin::Editor-->
-                                                <textarea id="kt_ecommerce_add_product_description"
-                                                    name="description" class="min-h-200px mb-2">
-                                                </textarea>
+                                                <div class="mb-10">
+                                                    <label class="form-label">Mô tả</label>
+                                                    <textarea name="description" id="kt_ecommerce_add_product_description" class="min-h-200px mb-2">
+                                                        {!! old('description', $product->description) !!}
+                                                    </textarea>
+                                                </div>
                                                 <!--end::Editor-->
 
                                                 <!--begin::Description-->
@@ -590,7 +604,7 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="price" class="form-control mb-2"
-                                                    placeholder="Product price" value="" />
+                                                    placeholder="Product price" value="{{ old('price', $product->price) }} "/>
                                                 <!--end::Input-->
 
                                                 <!--begin::Description-->
