@@ -22,25 +22,29 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'images' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            // thêm các validate khác
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'images' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        // validate thêm nếu có
+    ]);
 
-        $data = $request->all();
+    $data = $request->only(['name', 'price', 'description']); // thêm các field thật sự cần
 
-        if ($request->hasFile('images')) {
-            $path = $request->file('images')->store('uploads/products', 'public');
-            $data['images'] = '/storage/' . $path;
-        }
-
-        Product::create($data);
-
-        return redirect()->route('admin.products.index')->with('success', 'Đã thêm sản phẩm');
+    if ($request->hasFile('images')) {
+        // Lưu ảnh mới
+        $path = $request->file('images')->store('uploads/products', 'public');
+        $data['images'] = $path; // Lưu đường dẫn relative
     }
+// dd($data);
+    Product::create($data);
+
+    return redirect()->route('admin.products.index')->with('success', 'Đã thêm sản phẩm');
+
+    
+}
+
 
     public function edit(Product $product)
     {
@@ -56,7 +60,7 @@ class ProductController extends Controller
         'name' => 'nullable|string|max:255',
         'slug' => 'nullable|string|max:255',
         'price' => 'nullable|numeric',
-        'images' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'images' => 'nullable|image|mimes:jpeg,png,jpg',
         // ... thêm rule khác nếu cần
     ]);
 
@@ -74,7 +78,7 @@ class ProductController extends Controller
         }
 
         // Lưu ảnh mới
-        $path = $request->file('images')->store('products', 'public');
+        $path = $request->file('images')->store('uploads/products', 'public');
         $product->images = $path; // Lưu đường dẫn relative
     }
 

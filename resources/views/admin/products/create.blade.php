@@ -204,9 +204,9 @@
                             <div class="card-header">
                                 <!--begin::Card title-->
                                 <div class="card-title">
-                                    <h2>Ảnh</h2>
+                                <h2>Ảnh</h2>
                                 </div>
-                                <!--end::Card title-->
+                                <!--end::Card     title-->
                             </div>
                             <!--end::Card header-->
 
