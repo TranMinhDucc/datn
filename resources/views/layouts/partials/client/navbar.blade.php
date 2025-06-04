@@ -202,9 +202,8 @@
                             <ul class="dropdown-position-list">
                                 <li><a href='faq.html'>faqs</a></li>
                                 <li><a href='offer.html'>offers</a></li>
-                                {{-- <li><a href='{{ route('client.account.profile') }}'>my profile</a></li>
-                                <li><a href='{{ route('client.account.wallet') }}'>my wallet</a></li> --}}
-                                <li><a href='profile.html'>my profile</a></li>
+                                <li><a href='{{ route('client.account.profile') }}'>my profile</a></li>
+                                <li><a href='{{ route('client.account.wallet') }}'>my wallet</a></li>
                                 <li><a href='about.html'>about us</a></li>
                                 <li><a href='contact.html'>contact us</a></li>
                                 <li><a href='privacy.html'>privacy policy</a></li>
@@ -217,9 +216,9 @@
                         <li class="navbar-item dropdown">
                             <a class="navbar-link dropdown-arrow" href="#">authentic</a>
                             <ul class="dropdown-position-list">
-                                <li><a href="{{route('client.login')}}">login</a></li>
-                                <li><a href="{{route('client.register')}}">register</a></li>
-                                <li><a href="{{route('client.reset_password')}}"">reset password</a></li>
+                                <li><a href="{{url('login')}}">login</a></li>
+                                <li><a href="{{url('register')}}">register</a></li>
+                                <li><a href="{{route('client.reset_password')}}">reset password</a></li>
                                 <li><a href=" {{route('client.reset_password')}}">change password</a></li>
                             </ul>
                         </li>
@@ -615,7 +614,7 @@
             <li>
                 <a class="nav-link dropdown-link" href="#"><i class="icofont-bag-alt"></i>my account</a>
                 <ul class="dropdown-list">
-                    <li><a href='profile.html'>profile</a></li>
+                    <li><a href='profile.html'>cxdsa</a></li>
                     <li><a href='wallet.html'>wallet</a></li>
                     <li><a href='wishlist.html'>wishlist</a></li>
                     <li><a href='compare.html'>compare</a></li>
