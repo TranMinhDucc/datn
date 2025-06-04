@@ -457,7 +457,7 @@
                                         <div class="menu-item">
                                             <!--begin:Menu link--><a
                                                 class="menu-link"
-                                                href="https://preview.keenthemes.com/html/metronic/docs/getting-started/changelog"
+                                                href="{{ route('admin.coupons.index') }}"
                                                 target="_blank"
                                                 ><span class="menu-icon"
                                                     ><i

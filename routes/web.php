@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Admin\CouponController;
+
 
 // Giao diện client
 Route::controller(HomeController::class)->group(function () {
@@ -69,7 +71,7 @@ Route::prefix('admin')->group(function () {
     // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
 
     // Marketing
-    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
+    Route::resource('coupons', CouponController::class)->names('admin.coupons');
     // Route::resource('promotions', PromoController::class)->names('admin.promotions');
     // Route::resource('posts', PostController::class)->names('admin.posts');
 
