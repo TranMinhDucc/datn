@@ -78,4 +78,7 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+    // product crud
+    Route::resource('products', ProductController::class)->names('admin.products');
 });
