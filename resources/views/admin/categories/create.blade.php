@@ -319,7 +319,7 @@
             <!--end::Label-->
 
             <!--begin::Input-->
-                        <input type="text" name="name" class="form-control mb-2" placeholder=" Nhập tên danh mục " value="" />
+                        <input type="text" name="name" class="form-control mb-2" placeholder=" Nhập tên danh mục " value="{{ old('name') }}" />
                         @error('name')
         <div class="text-danger">{{ $message }}</div>
     @enderror
@@ -336,7 +336,7 @@
        
             <label class="required form-label">Nội dung  </label>
            
-                        <input type="text" name="description" class="form-control mb-2" placeholder="Nhập nội dung" value="" />
+                        <input type="text" name="description" class="form-control mb-2" placeholder="Nhập nội dung" value="{{ old('description') }}" />
            
         </div>
         

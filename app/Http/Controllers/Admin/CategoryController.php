@@ -26,30 +26,43 @@ return view('admin.categories.index', compact('categories'));
         return view('admin.categories.create', compact('parents'));
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-           
-            'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'name'        => 'required|string|max:255',
-            
-            'description' => 'nullable|string',
-            
-            'slug'        => 'required|string|max:255|unique:categories,slug',
-            
-            'status'      => 'required|boolean',
-        ]);
-    $data['slug'] = $data['slug'] ?? str::slug($data['name']);
 
-        if ($request->hasFile('icon')) {
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
-        }
+    
 
-        Category::create($data);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'name'        => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'slug'        => 'nullable|string|max:255|unique:categories,slug',
+        'status'      => 'required|boolean',
+    ], [
+        'icon.image'    => 'Tệp tải lên phải là hình ảnh.',
+        'icon.mimes'    => 'Ảnh phải có định dạng: jpg, jpeg, png, webp.',
+        'icon.max'      => 'Ảnh không được vượt quá 2MB.',
+        'name.required' => 'Vui lòng nhập tên danh mục.',
+        'slug.unique'   => 'Slug đã tồn tại, hãy chọn slug khác.',
+        'status.required' => 'Vui lòng chọn trạng thái hiển thị.',
+        'status.boolean'  => 'Giá trị trạng thái không hợp lệ.',
+    ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
+    // Nếu slug chưa nhập, tự động tạo từ name
+    if (empty($validated['slug'])) {
+        $validated['slug'] = Str::slug($validated['name']);
     }
 
+    // Nếu có icon, lưu ảnh
+    if ($request->hasFile('icon')) {
+        $validated['icon'] = $request->file('icon')->store('categories', 'public');
+    }
+
+    // Lưu danh mục
+    Category::create($validated);
+
+    return redirect()->route('admin.categories.index')
+                     ->with('success', 'Thêm danh mục thành công!');
+}
     public function edit(Category $category)
     {
         $parents = Category::where('id', '!=', $category->id)->get();
@@ -57,30 +70,44 @@ return view('admin.categories.index', compact('categories'));
     }
 
     public function update(Request $request, Category $category)
-    {
-        $data = $request->validate([
-           
-            'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'name'        => 'required|string|max:255',
-            
-            'description' => 'nullable|string',
-           
-            'slug'        => 'required|string|max:255|unique:categories,slug,' . $category->id,
-          
-            'status'      => 'required|boolean',
-        ]);
+{
+    $validated = $request->validate([
+        'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'name'        => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'slug'        => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
+        'status'      => 'required|boolean',
+    ], [
+        'icon.image'    => 'Tệp tải lên phải là hình ảnh.',
+        'icon.mimes'    => 'Ảnh phải có định dạng: jpg, jpeg, png, webp.',
+        'icon.max'      => 'Ảnh không được vượt quá 2MB.',
+        'name.required' => 'Vui lòng nhập tên danh mục.',
+        'slug.unique'   => 'Slug đã tồn tại, hãy chọn slug khác.',
+        'status.required' => 'Vui lòng chọn trạng thái.',
+        'status.boolean'  => 'Giá trị trạng thái không hợp lệ.',
+    ]);
 
-        if ($request->hasFile('icon')) {
-            if ($category->icon && Storage::disk('public')->exists($category->icon)) {
-                Storage::disk('public')->delete($category->icon);
-            }
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
-        }
-
-        $category->update($data);
-
-        return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công!');
+    // Nếu slug rỗng thì tạo tự động từ name
+    if (empty($validated['slug'])) {
+        $validated['slug'] = Str::slug($validated['name']);
     }
+
+    // Nếu upload icon mới
+    if ($request->hasFile('icon')) {
+        // Xóa icon cũ nếu tồn tại
+        if ($category->icon && Storage::disk('public')->exists($category->icon)) {
+            Storage::disk('public')->delete($category->icon);
+        }
+        // Lưu icon mới
+        $validated['icon'] = $request->file('icon')->store('categories', 'public');
+    }
+
+    // Cập nhật danh mục
+    $category->update($validated);
+
+    return redirect()->route('admin.categories.index')
+                     ->with('success', 'Cập nhật danh mục thành công!');
+}
 
     public function destroy(Category $category)
     {
