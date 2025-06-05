@@ -76,4 +76,10 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+    // Posts
+    Route::resource('posts', PostController::class)->names('admin.posts');
+
+    // Route để bật/tắt trạng thái bài viết
+    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
 });

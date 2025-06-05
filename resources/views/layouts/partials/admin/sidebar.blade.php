@@ -539,7 +539,7 @@
                                                 <div class="menu-item">
                                                     <!--begin:Menu link--><a
                                                         class="menu-link"
-                                                        href="toolbars/classic.html"
+                                                        href="{{ route('admin.posts.create') }}"
                                                         ><span
                                                             class="menu-bullet"
                                                             ><span
@@ -555,7 +555,7 @@
                                                 <div class="menu-item">
                                                     <!--begin:Menu link--><a
                                                         class="menu-link"
-                                                        href="toolbars/saas.html"
+                                                        href="{{ route('admin.posts.index') }}"
                                                         ><span
                                                             class="menu-bullet"
                                                             ><span
