@@ -63,7 +63,7 @@
 
                             <div class="form-button">
                                 <button type="submit">login</button>
-                                <p>Forgot your password?<a href="{{route('client.reset_password')}}">reset here</a></p>
+                                <p>Forgot your password?<a href="{{route('client.auth.reset_password')}}">reset here</a></p>
                             </div>
                         </form>
 

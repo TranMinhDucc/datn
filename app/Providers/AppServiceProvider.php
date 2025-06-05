@@ -14,6 +14,10 @@ use Laravel\Fortify\Contracts\LoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Illuminate\Validation\ValidationException;
+use Laravel\Fortify\Contracts\ResetPasswordViewResponse;
+use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
+use Laravel\Fortify\Contracts\ResetsUserPasswords;
+use App\Actions\Fortify\ResetUserPassword;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,24 +40,24 @@ class AppServiceProvider extends ServiceProvider
 
         // ✅ Cho phép đăng nhập bằng email hoặc username
         Fortify::authenticateUsing(function (Request $request) {
-                $login = $request->input('email'); // Có thể là email hoặc username
-    $user = User::where('email', $login)
+            $login = $request->input('email'); // Có thể là email hoặc username
+            $user = User::where('email', $login)
                 ->orWhere('username', $login)
                 ->first();
 
-    if (!$user) {
-        throw ValidationException::withMessages([
-            'email' => ['Tài khoản không tồn tại.'],
-        ]);
-    }
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['Tài khoản không tồn tại.'],
+                ]);
+            }
 
-    if (!Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'password' => ['Mật khẩu không đúng.'],
-        ]);
-    }
+            if (!Hash::check($request->password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'password' => ['Mật khẩu không đúng.'],
+                ]);
+            }
 
-    return $user;
+            return $user;
         });
 
 
@@ -62,5 +66,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
         $this->app->singleton(RegisterResponse::class, CustomRegisterResponse::class);
+        $this->app->singleton(ResetPasswordViewResponse::class, CustomResetPasswordViewResponse::class);
+        $this->app->singleton(ResetsUserPasswords::class, ResetUserPassword::class);
     }
 }

@@ -40,7 +40,7 @@ class HomeController extends Controller
     }
     public function reset_password()
     {
-        return view('client.auth.reset-password');
+        return view('client.auth.request-reset-password');
     }
     public function register()
     {

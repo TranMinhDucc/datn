@@ -31,7 +31,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('client.home');
     Route::get('/login', 'login')->name('login');
     Route::get('/register', 'register')->name('register');
-    Route::get('/reset-password', 'reset_password')->name('client.reset_password');
+
     Route::get('/policy', 'policy')->name('client.policy');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::get('/faq', 'faq')->name('client.faq');
@@ -47,7 +47,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('client.account.wallet');
     Route::get('/profile', [AccountController::class, 'profile'])->name('client.account.profile');
     // Add more protected routes here...
+
+
+    // Đổi mật khẩu
+    Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('client.account.change_password');
+    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('client.account.change_password.submit');
 });
+
+
+// --------- 🌐 KHÔI PHỤC MẬT KHẨU ---------
+// Trang nhập email để reset mật khẩu
+Route::get('/forgot-password', function () {
+    return view('client.auth.request-reset-password'); // hoặc reset-password nếu bạn giữ tên cũ
+})->middleware('guest')->name('client.auth.reset_password');
 
 // ---------------------------
 // 📧 EMAIL VERIFICATION ROUTES
