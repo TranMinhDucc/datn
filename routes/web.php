@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+
 // ---------------------------
 // ⚙️ PUBLIC ROUTES (ai cũng xem được)
 // ---------------------------
@@ -31,7 +32,6 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('client.home');
     Route::get('/login', 'login')->name('login');
     Route::get('/register', 'register')->name('register');
-
     Route::get('/policy', 'policy')->name('client.policy');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::get('/faq', 'faq')->name('client.faq');
@@ -46,26 +46,19 @@ Route::controller(HomeController::class)->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('client.account.wallet');
     Route::get('/profile', [AccountController::class, 'profile'])->name('client.account.profile');
-    // Add more protected routes here...
-
-
-    // Đổi mật khẩu
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('client.account.change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('client.account.change_password.submit');
 });
 
-
 // --------- 🌐 KHÔI PHỤC MẬT KHẨU ---------
-// Trang nhập email để reset mật khẩu
 Route::get('/forgot-password', function () {
-    return view('client.auth.request-reset-password'); // hoặc reset-password nếu bạn giữ tên cũ
+    return view('client.auth.request-reset-password');
 })->middleware('guest')->name('client.auth.reset_password');
 
 // ---------------------------
 // 📧 EMAIL VERIFICATION ROUTES
 // ---------------------------
 
-// Trang hiển thị yêu cầu xác minh
 Route::get('/email/verify', function () {
     if (Auth::check() && Auth::user()->hasVerifiedEmail()) {
         return redirect()->route('client.home');
@@ -73,7 +66,6 @@ Route::get('/email/verify', function () {
     return view('client.auth.verify-email');
 })->middleware(['auth'])->name('verification.notice');
 
-// Link xác minh từ email
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     $user = User::findOrFail($request->route('id'));
     $expectedHash = sha1($user->getEmailForVerification());
@@ -91,12 +83,10 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     return redirect()->route('client.home')->with('success', 'Xác minh email thành công!');
 })->middleware(['signed'])->name('verification.verify');
 
-// Gửi lại email xác minh
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('success', 'Email xác minh đã được gửi lại!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
 
 // ---------------------------
 // 🛠 ADMIN ROUTES
@@ -105,10 +95,10 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Quản lý sản phẩm, danh mục, v.v...
+    Route::resource('banners', BannerController::class)->names('admin.banners');
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('products', ProductController::class)->names('admin.products');
     Route::resource('users', UserController::class)->names('admin.users');
 
-    // Add more admin routes below if needed...
+    // Thêm các route quản lý khác nếu cần...
 });
