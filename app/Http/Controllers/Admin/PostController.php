@@ -17,10 +17,23 @@ class PostController extends Controller
     {
         $posts = Post::latest()->paginate(9);
         $stats = [
+            //Thống kê bài viết
             'total' => $posts->count(),
             'draft' => $posts->where('status', 0)->count(),
             'published' => $posts->where('status', 1)->count(),
             'hidden' => $posts->where('status', 2)->count(),
+
+            // Thống kê lượt xem
+            'total_views' => Post::sum('view'),
+            'max_views' => Post::max('view') ?? 0,
+            'today_views' => Post::whereDate('created_at', today())->sum('view'),
+
+            //
+            'today_views' => Post::whereDate('created_at', today())->sum('view'),
+
+
+            // Top 5 bài viết phổ biến
+            'popular_posts' => Post::orderBy('view', 'desc')->take(5)->get()
         ];
         return view('admin.posts.index', compact('posts', 'stats'));
     }
@@ -94,7 +107,7 @@ class PostController extends Controller
             'slug' => 'nullable|string|unique:posts,slug,' . $post->id,
             'content' => 'required',
             'status' => 'required|in:0,1,2',
-            'image' => 'nullable|image'
+            'thumbnail' => 'nullable|image'
         ]);
 
         $data['slug'] = $data['slug'] ?? Str::slug($data['title']) . '-' . $post->id;
