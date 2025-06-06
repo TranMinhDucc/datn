@@ -27,6 +27,7 @@ class CouponController extends Controller
             'amount' => 'required|integer|min:1',
             'min' => 'nullable|integer|min:0',
             'max' => 'nullable|integer|min:0',
+            'expired_at' => 'required|date',  // <-- thêm dòng này
         ]);
 
         Coupon::create($request->all());
@@ -50,6 +51,7 @@ class CouponController extends Controller
             'amount' => 'required|integer|min:1',
             'min' => 'nullable|integer|min:0',
             'max' => 'nullable|integer|min:0',
+            'expired_at' => 'required|date',  // <-- thêm dòng này
         ]);
 
         $coupon->update($request->all());

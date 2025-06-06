@@ -15,7 +15,8 @@ class Coupon extends Model
         'used',
         'product_id',
         'min',
-        'max'
+        'max',
+        'expired_at',
     ];
 
     public function users()
