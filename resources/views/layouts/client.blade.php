@@ -6,6 +6,11 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
 
 <head>
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="name" content="Greeny">
@@ -46,20 +51,59 @@
 
     <!-- Custom Profile -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/profile.css') }}">
-    
+
     <!-- Custom Wallet -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/user-auth.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/product-details.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/client/css/product-details.css') }}">
+
+    <!-- Toastr JS và CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
 
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION['error'])) {
+        echo "<script type='text/javascript'>
+        toastr.error('" . addslashes($_SESSION['error']) . "');
+    </script>";
+        unset($_SESSION['error']); // Xóa để không hiển thị lại
+    }
+
+    if (isset($_SESSION['success'])) {
+        echo "<script type='text/javascript'>
+        toastr.success('" . addslashes($_SESSION['success']) . "');
+    </script>";
+        unset($_SESSION['success']); // Xóa để không hiển thị lại
+    }
+    ?>
+
 
     @include('layouts.partials.client.header')
     @include('layouts.partials.client.navbar')
+    <script>
+        @if(session('success'))
+        toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+        toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
+        @endif
+
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
+        @endif
+    </script>
     {{-- <main class="container mt-4">
         @include('layouts.partials.alert')
         @yield('content')
