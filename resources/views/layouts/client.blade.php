@@ -28,9 +28,14 @@
     <link rel="stylesheet" href="{{ asset('assets/client/vendor/slickslider/slick.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/vendor/niceselect/nice-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/vendor/bootstrap/bootstrap.min.css') }}">
+    <!-- Banner CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/main.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/client/css/index.css') }}">
 
 
@@ -46,7 +51,7 @@
 
     <!-- Custom Profile -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/profile.css') }}">
-    
+
     <!-- Custom Wallet -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/wallet.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/user-auth.css') }}">

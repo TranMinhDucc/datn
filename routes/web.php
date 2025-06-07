@@ -51,6 +51,8 @@ Route::prefix('admin')->group(function () {
 
     // Banner
     Route::resource('banners', BannerController::class)->names('admin.banners');
+    Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])
+        ->name('admin.banners.toggle-status');
     // Products & Services
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('products', ProductController::class)->names('admin.products');

@@ -3,15 +3,21 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('client.home');
-    }
+        $banners = Banner::with('buttons')
+            ->where('status', 1)
+            ->orderBy('thu_tu', 'asc') // 🔥 ĐẢM BẢO thứ tự luôn đúng
+            ->get();
 
+
+        return view('client.home', compact('banners'));
+    }
     public function policy()
     {
         return view('client.policy');

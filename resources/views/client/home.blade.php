@@ -6,8 +6,8 @@
 
 
     <!--=====================================
-                                        PRODUCT VIEW START
-                            =======================================-->
+                                                                                                                                                                                                                    PRODUCT VIEW START
+                                                                                                                                                                                                        =======================================-->
     <div class="modal fade" id="product-view">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -113,129 +113,110 @@
         </div>
     </div>
     <!--=====================================
-                                        PRODUCT VIEW END
-                            =======================================-->
+                                                                                                                                                                                                                    PRODUCT VIEW END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        BANNER PART START
-                            =======================================-->
+                                                                                                                                                                                                                    BANNER PART START
+                                                                                                                                                                                                        =======================================-->
+
     <section class="home-index-slider slider-arrow slider-dots">
-        <div class="banner-part banner-1">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 col-lg-6">
-                        <div class="banner-content">
-                            <h1>free home delivery within 24 hours now.</h1>
-                            <p>Lorem ipsum dolor consectetur adipisicing elit modi consequatur eaque expedita porro
-                                necessitatibus eveniet voluptatum quis pariatur Laboriosam molestiae architecto excepturi
-                            </p>
-                            <div class="banner-btn">
-                                <a class='btn btn-inline' href='shop-4column.html'>
-                                    <i class="fas fa-shopping-basket"></i>
-                                    <span>shop now</span>
-                                </a>
-                                <a class='btn btn-outline' href='offer.html'>
-                                    <i class="icofont-sale-discount"></i>
-                                    <span>get offer</span>
-                                </a>
+        @foreach ($banners as $banner)
+            <div class="banner-part banner-{{ $loop->iteration }}">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 col-lg-6">
+                            <div class="banner-content">
+                                <h1>{{ $banner->ten }}</h1>
+                                <p>{!! $banner->mo_ta !!}</p>
+                                <div class="banner-btn">
+                                    @foreach ($banner->buttons as $btn)
+                                        <a class="btn btn-inline" href="{{ $btn->duong_dan }}">
+                                            <i class="fas fa-arrow-right"></i>
+                                            <span>{{ $btn->ten }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="banner-img">
-                            <img src="images/home/index/01.png" alt="index">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="banner-part banner-2">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 col-lg-6">
-                        <div class="banner-img">
-                            <img src="images/home/index/02.png" alt="index">
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="banner-content">
-                            <h1>free home delivery within 24 hours now.</h1>
-                            <p>Lorem ipsum dolor consectetur adipisicing elit modi consequatur eaque expedita porro
-                                necessitatibus eveniet voluptatum quis pariatur Laboriosam molestiae architecto excepturi
-                            </p>
-                            <div class="banner-btn">
-                                <a class='btn btn-inline' href='shop-4column.html'>
-                                    <i class="fas fa-shopping-basket"></i>
-                                    <span>shop now</span>
-                                </a>
-                                <a class='btn btn-outline' href='offer.html'>
-                                    <i class="icofont-sale-discount"></i>
-                                    <span>get offer</span>
-                                </a>
+                        <div class="col-md-6 col-lg-6">
+                            <div class="banner-img">
+                                <img src="{{ $banner->hinh_anh }}" alt="banner">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endforeach
     </section>
-    <!--=====================================
-                                        BANNER PART END
-                            =======================================-->
 
 
     <!--=====================================
-                                        SUGGEST PART START
-                            =======================================-->
+                                                                                                                                                                                                                    BANNER PART END
+                                                                                                                                                                                                        =======================================-->
+
+
+    <!--=====================================
+                                                                                                                                                                                                                    SUGGEST PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section suggest-part">
-        <div class="container">
+        <div class=" container">
             <ul class="suggest-slider slider-arrow">
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/01.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
+
                         <h5>vegetables <span>34 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/02.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>fruits <span>89 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/03.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>groceries <span>45 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/04.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>dairy farm <span>83 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/05.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>sea foods <span>40 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/06.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>vegan foods <span>57 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/07.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>dry foods <span>23 items</span></h5>
                     </a>
                 </li>
                 <li>
                     <a class='suggest-card' href='shop-4column.html'>
-                        <img src="images/suggest/08.jpg" alt="suggest">
+                        <img src="{{ asset('storage/banners/Wd80845u2RPy9BDz3hVVcvoKZH6YjQS6RDd6Fluc.jpg') }}"
+                            alt="suggest">
                         <h5>fast foods <span>97 items</span></h5>
                     </a>
                 </li>
@@ -323,13 +304,13 @@
     </section>
 
     <!--=====================================
-                                        RECENT PART END
-                            =======================================-->
+                                                                                                                                                                                                                    RECENT PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        PROMOTION PART START
-                            =======================================-->
+                                                                                                                                                                                                                    PROMOTION PART START
+                                                                                                                                                                                                        =======================================-->
     <div class="section promo-part">
         <div class="container">
             <div class="row">
@@ -342,13 +323,13 @@
         </div>
     </div>
     <!--=====================================
-                                        PROMOTION PART END
-                            =======================================-->
+                                                                                                                                                                                                                    PROMOTION PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        FEATURED PART START
-                            =======================================-->
+                                                                                                                                                                                                                    FEATURED PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section feature-part">
         <div class="container">
             <div class="row">
@@ -673,13 +654,13 @@
         </div>
     </section>
     <!--=====================================
-                                        FEATURE PART END
-                            =======================================-->
+                                                                                                                                                                                                                    FEATURE PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        COUNTDOWN PART START
-                            =======================================-->
+                                                                                                                                                                                                                    COUNTDOWN PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section countdown-part">
         <div class="container">
             <div class="row align-items-center">
@@ -714,13 +695,13 @@
         </div>
     </section>
     <!--=====================================
-                                        COUNTDOWN PART END
-                            =======================================-->
+                                                                                                                                                                                                                    COUNTDOWN PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        NEW ITEM PART START
-                            =======================================-->
+                                                                                                                                                                                                                    NEW ITEM PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section newitem-part">
         <div class="container">
             <div class="row">
@@ -1055,13 +1036,13 @@
         </div>
     </section>
     <!--=====================================
-                                        NEW ITEM PART END
-                            =======================================-->
+                                                                                                                                                                                                                    NEW ITEM PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        PROMOTION PART START
-                            =======================================-->
+                                                                                                                                                                                                                    PROMOTION PART START
+                                                                                                                                                                                                        =======================================-->
     <div class="section promo-part">
         <div class="container">
             <div class="row">
@@ -1079,13 +1060,13 @@
         </div>
     </div>
     <!--=====================================
-                                        PROMOTION PART END
-                            =======================================-->
+                                                                                                                                                                                                                    PROMOTION PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        NICHE PART START
-                            =======================================-->
+                                                                                                                                                                                                                    NICHE PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section niche-part">
         <div class="container">
             <div class="row">
@@ -2646,13 +2627,13 @@
         </div>
     </section>
     <!--=====================================
-                                        NICHE PART END
-                            =======================================-->
+                                                                                                                                                                                                                    NICHE PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        BRAND PART START
-                            =======================================-->
+                                                                                                                                                                                                                    BRAND PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section brand-part">
         <div class="container">
             <div class="row">
@@ -2749,13 +2730,13 @@
         </div>
     </section>
     <!--=====================================
-                                        BRAND PART END
-                            =======================================-->
+                                                                                                                                                                                                                    BRAND PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                      TESTIMONIAL PART START
-                            =======================================-->
+                                                                                                                                                                                                                  TESTIMONIAL PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section testimonial-part">
         <div class="container">
             <div class="row">
@@ -2830,13 +2811,13 @@
         </div>
     </section>
     <!--=====================================
-                                       TESTIMONIAL PART END
-                            =======================================-->
+                                                                                                                                                                                                                   TESTIMONIAL PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                          BLOG PART START
-                            =======================================-->
+                                                                                                                                                                                                                      BLOG PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="section blog-part">
         <div class="container">
             <div class="row">
@@ -2989,13 +2970,13 @@
         </div>
     </section>
     <!--=====================================
-                                          BLOG PART END
-                            =======================================-->
+                                                                                                                                                                                                                      BLOG PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        NEWSLETTER PART START
-                            =======================================-->
+                                                                                                                                                                                                                    NEWSLETTER PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center;">
         <div class="container">
             <div class="row align-items-center">
@@ -3015,13 +2996,13 @@
         </div>
     </section>
     <!--=====================================
-                                        NEWSLETTER PART END
-                            =======================================-->
+                                                                                                                                                                                                                    NEWSLETTER PART END
+                                                                                                                                                                                                        =======================================-->
 
 
     <!--=====================================
-                                        INTRO PART START
-                            =======================================-->
+                                                                                                                                                                                                                    INTRO PART START
+                                                                                                                                                                                                        =======================================-->
     <section class="intro-part">
         <div class="container">
             <div class="row intro-content">
@@ -3072,5 +3053,101 @@
             </div>
         </div>
     </section>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script>
+        @if($banners->count() >= 2)
+            < script >
+            $('.home-index-slider').slick({
+                dots: true,
+                arrows: true,
+                autoplay: true,
+                autoplaySpeed: 4000
+            });
+                                        </>
+        @else
+                                                                    < script >
+                $('.home-index-slider').slick({
+                    dots: true,
+                    arrows: true,
+                    autoplay: false
+                });
+                                                                    </>
+            @endif
+    </script>
+    <style>
+        .banner-part {
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .banner-part .container>.row {
+            height: 100%;
+            min-height: 400px;
+            align-items: center;
+        }
+
+        /* Bên trái: Nội dung cố định */
+        .banner-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            /* max-height: 400px; */
+            overflow: hidden;
+        }
+
+        .banner-content h1 {
+            margin-bottom: 16px;
+            font-size: 40px;
+            line-height: 1.3;
+            min-height: 100px;
+            /* Đảm bảo chiếm không gian cố định */
+        }
+
+        .banner-content p {
+            font-size: 18px;
+            line-height: 1.6;
+            max-height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            /* Số dòng tối đa */
+            -webkit-box-orient: vertical;
+            /* min-height: 80px; */
+        }
+
+        .banner-btn {
+            margin-top: auto;
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Bên phải: Ảnh căn giữa */
+        .banner-img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 300px;
+            max-height: 400px;
+            overflow: hidden;
+        }
+
+        .banner-img img {
+            object-fit: contain;
+            object-position: center;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            display: block;
+        }
+    </style>
 
 @endsection
