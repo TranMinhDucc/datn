@@ -5,14 +5,14 @@
                 <div class="navbar-content">
                     <ul class="navbar-list">
                         <li class="navbar-item dropdown">
-                            <a class="navbar-link dropdown-arrow" href="#">home</a>
-                            <ul class="dropdown-position-list">
+                            <a class="navbar-link" href="{{route('client.home')}}">Trang chủ</a>
+                            {{-- <ul class="dropdown-position-list">
                                 <li><a href='home-grid.html'>Home grid</a></li>
                                 <li><a href='index.html'>Home index</a></li>
                                 <li><a href='home-classic.html'>Home classic</a></li>
                                 <li><a href='home-standard.html'>Home standard</a></li>
                                 <li><a href='home-category.html'>Home category</a></li>
-                            </ul>
+                            </ul> --}}
                         </li>
                         <li class="navbar-item dropdown-megamenu">
                             <a class="navbar-link dropdown-arrow" href="#">sản phẩm</a>
@@ -21,13 +21,17 @@
                                     <div class="row">
                                         <div class="col-lg-3">
                                             <div class="megamenu-wrap">
-                                                <h5 class="megamenu-title">shop pages</h5>
+                                                <h5 class="megamenu-title">Facebook</h5>
                                                 <ul class="megamenu-list">
-                                                    <li><a href='shop-5column.html'>shop 5 column</a></li>
-                                                    <li><a href='shop-4column.html'>shop 4 column</a></li>
-                                                    {{-- <li><a href='{{ route('client.products.index') }}'>shop 3 column</a></li> --}}
-                                                    <li><a href='shop-2column.html'>shop 2 column</a></li>
-                                                    <li><a href='shop-1column.html'>shop 1 column</a></li>
+                                                    <li><a href='shop-5column.html'>
+                                                            CLONE FACEBOOK</a></li>
+                                                    <li><a href='shop-4column.html'>
+                                                            ACCOUNT CHUYÊN SPAM</a></li>
+                                                    {{-- <li><a href='{{ route(' client.products.index') }}'>shop 3
+                                                            column</a></li> --}}
+                                                    <li><a href='shop-2column.html'>ACCOUNT FACEBOOK VIỆT NAM</a></li>
+                                                    <li><a href='shop-1column.html'>
+                                                            ACCOUNT FACEBOOK NHIỀU BẠN BÈ</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -68,8 +72,8 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="navbar-item dropdown-megamenu">
-                            <a class="navbar-link dropdown-arrow" href="#">category</a>
+                        {{-- <li class="navbar-item dropdown-megamenu">
+                            <a class="navbar-link dropdown-arrow" href="#">Nạp tiền</a>
                             <div class="megamenu">
                                 <div class="container megamenu-scroll">
                                     <div class="row row-cols-5">
@@ -196,16 +200,25 @@
                                     </div>
                                 </div>
                             </div>
+                        </li> --}}
+                        <li class="navbar-item dropdown">
+                            <a class="navbar-link dropdown-arrow" href="#">Nạp tiền</a>
+                            <ul class="dropdown-position-list">
+                                <li><a href='faq.html'>Ngân hàng</a></li>
+                                <li><a href='offer.html'>Ví momo</a></li>
+                                {{-- <li><a href='{{ route(' client.account.profile') }}'>my profile</a></li>
+                                <li><a href='{{ route(' client.account.wallet') }}'>my wallet</a></li> --}}
+
+                            </ul>
                         </li>
                         <li class="navbar-item dropdown">
-                            <a class="navbar-link dropdown-arrow" href="#">pages</a>
+                            <a class="navbar-link dropdown-arrow" href="#">Lịch sử</a>
                             <ul class="dropdown-position-list">
-                                <li><a href='faq.html'>faqs</a></li>
-                                <li><a href='offer.html'>offers</a></li>
-                                {{-- <li><a href='{{ route('client.account.profile') }}'>my profile</a></li>
-                                <li><a href='{{ route('client.account.wallet') }}'>my wallet</a></li> --}}
-                                <li><a href='profile.html'>my profile</a></li>
-                                <li><a href='about.html'>about us</a></li>
+                                <li><a href='faq.html'>Lịch sử đơn hàng</a></li>
+                                {{-- <li><a href='{{ route(' client.account.profile') }}'>my profile</a></li>
+                                <li><a href='{{ route(' client.account.wallet') }}'>my wallet</a></li> --}}
+                                <li><a href='profile.html'>Nhật kí hoạt động</a></li>
+                                <li><a href='about.html'>Biến động số dư</a></li>
                                 <li><a href='contact.html'>contact us</a></li>
                                 <li><a href='privacy.html'>privacy policy</a></li>
                                 <li><a href='coming-soon.html'>coming soon</a></li>
@@ -215,23 +228,30 @@
                             </ul>
                         </li>
                         <li class="navbar-item dropdown">
-                            <a class="navbar-link dropdown-arrow" href="#">authentic</a>
+                            <a class="navbar-link dropdown-arrow" href="#">Affiliate Program</a>
                             <ul class="dropdown-position-list">
-                                <li><a href="{{route('client.login')}}">login</a></li>
-                                <li><a href="{{route('client.register')}}">register</a></li>
-                                <li><a href="{{route('client.reset_password')}}"">reset password</a></li>
-                                <li><a href=" {{route('client.reset_password')}}">change password</a></li>
+                                <li><a href='faq.html'>Thống kê</a></li>
+                                {{-- <li><a href='{{ route(' client.account.profile') }}'>my profile</a></li>
+                                <li><a href='{{ route(' client.account.wallet') }}'>my wallet</a></li> --}}
+                                <li><a href='profile.html'>Lịch sử</a></li>
+                                <li><a href='about.html'>Rút tiền</a></li>
+
                             </ul>
                         </li>
                         <li class=" navbar-item dropdown">
-                            <a class="navbar-link dropdown-arrow" href="#">blogs</a>
+                            <a class="navbar-link" href="{{route('client.blogs')}}">blogs</a>
+
+                        </li>
+                        <li class="navbar-item dropdown">
+                            <a class="navbar-link dropdown-arrow" href="#">authentic</a>
                             <ul class="dropdown-position-list">
-                                <li><a href="{{route('client.blogs')}}">blog grid</a></li>
-                                <li><a href='blog-standard.html'>blog standard</a></li>
-                                <li><a href='blog-details.html'>blog details</a></li>
-                                <li><a href='blog-author.html'>blog author</a></li>
+                                <li><a href="{{route('client.login')}}">Đăng nhập</a></li>
+                                <li><a href="{{route('client.register')}}">Đăng kí</a></li>
+                                <li><a href="{{route('client.reset_password')}}"">Đặt lại mật khẩu</a></li>
+                                <li><a href=" {{route('client.reset_password')}}">Thay đối password</a></li>
                             </ul>
                         </li>
+
                     </ul>
                     <div class="navbar-info-group">
                         <div class="navbar-info">
@@ -598,7 +618,7 @@
                 <ul class="dropdown-list">
                     <li><a href='shop-5column.html'>shop 5 column</a></li>
                     <li><a href='shop-4column.html'>shop 4 column</a></li>
-                    {{-- <li><a href='{{ route('client.products.index') }}'>shop 3 column</a></li> --}}
+                    {{-- <li><a href='{{ route(' client.products.index') }}'>shop 3 column</a></li> --}}
                     <li><a href='shop-2column.html'>shop 2 column</a></li>
                     <li><a href='shop-1column.html'>shop 1 column</a></li>
                 </ul>
