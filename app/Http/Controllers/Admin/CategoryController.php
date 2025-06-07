@@ -29,40 +29,55 @@ return view('admin.categories.index', compact('categories'));
 
     
 
+
+
 public function store(Request $request)
 {
     $validated = $request->validate([
         'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         'name'        => 'required|string|max:255',
         'description' => 'nullable|string',
-        'slug'        => 'nullable|string|max:255|unique:categories,slug',
+        'slug'        => 'nullable|string|max:255',
         'status'      => 'required|boolean',
     ], [
-        'icon.image'    => 'Tệp tải lên phải là hình ảnh.',
-        'icon.mimes'    => 'Ảnh phải có định dạng: jpg, jpeg, png, webp.',
-        'icon.max'      => 'Ảnh không được vượt quá 2MB.',
-        'name.required' => 'Vui lòng nhập tên danh mục.',
-        'slug.unique'   => 'Slug đã tồn tại, hãy chọn slug khác.',
-        'status.required' => 'Vui lòng chọn trạng thái hiển thị.',
-        'status.boolean'  => 'Giá trị trạng thái không hợp lệ.',
+        'icon.image'       => 'Tệp tải lên phải là hình ảnh.',
+        'icon.mimes'       => 'Ảnh phải có định dạng: jpg, jpeg, png, webp.',
+        'icon.max'         => 'Ảnh không được vượt quá 2MB.',
+        'name.required'    => 'Vui lòng nhập tên danh mục.',
+        'slug.max'         => 'Slug không được vượt quá 255 ký tự.',
+        'status.required'  => 'Vui lòng chọn trạng thái hiển thị.',
+        'status.boolean'   => 'Giá trị trạng thái không hợp lệ.',
     ]);
 
-    // Nếu slug chưa nhập, tự động tạo từ name
+    // Tự động tạo slug nếu không nhập và đảm bảo không trùng
     if (empty($validated['slug'])) {
-        $validated['slug'] = Str::slug($validated['name']);
+        $slug = Str::slug($validated['name']);
+        $original = $slug;
+        $i = 1;
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $original . '-' . $i++;
+        }
+        $validated['slug'] = $slug;
+    } else {
+        // Kiểm tra slug có bị trùng không
+        if (Category::where('slug', $validated['slug'])->exists()) {
+            return back()
+                ->withErrors(['slug' => 'Slug đã tồn tại, vui lòng chọn slug khác.'])
+                ->withInput();
+        }
     }
 
-    // Nếu có icon, lưu ảnh
+    // Nếu có ảnh icon thì lưu
     if ($request->hasFile('icon')) {
         $validated['icon'] = $request->file('icon')->store('categories', 'public');
     }
 
-    // Lưu danh mục
+    // Tạo danh mục
     Category::create($validated);
 
-    return redirect()->route('admin.categories.index')
-                     ->with('success', 'Thêm danh mục thành công!');
+    return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
 }
+
     public function edit(Category $category)
     {
         $parents = Category::where('id', '!=', $category->id)->get();
