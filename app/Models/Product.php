@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Product extends Model
 {
-    const CREATED_AT = 'create_gettime';
-const UPDATED_AT = 'update_gettime';
-
+  
 protected $fillable = [
     'user_id', 'name', 'slug', 'images', 'description', 'note', 'code',
-    'price', 'cost', 'discount', 'min', 'max', 'sold',
-     'quantity',
-    'category_id', 'status', 'check_live', 'text_txt'
+    'price', 'cost', 'discount','min_purchase_quantity', 'max_purchase_quantity', 'sold',
+    //  'quantity',
+    'category_id', 'status', 'check_live', 'text_txt','short_desc',
 ];
+ public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
 }

@@ -1,6 +1,12 @@
 @extends('layouts.admin')
 @section('title', 'Danh sách sản phẩm')
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
     <div class="d-flex flex-column flex-column-fluid">
 
         <!--begin::Toolbar-->
@@ -239,115 +245,134 @@
 
                         <!--begin::Table-->
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_products_table">
-    <thead>
-        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-            <th class="w-10px pe-2">
-                <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                    <input class="form-check-input" type="checkbox" data-kt-check="true"
-                        data-kt-check-target="#kt_ecommerce_products_table .form-check-input" value="1" />
+                           
+   <thead>
+    <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+        <th class="w-10px pe-2 text-center">
+            <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                <input class="form-check-input" type="checkbox" data-kt-check="true"
+                    data-kt-check-target="#kt_ecommerce_products_table .form-check-input" value="1" />
+            </div>
+        </th>
+        <th class="text-center min-w-60px">ID</th>
+        <th class="text-center min-w-90px">Ảnh</th>
+ <th class="min-w-120px">Tên sản phẩm</th>
+<th class="text-center min-w-90px">Mã sản phẩm</th>
+
+        <th class="text-center min-w-130px">Danh mục</th>
+        <th class="text-center min-w-120px">Giá</th>
+        <th class="text-center min-w-70px">Đã bán</th>
+        <th class="text-center min-w-120px">Đánh giá</th>
+        <th class="text-center min-w-100px">Trạng thái</th>
+        <th class="text-center min-w-120px">Hành động</th>
+    </tr>
+</thead>
+<tbody class="fw-semibold text-gray-600 align-middle">
+    @foreach ($products as $product)
+        <tr>
+            {{-- Checkbox --}}
+            <td class="text-center">
+                <div class="form-check form-check-sm form-check-custom form-check-solid">
+                    <input class="form-check-input" type="checkbox" value="{{ $product->id }}" />
                 </div>
-            </th>
-            <th class="min-w-200px">Sản phẩm</th>
-            <th class="text-center min-w-100px">Mã SP</th>
-            <th class="text-center min-w-70px">Số Lượng</th>
-            <th class="text-center min-w-100px">Giá</th>
-            <th class="text-center min-w-70px">Đã bán</th>
-            <th class="text-center min-w-100px">Đánh giá</th>
-            <th class="text-center min-w-100px">Trạng thái</th>
-            <th class="text-center min-w-100px">Hành động</th>
-        </tr>
-    </thead>
-    <tbody class="fw-semibold text-gray-600">
-        @foreach ($products as $product)
-            <tr>
-                {{-- Checkbox --}}
-                <td>
-                    <div class="form-check form-check-sm form-check-custom form-check-solid">
-                        <input class="form-check-input" type="checkbox" value="{{ $product->id }}" />
-                    </div>
-                </td>
+            </td>
 
-                {{-- Ảnh + Tên sản phẩm --}}
-                <td>
-                    <div class="d-flex align-items-center">
-                        <a href="{{ route('admin.products.edit', $product->id) }}" class="symbol symbol-50px">
-                            <img src="{{ $product->images ? (Str::startsWith($product->images, ['http://', 'https://']) ? $product->images : asset('storage/' . $product->images)) : 'https://via.placeholder.com/50' }}"
-                                width="50" height="50" style="object-fit: cover; border-radius: 6px;" alt="{{ $product->name }}">
-                        </a>
-                        <div class="ms-5">
-                            <a href="{{ route('admin.products.edit', $product->id) }}"
-                                class="text-gray-800 text-hover-primary fs-6 fw-bold">
-                                {{ $product->name }}
-                            </a>
-                        </div>
-                    </div>
-                </td>
+            {{-- ID --}}
+            <td class="text-center">
+                {{ $product->id }}
+            </td>
 
-                {{-- Mã sản phẩm --}}
-                <td class="text-center">
-                    <span class="fw-bold text-dark">SP{{ str_pad($product->id, 6, '0', STR_PAD_LEFT) }}</span>
-                </td>
-
-                {{-- Tồn kho (còn lại = max - sold) --}}
-               {{-- Số lượng hiện tại --}}
-<td class="text-center">
-    <span class="badge bg-light-primary text-dark">{{ $product->quantity }}</span>
+            {{-- Ảnh --}}
+        <td class="text-center" style="min-width: 150px;">
+    <a href="{{ route('admin.products.edit', $product->id) }}">
+        <img src="{{ $product->images ? (Str::startsWith($product->images, ['http://', 'https://']) ? $product->images : asset('storage/' . $product->images)) : 'https://via.placeholder.com/50' }}"
+            width="80" height="80"
+            class="rounded shadow-sm"
+            style="object-fit: cover;"
+            alt="{{ $product->name }}">
+    </a>
 </td>
 
 
-                {{-- Giá --}}
-                <td class="text-center">
-                    <span class="text-dark fw-bold">{{ number_format($product->price, 0, ',', '.') }} đ</span>
-                </td>
+            {{-- Tên sản phẩm --}}
+         {{-- TÊN SẢN PHẨM --}}
+<td class="align-middle" style="min-width: 20px;">
+    <a href="{{ route('admin.products.edit', $product->id) }}"
+       class="text-gray-800 text-hover-primary fs-6 fw-bold">
+        {{ $product->name }}
+    </a>
+</td>
 
-                {{-- Đã bán --}}
-                <td class="text-center">
-                    <span class="text-muted">{{ $product->sold }}</span>
-                </td>
 
-                {{-- Đánh giá (random) --}}
-                <td class="text-center">
-                    <div class="rating justify-content-center">
-                        @php $stars = rand(3, 5); @endphp
-                        @for ($i = 1; $i <= 5; $i++)
-                            <div class="rating-label {{ $i <= $stars ? 'checked' : '' }}">
-                                <i class="fa-solid fa-star fs-6"></i>
-                            </div>
-                        @endfor
-                    </div>
-                </td>
+            {{-- Mã sản phẩm --}}
+            <td class="text-center">
+                <span class="fw-bold text-dark">{{ $product->code }}</span>
+            </td>
 
-                {{-- Trạng thái --}}
-                <td class="text-center">
-                    <span class="badge badge-light-{{ $product->status ? 'success' : 'danger' }}">
-                        {{ $product->status ? 'Published' : 'Unpublished' }}
-                    </span>
-                </td>
+            {{-- Danh mục --}}
+            <td class="text-center">
+                <span class="badge bg-light-info text-dark">
+                    {{ $product->category->name ?? 'Chưa phân loại' }}
+                </span>
+            </td>
 
-                {{-- Hành động --}}
-                <td class="text-center">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary"
-                            data-bs-toggle="dropdown">
-                            Hành động <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a href="{{ route('admin.products.edit', $product->id) }}" class="dropdown-item">Sửa</a></li>
-                            <li>
-                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Xóa sản phẩm này?')"
-                                        class="dropdown-item text-danger">Xóa</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
+            {{-- Giá --}}
+            <td class="text-center">
+                <span class="fw-bold text-dark">{{ number_format($product->price, 0, ',', '.') }} đ</span>
+            </td>
+
+            {{-- Đã bán --}}
+            <td class="text-center">
+                <span class="text-muted">{{ $product->sold }}</span>
+            </td>
+
+            {{-- Đánh giá --}}
+            <td class="text-center">
+                <div class="rating justify-content-center">
+                    @php $stars = rand(3, 5); @endphp
+                    @for ($i = 1; $i <= 5; $i++)
+                        <div class="rating-label {{ $i <= $stars ? 'checked' : '' }}">
+                            <i class="fa-solid fa-star fs-6 text-warning"></i>
+                        </div>
+                    @endfor
+                </div>
+            </td>
+
+            {{-- Trạng thái --}}
+            <td class="text-center">
+                @if($product->status == 1)
+                    <span class="badge badge-light-success">Hiện</span>
+                @else
+                    <span class="badge badge-light-danger">Ẩn</span>
+                @endif
+            </td>
+
+            {{-- Hành động --}}
+            <td class="text-center">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary"
+                        data-bs-toggle="dropdown">
+                        Hành động <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a href="{{ route('admin.products.edit', ['product' => $product->id, 'page' => request('page', 1)]) }}" class="dropdown-item">Sửa</a>
+</li>
+                        <li>
+                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
+                                @csrf @method('DELETE')
+                                <button type="submit" onclick="return confirm('Xóa sản phẩm này?')"
+                                    class="dropdown-item text-danger">Xóa</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
 </table>
-
+     {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
                         <!--end::Table-->
 
                         {{-- <div class="d-flex justify-content-end">

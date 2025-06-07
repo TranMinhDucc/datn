@@ -193,8 +193,9 @@
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container  container-xxl ">
                 <!--begin::Form-->
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
-                data-kt-redirect="{{ route('admin.products.index') }}">
+                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
+                    id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
+                    data-kt-redirect="{{ route('admin.products.index') }}">
                     @csrf
                     <!--begin::Aside column-->
                     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
@@ -204,7 +205,7 @@
                             <div class="card-header">
                                 <!--begin::Card title-->
                                 <div class="card-title">
-                                <h2>Ảnh</h2>
+                                    <h2>Ảnh</h2>
                                 </div>
                                 <!--end::Card     title-->
                             </div>
@@ -238,10 +239,14 @@
                                         <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
                                                 class="path2"></span></i>
                                         <!--begin::Inputs-->
-                                        <input type="file" name="images" accept=".png, .jpg, .jpeg" />
-                                        <input type="hidden" name="avatar_remove" />
+                                        <input type="file" name="images" accept=".png, .jpg, .jpeg"
+                                            class="form-control mb-2" />
+
                                         <!--end::Inputs-->
                                     </label>
+                                    @error('images')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                     <!--end::Label-->
 
                                     <!--begin::Cancel-->
@@ -263,8 +268,8 @@
                                 <!--end::Image input-->
 
                                 <!--begin::Description-->
-                                <div class="text-muted fs-7">Set the product thumbnail image. Only *.png, *.jpg and *.jpeg
-                                    image files are accepted</div>
+                                <div class="text-muted fs-7">
+                                    **Chọn ảnh đại diện sản phẩm (chỉ hỗ trợ *.png, .jpg, .jpeg).</div>
                                 <!--end::Description-->
                             </div>
                             <!--end::Card body-->
@@ -292,12 +297,18 @@
                             <!--begin::Card body-->
                             <div class="card-body pt-0">
                                 <!--begin::Select2-->
-                                <select name="status" class="form-select mb-2" data-control="select2" data-hide-search="true"
-                                    data-placeholder="Select an option" id="kt_ecommerce_add_product_status_select">
+                                <select name="status" class="form-select mb-2" data-control="select2"
+                                    data-hide-search="true" data-placeholder="Chọn trạng thái"
+                                    id="kt_ecommerce_add_product_status_select">
                                     <option></option>
-                                    <option value="1" selected>Hiện</option>
-                                    <option value="0">Ẩn</option>
+                                    <option value="1" {{ old('status', $product->status ?? '1') == '1' ? 'selected' : '' }}>
+                                        Hiện</option>
+                                    <option value="0" {{ old('status', $product->status ?? '1') == '0' ? 'selected' : '' }}>Ẩn
+                                    </option>
                                 </select>
+                                @error('status')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                                 <!--end::Select2-->
 
                                 <!--begin::Description-->
@@ -323,7 +334,7 @@
                             <div class="card-header">
                                 <!--begin::Card title-->
                                 <div class="card-title">
-                                    <h2>Chi Tiết Sản Phẩm</h2>
+                                    <h2>Danh Mục Sản Phẩm</h2>
                                 </div>
                                 <!--end::Card title-->
                             </div>
@@ -333,20 +344,25 @@
                             <div class="card-body pt-0">
                                 <!--begin::Input group-->
                                 <!--begin::Label-->
-                                <label class="form-label">Danh Mục</label>
+                                <label class="form-label">Danh Mục:</label>
                                 <!--end::Label-->
                                 <!--begin::Select2-->
-                                <select name="category_id" class="form-select mb-2" data-control="select2" data-placeholder="Select an option"
-                                    data-allow-clear="true">
+                                <select name="category_id" class="form-select mb-2" data-control="select2"
+                                    data-placeholder="Chọn danh mục" data-allow-clear="true">
                                     <option></option>
                                     @foreach ($categories as $category)
-                                        <option value="{{$category->id}}">{{$category->name}}</option>
+                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
                                     @endforeach
                                 </select>
+                                @error('category_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                                 <!--end::Select2-->
 
                                 <!--begin::Description-->
-                                {{-- <div class="text-muted fs-7 mb-7">Add product to a category.</div> --}}
+                                <div class="text-muted fs-7 mb-7">Add product to a category.</div>
                                 <!--end::Description-->
                                 <!--end::Input group-->
 
@@ -438,7 +454,8 @@
                     <!--begin::Main column-->
                     <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                         <!--begin:::Tabs-->
-                        {{-- <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
+                        {{-- <ul
+                            class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
                             <!--begin:::Tab item-->
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab"
@@ -481,11 +498,16 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="name" class="form-control mb-2"
-                                                    placeholder="Tên Sản Phẩm" value="" />
+                                                    placeholder="Tên Sản Phẩm"
+                                                    value="{{ old('name', $product->name ?? '') }}" />
+                                                @error('name')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <!--end::Input-->
 
                                                 <!--begin::Description-->
-                                                {{-- <div class="text-muted fs-7">A product name is required and recommended to
+                                                {{-- <div class="text-muted fs-7">A product name is required and recommended
+                                                    to
                                                     be unique.</div> --}}
                                                 <!--end::Description-->
                                             </div>
@@ -499,38 +521,85 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="code" class="form-control mb-2"
-                                                    placeholder="Mã Sản Phẩm" value="" />
+                                                    placeholder="Mã Sản Phẩm"
+                                                    value="{{ old('code', $product->code ?? '') }}" />
+                                                @error('code')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <!--end::Input-->
                                             </div>
-                                            <div class="mb-10 fv-row">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="min_purchase_quantity">Mua tối thiểu:</label>
+                                                        <input type="number" name="min_purchase_quantity"
+                                                            id="min_purchase_quantity" class="form-control"
+                                                            value="{{ old('min_purchase_quantity', $product->min_purchase_quantity ?? 1) }}"
+                                                            min="1">
+                                                    </div>
+                                                </div>
+                                                @error('min_purchase_quantity')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="max_purchase_quantity">Mua tối đa:</label>
+                                                        <input type="number" name="max_purchase_quantity"
+                                                            id="max_purchase_quantity" class="form-control"
+                                                            value="{{ old('max_purchase_quantity', $product->max_purchase_quantity ?? 100) }}"
+                                                            min="1">
+                                                    </div>
+                                                </div>
+                                                @error('max_purchase_quantity')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+
+                                            </div>
+
+                                            {{-- <div class="mb-10 fv-row">
                                                 <!--begin::Label-->
                                                 <label class="required form-label">Số Lượng</label>
                                                 <!--end::Label-->
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="quantity" class="form-control mb-2"
-                                                    placeholder="Số lượng" value="" />
+                                                    placeholder="Số lượng"
+                                                    value="{{ old('quantity', $product->quantity ?? '') }}" />
+                                                @error('quantity')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+
                                                 <!--end::Input-->
-                                            </div>
+                                            </div> --}}
                                             <!--end::Input group-->
+                                            <div class="mb-3">
+                                                <label for="short_desc" class="form-label">Mô tả ngắn</label>
+                                                <textarea name="short_desc" id="short_desc" class="form-control"
+                                                    rows="3">{{ old('short_desc', $product->short_desc ?? '') }}</textarea>
+                                                @error('short_desc')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
 
                                             <!--begin::Input group-->
-                                            <div>
-                                                <!--begin::Label-->
-                                                <label class="form-label">Mô Tả:</label>
-                                                <!--end::Label-->
+   <!-- Form input -->
+<div class="mb-10 fv-row">
+    <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
+    <textarea id="description" name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
+    @error('description') <div class="text-danger">{{ $message }}</div> @enderror
+</div>
 
-                                                <!--begin::Editor-->
-                                                <textarea id="kt_ecommerce_add_product_description"
-                                                    name="Mô tả" class="min-h-200px mb-2">
-                                                </textarea>
-                                                <!--end::Editor-->
+<!-- Nhúng CKEditor -->
+<script src="https://cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
+<script>
+    // Kích hoạt CKEditor cho textarea có id là 'description'
+    CKEDITOR.replace('description', {
+        height: 100,
+        toolbarCanCollapse: true
+    });
+</script>
 
-                                                <!--begin::Description-->
-                                                {{-- <div class="text-muted fs-7">Set a description to the product for better
-                                                    visibility.</div> --}}
-                                                <!--end::Description-->
-                                            </div>
+
                                             <!--end::Input group-->
                                         </div>
                                         <!--end::Card header-->
@@ -600,13 +669,17 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="price" class="form-control mb-2"
-                                                    placeholder="Product price" value="" />
+                                                    placeholder="Giá sản phẩm"
+                                                    value="{{ old('price', $product->price ?? '') }}" />
+                                                @error('price')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <!--end::Input-->
 
                                                 <!--begin::Description-->
-                                                {{-- <div class="text-muted fs-7">Set the product price.</div>
+                                                <div class="text-muted fs-7">Set the product price.</div>
                                                 <!--end::Description-->
-                                            </div> --}}
+                                            </div>
                                             <!--end::Input group-->
 
                                             {{-- <!--begin::Input group-->
@@ -1154,5 +1227,6 @@
         <!--end::Content-->
 
     </div>
+
     <!--end::Content wrapper-->
 @endsection
