@@ -30,8 +30,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('client.home');
-    Route::get('/login', 'login')->name('login');
-    Route::get('/register', 'register')->name('register');
+    Route::get('/login', 'login')->name('client.login');
+    Route::get('/register', 'register')->name('client.register');
     Route::get('/policy', 'policy')->name('client.policy');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::get('/faq', 'faq')->name('client.faq');
@@ -91,8 +91,8 @@ Route::post('/email/verification-notification', function (Request $request) {
 // ---------------------------
 // 🛠 ADMIN ROUTES
 // ---------------------------
-
-Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
+// Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
+Route::prefix('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource('banners', BannerController::class)->names('admin.banners');

@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12 col-lg-5">
                 <div class="header-top-welcome">
-                    <p>Welcome to Ecomart in Your Dream Online Store!</p>
+                    <p>Chào mừng bạn đến với Cho MMO!</p>
                 </div>
             </div>
             <div class="col-md-5 col-lg-3">
@@ -33,7 +33,7 @@
                 <ul class="header-top-list">
                     <li><a href='{{ route('client.policy') }}'>chính sách</a></li>
                     <li><a href='{{ route('client.faq') }}'>faqs</a></li>
-                    <li><a href='{{ route('client.contact') }}'>contact</a></li>
+                    <li><a href='{{ route('client.contact') }}'>liên hệ</a></li>
                 </ul>
             </div>
         </div>
@@ -70,22 +70,21 @@
             </a>
 
             <form class="header-form">
-                <input type="text" placeholder="Search anything...">
+                <input type="text" placeholder="Tìm kiếm sản phẩm...">
                 <button><i class="fas fa-search"></i></button>
             </form>
 
             <div class="header-widget-group">
-                <a class='header-widget' href='compare.html' title='Compare List'>
-                    <i class="fas fa-random"></i>
-                    <sup>0</sup>
+                <a class='header-widget' href='compare.html' title='Đơn hàng'>
+                    <i class="fas fa-solid fa-cart-arrow-down"></i>
                 </a>
                 <a class='header-widget' href='wishlist.html' title='Wishlist'>
                     <i class="fas fa-heart"></i>
                     <sup>0</sup>
                 </a>
-                <button class="header-widget header-cart" title="Cartlist">
-                    <i class="fas fa-shopping-basket"></i>
-                    <sup>9+</sup>
+                <button class="header-widget header-cart" title="Nạp tiền">
+                    {{-- <i class="fas fa-shopping-basket"></i> --}}
+                     <i class="fas fa-solid fa-building-columns"></i>
                     <span>total price<small>$345.00</small></span>
                 </button>
             </div>
