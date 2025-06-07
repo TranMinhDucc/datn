@@ -570,7 +570,7 @@
                                                 <div class="menu-item">
                                                     <!--begin:Menu link--><a
                                                         class="menu-link"
-                                                        href="toolbars/saas.html"
+                                                        href="{{ route('admin.post-categories.index') }}"
                                                         ><span
                                                             class="menu-bullet"
                                                             ><span

@@ -117,7 +117,7 @@ class PostController extends Controller
         }
 
         $post->update($data);
-        return redirect()->route('posts.index')->with('success', 'Cập nhật bài viết thành công');
+        return redirect()->route('admin.posts.index')->with('success', 'Cập nhật bài viết thành công');
     }
 
     /**

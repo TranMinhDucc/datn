@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Admin\PostCategoryController;
 
 // Giao diện client
 Route::controller(HomeController::class)->group(function () {
@@ -81,6 +82,9 @@ Route::prefix('admin')->group(function () {
 
     // Posts
     Route::resource('posts', PostController::class)->names('admin.posts');
+
+    //post categories
+    Route::resource('post-categories', PostCategoryController::class) ->names('admin.post-categories');
 
     // Route để bật/tắt trạng thái bài viết
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
