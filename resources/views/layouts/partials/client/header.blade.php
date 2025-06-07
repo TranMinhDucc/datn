@@ -60,10 +60,13 @@
             <a class='header-logo' href="{{ route('client.home') }}">
                 <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo">
             </a>
-            <a class='header-widget' href="{{ route('client.login') }}" title='My Account'>
+            <a class='header-widget' href="{{ url('login') }}" title='My Account'>
                 <img src="{{ asset('assets/client/images/user.png') }}" alt="user">
 
-                <span>join</span>
+                @if (Auth::check())
+                <span class="fw-semibold text-success">{{ Auth::user()->fullname }}</span>
+                @endif
+
             </a>
 
             <form class="header-form">

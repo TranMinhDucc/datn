@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -35,11 +36,17 @@ class HomeController extends Controller
 
     public function login()
     {
+        if (Auth::check()) {
+            Auth::logout();
+            session()->invalidate();
+            session()->regenerateToken();
+        }
+
         return view('client.auth.login');
     }
     public function reset_password()
     {
-        return view('client.auth.reset-password');
+        return view('client.auth.request-reset-password');
     }
     public function register()
     {
