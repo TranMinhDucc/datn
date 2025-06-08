@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Admin\PostCategoryController;
+use App\Http\Controllers\Admin\FaqController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
@@ -123,6 +125,17 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 
+    Route::resource('faq', FaqController::class);
+
+    // Posts
+    Route::resource('posts', PostController::class)->names('admin.posts');
+
+    //post categories
+    Route::resource('post-categories', PostCategoryController::class) ->names('admin.post-categories');
+
+    // Route để bật/tắt trạng thái bài viết
+    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
+
     // product crud
     Route::resource('products', ProductController::class)->names('admin.products');
 
@@ -145,3 +158,4 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 
 });
+
