@@ -8,8 +8,9 @@ class Category extends Model
 {
     //
      protected $fillable = [
-      'icon', 'name',  'description',
-        'slug',  'status',
+       'name',
+        'parent_id','description',
+        
     ];
 
     public function parent()

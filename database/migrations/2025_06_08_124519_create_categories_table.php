@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('icon')->nullable();
+             $table->id(); // chỉ gọi 1 lần
             $table->string('name');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->text('description')->nullable();
-            $table->string('slug')->unique();
-            $table->boolean('status')->default(1);
-            $table->timestamps();
+
+            // Khóa ngoại tham chiếu đến bảng chính nó
+            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
+
+            $table->timestamps(); // tạo cột created_at và updated_at
         });
     }
 

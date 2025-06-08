@@ -197,10 +197,9 @@
                 </div>
             </th>
             <th class="min-w-40px">STT</th>
-            <th class="min-w-100px">Ảnh</th>
             <th class="min-w-200px">Tên</th>
+            <th class="min-w-150px">Danh mục cha</th>
             <th class="min-w-150px">Mô tả </th>
-            <th class="min-w-150px">Trạng thái </th>
             
             <th class="text-end min-w-100px">Thao tác</th>
         </tr>
@@ -215,17 +214,7 @@
         </div>
     </td>
     <td>{{ $category->id }}</td>
-    <td>
-        <div class="d-flex">
-            <!--begin::Thumbnail-->
-            <a href="{{ route('admin.categories.edit', $category) }}" class="symbol symbol-50px">
-                <span class="symbol-label" style="background-image:url('{{ asset('storage/' . $category->icon) }}'); background-size: cover;"></span>
-            </a>
-            <!--end::Thumbnail-->
-
-           
-        </div>
-    </td>
+  
     <td> 
  <div class="ms-5">
                 <!--begin::Title-->
@@ -239,19 +228,19 @@
                 <!--end::Description-->
             </div>
     </td>
+
+  <td>
+    <div class="text-muted fs-7 fw-bold">
+        {{ $category->parent ? $category->parent->name : 'Chưa có danh mục cha' }}
+    </div>
+</td>
+
     <td>
          <div class="text-muted fs-7 fw-bold">
                     {{ $category->description ?? 'Chưa có mô tả' }}
                 </div>
     </td>
 
-    <td>
-        <!--begin::Badges-->
-        <div class="badge {{ $category->status ? 'badge-light-success' : 'badge-light-danger' }}">
-            {{ $category->status ? 'Hiển thị' : 'Ẩn' }}
-        </div>
-        <!--end::Badges-->
-    </td>
 
     <td class="text-end">
         <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"

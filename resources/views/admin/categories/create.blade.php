@@ -169,19 +169,19 @@
     <!--begin::Aside column-->
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
         <!--begin::Thumbnail settings-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4"> --}}
     <!--begin::Card header-->
-    <div class="card-header">
+    {{-- <div class="card-header">
         <!--begin::Card title-->
         <div class="card-title">
             <h2>Thumbnail</h2>
         </div>
         <!--end::Card title-->
-    </div>
+    </div> --}}
     <!--end::Card header-->
 
     <!--begin::Card body-->
-    <div class="card-body text-center pt-0">
+    {{-- <div class="card-body text-center pt-0">
         <!--begin::Image input-->
                     <!--begin::Image input placeholder-->
             <style>
@@ -228,12 +228,12 @@
         <!--begin::Description-->
         <div class="text-muted fs-7">Set the category thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
         <!--end::Description-->
-    </div>
+    </div> --}}
     <!--end::Card body-->
-</div>
+{{-- </div> --}}
 <!--end::Thumbnail settings-->
         <!--begin::Status-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
@@ -247,11 +247,11 @@
             <div class="rounded-circle {{ old('status', $category->status ?? 1) == 1 ? 'bg-success' : 'bg-danger' }} w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
         </div>
         <!--end::Card toolbar-->
-    </div>
+    </div> --}}
     <!--end::Card header-->
 
     <!--begin::Card body-->
-    <div class="card-body pt-0">
+    {{-- <div class="card-body pt-0">
         <!--begin::Select-->
         <select name="status" class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Chọn trạng thái" id="kt_ecommerce_add_category_status_select">
             <option></option>
@@ -263,7 +263,7 @@
         <!--begin::Description-->
         <div class="text-muted fs-7">Chọn trạng thái hiển thị danh mục.</div>
         <!--end::Description-->
-    </div>
+    </div> --}}
     <!--end::Card body-->
 </div>
 
@@ -335,25 +335,32 @@
            
             <!--end::Description-->
         </div>
+
+<div class="mb-10 fv-row">
+    <label class="required form-label">Danh mục cha</label>
+    <select name="parent_id" class="form-control mb-2">
+        <option value="">-- Chọn danh mục cha --</option>
+        @foreach ($parents as $category )
+            <option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+   
+</div>
+
         <!--end::Input group-->
   
         <!--begin::Input group-->
     <div class="mb-10 fv-row">
-        <label class="form-label">Nội dung chi tiết (HTML hoặc văn bản dài)</label>
-        <textarea name="content" class="form-control" rows="5">{{ old('content') }}</textarea>
-        @error('content') <div class="text-danger">{{ $message }}</div> @enderror
+        <label class="form-label">Nội dung </label>
+        <textarea name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
+        @error('description') <div class="text-danger">{{ $message }}</div> @enderror
     </div>
         
-        <div class="mb-10 fv-row">
-    <label class="form-label">Đường dẫn (tự sinh nếu bỏ trống)</label>
-    <input type="text" name="slug" class="form-control mb-2" placeholder="Tự động tạo từ tên nếu để trống" value="{{ old('slug') }}" />
-    {{-- @error('slug')
-        <div class="text-danger">{{ $message }}</div>
-    @enderror --}}
-</div>
-          <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+       <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('content');
+    CKEDITOR.replace('description');
 </script>
 
         <!--end::Input group-->
@@ -386,9 +393,6 @@
 <!--end::Content-->	
 
                                     </div>
-                                    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
-<script>
-    CKEDITOR.replace('content');
-</script>
+                                   
                 <!--end::Content wrapper-->
 @endsection
