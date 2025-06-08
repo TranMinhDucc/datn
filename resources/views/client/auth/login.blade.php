@@ -25,8 +25,8 @@
                 </div>
                 <div class="user-form-card">
                     <div class="user-form-title">
-                        <h2>welcome!</h2>
-                        <p>Use your credentials to access</p>
+                        <h2>Chào mừng!</h2>
+                        <p>Sử dụng thông tin đăng nhập của bạn để truy cập</p>
                     </div>
                     <div class="user-form-group">
                         <ul class="user-form-social">
@@ -53,7 +53,7 @@
                             </div>
 
                             <div class="form-group">
-                                <input type="password" name="password" class="form-control" placeholder="Enter your password">
+                                <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu">
                                 @error('password')
                                 <small class="text-danger d-block mt-1">
                                     <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -62,15 +62,15 @@
                             </div>
 
                             <div class="form-button">
-                                <button type="submit">login</button>
-                                <p>Forgot your password?<a href="{{route('client.auth.reset_password')}}">reset here</a></p>
+                                <button type="submit">đăng nhập</button>
+                                <p>Quên mật khẩu?<a href="{{route('client.auth.reset_password')}}">đặt lại tại đây</a></p>
                             </div>
                         </form>
 
                     </div>
                 </div>
                 <div class="user-form-remind">
-                    <p>Don't have any account?<a href="{{url('register')}}">register here</a></p>
+                    <p>Bạn chưa có tài khoản?<a href="{{url('register')}}">đăng ký tại đây</a></p>
                 </div>
                 <div class="user-form-footer">
                     <p>Greeny | &COPY; Copyright by <a href="#">Mironcoder</a></p>

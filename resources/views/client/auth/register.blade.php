@@ -15,8 +15,10 @@
                 </div>
                 <div class="user-form-card">
                     <div class="user-form-title">
-                        <h2>Join Now!</h2>
-                        <p>Setup A New Account In A Minute</p>
+                        <h2>Tham gia ngay!</h2>
+                        <p>Thiết lập một tài khoản mới trong một phút
+
+</p>
                     </div>
                     <div class="user-form-group">
                         <ul class="user-form-social">
@@ -34,35 +36,35 @@
                             @csrf
 
                             <div class="form-group">
-                                <input type="text" name="username" value="{{ old('username') }}" class="form-control" placeholder="Enter your username">
+                                <input type="text" name="username" value="{{ old('username') }}" class="form-control" placeholder="Nhập tên tài khoản">
                                 @error('username')
                                 <small class="text-danger"><i class="fas fa-exclamation-circle"></i> {{ $message }}</small>
                                 @enderror
                             </div>
 
                             <div class="form-group">
-                                <input type="text" name="fullname" value="{{ old('fullname') }}" class="form-control" placeholder="Enter your full name">
+                                <input type="text" name="fullname" value="{{ old('fullname') }}" class="form-control" placeholder="Nhập họ và tên">
                                 @error('fullname')
                                 <small class="text-danger"><i class="fas fa-exclamation-circle"></i> {{ $message }}</small>
                                 @enderror
                             </div>
 
                             <div class="form-group">
-                                <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Enter your email">
+                                <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Nhập email">
                                 @error('email')
                                 <small class="text-danger"><i class="fas fa-exclamation-circle"></i> {{ $message }}</small>
                                 @enderror
                             </div>
 
                             <div class="form-group">
-                                <input type="password" name="password" class="form-control" placeholder="Enter your password">
+                                <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu">
                                 @error('password')
                                 <small class="text-danger"><i class="fas fa-exclamation-circle"></i> {{ $message }}</small>
                                 @enderror
                             </div>
 
                             <div class="form-group">
-                                <input type="password" name="password_confirmation" class="form-control" placeholder="Enter repeat password">
+                                <input type="password" name="password_confirmation" class="form-control" placeholder="Nhập lại mật khẩu">
                                 @error('password_confirmation')
                                 <small class="text-danger"><i class="fas fa-exclamation-circle"></i> {{ $message }}</small>
                                 @enderror
@@ -74,14 +76,14 @@
                             </div>
 
                             <div class="form-button">
-                                <button type="submit">register</button>
+                                <button type="submit">đăng ký</button>
                             </div>
                         </form>
 
                     </div>
                 </div>
                 <div class="user-form-remind">
-                    <p>Already Have An Account?<a href="{{url('login')}}">login here</a></p>
+                    <p>Bạn đã có tài khoản?<a href="{{url('login')}}">đăng nhập tại đây</a></p>
                 </div>
                 <div class="user-form-footer">
                     <p>Greeny | &COPY; Copyright by <a href="#">Mironcoder</a></p>

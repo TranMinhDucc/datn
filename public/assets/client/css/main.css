@@ -345,6 +345,10 @@ button:focus {
   -moz-transition: all linear .3s;
   -ms-transition: all linear .3s;
   -o-transition: all linear .3s;
+display: flex !important;
+
+  align-items: center;
+  justify-content: center;
 }
 
 .backtop:hover {

@@ -1,6 +1,5 @@
 <div class="backdrop"></div>
-<a class="backtop fas fa-arrow-up" href="#"></a>
-
+<a class="backtop fas fa-solid fa-arrow-up" href="#"></a>
 <div class="header-top">
     <div class="container">
         <div class="row">
@@ -84,7 +83,7 @@
                 </a>
                 <button class="header-widget header-cart" title="Nạp tiền">
                     {{-- <i class="fas fa-shopping-basket"></i> --}}
-                     <i class="fas fa-solid fa-building-columns"></i>
+                    <i class="fa-solid fa-building-columns"></i>
                     <span>total price<small>$345.00</small></span>
                 </button>
             </div>
