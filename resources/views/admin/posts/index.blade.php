@@ -1,167 +1,19 @@
 @extends('layouts.admin')
 
+@section('title', 'Quản lý bài viết')
+
 @section('content')
-<div class="page-title d-flex flex-column justify-content-center flex-wrap me-1 ">
-	<!--begin::Title-->
-	<h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-		My Projects
-	</h1>
-	<!--end::Title-->
 
-	<!--begin::Breadcrumb-->
-	<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-		<!--begin::Item-->
-		<li class="breadcrumb-item text-muted">
-			<a href="../../index.html" class="text-muted text-hover-primary">
-				Home </a>
-		</li>
-		<!--end::Item-->
-		<!--begin::Item-->
-		<li class="breadcrumb-item">
-			<span class="bullet bg-gray-500 w-5px h-2px"></span>
-		</li>
-		<!--end::Item-->
-
-		<!--begin::Item-->
-		<li class="breadcrumb-item text-muted">
-			Projects </li>
-		<!--end::Item-->
-
-	</ul>
-	<!--end::Breadcrumb-->
-</div>
 <!--end::Page title-->
 <!--begin::Actions-->
-<div class="d-flex align-items-center gap-2 gap-lg-3 ">
-	<!--begin::Filter menu-->
-	<div class="m-0">
-		<!--begin::Menu toggle-->
-		<a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-			<i class="ki-duotone ki-filter fs-6 text-muted me-1"><span class="path1"></span><span class="path2"></span></i>
-			Filter
-		</a>
-		<!--end::Menu toggle-->
-
-		<!--begin::Menu 1-->
-		<div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true" id="kt_menu_683933a8f3a42">
-			<!--begin::Header-->
-			<div class="px-7 py-5">
-				<div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
-			</div>
-			<!--end::Header-->
-
-			<!--begin::Menu separator-->
-			<div class="separator border-gray-200"></div>
-			<!--end::Menu separator-->
-
-			<!--begin::Form-->
-			<div class="px-7 py-5">
-				<!--begin::Input group-->
-				<div class="mb-10">
-					<!--begin::Label-->
-					<label class="form-label fw-semibold">Status:</label>
-					<!--end::Label-->
-
-					<!--begin::Input-->
-					<div>
-						<select class="form-select form-select-solid" multiple data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_683933a8f3a42" data-allow-clear="true">
-							<option></option>
-							<option value="1">Approved</option>
-							<option value="2">Pending</option>
-							<option value="2">In Process</option>
-							<option value="2">Rejected</option>
-						</select>
-					</div>
-					<!--end::Input-->
-				</div>
-				<!--end::Input group-->
-
-				<!--begin::Input group-->
-				<div class="mb-10">
-					<!--begin::Label-->
-					<label class="form-label fw-semibold">Member Type:</label>
-					<!--end::Label-->
-
-					<!--begin::Options-->
-					<div class="d-flex">
-						<!--begin::Options-->
-						<label class="form-check form-check-sm form-check-custom form-check-solid me-5">
-							<input class="form-check-input" type="checkbox" value="1" />
-							<span class="form-check-label">
-								Author
-							</span>
-						</label>
-						<!--end::Options-->
-
-						<!--begin::Options-->
-						<label class="form-check form-check-sm form-check-custom form-check-solid">
-							<input class="form-check-input" type="checkbox" value="2" checked="checked" />
-							<span class="form-check-label">
-								Customer
-							</span>
-						</label>
-						<!--end::Options-->
-					</div>
-					<!--end::Options-->
-				</div>
-				<!--end::Input group-->
-
-				<!--begin::Input group-->
-				<div class="mb-10">
-					<!--begin::Label-->
-					<label class="form-label fw-semibold">Notifications:</label>
-					<!--end::Label-->
-
-					<!--begin::Switch-->
-					<div class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-						<input class="form-check-input" type="checkbox" value="" name="notifications" checked />
-						<label class="form-check-label">
-							Enabled
-						</label>
-					</div>
-					<!--end::Switch-->
-				</div>
-				<!--end::Input group-->
-
-				<!--begin::Actions-->
-				<div class="d-flex justify-content-end">
-					<button type="reset" class="btn btn-sm btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true">Reset</button>
-
-					<button type="submit" class="btn btn-sm btn-primary" data-kt-menu-dismiss="true">Apply</button>
-				</div>
-				<!--end::Actions-->
-			</div>
-			<!--end::Form-->
-		</div>
-		<!--end::Menu 1-->
-	</div>
-	<!--end::Filter menu-->
-
-	<!--begin::Search-->
-	<div class="position-relative me-3">
-		<input type="text" class="form-control form-control-sm form-control-solid w-250px ps-9" placeholder="Tìm kiếm bài viết..." id="searchInput">
-		<i class="ki-duotone ki-magnifier fs-6 position-absolute ms-4 top-50 translate-middle-y">
-			<span class="path1"></span>
-			<span class="path2"></span>
-		</i>
-	</div>
-	<!--end::Search-->
-
-	<!--begin::Primary button-->
-	<a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">
-		Create </a>
-	<!--end::Primary button-->
-</div>
-<!--end::Actions-->
-</div>
-<!--end::Toolbar container-->
-</div>
-<!--end::Toolbar-->
 
 <!--begin::Content-->
 <div id="kt_app_content" class="app-content  flex-column-fluid ">
 	<!--begin::Content container-->
 	<div id="kt_app_content_container" class="app-container  container-xxl ">
+		<div class="d-flex align-items-center mb-6">
+			<h1 class="fs-1 fw-bold text-dark me-3 mb-0">Quản lý bài viết</h1>
+		</div>
 		<!--begin::Stats-->
 		<div class="row gx-6 gx-xl-9">
 			<div class="col-lg-6 col-xxl-4">
@@ -353,7 +205,7 @@
 						</div>
 						<!--end::Recent activity-->
 
-						
+
 					</div>
 				</div>
 			</div>
@@ -518,7 +370,7 @@
 
 				<!-- Phân trang -->
 				<div class="mt-5">
-					{{ $posts->links() }}
+					{{ $posts->links('pagination::bootstrap-5') }}
 				</div>
 			</div>
 			<!--end::Posts Grid-->
@@ -583,7 +435,7 @@
 						<!--end::Posts list-->
 
 						<!--begin::View All Button-->
-						<div class="text-center mt-6">
+						<!-- <div class="text-center mt-6">
 							<a href="#" class="btn btn-light-primary fw-bold w-100">
 								<i class="ki-duotone ki-arrow-right fs-3 ms-2">
 									<span class="path1"></span>
@@ -591,7 +443,7 @@
 								</i>
 								Xem tất cả bài viết
 							</a>
-						</div>
+						</div> -->
 						<!--end::View All Button-->
 					</div>
 				</div>
@@ -606,28 +458,7 @@
 <!--end::Content-->
 
 <!--begin::Javascript-->
-<script>
-	var hostUrl = "../../assets/index.html";
-</script>
 
-<!--begin::Global Javascript Bundle(mandatory for all pages)-->
-<script src="../../assets/plugins/global/plugins.bundle.js"></script>
-<script src="../../assets/js/scripts.bundle.js"></script>
-<!--end::Global Javascript Bundle-->
-
-<!--begin::Vendors Javascript(used for this page only)-->
-<script src="../../assets/plugins/custom/datatables/datatables.bundle.js"></script>
-<!--end::Vendors Javascript-->
-
-<!--begin::Custom Javascript(used for this page only)-->
-<script src="../../assets/js/custom/apps/projects/list/list.js"></script>
-<script src="../../assets/js/widgets.bundle.js"></script>
-<script src="../../assets/js/custom/widgets.js"></script>
-<script src="../../assets/js/custom/apps/chat/chat.js"></script>
-<script src="../../assets/js/custom/utilities/modals/upgrade-plan.js"></script>
-<script src="../../assets/js/custom/utilities/modals/create-app.js"></script>
-<script src="../../assets/js/custom/utilities/modals/users-search.js"></script>
-<!--end::Custom Javascript-->
 
 <script>
 	// Search functionality

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\PostCategory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+
 
 class PostController extends Controller
 {
@@ -15,28 +17,24 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->paginate(9);
-        $stats = [
-            //Thống kê bài viết
-            'total' => $posts->count(),
-            'draft' => $posts->where('status', 0)->count(),
-            'published' => $posts->where('status', 1)->count(),
-            'hidden' => $posts->where('status', 2)->count(),
+        $posts = Post::latest()->paginate(6);
 
-            // Thống kê lượt xem
-            'total_views' => Post::sum('view'),
-            'max_views' => Post::max('view') ?? 0,
-            'today_views' => Post::whereDate('created_at', today())->sum('view'),
+        $stats = Cache::remember('post_stats', 600, function () {
+            return [
+                'total' => Post::count(),
+                'draft' => Post::where('status', 0)->count(),
+                'published' => Post::where('status', 1)->count(),
+                'hidden' => Post::where('status', 2)->count(),
+                'total_views' => Post::sum('view'),
+                'max_views' => Post::max('view') ?? 0,
+                'today_views' => Post::whereDate('created_at', today())->sum('view'),
+                'popular_posts' => Post::orderBy('view', 'desc')->take(5)->get(),
+            ];
+        });
 
-            //
-            'today_views' => Post::whereDate('created_at', today())->sum('view'),
-
-
-            // Top 5 bài viết phổ biến
-            'popular_posts' => Post::orderBy('view', 'desc')->take(5)->get()
-        ];
         return view('admin.posts.index', compact('posts', 'stats'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -74,6 +72,8 @@ class PostController extends Controller
 
         // Ghi dữ liệu vào DB
         Post::create($data);
+
+        Cache::forget('post_stats');
 
         return redirect()->route('admin.posts.index')->with('success', 'Thêm bài viết thành công');
     }
@@ -117,6 +117,9 @@ class PostController extends Controller
         }
 
         $post->update($data);
+
+        Cache::forget('post_stats');
+        
         return redirect()->route('admin.posts.index')->with('success', 'Cập nhật bài viết thành công');
     }
 

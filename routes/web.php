@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
 use App\Http\Controllers\Admin\PostCategoryController;
+use App\Http\Controllers\Admin\FaqController;
 
 // Giao diện client
 Route::controller(HomeController::class)->group(function () {
@@ -79,6 +80,7 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+    Route::resource('faq', FaqController::class);
 
     // Posts
     Route::resource('posts', PostController::class)->names('admin.posts');
