@@ -248,37 +248,45 @@
         <!--end::Badges-->
     </td>
 
-    <td class="text-end">
-        <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
-           data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-            Hành động
-            <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
-        </a>
+   <td class="text-end">
+                    <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                        Hành động
+                        <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>                    </a>
 
         <!--begin::Menu-->
-        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-             data-kt-menu="true">
-            <!--begin::Menu item-->
-            <div class="menu-item px-3">
-                <a href="{{ route('admin.categories.edit', $category) }}" class="menu-link px-3 btn btn-link p-0 m-0">
-                    Sửa
-                </a>
-            </div>
-             <div class="menu-item px-3">
-                <a href="{{ route('admin.categories.show', $category) }}" class="menu-link px-3 btn btn-link p-0 m-0">
-                    Xem
-                </a>
-            </div>
+       <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+    <!--begin::Menu item-->
+   
+    <div class="menu-item px-3">
+        <a href="{{ route('admin.categories.show', $category) }}" class="menu-link px-3">
+            Xem
+        </a>
+    </div>
+     <div class="menu-item px-3">
+        <a href="{{ route('admin.categories.edit', $category) }}" class="menu-link px-3">
+            Sửa
+        </a>
+    </div>
+    <form id="delete-form-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category) }}" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+   <div class="menu-item px-3">
+    <a href="#" class="menu-link px-3"
+       onclick="event.preventDefault(); if(confirm('Bạn chắc chắn muốn xóa?')) document.getElementById('delete-form-{{ $category->id }}').submit();">
+       Xóa
+    </a>
+</div>
             <!--end::Menu item-->
 
             <!--begin::Menu item-->
-            <div class="menu-item px-3">
+            {{-- <div class="menu-item px-3">
                 <form action="{{ route('admin.categories.destroy', $category ) }}" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="menu-link px-3 btn btn-link p-0 m-0">Xóa</button>
                 </form>
-            </div>
+            </div> --}}
             <!--end::Menu item-->
         </div>
         <!--end::Menu-->

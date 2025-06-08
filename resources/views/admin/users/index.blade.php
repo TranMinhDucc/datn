@@ -289,22 +289,21 @@
                     05 May 2025, 6:43 am                </td>
                 <td class="text-end">
                     <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                        Actions
+                        Hành động
                         <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>                    </a>
                     <!--begin::Menu-->
 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
     <!--begin::Menu item-->
     <div class="menu-item px-3">
         <a href="../../customers/view.html" class="menu-link px-3">
-            View
+            Sửa
         </a>
     </div>
     <!--end::Menu item-->
-    
     <!--begin::Menu item-->
     <div class="menu-item px-3">
         <a href="#" class="menu-link px-3" data-kt-customer-table-filter="delete_row">
-            Delete
+            Xóa
         </a>
     </div>
     <!--end::Menu item-->
