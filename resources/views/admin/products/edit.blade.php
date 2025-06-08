@@ -89,7 +89,7 @@
                                 <!--begin::Input group-->
                                 <div class="mb-10">
                                     <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Status:</label>
+                                    <label class="form-label fw-semibold">Trạng Thái:</label>
                                     <!--end::Label-->
 
                                     <!--begin::Input-->
@@ -98,8 +98,8 @@
                                             data-close-on-select="false" data-placeholder="Select option"
                                             data-dropdown-parent="#kt_menu_683db6e98b446" data-allow-clear="true">
                                             <option></option>
-                                            <option value="1">Show</option>
-                                            <option value="0">Hide</option>
+                                            <option value="1">Hiện </option>
+                                            <option value="0">Ẩn</option>
                                         </select>
                                     </div>
                                     <!--end::Input-->
@@ -193,87 +193,64 @@
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container  container-xxl ">
                 <!--begin::Form-->
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
-                    id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
-                    data-kt-redirect="{{ route('admin.products.index') }}">
+                <form action="{{ route('admin.products.update', $product->id) }}?page={{ request()->get('page', 1) }}" method="POST"
+                    enctype="multipart/form-data" id="kt_ecommerce_add_product_form"
+                    class="form d-flex flex-column flex-lg-row"
+                    data-kt-redirect="{{ route('admin.products.update', $product->id) }}">
                     @csrf
+                    @method('PUT')
                     <!--begin::Aside column-->
                     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                         <!--begin::Thumbnail settings-->
-                        <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card-header">
-                                <!--begin::Card title-->
-                                <div class="card-title">
-                                    <h2>Ảnh</h2>
+                        <div class="fv-row mb-7">
+                            <label class="form-label">Ảnh sản phẩm</label>
+
+                            <!--begin::Image input-->
+                            <div class="image-input image-input-outline image-input-placeholder mb-3"
+                                data-kt-image-input="true"
+                                style="background-image: url('{{ $product->images ? asset('storage/' . $product->images) : 'https://via.placeholder.com/125' }}')">
+
+                                <!--begin::Preview-->
+                                <div class="image-input-wrapper w-125px h-125px"
+                                    style="background-image: url('{{ $product->images ? asset('storage/' . $product->images) : 'https://via.placeholder.com/125' }}')">
                                 </div>
-                                <!--end::Card     title-->
+                                <!--end::Preview-->
+
+                                <!--begin::Edit button-->
+                                <label
+                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
+                                    data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Thay ảnh">
+                                    <i class="bi bi-pencil-fill fs-7"></i>
+
+                                    <!-- File input -->
+                                    <input type="file" name="images" accept=".png, .jpg, .jpeg" />
+                                    <input type="hidden" name="avatar_remove" />
+                                </label>
+                                <!--end::Edit button-->
+
+                                <!--begin::Cancel button-->
+                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
+                                    data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Hủy">
+                                    <i class="bi bi-x fs-2"></i>
+                                </span>
+                                <!--end::Cancel button-->
+
+                                <!--begin::Remove button-->
+                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
+                                    data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Xóa ảnh">
+                                    <i class="bi bi-x fs-2"></i>
+                                </span>
+                                <!--end::Remove button-->
                             </div>
-                            <!--end::Card header-->
+                            <!--end::Image input-->
 
-                            <!--begin::Card body-->
-                            <div class="card-body text-center pt-0">
-                                <!--begin::Image input-->
-                                <!--begin::Image input placeholder-->
-                                <style>
-                                    .image-input-placeholder {
-                                        background-image: url('../../../assets/media/svg/files/blank-image.svg');
-                                    }
+                            @error('images')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
 
-                                    [data-bs-theme="dark"] .image-input-placeholder {
-                                        background-image: url('../../../assets/media/svg/files/blank-image-dark.svg');
-                                    }
-                                </style>
-                                <!--end::Image input placeholder-->
-
-                                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                                    data-kt-image-input="true">
-                                    <!--begin::Preview existing avatar-->
-                                    <div class="image-input-wrapper w-150px h-150px"></div>
-                                    <!--end::Preview existing avatar-->
-
-                                    <!--begin::Label-->
-                                    <label
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                        <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
-                                                class="path2"></span></i>
-                                        <!--begin::Inputs-->
-                                        <input type="file" name="images" accept=".png, .jpg, .jpeg"
-                                            class="form-control mb-2" />
-
-                                        <!--end::Inputs-->
-                                    </label>
-                                    @error('images')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                    <!--end::Label-->
-
-                                    <!--begin::Cancel-->
-                                    <span
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                        <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
-                                                class="path2"></span></i> </span>
-                                    <!--end::Cancel-->
-
-                                    <!--begin::Remove-->
-                                    <span
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                        <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
-                                                class="path2"></span></i> </span>
-                                    <!--end::Remove-->
-                                </div>
-                                <!--end::Image input-->
-
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    **Chọn ảnh đại diện sản phẩm (chỉ hỗ trợ *.png, .jpg, .jpeg).</div>
-                                <!--end::Description-->
-                            </div>
-                            <!--end::Card body-->
+                            <div class="form-text">Định dạng: png, jpg, jpeg. Dung lượng tối đa: 2MB</div>
                         </div>
+
                         <!--end::Thumbnail settings-->
                         <!--begin::Status-->
                         <div class="card card-flush py-4">
@@ -298,22 +275,23 @@
                             <div class="card-body pt-0">
                                 <!--begin::Select2-->
                                 <select name="status" class="form-select mb-2" data-control="select2"
-                                    data-hide-search="true" data-placeholder="Chọn trạng thái"
+                                    data-hide-search="true" data-placeholder="Select an option"
                                     id="kt_ecommerce_add_product_status_select">
                                     <option></option>
-                                    <option value="1" {{ old('status', $product->status ?? '1') == '1' ? 'selected' : '' }}>
-                                        Hiện</option>
-                                    <option value="0" {{ old('status', $product->status ?? '1') == '0' ? 'selected' : '' }}>Ẩn
+                                    <option value="1" {{ old('status', $product->status) == 1 ? 'selected' : '' }}>Hiện
+                                    </option>
+                                    <option value="0" {{ old('status', $product->status) == 0 ? 'selected' : '' }}>Ẩn
                                     </option>
                                 </select>
                                 @error('status')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
+
                                 <!--end::Select2-->
 
-                                <!--begin::Description-->
+                                {{-- <!--begin::Description-->
                                 <div class="text-muted fs-7">Set the product status.</div>
-                                <!--end::Description-->
+                                <!--end::Description--> --}}
 
                                 <!--begin::Datepicker-->
                                 <div class="d-none mt-10">
@@ -334,7 +312,7 @@
                             <div class="card-header">
                                 <!--begin::Card title-->
                                 <div class="card-title">
-                                    <h2>Danh Mục Sản Phẩm</h2>
+                                    <h2>Danh Mục sản phẩm</h2>
                                 </div>
                                 <!--end::Card title-->
                             </div>
@@ -344,25 +322,25 @@
                             <div class="card-body pt-0">
                                 <!--begin::Input group-->
                                 <!--begin::Label-->
-                                <label class="form-label">Danh Mục:</label>
+                                <label class="form-label">Danh Mục</label>
                                 <!--end::Label-->
                                 <!--begin::Select2-->
                                 <select name="category_id" class="form-select mb-2" data-control="select2"
-                                    data-placeholder="Chọn danh mục" data-allow-clear="true">
-                                    <option></option>
+                                    data-placeholder="Select an option" data-allow-clear="true">
+                                    <option value=""></option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}" {{ (old('category_id', $product->category_id) == $category->id) ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>
                                 @error('category_id')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                                 <!--end::Select2-->
 
                                 <!--begin::Description-->
-                                <div class="text-muted fs-7 mb-7">Add product to a category.</div>
+                                <div class="text-muted fs-7 mb-7">Add product to a category</div>
                                 <!--end::Description-->
                                 <!--end::Input group-->
 
@@ -483,7 +461,7 @@
                                         <!--begin::Card header-->
                                         <div class="card-header">
                                             <div class="card-title">
-                                                <h2>Tổng quan</h2>
+                                                <h2>Tổng Quan</h2>
                                             </div>
                                         </div>
                                         <!--end::Card header-->
@@ -492,25 +470,15 @@
                                         <div class="card-body pt-0">
                                             <!--begin::Input group-->
                                             <div class="mb-10 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required form-label">Tên Sản phẩm</label>
-                                                <!--end::Label-->
-
-                                                <!--begin::Input-->
+                                                <label class="required form-label">Tên Sản Phẩm</label>
                                                 <input type="text" name="name" class="form-control mb-2"
-                                                    placeholder="Tên Sản Phẩm"
+                                                    placeholder="Nhập tên sản phẩm"
                                                     value="{{ old('name', $product->name ?? '') }}" />
                                                 @error('name')
-                                                    <div class="text-danger">{{ $message }}</div>
+                                                    <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
-                                                <!--end::Input-->
-
-                                                <!--begin::Description-->
-                                                {{-- <div class="text-muted fs-7">A product name is required and recommended
-                                                    to
-                                                    be unique.</div> --}}
-                                                <!--end::Description-->
                                             </div>
+
                                             <!--end::Input group-->
 
                                             <!--begin::Input group-->
@@ -521,10 +489,9 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="code" class="form-control mb-2"
-                                                    placeholder="Mã Sản Phẩm"
-                                                    value="{{ old('code', $product->code ?? '') }}" />
+                                                    placeholder="Mã Sản Phẩm" value="{{ old('code', $product->code) }}" />
                                                 @error('code')
-                                                    <div class="text-danger">{{ $message }}</div>
+                                                    <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                                 <!--end::Input-->
                                             </div>
@@ -533,45 +500,43 @@
                                                     <div class="form-group">
                                                         <label for="min_purchase_quantity">Mua tối thiểu:</label>
                                                         <input type="number" name="min_purchase_quantity"
-                                                            id="min_purchase_quantity" class="form-control"
+                                                            id="min_purchase_quantity"
+                                                            class="form-control @error('min_purchase_quantity') is-invalid @enderror"
                                                             value="{{ old('min_purchase_quantity', $product->min_purchase_quantity ?? 1) }}"
                                                             min="1">
+                                                        @error('min_purchase_quantity')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
-                                                @error('min_purchase_quantity')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label for="max_purchase_quantity">Mua tối đa:</label>
                                                         <input type="number" name="max_purchase_quantity"
-                                                            id="max_purchase_quantity" class="form-control"
-                                                            value="{{ old('max_purchase_quantity', $product->max_purchase_quantity ?? 100) }}"
+                                                            id="max_purchase_quantity"
+                                                            class="form-control @error('max_purchase_quantity') is-invalid @enderror"
+                                                            value="{{ old('max_purchase_quantity', $product->max_purchase_quantity ?? 1000000) }}"
                                                             min="1">
+                                                        @error('max_purchase_quantity')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
-                                                @error('max_purchase_quantity')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-
                                             </div>
 
-                                            {{-- <div class="mb-10 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required form-label">Số Lượng</label>
-                                                <!--end::Label-->
-
-                                                <!--begin::Input-->
-                                                <input type="text" name="quantity" class="form-control mb-2"
-                                                    placeholder="Số lượng"
-                                                    value="{{ old('quantity', $product->quantity ?? '') }}" />
-                                                @error('quantity')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-
-                                                <!--end::Input-->
-                                            </div> --}}
                                             <!--end::Input group-->
+                                            <!--begin::Form group: Số lượng-->
+                                            {{-- <div class="fv-row mb-7">
+                                                <label class="required form-label">Số lượng</label>
+                                                <input type="number" name="quantity" class="form-control mb-2"
+                                                    placeholder="Nhập số lượng"
+                                                    value="{{ old('quantity', $product->quantity) }}" min="0" />
+                                                @error('quantity')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div> --}}
+                                            <!--end::Form group-->
                                             <div class="mb-3">
                                                 <label for="short_desc" class="form-label">Mô tả ngắn</label>
                                                 <textarea name="short_desc" id="short_desc" class="form-control"
@@ -581,18 +546,26 @@
                                                 @enderror
                                             </div>
 
+
                                             <!--begin::Input group-->
-   <!-- Form input -->
+                                            <div>
+                                                <!--begin::Label-->
+                                                <label class="form-label"></label>
+                                                <!--end::Label-->
+
+                                                <!--begin::Editor-->
+                                          <!-- Mô tả chi tiết sản phẩm (edit) -->
 <div class="mb-10 fv-row">
     <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
-    <textarea id="description" name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
-    @error('description') <div class="text-danger">{{ $message }}</div> @enderror
+    <textarea id="description" name="description" class="form-control" rows="5">{{ old('description', $product->description ?? '') }}</textarea>
+    @error('description')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
 </div>
 
-<!-- Nhúng CKEditor -->
+<!-- Nhúng CKEditor bản full giống phần thêm -->
 <script src="https://cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
 <script>
-    // Kích hoạt CKEditor cho textarea có id là 'description'
     CKEDITOR.replace('description', {
         height: 100,
         toolbarCanCollapse: true
@@ -600,6 +573,14 @@
 </script>
 
 
+
+                                                <!--end::Editor-->
+
+                                                {{-- <!--begin::Description-->
+                                                <div class="text-muted fs-7">Set a description to the product for better
+                                                    visibility.</div>
+                                                <!--end::Description-->
+                                            </div> --}}
                                             <!--end::Input group-->
                                         </div>
                                         <!--end::Card header-->
@@ -652,11 +633,11 @@
                                     <!--begin::Pricing-->
                                     <div class="card card-flush py-4">
                                         <!--begin::Card header-->
-                                        <div class="card-header">
+                                        {{-- <div class="card-header">
                                             <div class="card-title">
                                                 <h2>Giá Bán</h2>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <!--end::Card header-->
 
                                         <!--begin::Card body-->
@@ -669,10 +650,10 @@
 
                                                 <!--begin::Input-->
                                                 <input type="text" name="price" class="form-control mb-2"
-                                                    placeholder="Giá sản phẩm"
-                                                    value="{{ old('price', $product->price ?? '') }}" />
+                                                    placeholder="Product price"
+                                                    value="{{ old('price', $product->price) }} " />
                                                 @error('price')
-                                                    <div class="text-danger">{{ $message }}</div>
+                                                    <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                                 <!--end::Input-->
 
@@ -1227,6 +1208,5 @@
         <!--end::Content-->
 
     </div>
-
     <!--end::Content wrapper-->
 @endsection

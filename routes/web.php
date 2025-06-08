@@ -105,6 +105,26 @@ Route::prefix('admin')->group(function () {
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('products', ProductController::class)->names('admin.products');
     Route::resource('users', UserController::class)->names('admin.users');
+    // Route::resource('roles', RoleController::class)->names('admin.roles');
+
+    // Topup & Campaigns
+    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
+    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
+    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
+
+    // Marketing
+    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
+    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
+    // Route::resource('posts', PostController::class)->names('admin.posts');
+
+    // System Settings
+    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+    // product crud
+    Route::resource('products', ProductController::class)->names('admin.products');
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
