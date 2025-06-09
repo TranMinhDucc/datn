@@ -9,61 +9,56 @@ use Illuminate\Http\Request;
 class CouponController extends Controller
 {
     public function index()
-    {
-        $coupons = Coupon::orderBy('id', 'desc')->get();
-        return view('admin.coupons.index', compact('coupons'));
-    }
+{
+    $coupons = Coupon::latest()->paginate(10);
+    return view('admin.coupons.index', compact('coupons'));
+}
 
     public function create()
-    {
-        return view('admin.coupons.create');
-    }
+{
+    return view('admin.coupons.create');
+}
 
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|unique:coupons,code',
-            'discount' => 'required|numeric|min:1|max:100',
-            'amount' => 'required|integer|min:1',
-            'min' => 'nullable|integer|min:0',
-            'max' => 'nullable|integer|min:0',
-            'expired_at' => 'required|date',  // <-- thêm dòng này
+            'code' => 'required|unique:coupons,code|max:50',
+            'discount_type' => 'required|in:percent,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'max_usage' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
         Coupon::create($request->all());
 
-        return redirect()->route('admin.coupons.index')->with('success', 'Tạo mã giảm giá thành công.');
+        return redirect()->route('admin.coupons.index')->with('success', 'Coupon created successfully.');
     }
 
-    public function edit($id)
-    {
-        $coupon = Coupon::findOrFail($id);
-        return view('admin.coupons.edit', compact('coupon'));
-    }
+    public function edit(Coupon $coupon)
+{
+    return view('admin.coupons.edit', compact('coupon'));
+}
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Coupon $coupon)
     {
-        $coupon = Coupon::findOrFail($id);
-
         $request->validate([
-            'code' => 'required|unique:coupons,code,' . $id,
-            'discount' => 'required|numeric|min:1|max:100',
-            'amount' => 'required|integer|min:1',
-            'min' => 'nullable|integer|min:0',
-            'max' => 'nullable|integer|min:0',
-            'expired_at' => 'required|date',  // <-- thêm dòng này
+            'code' => 'required|max:50|unique:coupons,code,' . $coupon->id,
+            'discount_type' => 'required|in:percent,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'max_usage' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
         $coupon->update($request->all());
 
-        return redirect()->route('admin.coupons.index')->with('success', 'Cập nhật mã giảm giá thành công.');
+        return redirect()->route('admin.coupons.index')->with('success', 'Coupon updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Coupon $coupon)
     {
-        $coupon = Coupon::findOrFail($id);
         $coupon->delete();
-
-        return redirect()->route('admin.coupons.index')->with('success', 'Đã xóa mã giảm giá.');
+        return redirect()->route('admin.coupons.index')->with('success', 'Coupon deleted successfully.');
     }
 }

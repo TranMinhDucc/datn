@@ -482,6 +482,31 @@
                                         <div class="menu-item">
                                             <!--begin:Menu link--><a
                                                 class="menu-link"
+                                                href="{{ route('admin.brands.index') }}"
+                                                target="_blank"
+                                                ><span class="menu-icon"
+                                                    ><i
+                                                        class="fa-solid fa-percent fs-4"
+                                                        ><span
+                                                            class="path1"
+                                                        ></span
+                                                        ><span
+                                                            class="path2"
+                                                        ></span
+                                                        ><span
+                                                            class="path3"
+                                                        ></span
+                                                        ><span
+                                                            class="path4"
+                                                        ></span></i></span
+                                                ><span class="menu-title"
+                                                    >Thương hiệu</span
+                                                ></a
+                                            ><!--end:Menu link-->
+                                        </div>
+                                        <div class="menu-item">
+                                            <!--begin:Menu link--><a
+                                                class="menu-link"
                                                 href="https://preview.keenthemes.com/html/metronic/docs/getting-started/changelog"
                                                 target="_blank"
                                                 ><span class="menu-icon"

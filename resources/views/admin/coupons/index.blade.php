@@ -1,91 +1,83 @@
 @extends('layouts.admin')
 
-@section('title', 'Mã giảm giá')
+@section('title', 'Danh sách mã giảm giá')
 
 @section('content')
-    <div class="container py-4">
-        <div class="card shadow-sm rounded">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Danh sách mã giảm giá</h5>
-                <a href="{{ route('admin.coupons.create') }}" class="btn btn-light text-primary btn-sm fw-bold">
-                    + Thêm mã mới
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-center align-items-center py-5 rounded-top">
+    <h2 class="mb-0 fw-bold text-uppercase">Danh sách mã giảm giá</h2>
+</div>
+
+
+        <div class="card-body">
+            @if (session('success'))
+                <div class="alert alert-success text-center">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div class="d-flex justify-content-start mb-3">
+                <a href="{{ route('admin.coupons.create') }}" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-1"></i> Tạo mã giảm giá mới
                 </a>
             </div>
 
-            <div class="card-body">
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Mã</th>
+                            <th>Loại</th>
+                            <th>Giá trị</th>
+                            <th>Sử dụng</th>
+                            <th>Thời gian</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($coupons as $coupon)
+                        <tr>
+                            <td>{{ $coupon->id }}</td>
+                            <td class="fw-semibold">{{ $coupon->code }}</td>
+                            <td>{{ ucfirst($coupon->discount_type) }}</td>
+                            <td>
+                                {{ $coupon->discount_type === 'percent' ? $coupon->discount_value . '%' : number_format($coupon->discount_value) . 'đ' }}
+                            </td>
+                            <td>{{ $coupon->usage_count }}/{{ $coupon->max_usage }}</td>
+                            <td>
+                                {{ $coupon->start_date ? $coupon->start_date->format('d/m/Y H:i') : '-' }} <br>
+                                đến <br>
+                                {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y H:i') : '-' }}
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.coupons.edit', $coupon->id) }}" class="btn btn-sm btn-warning me-1">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle text-center">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Mã</th>
-                                <th>Giảm (%)</th>
-                                <th>Số lượng</th>
-                                <th>Đã dùng</th>
-                                <th>Giá trị tối thiểu</th>
-                                <th>Giá trị tối đa</th>
-                                <th>Hạn sử dụng</th>
-                                <th>Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($coupons as $index => $coupon)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td class="fw-bold text-uppercase">{{ $coupon->code }}</td>
-                                    <td>{{ $coupon->discount }}%</td>
-                                    <td>{{ $coupon->amount }}</td>
-                                    <td>{{ $coupon->used }}</td>
-                                    <td>{{ number_format($coupon->min) }}₫</td>
-                                    <td>{{ number_format($coupon->max) }}₫</td>
-                                    <td>
-                                        @if ($coupon->expired_at)
-                                            @php
-                                                $expired = \Carbon\Carbon::parse($coupon->expired_at);
-                                                $now = \Carbon\Carbon::now();
-                                            @endphp
+                                <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-muted">Không có mã giảm giá nào.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                                            @if ($expired->lt($now))
-                                                {{-- expired_at < now => hết hạn --}}
-                                                <span class="badge bg-danger">
-                                                    {{ $expired->format('d/m/Y') }} (Hết hạn)
-                                                </span>
-                                            @else
-                                                <span class="badge bg-success">
-                                                    {{ $expired->format('d/m/Y') }}
-                                                </span>
-                                            @endif
-                                        @else
-                                            <span class="badge bg-secondary">Không giới hạn</span>
-                                        @endif
-                                    </td>
-
-                                    <td>
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.coupons.edit', $coupon->id) }}"
-                                                class="btn btn-sm btn-warning">Sửa</a>
-                                            <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST"
-                                                onsubmit="return confirm('Bạn có chắc muốn xoá?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-sm btn-danger">Xoá</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center text-muted">Không có mã giảm giá nào.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            <div class="d-flex justify-content-center">
+                {{ $coupons->links() }}
             </div>
         </div>
     </div>
+</div>
 @endsection

@@ -1,19 +1,19 @@
 @extends('layouts.admin')
 
-@section('title', 'Cập nhật mã giảm giá')
+@section('title', 'Chỉnh sửa mã giảm giá')
 
 @section('content')
-<div class="container py-4" style="max-width: 720px;">
-    <div class="card shadow-sm rounded">
-        <div class="card-header bg-warning text-white d-flex justify-content-center align-items-center" style="height: 60px;">
-    <h2 class="mb-0 m-0">✏️ Cập nhật mã giảm giá</h2>
-</div>
-
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-white d-flex justify-content-center align-items-center py-5 rounded-top">
+            <h3 class="mb-0 fw-bold text-uppercase">Chỉnh sửa mã giảm giá</h3>
+        </div>
 
         <div class="card-body">
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <ul class="mb-0">
+                    <strong>Lỗi!</strong> Vui lòng kiểm tra lại dữ liệu.
+                    <ul class="mb-0 mt-2">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -21,47 +21,58 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.coupons.update', $coupon->id) }}" method="POST" novalidate>
+            <form action="{{ route('admin.coupons.update', $coupon->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <label for="code" class="form-label">Mã giảm giá <span class="text-danger">*</span></label>
-                    <input type="text" id="code" name="code" class="form-control" value="{{ old('code', $coupon->code) }}" required placeholder="Nhập mã giảm giá">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="code" class="form-label fw-semibold">Mã giảm giá</label>
+                        <input type="text" name="code" class="form-control" value="{{ $coupon->code }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="discount_type" class="form-label fw-semibold">Loại giảm giá</label>
+                        <select name="discount_type" class="form-select" required>
+                            <option value="percent" {{ $coupon->discount_type == 'percent' ? 'selected' : '' }}>Phần trăm</option>
+                            <option value="fixed" {{ $coupon->discount_type == 'fixed' ? 'selected' : '' }}>Cố định</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="discount" class="form-label">Chiết khấu (%) <span class="text-danger">*</span></label>
-                    <input type="number" id="discount" name="discount" class="form-control" value="{{ old('discount', $coupon->discount) }}" required min="1" max="100" placeholder="Ví dụ: 10">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="discount_value" class="form-label fw-semibold">Giá trị giảm</label>
+                        <input type="number" step="0.01" name="discount_value" class="form-control" value="{{ $coupon->discount_value }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="max_usage" class="form-label fw-semibold">Số lượt sử dụng tối đa</label>
+                        <input type="number" name="max_usage" class="form-control" value="{{ $coupon->max_usage }}" required>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="amount" class="form-label">Số lượt áp dụng <span class="text-danger">*</span></label>
-                    <input type="number" id="amount" name="amount" class="form-control" value="{{ old('amount', $coupon->amount) }}" required min="1" placeholder="Số lượt sử dụng tối đa">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="start_date" class="form-label fw-semibold">Ngày bắt đầu</label>
+                        <input type="datetime-local" name="start_date" class="form-control"
+                            value="{{ \Carbon\Carbon::parse($coupon->start_date)->format('Y-m-d\TH:i') }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="end_date" class="form-label fw-semibold">Ngày kết thúc</label>
+                        <input type="datetime-local" name="end_date" class="form-control"
+                            value="{{ \Carbon\Carbon::parse($coupon->end_date)->format('Y-m-d\TH:i') }}" required>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="min" class="form-label">Giá trị đơn hàng tối thiểu</label>
-                    <input type="number" id="min" name="min" class="form-control" value="{{ old('min', $coupon->min) }}" min="0" placeholder="Không bắt buộc">
-                    <small class="text-muted">Để trống nếu không yêu cầu giá trị tối thiểu</small>
-                </div>
-
-                <div class="mb-3">
-                    <label for="max" class="form-label">Giá trị đơn hàng tối đa</label>
-                    <input type="number" id="max" name="max" class="form-control" value="{{ old('max', $coupon->max) }}" min="0" placeholder="Không bắt buộc">
-                    <small class="text-muted">Để trống nếu không yêu cầu giá trị tối đa</small>
-                </div>
-
-                <div class="mb-3">
-                    <label for="expired_at" class="form-label">Hạn sử dụng</label>
-                    <input type="date" id="expired_at" name="expired_at" class="form-control"
-                        value="{{ old('expired_at', optional(\Carbon\Carbon::parse($coupon->expired_at))->format('Y-m-d')) }}">
-                    <small class="text-muted">Chọn ngày hết hạn mã giảm giá (nếu có)</small>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary me-2">← Quay lại</a>
-                    <button type="submit" class="btn btn-success">✔️ Cập nhật</button>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i> Cập nhật
+                    </button>
                 </div>
             </form>
         </div>
