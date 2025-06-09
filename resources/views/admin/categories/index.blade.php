@@ -20,7 +20,12 @@
                     </h1>
                     <!--end::Title-->
 
-
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                     <!--begin::Breadcrumb-->
 
                 </div>
@@ -203,10 +208,9 @@
                                         </div>
                                     </th>
                                     <th class="min-w-40px">STT</th>
-                                    <th class="min-w-100px">Ảnh</th>
                                     <th class="min-w-200px">Tên</th>
+                                    <th class="min-w-150px">Danh mục cha</th>
                                     <th class="min-w-150px">Mô tả </th>
-                                    <th class="min-w-150px">Trạng thái </th>
 
                                     <th class="text-end min-w-100px">Thao tác</th>
                                 </tr>
@@ -222,19 +226,7 @@
                                             </div>
                                         </td>
                                         <td>{{ $category->id }}</td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <!--begin::Thumbnail-->
-                                                <a href="{{ route('admin.categories.edit', $category) }}"
-                                                    class="symbol symbol-50px">
-                                                    <span class="symbol-label"
-                                                        style="background-image:url('{{ asset('storage/' . $category->icon) }}'); background-size: cover;"></span>
-                                                </a>
-                                                <!--end::Thumbnail-->
 
-
-                                            </div>
-                                        </td>
                                         <td>
                                             <div class="ms-5">
                                                 <!--begin::Title-->
@@ -250,32 +242,38 @@
                                                 <!--end::Description-->
                                             </div>
                                         </td>
+
+                                        <td>
+                                            <div class="text-muted fs-7 fw-bold">
+                                                {{ $category->parent ? $category->parent->name : 'Chưa có danh mục cha' }}
+                                            </div>
+                                        </td>
+
                                         <td>
                                             <div class="text-muted fs-7 fw-bold">
                                                 {{ $category->description ?? 'Chưa có mô tả' }}
                                             </div>
                                         </td>
 
-                                        <td>
-                                            <!--begin::Badges-->
-                                            <div
-                                                class="badge {{ $category->status ? 'badge-light-success' : 'badge-light-danger' }}">
-                                                {{ $category->status ? 'Hiển thị' : 'Ẩn' }}
-                                            </div>
-                                            <!--end::Badges-->
-                                        </td>
 
                                         <td class="text-end">
                                             <a href="#"
-                                                class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary"
+                                                class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
                                                 data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                Action
-                                                <i class="fa-solid fa-arrow-down fs-9 ms-2"></i> </a>
+                                                Hành động
+                                                <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
+                                            </a>
 
                                             <!--begin::Menu-->
                                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
                                                 data-kt-menu="true">
                                                 <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="{{ route('admin.categories.edit', $category) }}"
+                                                        class="menu-link px-3">
+                                                        Sửa
+                                                    </a>
+                                                </div>
 
                                                 <div class="menu-item px-3">
                                                     <a href="{{ route('admin.categories.show', $category) }}"
@@ -283,28 +281,21 @@
                                                         Xem
                                                     </a>
                                                 </div>
-                                                <div class="menu-item px-3">
-                                                    <a href="{{ route('admin.categories.edit', $category) }}"
-                                                        class="menu-link px-3">
-                                                        Sửa
-                                                    </a>
-                                                </div>
-                                                <form id="delete-form-{{ $category->id }}"
-                                                    action="{{ route('admin.categories.destroy', $category) }}"
-                                                    method="POST" style="display: none;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3"
-                                                        onclick="event.preventDefault(); if(confirm('Bạn chắc chắn muốn xóa?')) document.getElementById('delete-form-{{ $category->id }}').submit();">
-                                                        Xóa
-                                                    </a>
-                                                </div>
                                                 <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <form action="{{ route('admin.categories.destroy', $category) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="menu-link px-3">Xóa</button>
+                                                    </form>
+                                                </div>
                                                 <!--end::Menu item-->
                                             </div>
-                                            <!--end::Menu-->
+
                                         </td>
                                     </tr>
                                 @endforeach
