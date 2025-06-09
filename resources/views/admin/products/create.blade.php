@@ -17,7 +17,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Product Form
+                        Thêm sản phẩm mới
                     </h1>
                     <!--end::Title-->
 
@@ -38,7 +38,7 @@
 
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            eCommerce </li>
+                            Product </li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -48,7 +48,7 @@
 
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            Catalog </li>
+                            Create </li>
                         <!--end::Item-->
 
                     </ul>
@@ -233,17 +233,26 @@
                                     <!--end::Preview existing avatar-->
 
                                     <!--begin::Label-->
-                                    <label
+                                    {{-- <label
                                         class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                                         data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                        <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
+                                        <i class="fa-solid fa-image"><span class="path1"></span><span
                                                 class="path2"></span></i>
                                         <!--begin::Inputs-->
                                         <input type="file" name="images" accept=".png, .jpg, .jpeg"
                                             class="form-control mb-2" />
 
                                         <!--end::Inputs-->
-                                    </label>
+                                    </label> --}}
+                                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                <!--begin::Icon-->
+              <i class="fa-solid fa-image"><span class="path1"></span><span class="path2"></span></i>                <!--end::Icon-->
+
+                <!--begin::Inputs-->
+                <input type="file" name="images" accept=".png, .jpg, .jpeg" />
+                <input type="hidden" name="images" />
+                <!--end::Inputs-->
+            </label>
                                     @error('images')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror

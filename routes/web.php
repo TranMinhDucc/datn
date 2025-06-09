@@ -7,7 +7,7 @@ use App\Models\User;
 
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
-
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -21,6 +21,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\ContactController;
+use App\Http\Controllers\Client\WishlistController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
@@ -38,7 +43,27 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/blogs', 'blogs')->name('client.blogs');
     Route::get('/product_detail', 'productDetail')->name('client.product_detail');
 });
-
+Route::controller(ClientProductController::class)->group(function () {
+    Route::get('/products', 'index')->name('client.products.index');
+    Route::get('/products/{slug}', 'show')->name('client.products.show');
+});
+Route::controller(CartController::class)->group(function () {
+    Route::get('/cart', 'index')->name('client.cart.index');
+    Route::get('/cart-show', 'show')->name('client.products.show');
+});
+Route::controller(BlogController::class)->group(function () {
+    Route::get('/blog', 'index')->name('client.blog.index');
+    Route::get('/blog-show', 'show')->name('client.blog.show');
+});
+Route::controller(WishlistController::class)->group(function () {
+    Route::get('/wishlist', 'index')->name('client.wishlist.index');
+});
+Route::controller(ContactController::class)->group(function () {
+    Route::get('/contact', 'index')->name('client.contact.index');
+});
+Route::controller(CheckoutController::class)->group(function () {
+    Route::get('/checkout', 'index')->name('client.checkout.index');
+});
 // ---------------------------
 // 🔐 PROTECTED ROUTES (phải đăng nhập + xác minh)
 // ---------------------------

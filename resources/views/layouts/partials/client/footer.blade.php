@@ -1,109 +1,117 @@
-<footer class="footer-part">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6 col-xl-3">
-                <div class="footer-widget">
-                    <a class="footer-logo" href="{{ route('client.home') }}">
-                        <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo">
-                    </a>
-                    <p class="footer-desc">
-                        Adipisci asperiores ipsum ipsa repellat consequatur repudiandae quisquam assumenda dolor
-                        perspiciatis sit ipsum dolor amet.
-                    </p>
-                    <ul class="footer-social">
-                        <li><a class="icofont-facebook" href="#"></a></li>
-                        <li><a class="icofont-twitter" href="#"></a></li>
-                        <li><a class="icofont-linkedin" href="#"></a></li>
-                        <li><a class="icofont-instagram" href="#"></a></li>
-                        <li><a class="icofont-pinterest" href="#"></a></li>
-                    </ul>
-                </div>
-            </div>
+  <footer class="footer-layout-img">
+      <section class="section-b-space footer-1">
+          <div class="custom-container container">
+              <div class="row">
+                  <div class="col-xl-3 col-lg-4 col-md-6">
+                      <div class="footer-content">
+                          <div class="footer-logo">
+                              <a href="{{ url('/') }}">
+                                  <img class="img-fluid" src="{{ asset('assets/client/images/logo/logo-white-4.png') }}"
+                                      alt="Footer Logo">
+                              </a>
+                          </div>
 
-            <div class="col-sm-6 col-xl-3">
-                <div class="footer-widget contact">
-                    <h3 class="footer-title">contact us</h3>
-                    <ul class="footer-contact">
-                        <li>
-                            <i class="icofont-ui-email"></i>
-                            <p>
-                                <span>support@example.com</span>
-                                <span>carrer@example.com</span>
-                            </p>
-                        </li>
-                        <li>
-                            <i class="icofont-ui-touch-phone"></i>
-                            <p>
-                                <span>+120 279 532 13</span>
-                                <span>+120 279 532 14</span>
-                            </p>
-                        </li>
-                        <li>
-                            <i class="icofont-location-pin"></i>
-                            <p>1Hd- 50, 010 Avenue, NY 90001 United States</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xl-3">
-                <div class="footer-widget">
-                    <h3 class="footer-title">quick Links</h3>
-                    <div class="footer-links">
-                        <ul>
-                            <li><a href="#">My Account</a></li>
-                            <li><a href="#">Order History</a></li>
-                            <li><a href="#">Order Tracking</a></li>
-                            <li><a href="#">Best Seller</a></li>
-                            <li><a href="#">New Arrivals</a></li>
-                        </ul>
-                        <ul>
-                            <li><a href="#">Location</a></li>
-                            <li><a href="#">Affiliates</a></li>
-                            <li><a href="{{ route('client.contact') }}">Contact</a></li>
-                            <li><a href="#">Career</a></li>
-                            <li><a href="{{ route('client.faq') }}">FAQ</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xl-3">
-                <div class="footer-widget">
-                    <h3 class="footer-title">Download App</h3>
-                    <p class="footer-desc">
-                        Lorem ipsum dolor sit amet tenetur dignissimos ipsum eligendi autem obcaecati minus ducimus
-                        totam reprehenderit exercitationem!
-                    </p>
-                    <div class="footer-app">
-                        <a href="#"><img src="{{ asset('assets/client/images/google-store.png') }}"
-                                alt="google"></a>
-                        <a href="#"><img src="{{ asset('assets/client/images/app-store.png') }}"
-                                alt="app"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="footer-bottom">
-                    <p class="footer-copytext">
-                        &copy; All Copyrights Reserved by
-                        <a target="_blank" href="https://themeforest.net/user/mironcoder">Mironcoder</a>
-                    </p>
-                    <div class="footer-card">
-                        <a href="#"><img src="{{ asset('assets/client/images/payment/jpg/01.jpg') }}"
-                                alt="payment"></a>
-                        <a href="#"><img src="{{ asset('assets/client/images/payment/jpg/02.jpg') }}"
-                                alt="payment"></a>
-                        <a href="#"><img src="{{ asset('assets/client/images/payment/jpg/03.jpg') }}"
-                                alt="payment"></a>
-                        <a href="#"><img src="{{ asset('assets/client/images/payment/jpg/04.jpg') }}"
-                                alt="payment"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+                          <ul>
+                              <li> <i class="iconsax" data-icon="location"></i>
+                                  <h6>1418 Riverwood Drive, Suite 3245 Cottonwood, CA 96052, United States</h6>
+                              </li>
+                              <li> <i class="iconsax" data-icon="phone-calling"></i>
+                                  <h6>+ 185659635</h6>
+                              </li>
+                              <li> <i class="iconsax" data-icon="mail"></i>
+                                  <h6>contact@katie.com</h6>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+                  <div class="col offset-xl-1">
+                      <div class="footer-content">
+                          <div>
+                              <div class="footer-title d-md-block">
+                                  <h5>About Us</h5>
+                                  <ul class="footer-details accordion-hidden">
+                                      <li> <a class="nav" href="index.html">Home</a></li>
+                                      <li> <a class="nav" href="collection-left-sidebar.html">Shop</a></li>
+                                      <li> <a class="nav" href="about-us.html">About Us</a></li>
+                                      <li> <a class="nav" href="blog-left-sidebar.html">Blog</a></li>
+                                      <li> <a class="nav" href="contact.html">Contact</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col">
+                      <div class="footer-content">
+                          <div>
+                              <div class="footer-title d-md-block">
+                                  <h5>New Categories</h5>
+                                  <ul class="footer-details accordion-hidden">
+                                      <li> <a class="nav" href="product-bundle.html">Latest Shoes</a></li>
+                                      <li> <a class="nav" href="variant-radio.html">Branded Jeans</a></li>
+                                      <li> <a class="nav" href="product.html">New Jackets</a></li>
+                                      <li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
+                                      <li> <a class="nav" href="variant-dropdown.html">Best Perfume</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col">
+                      <div class="footer-content">
+                          <div>
+                              <div class="footer-title d-md-block">
+                                  <h5>Get Help</h5>
+                                  <ul class="footer-details accordion-hidden">
+                                      <li> <a class="nav" href="order-success.html">Your Orders</a></li>
+                                      <li> <a class="nav" href="dashboard.html">Your Account</a></li>
+                                      <li> <a class="nav" href="order-tracking.html">Track Orders</a></li>
+                                      <li> <a class="nav" href="wishlist.html">Your Wishlist</a></li>
+                                      <li> <a class="nav" href="faq.html">Shopping FAQs</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col">
+                      <div class="footer-content">
+                          <div>
+                              <div class="footer-title d-md-block">
+                                  <h5>My Account</h5>
+                                  <ul class="footer-details accordion-hidden">
+                                      <li> <a class="nav" href="dashboard.html">My Account</a></li>
+                                      <li> <a class="nav" href="login.html">Login/Register</a></li>
+                                      <li> <a class="nav" href="cart.html">Cart</a></li>
+                                      <li> <a class="nav" href="order-success.html">Order History</a></li>
+                                      <li> <a class="nav" href="faq.html">Shopping FAQs</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <div class="sub-footer">
+          <div class="custom-container container">
+              <div class="row">
+                  <div class="col-xl-6 col-md-6 col-sm-12">
+                      <div class="footer-end">
+                          <h6>2024 Copyright By Themeforest Powered By Pixelstrap </h6>
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-md-6 col-sm-12">
+                      <div class="payment-card-bottom">
+                          <ul>
+                              <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt="">
+                              </li>
+                              <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt="">
+                              </li>
+                              <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>
+                              <li><img src="{{ asset('assets/client/images/footer/giro.png') }}" alt=""></li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </footer>
