@@ -5,14 +5,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+// ========== Client Controllers ==========
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\ContactController;
+use App\Http\Controllers\Client\WishlistController;
+
+// ========== Admin Controllers ==========
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
@@ -21,69 +29,70 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
-use App\Http\Controllers\Client\BlogController;
-use App\Http\Controllers\Client\CartController;
-use App\Http\Controllers\Client\CheckoutController;
-use App\Http\Controllers\Client\ContactController;
-use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\PostCategoryController;
+
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+// ========== PUBLIC CLIENT ROUTES ==========
+Route::prefix('/')->name('client.')->group(function () {
+    // Trang chính & static
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/', 'index')->name('home');
+        Route::get('/login', 'login')->name('login');
+        Route::get('/register', 'register')->name('register');
+        Route::get('/policy', 'policy')->name('policy');
+        Route::get('/faq', 'faq')->name('faq');
+    });
 
-// ---------------------------
-// ⚙️ PUBLIC ROUTES (ai cũng xem được)
-// ---------------------------
+    // Contact
+    Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
 
-Route::controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('client.home');
-    Route::get('/login', 'login')->name('client.login');
-    Route::get('/register', 'register')->name('client.register');
-    Route::get('/policy', 'policy')->name('client.policy');
-    Route::get('/contact', 'contact')->name('client.contact');
-    Route::get('/faq', 'faq')->name('client.faq');
-    Route::get('/blogs', 'blogs')->name('client.blogs');
-    Route::get('/product_detail', 'productDetail')->name('client.product_detail');
-});
-Route::controller(ClientProductController::class)->group(function () {
-    Route::get('/products', 'index')->name('client.products.index');
-    Route::get('/products/{slug}', 'show')->name('client.products.show');
-});
-Route::controller(CartController::class)->group(function () {
-    Route::get('/cart', 'index')->name('client.cart.index');
-    Route::get('/cart-show', 'show')->name('client.products.show');
-});
-Route::controller(BlogController::class)->group(function () {
-    Route::get('/blog', 'index')->name('client.blog.index');
-    Route::get('/blog-show', 'show')->name('client.blog.show');
-});
-Route::controller(WishlistController::class)->group(function () {
-    Route::get('/wishlist', 'index')->name('client.wishlist.index');
-});
-Route::controller(ContactController::class)->group(function () {
-    Route::get('/contact', 'index')->name('client.contact.index');
-});
-Route::controller(CheckoutController::class)->group(function () {
-    Route::get('/checkout', 'index')->name('client.checkout.index');
-});
-// ---------------------------
-// 🔐 PROTECTED ROUTES (phải đăng nhập + xác minh)
-// ---------------------------
+    // Product
+    Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{slug}', 'show')->name('show');
+    });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/wallet', [HomeController::class, 'wallet'])->name('client.account.wallet');
-    Route::get('/profile', [AccountController::class, 'profile'])->name('client.account.profile');
-    Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('client.account.change_password');
-    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('client.account.change_password.submit');
+    // Blog
+    Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{slug}', 'show')->name('show');
+    });
+
+    // Cart
+    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show', 'show')->name('show');
+    });
+
+    // Wishlist
+    Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+    // Checkout
+    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
 });
 
-// --------- 🌐 KHÔI PHỤC MẬT KHẨU ---------
+// ========== PROTECTED ROUTES ==========
+Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
+    Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
+    Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
+    Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
+    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+});
+
+// ========== PASSWORD RESET ==========
 Route::get('/forgot-password', function () {
     return view('client.auth.request-reset-password');
 })->middleware('guest')->name('client.auth.reset_password');
 
-// ---------------------------
-// 📧 EMAIL VERIFICATION ROUTES
-// ---------------------------
-
+// ========== EMAIL VERIFICATION ==========
 Route::get('/email/verify', function () {
     if (Auth::check() && Auth::user()->hasVerifiedEmail()) {
         return redirect()->route('client.home');
@@ -113,60 +122,19 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('success', 'Email xác minh đã được gửi lại!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-// ---------------------------
-// 🛠 ADMIN ROUTES
-// ---------------------------
-// Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
-Route::prefix('admin')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+// ========== ADMIN ROUTES ==========
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('banners', BannerController::class)->names('admin.banners');
+    Route::resource('banners', BannerController::class);
+    Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
-    Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])
-        ->name('admin.banners.toggle-status');
-    // Products & Services
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('posts', PostController::class);
+    Route::resource('post-categories', PostCategoryController::class);
+    Route::resource('faq', FaqController::class);
 
-
-    Route::resource('categories', CategoryController::class)->names('admin.categories');
-    Route::resource('products', ProductController::class)->names('admin.products');
-    Route::resource('users', UserController::class)->names('admin.users');
-    // Route::resource('roles', RoleController::class)->names('admin.roles');
-
-    // Topup & Campaigns
-    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
-    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
-    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
-
-    // Marketing
-    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
-    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
-    // Route::resource('posts', PostController::class)->names('admin.posts');
-
-    // System Settings
-    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
-    // product crud
-    Route::resource('products', ProductController::class)->names('admin.products');
-
-    // Route::resource('roles', RoleController::class)->names('admin.roles');
-
-    // Topup & Campaigns
-    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
-    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
-    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
-
-    // Marketing
-    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
-    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
-    // Route::resource('posts', PostController::class)->names('admin.posts');
-
-    // System Settings
-    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
+    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
 });
