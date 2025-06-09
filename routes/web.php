@@ -81,6 +81,7 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+    Route::post('/review', [ReviewController::class, 'store'])->name('client.review.store');
 });
 
 // ========== PASSWORD RESET ==========
@@ -143,10 +144,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 
-    // product crud
-    Route::resource('products', ProductController::class)->names('admin.products');
-//reviews crud
-   Route::resource('reviews', ReviewController::class)->names('admin.reviews');
+    //reviews crud
+    Route::resource('reviews', ReviewController::class)->names('reviews');
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
