@@ -44,6 +44,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>
         window.dataLayer = window.dataLayer || [];
+
         function gtag() {
             dataLayer.push(arguments);
         }
@@ -57,6 +58,13 @@
             window.top.location.replace(window.self.location.href);
         }
     </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
 </head>
 
 <!--end::Head-->
@@ -91,10 +99,10 @@
 
             if (themeMode === "system") {
                 themeMode = window.matchMedia(
-                    "(prefers-color-scheme: dark)"
-                ).matches
-                    ? "dark"
-                    : "light";
+                        "(prefers-color-scheme: dark)"
+                    ).matches ?
+                    "dark" :
+                    "light";
             }
 
             document.documentElement.setAttribute(
@@ -103,6 +111,24 @@
             );
         }
     </script>
+
+    <?php
+    if (isset($_SESSION['error'])) {
+        echo "<script type='text/javascript'>
+        toastr.error('" . addslashes($_SESSION['error']) . "');
+    </script>";
+        unset($_SESSION['error']); // Xóa để không hiển thị lại
+    }
+
+    if (isset($_SESSION['success'])) {
+        echo "<script type='text/javascript'>
+        toastr.success('" . addslashes($_SESSION['success']) . "');
+    </script>";
+        unset($_SESSION['success']); // Xóa để không hiển thị lại
+    }
+    ?>
+
+
     <!--end::Theme mode setup on page load-->
 
     <!--begin::App-->
@@ -113,6 +139,23 @@
             <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
                 <!--begin::Sidebar-->
                 @include('layouts.partials.admin.sidebar')
+                <script>
+                    @if(session('success'))
+                    toastr.success("{{ session('success') }}");
+                    @endif
+
+                    @if(session('error'))
+                    toastr.error("{{ session('error') }}");
+                    @endif
+
+                    @if(session('warning'))
+                    toastr.warning("{{ session('warning') }}");
+                    @endif
+
+                    @if(session('info'))
+                    toastr.info("{{ session('info') }}");
+                    @endif
+                </script>
                 <!--end::Sidebar-->
 
                 <!--begin::Main-->

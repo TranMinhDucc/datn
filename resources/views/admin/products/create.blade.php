@@ -2,379 +2,379 @@
 
 @section('title', 'Thêm mới danh mục')
 @section('content')
-    <!--begin::Content wrapper-->
-    <div class="d-flex flex-column flex-column-fluid">
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
 
-        <!--begin::Toolbar-->
-        <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
+    <!--begin::Toolbar-->
+    <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
-            <!--begin::Toolbar container-->
-            <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
-
-
-
-                <!--begin::Page title-->
-                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
-                    <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Product Form
-                    </h1>
-                    <!--end::Title-->
-
-
-                    <!--begin::Breadcrumb-->
-                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            <a href="../../../index.html" class="text-muted text-hover-primary">
-                                Home </a>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                        </li>
-                        <!--end::Item-->
-
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            eCommerce </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                        </li>
-                        <!--end::Item-->
-
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            Catalog </li>
-                        <!--end::Item-->
-
-                    </ul>
-                    <!--end::Breadcrumb-->
-                </div>
-                <!--end::Page title-->
-                <!--begin::Actions-->
-                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Filter menu-->
-                    <div class="m-0">
-                        <!--begin::Menu toggle-->
-                        <a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click"
-                            data-kt-menu-placement="bottom-end">
-                            <i class="ki-duotone ki-filter fs-6 text-muted me-1"><span class="path1"></span><span
-                                    class="path2"></span></i>
-                            Filter
-                        </a>
-                        <!--end::Menu toggle-->
+        <!--begin::Toolbar container-->
+        <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
 
 
 
-                        <!--begin::Menu 1-->
-                        <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                            id="kt_menu_683db6e98b446">
-                            <!--begin::Header-->
-                            <div class="px-7 py-5">
-                                <div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
-                            </div>
-                            <!--end::Header-->
-
-                            <!--begin::Menu separator-->
-                            <div class="separator border-gray-200"></div>
-                            <!--end::Menu separator-->
+            <!--begin::Page title-->
+            <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
+                <!--begin::Title-->
+                <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                    Product Form
+                </h1>
+                <!--end::Title-->
 
 
-                            <!--begin::Form-->
-                            <div class="px-7 py-5">
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Status:</label>
-                                    <!--end::Label-->
+                <!--begin::Breadcrumb-->
+                <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                    <!--begin::Item-->
+                    <li class="breadcrumb-item text-muted">
+                        <a href="../../../index.html" class="text-muted text-hover-primary">
+                            Home </a>
+                    </li>
+                    <!--end::Item-->
+                    <!--begin::Item-->
+                    <li class="breadcrumb-item">
+                        <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                    </li>
+                    <!--end::Item-->
 
-                                    <!--begin::Input-->
-                                    <div>
-                                        <select class="form-select form-select-solid" multiple data-kt-select2="true"
-                                            data-close-on-select="false" data-placeholder="Select option"
-                                            data-dropdown-parent="#kt_menu_683db6e98b446" data-allow-clear="true">
-                                            <option></option>
-                                            <option value="1">Show</option>
-                                            <option value="0">Hide</option>
-                                        </select>
-                                    </div>
-                                    <!--end::Input-->
+                    <!--begin::Item-->
+                    <li class="breadcrumb-item text-muted">
+                        eCommerce </li>
+                    <!--end::Item-->
+                    <!--begin::Item-->
+                    <li class="breadcrumb-item">
+                        <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                    </li>
+                    <!--end::Item-->
+
+                    <!--begin::Item-->
+                    <li class="breadcrumb-item text-muted">
+                        Catalog </li>
+                    <!--end::Item-->
+
+                </ul>
+                <!--end::Breadcrumb-->
+            </div>
+            <!--end::Page title-->
+            <!--begin::Actions-->
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                <!--begin::Filter menu-->
+                <div class="m-0">
+                    <!--begin::Menu toggle-->
+                    <a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click"
+                        data-kt-menu-placement="bottom-end">
+                        <i class="ki-duotone ki-filter fs-6 text-muted me-1"><span class="path1"></span><span
+                                class="path2"></span></i>
+                        Filter
+                    </a>
+                    <!--end::Menu toggle-->
+
+
+
+                    <!--begin::Menu 1-->
+                    <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
+                        id="kt_menu_683db6e98b446">
+                        <!--begin::Header-->
+                        <div class="px-7 py-5">
+                            <div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
+                        </div>
+                        <!--end::Header-->
+
+                        <!--begin::Menu separator-->
+                        <div class="separator border-gray-200"></div>
+                        <!--end::Menu separator-->
+
+
+                        <!--begin::Form-->
+                        <div class="px-7 py-5">
+                            <!--begin::Input group-->
+                            <div class="mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label fw-semibold">Status:</label>
+                                <!--end::Label-->
+
+                                <!--begin::Input-->
+                                <div>
+                                    <select class="form-select form-select-solid" multiple data-kt-select2="true"
+                                        data-close-on-select="false" data-placeholder="Select option"
+                                        data-dropdown-parent="#kt_menu_683db6e98b446" data-allow-clear="true">
+                                        <option></option>
+                                        <option value="1">Show</option>
+                                        <option value="0">Hide</option>
+                                    </select>
                                 </div>
-                                <!--end::Input group-->
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
 
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Member Type:</label>
-                                    <!--end::Label-->
+                            <!--begin::Input group-->
+                            <div class="mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label fw-semibold">Member Type:</label>
+                                <!--end::Label-->
+
+                                <!--begin::Options-->
+                                <div class="d-flex">
+                                    <!--begin::Options-->
+                                    <label class="form-check form-check-sm form-check-custom form-check-solid me-5">
+                                        <input class="form-check-input" type="checkbox" value="1" />
+                                        <span class="form-check-label">
+                                            Author
+                                        </span>
+                                    </label>
+                                    <!--end::Options-->
 
                                     <!--begin::Options-->
-                                    <div class="d-flex">
-                                        <!--begin::Options-->
-                                        <label class="form-check form-check-sm form-check-custom form-check-solid me-5">
-                                            <input class="form-check-input" type="checkbox" value="1" />
-                                            <span class="form-check-label">
-                                                Author
-                                            </span>
-                                        </label>
-                                        <!--end::Options-->
-
-                                        <!--begin::Options-->
-                                        <label class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="2" checked="checked" />
-                                            <span class="form-check-label">
-                                                Customer
-                                            </span>
-                                        </label>
-                                        <!--end::Options-->
-                                    </div>
+                                    <label class="form-check form-check-sm form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="checkbox" value="2" checked="checked" />
+                                        <span class="form-check-label">
+                                            Customer
+                                        </span>
+                                    </label>
                                     <!--end::Options-->
                                 </div>
-                                <!--end::Input group-->
-
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Notifications:</label>
-                                    <!--end::Label-->
-
-                                    <!--begin::Switch-->
-                                    <div class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox" value="" name="notifications"
-                                            checked />
-                                        <label class="form-check-label">
-                                            Enabled
-                                        </label>
-                                    </div>
-                                    <!--end::Switch-->
-                                </div>
-                                <!--end::Input group-->
-
-                                <!--begin::Actions-->
-                                <div class="d-flex justify-content-end">
-                                    <button type="reset" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                        data-kt-menu-dismiss="true">Reset</button>
-
-                                    <button type="submit" class="btn btn-sm btn-primary"
-                                        data-kt-menu-dismiss="true">Apply</button>
-                                </div>
-                                <!--end::Actions-->
+                                <!--end::Options-->
                             </div>
-                            <!--end::Form-->
-                        </div>
-                        <!--end::Menu 1-->
-                    </div>
-                    <!--end::Filter menu-->
+                            <!--end::Input group-->
 
-
-                    <!--begin::Secondary button-->
-                    <!--end::Secondary button-->
-
-                    <!--begin::Primary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_create_app">
-                        Create </a>
-                    <!--end::Primary button-->
-                </div>
-                <!--end::Actions-->
-            </div>
-            <!--end::Toolbar container-->
-        </div>
-        <!--end::Toolbar-->
-
-        <!--begin::Content-->
-        <div id="kt_app_content" class="app-content  flex-column-fluid ">
-
-
-            <!--begin::Content container-->
-            <div id="kt_app_content_container" class="app-container  container-xxl ">
-                <!--begin::Form-->
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
-                    id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
-                    data-kt-redirect="{{ route('admin.products.index') }}">
-                    @csrf
-                    <!--begin::Aside column-->
-                    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
-                        <!--begin::Thumbnail settings-->
-                        <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card-header">
-                                <!--begin::Card title-->
-                                <div class="card-title">
-                                    <h2>Ảnh</h2>
-                                </div>
-                                <!--end::Card     title-->
-                            </div>
-                            <!--end::Card header-->
-
-                            <!--begin::Card body-->
-                            <div class="card-body text-center pt-0">
-                                <!--begin::Image input-->
-                                <!--begin::Image input placeholder-->
-                                <style>
-                                    .image-input-placeholder {
-                                        background-image: url('../../../assets/media/svg/files/blank-image.svg');
-                                    }
-
-                                    [data-bs-theme="dark"] .image-input-placeholder {
-                                        background-image: url('../../../assets/media/svg/files/blank-image-dark.svg');
-                                    }
-                                </style>
-                                <!--end::Image input placeholder-->
-
-                                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                                    data-kt-image-input="true">
-                                    <!--begin::Preview existing avatar-->
-                                    <div class="image-input-wrapper w-150px h-150px"></div>
-                                    <!--end::Preview existing avatar-->
-
-                                    <!--begin::Label-->
-                                    <label
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                        <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
-                                                class="path2"></span></i>
-                                        <!--begin::Inputs-->
-                                        <input type="file" name="images" accept=".png, .jpg, .jpeg"
-                                            class="form-control mb-2" />
-
-                                        <!--end::Inputs-->
-                                    </label>
-                                    @error('images')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                    <!--end::Label-->
-
-                                    <!--begin::Cancel-->
-                                    <span
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                        <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
-                                                class="path2"></span></i> </span>
-                                    <!--end::Cancel-->
-
-                                    <!--begin::Remove-->
-                                    <span
-                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                        data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                        <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
-                                                class="path2"></span></i> </span>
-                                    <!--end::Remove-->
-                                </div>
-                                <!--end::Image input-->
-
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">
-                                    **Chọn ảnh đại diện sản phẩm (chỉ hỗ trợ *.png, .jpg, .jpeg).</div>
-                                <!--end::Description-->
-                            </div>
-                            <!--end::Card body-->
-                        </div>
-                        <!--end::Thumbnail settings-->
-                        <!--begin::Status-->
-                        <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card-header">
-                                <!--begin::Card title-->
-                                <div class="card-title">
-                                    <h2>Trạng Thái</h2>
-                                </div>
-                                <!--end::Card title-->
-
-                                <!--begin::Card toolbar-->
-                                <div class="card-toolbar">
-                                    <div class="rounded-circle bg-success w-15px h-15px"
-                                        id="kt_ecommerce_add_product_status"></div>
-                                </div>
-                                <!--begin::Card toolbar-->
-                            </div>
-                            <!--end::Card header-->
-
-                            <!--begin::Card body-->
-                            <div class="card-body pt-0">
-                                <!--begin::Select2-->
-                                <select name="status" class="form-select mb-2" data-control="select2"
-                                    data-hide-search="true" data-placeholder="Chọn trạng thái"
-                                    id="kt_ecommerce_add_product_status_select">
-                                    <option></option>
-                                    <option value="1" {{ old('status', $product->status ?? '1') == '1' ? 'selected' : '' }}>
-                                        Hiện</option>
-                                    <option value="0" {{ old('status', $product->status ?? '1') == '0' ? 'selected' : '' }}>Ẩn
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                                <!--end::Select2-->
-
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">Set the product status.</div>
-                                <!--end::Description-->
-
-                                <!--begin::Datepicker-->
-                                <div class="d-none mt-10">
-                                    <label for="kt_ecommerce_add_product_status_datepicker" class="form-label">Select
-                                        publishing date and time</label>
-                                    <input class="form-control" id="kt_ecommerce_add_product_status_datepicker"
-                                        placeholder="Pick date & time" />
-                                </div>
-                                <!--end::Datepicker-->
-                            </div>
-                            <!--end::Card body-->
-                        </div>
-                        <!--end::Status-->
-
-                        <!--begin::Category & tags-->
-                        <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card-header">
-                                <!--begin::Card title-->
-                                <div class="card-title">
-                                    <h2>Danh Mục Sản Phẩm</h2>
-                                </div>
-                                <!--end::Card title-->
-                            </div>
-                            <!--end::Card header-->
-
-                            <!--begin::Card body-->
-                            <div class="card-body pt-0">
-                                <!--begin::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10">
                                 <!--begin::Label-->
-                                <label class="form-label">Danh Mục:</label>
+                                <label class="form-label fw-semibold">Notifications:</label>
                                 <!--end::Label-->
-                                <!--begin::Select2-->
-                                <select name="category_id" class="form-select mb-2" data-control="select2"
-                                    data-placeholder="Chọn danh mục" data-allow-clear="true">
-                                    <option></option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <div class="text-danger">{{ $message }}</div>
+
+                                <!--begin::Switch-->
+                                <div class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="checkbox" value="" name="notifications"
+                                        checked />
+                                    <label class="form-check-label">
+                                        Enabled
+                                    </label>
+                                </div>
+                                <!--end::Switch-->
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Actions-->
+                            <div class="d-flex justify-content-end">
+                                <button type="reset" class="btn btn-sm btn-light btn-active-light-primary me-2"
+                                    data-kt-menu-dismiss="true">Reset</button>
+
+                                <button type="submit" class="btn btn-sm btn-primary"
+                                    data-kt-menu-dismiss="true">Apply</button>
+                            </div>
+                            <!--end::Actions-->
+                        </div>
+                        <!--end::Form-->
+                    </div>
+                    <!--end::Menu 1-->
+                </div>
+                <!--end::Filter menu-->
+
+
+                <!--begin::Secondary button-->
+                <!--end::Secondary button-->
+
+                <!--begin::Primary button-->
+                <a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#kt_modal_create_app">
+                    Create </a>
+                <!--end::Primary button-->
+            </div>
+            <!--end::Actions-->
+        </div>
+        <!--end::Toolbar container-->
+    </div>
+    <!--end::Toolbar-->
+
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content  flex-column-fluid ">
+
+
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container  container-xxl ">
+            <!--begin::Form-->
+            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
+                id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
+                data-kt-redirect="{{ route('admin.products.index') }}">
+                @csrf
+                <!--begin::Aside column-->
+                <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+                    <!--begin::Thumbnail settings-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <!--begin::Card title-->
+                            <div class="card-title">
+                                <h2>Ảnh</h2>
+                            </div>
+                            <!--end::Card     title-->
+                        </div>
+                        <!--end::Card header-->
+
+                        <!--begin::Card body-->
+                        <div class="card-body text-center pt-0">
+                            <!--begin::Image input-->
+                            <!--begin::Image input placeholder-->
+                            <style>
+                                .image-input-placeholder {
+                                    background-image: url('../../../assets/media/svg/files/blank-image.svg');
+                                }
+
+                                [data-bs-theme="dark"] .image-input-placeholder {
+                                    background-image: url('../../../assets/media/svg/files/blank-image-dark.svg');
+                                }
+                            </style>
+                            <!--end::Image input placeholder-->
+
+                            <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
+                                data-kt-image-input="true">
+                                <!--begin::Preview existing avatar-->
+                                <div class="image-input-wrapper w-150px h-150px"></div>
+                                <!--end::Preview existing avatar-->
+
+                                <!--begin::Label-->
+                                <label
+                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                    <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
+                                            class="path2"></span></i>
+                                    <!--begin::Inputs-->
+                                    <input type="file" name="images" accept=".png, .jpg, .jpeg"
+                                        class="form-control mb-2" />
+
+                                    <!--end::Inputs-->
+                                </label>
+                                @error('images')
+                                <div class="text-danger">{{ $message }}</div>
                                 @enderror
-                                <!--end::Select2-->
+                                <!--end::Label-->
 
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7 mb-7">Add product to a category.</div>
-                                <!--end::Description-->
-                                <!--end::Input group-->
+                                <!--begin::Cancel-->
+                                <span
+                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                    <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
+                                            class="path2"></span></i> </span>
+                                <!--end::Cancel-->
 
-                                <!--begin::Button-->
-                                {{-- <a href="add-category.html" class="btn btn-light-primary btn-sm mb-10">
+                                <!--begin::Remove-->
+                                <span
+                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                    <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
+                                            class="path2"></span></i> </span>
+                                <!--end::Remove-->
+                            </div>
+                            <!--end::Image input-->
+
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">
+                                **Chọn ảnh đại diện sản phẩm (chỉ hỗ trợ *.png, .jpg, .jpeg).</div>
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Thumbnail settings-->
+                    <!--begin::Status-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <!--begin::Card title-->
+                            <div class="card-title">
+                                <h2>Trạng Thái</h2>
+                            </div>
+                            <!--end::Card title-->
+
+                            <!--begin::Card toolbar-->
+                            <div class="card-toolbar">
+                                <div class="rounded-circle bg-success w-15px h-15px"
+                                    id="kt_ecommerce_add_product_status"></div>
+                            </div>
+                            <!--begin::Card toolbar-->
+                        </div>
+                        <!--end::Card header-->
+
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Select2-->
+                            <select name="status" class="form-select mb-2" data-control="select2"
+                                data-hide-search="true" data-placeholder="Chọn trạng thái"
+                                id="kt_ecommerce_add_product_status_select">
+                                <option></option>
+                                <option value="1" {{ old('status', $product->status ?? '1') == '1' ? 'selected' : '' }}>
+                                    Hiện</option>
+                                <option value="0" {{ old('status', $product->status ?? '1') == '0' ? 'selected' : '' }}>Ẩn
+                                </option>
+                            </select>
+                            @error('status')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <!--end::Select2-->
+
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7">Set the product status.</div>
+                            <!--end::Description-->
+
+                            <!--begin::Datepicker-->
+                            <div class="d-none mt-10">
+                                <label for="kt_ecommerce_add_product_status_datepicker" class="form-label">Select
+                                    publishing date and time</label>
+                                <input class="form-control" id="kt_ecommerce_add_product_status_datepicker"
+                                    placeholder="Pick date & time" />
+                            </div>
+                            <!--end::Datepicker-->
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Status-->
+
+                    <!--begin::Category & tags-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <!--begin::Card title-->
+                            <div class="card-title">
+                                <h2>Danh Mục Sản Phẩm</h2>
+                            </div>
+                            <!--end::Card title-->
+                        </div>
+                        <!--end::Card header-->
+
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <!--begin::Label-->
+                            <label class="form-label">Danh Mục:</label>
+                            <!--end::Label-->
+                            <!--begin::Select2-->
+                            <select name="category_id" class="form-select mb-2" data-control="select2"
+                                data-placeholder="Chọn danh mục" data-allow-clear="true">
+                                <option></option>
+                                @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <!--end::Select2-->
+
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7 mb-7">Add product to a category.</div>
+                            <!--end::Description-->
+                            <!--end::Input group-->
+
+                            <!--begin::Button-->
+                            {{-- <a href="add-category.html" class="btn btn-light-primary btn-sm mb-10">
                                     <i class="ki-duotone ki-plus fs-2"></i> Create new category
                                 </a> --}}
-                                <!--end::Button-->
+                            <!--end::Button-->
 
-                                <!--begin::Input group-->
-                                <!--begin::Label-->
-                                {{-- <label class="form-label d-block">Tags</label>
+                            <!--begin::Input group-->
+                            <!--begin::Label-->
+                            {{-- <label class="form-label d-block">Tags</label>
                                 <!--end::Label-->
 
                                 <!--begin::Input-->
@@ -384,14 +384,14 @@
 
                                 <!--begin::Description-->
                                 <div class="text-muted fs-7">Add tags to a product.</div> --}}
-                                <!--end::Description-->
-                                <!--end::Input group-->
-                            </div>
-                            <!--end::Card body-->
+                            <!--end::Description-->
+                            <!--end::Input group-->
                         </div>
-                        <!--end::Category & tags-->
-                        <!--begin::Weekly sales-->
-                        {{-- <div class="card card-flush py-4">
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Category & tags-->
+                    <!--begin::Weekly sales-->
+                    {{-- <div class="card card-flush py-4">
                             <!--begin::Card header-->
                             <div class="card-header">
                                 <!--begin::Card title-->
@@ -447,14 +447,14 @@
                             </div>
                             <!--end::Card body-->
                         </div> --}}
-                        <!--end::Template settings-->
-                    </div>
-                    <!--end::Aside column-->
+                    <!--end::Template settings-->
+                </div>
+                <!--end::Aside column-->
 
-                    <!--begin::Main column-->
-                    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
-                        <!--begin:::Tabs-->
-                        {{-- <ul
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin:::Tabs-->
+                    {{-- <ul
                             class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
                             <!--begin:::Tab item-->
                             <li class="nav-item">
@@ -471,92 +471,95 @@
                             <!--end:::Tab item-->
 
                         </ul> --}}
-                        <!--end:::Tabs-->
-                        <!--begin::Tab content-->
-                        <div class="tab-content">
-                            <!--begin::Tab pane-->
-                            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
-                                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <!--end:::Tabs-->
+                    <!--begin::Tab content-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
 
-                                    <!--begin::General options-->
-                                    <div class="card card-flush py-4">
-                                        <!--begin::Card header-->
-                                        <div class="card-header">
-                                            <div class="card-title">
-                                                <h2>Tổng quan</h2>
-                                            </div>
+                                <!--begin::General options-->
+                                <div class="card card-flush py-4">
+                                    <!--begin::Card header-->
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Tổng quan</h2>
                                         </div>
-                                        <!--end::Card header-->
+                                    </div>
+                                    <!--end::Card header-->
 
-                                        <!--begin::Card body-->
-                                        <div class="card-body pt-0">
-                                            <!--begin::Input group-->
-                                            <div class="mb-10 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required form-label">Tên Sản phẩm</label>
-                                                <!--end::Label-->
+                                    <!--begin::Card body-->
+                                    <div class="card-body pt-0">
+                                        <!--begin::Input group-->
+                                        <div class="mb-10 fv-row">
+                                            <!--begin::Label-->
+                                            <label class="required form-label">Tên Sản phẩm</label>
+                                            <!--end::Label-->
 
-                                                <!--begin::Input-->
-                                                <input type="text" name="name" class="form-control mb-2"
-                                                    placeholder="Tên Sản Phẩm"
-                                                    value="{{ old('name', $product->name ?? '') }}" />
-                                                @error('name')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <!--end::Input-->
+                                            <!--begin::Input-->
+                                            <input type="text" name="name" class="form-control mb-2"
+                                                placeholder="Tên Sản Phẩm"
+                                                value="{{ old('name', $product->
+@error('name')
+<div class="text-danger mt-1">{{ $message }}</div>
+@enderrorname ?? '') }}" />
+                                            @error('name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                            <!--end::Input-->
 
-                                                <!--begin::Description-->
-                                                {{-- <div class="text-muted fs-7">A product name is required and recommended
+                                            <!--begin::Description-->
+                                            {{-- <div class="text-muted fs-7">A product name is required and recommended
                                                     to
                                                     be unique.</div> --}}
-                                                <!--end::Description-->
-                                            </div>
-                                            <!--end::Input group-->
+                                            <!--end::Description-->
+                                        </div>
+                                        <!--end::Input group-->
 
-                                            <!--begin::Input group-->
-                                            <div class="mb-10 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required form-label">Mã Sản Phẩm</label>
-                                                <!--end::Label-->
+                                        <!--begin::Input group-->
+                                        <div class="mb-10 fv-row">
+                                            <!--begin::Label-->
+                                            <label class="required form-label">Mã Sản Phẩm</label>
+                                            <!--end::Label-->
 
-                                                <!--begin::Input-->
-                                                <input type="text" name="code" class="form-control mb-2"
-                                                    placeholder="Mã Sản Phẩm"
-                                                    value="{{ old('code', $product->code ?? '') }}" />
-                                                @error('code')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <!--end::Input-->
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="min_purchase_quantity">Mua tối thiểu:</label>
-                                                        <input type="number" name="min_purchase_quantity"
-                                                            id="min_purchase_quantity" class="form-control"
-                                                            value="{{ old('min_purchase_quantity', $product->min_purchase_quantity ?? 1) }}"
-                                                            min="1">
-                                                    </div>
+                                            <!--begin::Input-->
+                                            <input type="text" name="code" class="form-control mb-2"
+                                                placeholder="Mã Sản Phẩm"
+                                                value="{{ old('code', $product->code ?? '') }}" />
+                                            @error('code')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                            <!--end::Input-->
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="min_purchase_quantity">Mua tối thiểu:</label>
+                                                    <input type="number" name="min_purchase_quantity"
+                                                        id="min_purchase_quantity" class="form-control"
+                                                        value="{{ old('min_purchase_quantity', $product->min_purchase_quantity ?? 1) }}"
+                                                        min="1">
                                                 </div>
-                                                @error('min_purchase_quantity')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="max_purchase_quantity">Mua tối đa:</label>
-                                                        <input type="number" name="max_purchase_quantity"
-                                                            id="max_purchase_quantity" class="form-control"
-                                                            value="{{ old('max_purchase_quantity', $product->max_purchase_quantity ?? 100) }}"
-                                                            min="1">
-                                                    </div>
-                                                </div>
-                                                @error('max_purchase_quantity')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-
                                             </div>
+                                            @error('min_purchase_quantity')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="max_purchase_quantity">Mua tối đa:</label>
+                                                    <input type="number" name="max_purchase_quantity"
+                                                        id="max_purchase_quantity" class="form-control"
+                                                        value="{{ old('max_purchase_quantity', $product->max_purchase_quantity ?? 100) }}"
+                                                        min="1">
+                                                </div>
+                                            </div>
+                                            @error('max_purchase_quantity')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
 
-                                            {{-- <div class="mb-10 fv-row">
+                                        </div>
+
+                                        {{-- <div class="mb-10 fv-row">
                                                 <!--begin::Label-->
                                                 <label class="required form-label">Số Lượng</label>
                                                 <!--end::Label-->
@@ -565,48 +568,59 @@
                                                 <input type="text" name="quantity" class="form-control mb-2"
                                                     placeholder="Số lượng"
                                                     value="{{ old('quantity', $product->quantity ?? '') }}" />
-                                                @error('quantity')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                        @error('quantity')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
 
-                                                <!--end::Input-->
-                                            </div> --}}
-                                            <!--end::Input group-->
-                                            <div class="mb-3">
-                                                <label for="short_desc" class="form-label">Mô tả ngắn</label>
-                                                <textarea name="short_desc" id="short_desc" class="form-control"
-                                                    rows="3">{{ old('short_desc', $product->short_desc ?? '') }}</textarea>
-                                                @error('short_desc')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-
-                                            <!--begin::Input group-->
-   <!-- Form input -->
-<div class="mb-10 fv-row">
-    <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
-    <textarea id="description" name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
-    @error('description') <div class="text-danger">{{ $message }}</div> @enderror
-</div>
-
-<!-- Nhúng CKEditor -->
-<script src="https://cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
-<script>
-    // Kích hoạt CKEditor cho textarea có id là 'description'
-    CKEDITOR.replace('description', {
-        height: 100,
-        toolbarCanCollapse: true
-    });
-</script>
-
-
-                                            <!--end::Input group-->
-                                        </div>
-                                        <!--end::Card header-->
+                                        <!--end::Input-->
+                                    </div> --}}
+                                    <!--end::Input group-->
+                                    <div class="mb-3">
+                                        <label for="short_desc" class="form-label">Mô tả ngắn</label>
+                                        <textarea name="short_desc" id="short_desc" class="form-control"
+                                            rows="3">{{ old('short_desc', $product->short_desc ?? '') }}</textarea>
+                                        @error('short_desc')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <!--end::General options-->
-                                    <!--begin::Media-->
-                                    {{-- <div class="card card-flush py-4">
+
+                                    <!--begin::Input group-->
+                                    <!-- Form input -->
+                                    <div class="mb-10 fv-row">
+                                        <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
+                                        <textarea id="description" name="description" class="form-control" rows="5">{{ old("description") }}</textarea>
+@error("description")
+<div class="text-danger mt-1">{{ $message }}</div>
+@enderror
+                                        @error('description') <div class="text-danger">{{ $message }}</div> @enderror
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <label>Ảnh phụ</label>
+                                        <input type="file" class="form-control" id="image-input" multiple>
+                                        <div id="image-preview-container" class="mt-2 d-flex flex-wrap gap-3"></div>
+                                    </div>
+
+
+
+                                    <!-- Nhúng CKEditor -->
+                                    <script src="https://cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
+                                    <script>
+                                        // Kích hoạt CKEditor cho textarea có id là 'description'
+                                        CKEDITOR.replace('description', {
+                                            height: 100,
+                                            toolbarCanCollapse: true
+                                        });
+                                    </script>
+
+
+                                    <!--end::Input group-->
+                                </div>
+                                <!--end::Card header-->
+                            </div>
+                            <!--end::General options-->
+                            <!--begin::Media-->
+                            {{-- <div class="card card-flush py-4">
                                         <!--begin::Card header-->
                                         <div class="card-header">
                                             <div class="card-title">
@@ -647,42 +661,61 @@
                                         </div>
                                         <!--end::Card header-->
                                     </div> --}}
-                                    <!--end::Media-->
+                            <!--end::Media-->
 
-                                    <!--begin::Pricing-->
-                                    <div class="card card-flush py-4">
-                                        <!--begin::Card header-->
+                            <!--begin::Pricing-->
+                            <div class="card card-flush py-4">
+                                <!--begin::Card header-->
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <h2>Giá Bán</h2>
+                                    </div>
+                                </div>
+                                <!--end::Card header-->
+
+                                <!--begin::Card body-->
+                                <div class="card-body pt-0">
+                                    <!--begin::Input group-->
+                                    <div class="mb-10 fv-row">
+                                        <!--begin::Label-->
+                                        <label class="required form-label">Giá</label>
+                                        <!--end::Label-->
+
+                                        <!--begin::Input-->
+                                        <input type="text" name="price" class="form-control mb-2"
+                                            placeholder="Giá sản phẩm"
+                                            value="{{ old('price', $product->price ?? '') }}" />
+                                        @error('price')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                        <!--end::Input-->
+
+                                        <!--begin::Description-->
+                                        <div class="text-muted fs-7">Set the product price.</div>
+                                        <!--end::Description-->
+                                    </div>
+
+                                    <!--begin::Product Variants-->
+                                    {{-- Biến thể thêm tay dạng card --}}
+                                    <div class="card mb-4">
                                         <div class="card-header">
-                                            <div class="card-title">
-                                                <h2>Giá Bán</h2>
-                                            </div>
+                                            <h3 class="card-title">Biến thể sản phẩm (từng dòng)</h3>
                                         </div>
-                                        <!--end::Card header-->
+                                        <div class="card-body">
+                                            <div id="manual-variant-list"></div>
+                                            <button type="button" class="btn btn-sm btn-primary mt-3" onclick="addVariantCard()">+ Thêm biến thể</button>
+                                        </div>
+                                    </div>
 
-                                        <!--begin::Card body-->
-                                        <div class="card-body pt-0">
-                                            <!--begin::Input group-->
-                                            <div class="mb-10 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required form-label">Giá</label>
-                                                <!--end::Label-->
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-success">Lưu sản phẩm</button>
+                                    </div>
+                                    <!--end::Product Variants-->
 
-                                                <!--begin::Input-->
-                                                <input type="text" name="price" class="form-control mb-2"
-                                                    placeholder="Giá sản phẩm"
-                                                    value="{{ old('price', $product->price ?? '') }}" />
-                                                @error('price')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <!--end::Input-->
 
-                                                <!--begin::Description-->
-                                                <div class="text-muted fs-7">Set the product price.</div>
-                                                <!--end::Description-->
-                                            </div>
-                                            <!--end::Input group-->
+                                    <!--end::Input group-->
 
-                                            {{-- <!--begin::Input group-->
+                                    {{-- <!--begin::Input group-->
                                             <div class="fv-row mb-10">
                                                 <!--begin::Label-->
                                                 <label class="fs-6 fw-semibold mb-2">
@@ -863,16 +896,16 @@
                                                 <!--end::Input group-->
                                             </div>
                                             <!--end:Tax--> --}}
-                                        </div>
-                                        <!--end::Card header-->
-                                    </div>
-                                    <!--end::Pricing-->
                                 </div>
+                                <!--end::Card header-->
                             </div>
-                            <!--end::Tab pane-->
+                            <!--end::Pricing-->
+                        </div>
+                    </div>
+                    <!--end::Tab pane-->
 
-                            <!--begin::Tab pane-->
-                            {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+                    <!--begin::Tab pane-->
+                    {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
                                 <div class="d-flex flex-column gap-7 gap-lg-10">
 
                                     <!--begin::Inventory-->
@@ -1194,39 +1227,193 @@
                                     <!--end::Meta options-->
                                 </div>
                             </div> --}}
-                            <!--end::Tab pane-->
+                    <!--end::Tab pane-->
 
-                        </div>
-                        <!--end::Tab content-->
+                </div>
+                <!--end::Tab content-->
 
-                        <div class="d-flex justify-content-end">
-                            <!--begin::Button-->
-                            <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
-                                Cancel
-                            </a>
-                            <!--end::Button-->
+                <div class="d-flex justify-content-end">
+                    <!--begin::Button-->
+                    <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
+                        Cancel
+                    </a>
+                    <!--end::Button-->
 
-                            <!--begin::Button-->
-                            <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
-                                <span class="indicator-label">
-                                    Save Changes
-                                </span>
-                                <span class="indicator-progress">
-                                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                </span>
-                            </button>
-                            <!--end::Button-->
-                        </div>
-                    </div>
-                    <!--end::Main column-->
-                </form>
-                <!--end::Form-->
-            </div>
-            <!--end::Content container-->
+                    <!--begin::Button-->
+                    <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+                        <span class="indicator-label">
+                            Save Changes
+                        </span>
+                        <span class="indicator-progress">
+                            Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
+                    <!--end::Button-->
+                </div>
         </div>
-        <!--end::Content-->
-
+        <!--end::Main column-->
+        </form>
+        <!--end::Form-->
     </div>
+    <!--end::Content container-->
+</div>
+<!--end::Content-->
 
-    <!--end::Content wrapper-->
+</div>
+@push('scripts')
+<script>
+    const attributes = @json($variantAttributes);
+    let variantIndex = 0;
+
+    function slugify(str) {
+        return str.toString().toLowerCase()
+            .replace(/\s+/g, '-')          
+            .replace(/[^\w\-]+/g, '')     
+            .replace(/\-\-+/g, '-')       
+            .replace(/^-+/, '')            
+            .replace(/-+$/, '');           
+    }
+
+    function generateSKU(productName, selectedValues) {
+        const slug = slugify(productName).toUpperCase();
+        const valueStr = selectedValues.map(val => val.toUpperCase()).join('-');
+        return slug + '-' + valueStr;
+    }
+
+    function addVariantCard() {
+        const container = document.getElementById('manual-variant-list');
+        const div = document.createElement('div');
+        div.className = 'border rounded p-3 mb-3 bg-light';
+        div.id = `variant_card_${variantIndex}`;
+
+        let html = '<div class="row g-3 align-items-end">';
+        attributes.forEach(attr => {
+            html += `
+                <div class="col-md-3">
+                    <label class="form-label">${attr.name}</label>
+                    <select name="manual_variants[${variantIndex}][attributes][${attr.id}]" class="form-select attribute-select" data-index="${variantIndex}">
+                        <option value="">-- Chọn ${attr.name} --</option>`;
+            attr.values.forEach(val => {
+                html += `<option value="${val.id}">${val.value}</option>`;
+            });
+            html += '</select></div>';
+        });
+
+        html += `
+            <div class="col-md-2">
+                <label class="form-label">SKU</label>
+                <input type="text" name="manual_variants[${variantIndex}][sku]" class="form-control sku-input" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Giá</label>
+                <input type="number" name="manual_variants[${variantIndex}][price]" class="form-control" min="0" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Tồn kho</label>
+                <input type="number" name="manual_variants[${variantIndex}][quantity]" class="form-control" min="0" required>
+            </div>
+
+            <div class="col-md-1 text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger" title="Xoá biến thể" onclick="removeVariantCard(${variantIndex})">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>`;
+
+        div.innerHTML = html;
+        container.appendChild(div);
+
+        attachSKUListener(variantIndex);
+        variantIndex++;
+    }
+
+    function removeVariantCard(index) {
+        const card = document.getElementById('variant_card_' + index);
+        if (card) card.remove();
+    }
+
+    function attachSKUListener(index) {
+        const card = document.getElementById('variant_card_' + index);
+        const selects = card.querySelectorAll('.attribute-select');
+
+        selects.forEach(select => {
+            select.addEventListener('change', () => {
+                const values = [];
+                selects.forEach(s => {
+                    const txt = s.options[s.selectedIndex]?.text;
+                    if (txt && !txt.startsWith('--')) values.push(txt.trim());
+                });
+
+                const productName = document.querySelector('input[name=name]').value || 'SP';
+                const sku = generateSKU(productName, values);
+
+                const skuInput = card.querySelector('.sku-input');
+                if (skuInput) skuInput.value = sku;
+            });
+        });
+    }
+
+    let imageFiles = []; // Mảng chứa các File ảnh đã chọn
+    let previewId = 0; // ID để định danh ảnh trong DOM
+
+    document.getElementById('image-input').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+
+        files.forEach(file => {
+            const localId = previewId++;
+            imageFiles.push({
+                id: localId,
+                file
+            });
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgWrapper = document.createElement('div');
+                imgWrapper.className = 'position-relative';
+                imgWrapper.style.width = '100px';
+
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.className = 'rounded border';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.width = '100%';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = function() {
+                    imageFiles = imageFiles.filter(img => img.id !== localId);
+                    imgWrapper.remove();
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(removeBtn);
+                document.getElementById('image-preview-container').appendChild(imgWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Reset input để chọn cùng 1 ảnh lại không bị chặn
+        e.target.value = '';
+    });
+
+    // Trước khi gửi, thêm ảnh vào FormData
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const formData = new FormData(this);
+        imageFiles.forEach(({
+            file
+        }) => formData.append('images[]', file));
+
+        // Nếu dùng JavaScript gửi AJAX thì:
+        // fetch(this.action, { method: 'POST', body: formData })
+
+        // Nếu dùng submit bình thường thì:
+        // this.submit() sẽ gửi input file cũ, cần thêm ảnh vào controller (nâng cao)
+    });
+</script>
+@endpush
+
+<!--end::Content wrapper-->
 @endsection

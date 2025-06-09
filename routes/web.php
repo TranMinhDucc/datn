@@ -19,10 +19,11 @@ use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\admin\VariantAttributeController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
 
 // ---------------------------
 // ⚙️ PUBLIC ROUTES (ai cũng xem được)
@@ -106,6 +107,12 @@ Route::prefix('admin')->group(function () {
     Route::resource('products', ProductController::class)->names('admin.products');
     Route::resource('users', UserController::class)->names('admin.users');
     // Route::resource('roles', RoleController::class)->names('admin.roles');
+
+
+
+    // Variant Attributes
+    Route::resource('product_variants', ProductVariantController::class)->names('admin.product_variants');
+    Route::resource('variant_attributes', VariantAttributeController::class)->names('admin.variant_attributes');
 
     // Topup & Campaigns
     // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
