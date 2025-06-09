@@ -140,5 +140,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // System Settings
     Route::resource('brands', BrandController::class);
     // Tag
-    Route::resource('tags', TagController::class)->names('admin.tags');
+    Route::resource('tags', TagController::class);
 });
