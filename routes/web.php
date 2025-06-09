@@ -30,7 +30,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('client.home');
-    Route::get('/login', 'login')->name('client.login');
+    Route::get('/login', 'login')->name('login');
     Route::get('/register', 'register')->name('client.register');
     Route::get('/policy', 'policy')->name('client.policy');
     Route::get('/contact', 'contact')->name('client.contact');
@@ -125,7 +125,8 @@ Route::prefix('admin')->group(function () {
 
     // product crud
     Route::resource('products', ProductController::class)->names('admin.products');
-
+    // Tag
+    Route::resource('tags', \App\Http\Controllers\Admin\TagController::class)->names('admin.tags');
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
     // Topup & Campaigns
