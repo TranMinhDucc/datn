@@ -19,42 +19,13 @@
 <div  class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
     <!--begin::Title-->
     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-        Add Category
+        Thêm danh mục sản phẩm
             </h1>
     <!--end::Title-->
 
             
         <!--begin::Breadcrumb-->
-        <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                            <!--begin::Item-->
-                                    <li class="breadcrumb-item text-muted">
-                                                    <a href="../../../index.html" class="text-muted text-hover-primary">
-                                Home                            </a>
-                                            </li>
-                                <!--end::Item-->
-                                    <!--begin::Item-->
-                    <li class="breadcrumb-item">
-                        <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                    </li>
-                    <!--end::Item-->
-                                        
-                            <!--begin::Item-->
-                                    <li class="breadcrumb-item text-muted">
-                                                    eCommerce                                            </li>
-                                <!--end::Item-->
-                                    <!--begin::Item-->
-                    <li class="breadcrumb-item">
-                        <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                    </li>
-                    <!--end::Item-->
-                                        
-                            <!--begin::Item-->
-                                    <li class="breadcrumb-item text-muted">
-                                                    Catalog                                            </li>
-                                <!--end::Item-->
-                                        
-                    </ul>
-        <!--end::Breadcrumb-->
+       
     </div>
 <!--end::Page title-->
 <!--begin::Actions-->
@@ -62,10 +33,7 @@
             <!--begin::Filter menu-->
         <div class="m-0">
             <!--begin::Menu toggle-->
-            <a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                <i class="ki-duotone ki-filter fs-6 text-muted me-1"><span class="path1"></span><span class="path2"></span></i>               
-                Filter
-            </a>
+            
             <!--end::Menu toggle-->
             
             
@@ -86,23 +54,19 @@
     <!--begin::Form-->
     <div class="px-7 py-5">
         <!--begin::Input group-->
-        <div class="mb-10">
-            <!--begin::Label-->
-            <label class="form-label fw-semibold">Status:</label>
-            <!--end::Label-->
+     <div class="mb-10">
+    <!--begin::Label-->
+    <label class="form-label fw-semibold">Trạng thái:</label>
+    <!--end::Label-->
 
-            <!--begin::Input-->
-            <div>
-                <select class="form-select form-select-solid" multiple data-kt-select2="true" data-close-on-select="false" data-placeholder="Select option" data-dropdown-parent="#kt_menu_683db6ea12dcf" data-allow-clear="true">
-                    <option></option>
-                    <option value="1">Approved</option>
-                    <option value="2">Pending</option>
-                    <option value="2">In Process</option>
-                    <option value="2">Rejected</option>
-                </select>
-            </div>
-            <!--end::Input-->
-        </div>
+    <!--begin::Input-->
+    <select name="status" class="form-select form-select-solid" data-placeholder="Chọn trạng thái">
+        <option value="1" {{ isset($category) && $category->status == 1 ? 'selected' : '' }}>Hiện</option>
+        <option value="0" {{ isset($category) && $category->status == 0 ? 'selected' : '' }}>Ẩn</option>
+    </select>
+    <!--end::Input-->
+</div>
+
         <!--end::Input group-->
 
         <!--begin::Input group-->
@@ -170,8 +134,7 @@
         <!--end::Secondary button-->
     
     <!--begin::Primary button-->
-            <a href="#" class="btn btn-sm fw-bold btn-primary"  data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">
-            Create        </a>
+          
         <!--end::Primary button-->
 </div>
 <!--end::Actions-->
@@ -179,30 +142,46 @@
         <!--end::Toolbar container-->
     </div>
 <!--end::Toolbar-->                                        
-                    
+       @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif       
+@if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif      
 <!--begin::Content-->
 <div id="kt_app_content" class="app-content  flex-column-fluid " >
     
            
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
-            <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="categories.html">
+            
+           <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
     <!--begin::Aside column-->
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
         <!--begin::Thumbnail settings-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4"> --}}
     <!--begin::Card header-->
-    <div class="card-header">
+    {{-- <div class="card-header">
         <!--begin::Card title-->
         <div class="card-title">
             <h2>Thumbnail</h2>
         </div>
         <!--end::Card title-->
-    </div>
+    </div> --}}
     <!--end::Card header-->
 
     <!--begin::Card body-->
-    <div class="card-body text-center pt-0">
+    {{-- <div class="card-body text-center pt-0">
         <!--begin::Image input-->
                     <!--begin::Image input placeholder-->
             <style>
@@ -225,11 +204,11 @@
             <!--begin::Label-->
             <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
                 <!--begin::Icon-->
-                <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span class="path2"></span></i>                <!--end::Icon-->
+              <i class="fa-solid fa-image"><span class="path1"></span><span class="path2"></span></i>                <!--end::Icon-->
 
                 <!--begin::Inputs-->
-                <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                <input type="hidden" name="avatar_remove" />
+                <input type="file" name="icon" accept=".png, .jpg, .jpeg" />
+                <input type="hidden" name="icon" />
                 <!--end::Inputs-->
             </label>
             <!--end::Label-->
@@ -249,55 +228,48 @@
         <!--begin::Description-->
         <div class="text-muted fs-7">Set the category thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
         <!--end::Description-->
-    </div>
+    </div> --}}
     <!--end::Card body-->
-</div>
+{{-- </div> --}}
 <!--end::Thumbnail settings-->
         <!--begin::Status-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
         <div class="card-title">
-            <h2>Status</h2>
+            <h2>Trạng thái</h2>
         </div>
         <!--end::Card title-->
 
         <!--begin::Card toolbar-->
         <div class="card-toolbar">
-            <div class="rounded-circle bg-success w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
+            <div class="rounded-circle {{ old('status', $category->status ?? 1) == 1 ? 'bg-success' : 'bg-danger' }} w-15px h-15px" id="kt_ecommerce_add_category_status"></div>
         </div>
-        <!--begin::Card toolbar-->
-    </div>
+        <!--end::Card toolbar-->
+    </div> --}}
     <!--end::Card header-->
 
     <!--begin::Card body-->
-    <div class="card-body pt-0">
-        <!--begin::Select2-->
-        <select class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Select an option" id="kt_ecommerce_add_category_status_select">
+    {{-- <div class="card-body pt-0">
+        <!--begin::Select-->
+        <select name="status" class="form-select mb-2" data-control="select2" data-hide-search="true" data-placeholder="Chọn trạng thái" id="kt_ecommerce_add_category_status_select">
             <option></option>
-            <option value="published" selected>Published</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="unpublished">Unpublished</option>
+            <option value="1" {{ old('status', $category->status ?? 1) == 1 ? 'selected' : '' }}>Hiện</option>
+            <option value="0" {{ old('status', $category->status ?? 1) == 0 ? 'selected' : '' }}>Ẩn</option>
         </select>
-        <!--end::Select2-->
+        <!--end::Select-->
 
         <!--begin::Description-->
-        <div class="text-muted fs-7">Set the category status.</div>
+        <div class="text-muted fs-7">Chọn trạng thái hiển thị danh mục.</div>
         <!--end::Description-->
-
-        <!--begin::Datepicker-->
-        <div class="d-none mt-10">
-            <label for="kt_ecommerce_add_category_status_datepicker" class="form-label">Select publishing date and time</label>
-            <input class="form-control" id="kt_ecommerce_add_category_status_datepicker" placeholder="Pick date & time" />
-        </div>
-        <!--end::Datepicker-->
-    </div>
+    </div> --}}
     <!--end::Card body-->
 </div>
+
 <!--end::Status-->
         <!--begin::Template settings-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
@@ -329,7 +301,7 @@
         <!--end::Description-->
     </div>
     <!--end::Card body-->
-</div>
+</div> --}}
 <!--end::Template settings-->    </div>
     <!--end::Aside column-->
 
@@ -339,280 +311,77 @@
 <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
-        <div class="card-title">
-            <h2>General</h2>
-        </div>
+       
     </div>
     <!--end::Card header-->
 
     <!--begin::Card body-->
     <div class="card-body pt-0">
         <!--begin::Input group-->
+   
         <div class="mb-10 fv-row">
             <!--begin::Label-->
-            <label class="required form-label">Category Name</label>
+            <label class="required form-label">Tên danh mục </label>
             <!--end::Label-->
 
             <!--begin::Input-->
-                        <input type="text" name="category_name" class="form-control mb-2" placeholder="Product name" value="" />
+                        <input type="text" name="name" class="form-control mb-2" placeholder=" Nhập tên danh mục " value="{{ old('name') }}" />
+                        @error('name')
+        <div class="text-danger">{{ $message }}</div>
+    @enderror
             <!--end::Input-->
 
             <!--begin::Description-->
-            <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
+           
             <!--end::Description-->
         </div>
-        <!--end::Input group-->
 
-        <!--begin::Input group-->
-        <div>
-            <!--begin::Label-->
-            <label class="form-label">Description</label>
-            <!--end::Label-->
-
-            <!--begin::Editor-->
-            <div id="kt_ecommerce_add_category_description" name="kt_ecommerce_add_category_description" class="min-h-200px mb-2"></div>
-            <!--end::Editor-->
-
-            <!--begin::Description-->
-            <div class="text-muted fs-7">Set a description to the category for better visibility.</div>
-            <!--end::Description-->
-        </div>
-        <!--end::Input group-->
-    </div>
-    <!--end::Card header-->
+<div class="mb-10 fv-row">
+    <label class="required form-label">Danh mục cha</label>
+    <select name="parent_id" class="form-control mb-2">
+        <option value="">-- Chọn danh mục cha --</option>
+        @foreach ($parents as $category )
+            <option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+   
 </div>
-<!--end::General options-->
-        <!--begin::Meta options-->
-<div class="card card-flush py-4">
-    <!--begin::Card header-->
-    <div class="card-header">
-        <div class="card-title">
-            <h2>Meta Options</h2>
-        </div>
+
+        <!--end::Input group-->
+  
+        <!--begin::Input group-->
+    <div class="mb-10 fv-row">
+        <label class="form-label">Nội dung </label>
+        <textarea name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
+        @error('description') <div class="text-danger">{{ $message }}</div> @enderror
     </div>
-    <!--end::Card header-->
-
-    <!--begin::Card body-->
-    <div class="card-body pt-0">
-        <!--begin::Input group-->
-        <div class="mb-10">
-            <!--begin::Label-->
-            <label class="form-label">Meta Tag Title</label>
-            <!--end::Label-->
-
-            <!--begin::Input-->
-            <input type="text" class="form-control mb-2" name="meta_title" placeholder="Meta tag name" />
-            <!--end::Input-->
-
-            <!--begin::Description-->
-            <div class="text-muted fs-7">Set a meta tag title. Recommended to be simple and precise keywords.</div>
-            <!--end::Description-->
-        </div>
-        <!--end::Input group-->
-
-        <!--begin::Input group-->
-        <div class="mb-10">
-            <!--begin::Label-->
-            <label class="form-label">Meta Tag Description</label>
-            <!--end::Label-->
-
-            <!--begin::Editor-->
-            <div id="kt_ecommerce_add_category_meta_description" name="kt_ecommerce_add_category_meta_description" class="min-h-100px mb-2"></div>
-            <!--end::Editor-->
-
-            <!--begin::Description-->
-            <div class="text-muted fs-7">Set a meta tag description to the category for increased SEO ranking.</div>
-            <!--end::Description-->
-        </div>
-        <!--end::Input group-->
-
-        <!--begin::Input group-->
-        <div>
-            <!--begin::Label-->
-            <label class="form-label">Meta Tag Keywords</label>
-            <!--end::Label-->
-
-            <!--begin::Editor-->
-            <input id="kt_ecommerce_add_category_meta_keywords" name="kt_ecommerce_add_category_meta_keywords" class="form-control mb-2" />
-            <!--end::Editor-->
-
-            <!--begin::Description-->
-            <div class="text-muted fs-7">Set a list of keywords that the category is related to. Separate the keywords by adding a comma <code>,</code> between each keyword.</div>
-            <!--end::Description-->
-        </div>
-        <!--end::Input group-->
-    </div>
-    <!--end::Card header-->
-</div>
-<!--end::Meta options-->
         
-<!--begin::Automation-->
-<div class="card card-flush py-4">
-    <!--begin::Card header-->
-    <div class="card-header">
-        <div class="card-title">
-            <h2>Automation</h2>
-        </div>
-    </div>
-    <!--end::Card header-->
+       <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('description');
+</script>
 
-    <!--begin::Card body-->
-    <div class="card-body pt-0">
-        <!--begin::Input group-->
-        <div>
-            <!--begin::Label-->
-            <label class="form-label mb-5">Product assignment method</label>
-            <!--end::Label-->
-
-            <!--begin::Methods-->
-                            <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="method" type="radio" value="0" id="kt_ecommerce_add_category_automation_0" checked='checked' />
-                        <!--end::Input-->
-
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_ecommerce_add_category_automation_0">
-                            <div class="fw-bold text-gray-800">Manual</div>
-                            <div class="text-gray-600">Add products to this category one by one by manually selecting this category during product creation or update.</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-
-                <div class='separator separator-dashed my-5'></div>                            <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="method" type="radio" value="1" id="kt_ecommerce_add_category_automation_1"  />
-                        <!--end::Input-->
-
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_ecommerce_add_category_automation_1">
-                            <div class="fw-bold text-gray-800">Automatic</div>
-                            <div class="text-gray-600">Products matched with the following conditions will be automatically assigned to this category.</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-
-                                        <!--end::Methods-->
-        </div>
-        <!--end::Input group-->
-
-        <!--begin::Input group-->
-        <div class="d-none mt-10" data-kt-ecommerce-catalog-add-category="auto-options">
-            <!--begin::Label-->
-            <label class="form-label">Conditions</label>
-            <!--end::Label-->
-
-            <!--begin::Conditions-->
-            <div class="d-flex flex-wrap align-items-center text-gray-600 gap-5 mb-7">
-                <span>Products must match:</span>
-
-                <!--begin::Radio-->
-                <div class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" type="radio" name="conditions" value="" id="all_conditions" checked="checked" />
-                    <label class="form-check-label" for="all_conditions">
-                        All conditions
-                    </label>
-                </div>
-                <!--end::Radio-->
-
-                <!--begin::Radio-->
-                <div class="form-check form-check-custom form-check-solid">
-                    <input class="form-check-input" type="radio" name="conditions" value="" id="any_conditions" />
-                    <label class="form-check-label" for="any_conditions">
-                        Any conditions
-                    </label>
-                </div>
-                <!--end::Radio-->
-            </div>
-            <!--end::Conditions-->
-
-            <!--begin::Repeater-->
-            <div id="kt_ecommerce_add_category_conditions">
-                <!--begin::Form group-->
-                <div class="form-group">
-                    <div data-repeater-list="kt_ecommerce_add_category_conditions" class="d-flex flex-column gap-3">
-                        <div data-repeater-item class="form-group d-flex flex-wrap align-items-center gap-5">
-                            <!--begin::Select2-->
-                            <div class="w-100 w-md-200px">
-                                <select class="form-select" name="condition_type" data-placeholder="Select an option" data-kt-ecommerce-catalog-add-category="condition_type">
-                                    <option></option>
-                                    <option value="title">Product Title</option>
-                                    <option value="tag" selected>Product Tag</option>
-                                    <option value="price">Prodict Price</option>
-                                </select>
-                            </div>
-                            <!--end::Select2-->
-
-                            <!--begin::Select2-->
-                            <div class="w-100 w-md-200px">
-                                <select class="form-select" name="condition_equals" data-placeholder="Select an option" data-kt-ecommerce-catalog-add-category="condition_equals">
-                                    <option></option>
-                                    <option value="equal" selected>is equal to</option>
-                                    <option value="notequal">is not equal to</option>
-                                    <option value="greater">is greater than</option>
-                                    <option value="less">is less than</option>
-                                    <option value="starts">starts with</option>
-                                    <option value="ends">ends with</option>
-                                </select>
-                            </div>
-                            <!--end::Select2-->
-
-                            <!--begin::Input-->
-                            <input type="text" class="form-control mw-100 w-200px" name="condition_label" placeholder="" />
-                            <!--end::Input-->
-
-                            <!--begin::Button-->
-                            <button type="button" data-repeater-delete class="btn btn-sm btn-icon btn-light-danger">
-                                <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span class="path2"></span></i>                            </button>
-                            <!--end::Button-->
-                        </div>
-                    </div>
-                </div>
-                <!--end::Form group-->
-
-                <!--begin::Form group-->
-                <div class="form-group mt-5">
-                    <!--begin::Button-->
-                    <button type="button" data-repeater-create class="btn btn-sm btn-light-primary">
-                        <i class="ki-duotone ki-plus fs-2"></i> Add another condition
-                    </button>
-                    <!--end::Button-->
-                </div>
-                <!--end::Form group-->
-            </div>
-            <!--end::Repeater-->
-        </div>
         <!--end::Input group-->
     </div>
     <!--end::Card header-->
 </div>
+
 <!--end::Automation-->
         <div class="d-flex justify-content-end">
              <!--begin::Button-->
-             <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
-                Cancel
-            </a>
+             
             <!--end::Button-->
 
             <!--begin::Button-->
             <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
                 <span class="indicator-label">
-                    Save Changes
+                 Thêm mới
                 </span>
-                <span class="indicator-progress">
+                {{-- <span class="indicator-progress">
                     Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                </span>
+                </span> --}}
             </button>
             <!--end::Button-->
         </div>
@@ -624,5 +393,6 @@
 <!--end::Content-->	
 
                                     </div>
+                                   
                 <!--end::Content wrapper-->
 @endsection
