@@ -43,5 +43,14 @@ return [
         'email' => 'Email',
         'password' => 'Mật khẩu',
         'username' => 'Tên đăng nhập',
+
+        // ✅ Cho đánh giá (review)
+        'user_id' => 'người dùng',
+        'product_id' => 'sản phẩm',
+        'rating' => 'đánh giá',
+        'comment' => 'bình luận',
+        'verified_purchase' => 'xác minh mua hàng',
+        'created_at' => 'thời gian đánh giá',
     ],
 ];
+

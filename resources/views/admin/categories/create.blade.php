@@ -319,7 +319,7 @@
             <!--end::Label-->
 
             <!--begin::Input-->
-                        <input type="text" name="name" class="form-control mb-2" placeholder=" Nhập tên danh mục " value="" />
+                        <input type="text" name="name" class="form-control mb-2" placeholder=" Nhập tên danh mục " value="{{ old('name') }}" />
                         @error('name')
         <div class="text-danger">{{ $message }}</div>
     @enderror
@@ -332,22 +332,23 @@
         <!--end::Input group-->
   
         <!--begin::Input group-->
-   <div class="mb-10 fv-row">
-       
-            <label class="required form-label">Nội dung  </label>
-           
-                        <input type="text" name="description" class="form-control mb-2" placeholder="Nhập nội dung" value="" />
-           
-        </div>
+    <div class="mb-10 fv-row">
+        <label class="form-label">Nội dung chi tiết (HTML hoặc văn bản dài)</label>
+        <textarea name="content" class="form-control" rows="5">{{ old('content') }}</textarea>
+        @error('content') <div class="text-danger">{{ $message }}</div> @enderror
+    </div>
         
         <div class="mb-10 fv-row">
     <label class="form-label">Đường dẫn (tự sinh nếu bỏ trống)</label>
     <input type="text" name="slug" class="form-control mb-2" placeholder="Tự động tạo từ tên nếu để trống" value="{{ old('slug') }}" />
-    @error('slug')
+    {{-- @error('slug')
         <div class="text-danger">{{ $message }}</div>
-    @enderror
+    @enderror --}}
 </div>
-          
+          <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('content');
+</script>
 
         <!--end::Input group-->
     </div>

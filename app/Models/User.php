@@ -63,4 +63,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'create_date' => 'datetime',
         'update_date' => 'datetime',
     ];
+      public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // ✅ Quan hệ: người dùng có nhiều đánh giá
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

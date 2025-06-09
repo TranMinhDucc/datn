@@ -3,64 +3,78 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Review;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Review; 
+
 class ReviewController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-   public function index()
+    public function index()
     {
-        $reviews = Review::all();
+        $reviews = Review::with(['user', 'product'])->latest('created_at')->paginate(10);
         return view('admin.reviews.index', compact('reviews'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $products = Product::all();
+        $users = User::all();
+        return view('admin.reviews.create', compact('products', 'users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+  public function store(Request $request)
+{
+    $request->validate([
+    'user_id' => 'required|exists:users,id',
+    'product_id' => 'required|exists:products,id',
+    'rating' => 'required|integer|min:1|max:5',
+    'comment' => 'nullable|string|max:1000',
+    'verified_purchase' => 'required|boolean',
+]);
+
+    $data = $request->only('user_id', 'product_id', 'rating', 'comment', 'verified_purchase');
+    $data['created_at'] = now();
+
+    Review::create($data);
+
+    return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được thêm.');
+}
+
+
+    public function show(Review $review)
     {
-        //
+        return view('admin.reviews.show', compact('review'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Review $review)
     {
-        //
+        $products = Product::all();
+        $users = User::all();
+        return view('admin.reviews.edit', compact('review', 'products', 'users'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Review $review)
     {
-        //
+       $request->validate([
+    'user_id' => 'required|exists:users,id',
+    'product_id' => 'required|exists:products,id',
+    'rating' => 'required|integer|min:1|max:5',
+    'comment' => 'required|string|min:10|max:500',
+    'verified_purchase' => 'required|boolean',
+]);
+
+
+        $review->update([
+            ...$request->only('user_id', 'product_id', 'rating', 'comment', 'verified_purchase'),
+        ]);
+
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được cập nhật.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Review $review)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $review->delete();
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được xóa.');
     }
 }
