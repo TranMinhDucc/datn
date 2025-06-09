@@ -23,10 +23,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'fullname',
         'email',
         'phone',
+        'address',
         'password',
         'avatar',
         'gender',
         'role',
+        'point', // ✅ có point
         'balance',
         'two_factor_enabled',
         'token_2fa',
