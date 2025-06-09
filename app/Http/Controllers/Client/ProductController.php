@@ -10,8 +10,8 @@ class ProductController extends Controller
     public function index()
     {
         // Lấy danh sách sản phẩm, có thể dùng paginate
-        
-        // return view('client.products.index');
+
+        return view('client.products.index');
     }
 
     public function show($id)
