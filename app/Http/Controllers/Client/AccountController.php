@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Password;
 
 class AccountController extends Controller
 {
-    public function profile()
+    public function dashboard()
     {
-        return view('client.account.profile');
+        $user = Auth::user();
+        return view('client.account.dashboard', compact('user'));
     }
 
     public function wallet()

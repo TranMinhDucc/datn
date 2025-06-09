@@ -272,7 +272,7 @@
                 <div class="card-body pt-0">
 
                     <!--begin::Table-->
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;"
                             id="kt_ecommerce_products_table">
 
@@ -422,6 +422,7 @@
                             </tbody>
 
                         </table>
+                    </div>
                     </div>
                     {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
                     <!--end::Table-->

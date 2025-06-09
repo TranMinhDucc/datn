@@ -78,7 +78,10 @@ Route::prefix('/')->name('client.')->group(function () {
 // ========== PROTECTED ROUTES ==========
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
-    Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
+    Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile/edit', [AccountController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [AccountController::class, 'update'])->name('profile.update');
+
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
 });
@@ -124,4 +127,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('coupons', CouponController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
 });
