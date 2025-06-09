@@ -29,6 +29,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\PostCategoryController;
 
@@ -36,7 +38,6 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 // ========== PUBLIC CLIENT ROUTES ==========
 Route::prefix('/')->name('client.')->group(function () {
-    // Trang chính & static
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/login', 'login')->name('login');
@@ -45,35 +46,29 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/faq', 'faq')->name('faq');
     });
 
-    // Contact
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
-    // Product
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
 
-    // Blog
     Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
 
-    // Cart
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/show', 'show')->name('show');
     });
 
-    // Wishlist
     Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
-    // Checkout
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
@@ -129,12 +124,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('banners', BannerController::class);
     Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
+    // Admin Content
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
     Route::resource('posts', PostController::class);
     Route::resource('post-categories', PostCategoryController::class);
     Route::resource('faq', FaqController::class);
-
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+
+    // Marketing
+    Route::resource('coupons', CouponController::class)->names('admin.coupons');
+
+    // System Settings
+    Route::resource('brands', BrandController::class)->names('admin.brands');
 });
