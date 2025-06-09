@@ -4,80 +4,85 @@
 
 @section('content')
 
-<!--=====================================
-                                                        USER FORM PART START
-                                            =======================================-->
-
-<section class="user-form-part">
-    <script>
-        window.addEventListener('pageshow', function(event) {
-            // Kiểm tra nếu là phiên bản được cache (tức là quay lại bằng Back)
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-    </script>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-sm-10 col-md-12 col-lg-12 col-xl-10">
-                <div class="user-form-logo">
-                    <a href='index.html'> <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo"></a>
-                </div>
-                <div class="user-form-card">
-                    <div class="user-form-title">
-                        <h2>Chào mừng!</h2>
-                        <p>Sử dụng thông tin đăng nhập của bạn để truy cập</p>
+    <section class="section-b-space pt-0">
+        <div class="heading-banner">
+            <div class="custom-container container">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <h4>Login</h4>
                     </div>
-                    <div class="user-form-group">
-                        <ul class="user-form-social">
-                            <li><a href="#" class="facebook"><i class="fab fa-facebook-f"></i>login with facebook</a>
-                            </li>
-                            <li><a href="#" class="twitter"><i class="fab fa-twitter"></i>login with twitter</a></li>
-                            <li><a href="#" class="google"><i class="fab fa-google"></i>login with google</a></li>
-                            <li><a href="#" class="instagram"><i class="fab fa-instagram"></i>login with instagram</a>
-                            </li>
+                    <div class="col-sm-6">
+                        <ul class="breadcrumb float-end">
+                            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
+                            <li class="breadcrumb-item active"> <a href="#">Login</a></li>
                         </ul>
-                        <div class="user-form-divider">
-                            <p>or</p>
-                        </div>
-                        <form method="POST" action="{{ url('/login') }}" class="user-form">
-                            @csrf
-
-                            <div class="form-group">
-                                <input type="text" name="email" class="form-control" placeholder="Nhập email hoặc username" value="{{ old('email') }}">
-                                @error('email')
-                                <small class="text-danger d-block mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </small>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu">
-                                @error('password')
-                                <small class="text-danger d-block mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </small>
-                                @enderror
-                            </div>
-
-                            <div class="form-button">
-                                <button type="submit">đăng nhập</button>
-                                <p>Quên mật khẩu?<a href="{{route('client.auth.reset_password')}}">đặt lại tại đây</a></p>
-                            </div>
-                        </form>
-
                     </div>
-                </div>
-                <div class="user-form-remind">
-                    <p>Bạn chưa có tài khoản?<a href="{{url('register')}}">đăng ký tại đây</a></p>
-                </div>
-                <div class="user-form-footer">
-                    <p>Greeny | &COPY; Copyright by <a href="#">Mironcoder</a></p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
+    </section>
+    <section class="section-b-space pt-0 login-bg-img">
+        <div class="custom-container container login-page">
+            <div class="row align-items-center">
+                <div class="col-xxl-7 col-6 d-none d-lg-block">
+                    <div class="login-img"> <img class="img-fluid"
+                            src="https://themes.pixelstrap.net/katie/assets/images/login/1.svg" alt=""></div>
+                </div>
+                <div class="col-xxl-4 col-lg-6 mx-auto">
+                    <div class="log-in-box">
+                        <div class="log-in-title">
+                            <h4>Chào mừng đến với katie</h4>
+                            <p>Register Your Account</p>
+                        </div>
+                        <div class="login-box">
+                            <form class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="floatingInputValue" type="email"
+                                            placeholder="name@example.com" value="test@example.com">
+                                        <label for="floatingInputValue">Tài khoản hoặc email</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="floatingInputValue1" type="password"
+                                            placeholder="Password" value="password">
+                                        <label for="floatingInputValue1">Mật khẩu</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="forgot-box">
+                                        <div>
+                                            <input class="custom-checkbox me-2" id="category1" type="checkbox"
+                                                name="text">
+                                            <label for="category1">Remember me</label>
+                                        </div><a href="forget-password.html">Quên mật khẩu?</a>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn login btn_black sm" type="submit" data-bs-dismiss="modal"
+                                        aria-label="Close">Đăng nhập</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="other-log-in">
+                            <h6>HOẶC</h6>
+                        </div>
+                        <div class="log-in-button">
+                            <ul>
+                                <li> <a href="https://www.google.com/" target="_blank"> <i class="fa-brands fa-google me-2">
+                                        </i>Google</a></li>
+                                <li> <a href="https://www.facebook.com/" target="_blank"><i
+                                            class="fa-brands fa-facebook-f me-2"></i>Facebook </a></li>
+                            </ul>
+                        </div>
+                        <div class="other-log-in"></div>
+                        <div class="sign-up-box">
+                            <p>Bạn chưa có tài khoản?</p><a href="{{ route('client.register') }}">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection

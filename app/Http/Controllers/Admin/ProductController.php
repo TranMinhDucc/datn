@@ -14,7 +14,7 @@ class ProductController extends Controller
     {
         $perPage = 10;
         $page = $request->input('page', 1);
-        $products = Product::orderBy('id', 'asc')->paginate($perPage, ['*'], 'page', $page);
+        $products = Product::orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
         return view('admin.products.index', compact('products'));
     }
 

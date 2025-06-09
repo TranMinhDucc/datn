@@ -22,7 +22,12 @@
         Thêm danh mục sản phẩm
             </h1>
     <!--end::Title-->
-
+  @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
             
         <!--begin::Breadcrumb-->
        
@@ -163,9 +168,9 @@
                 @method('PUT')
 
     <!--begin::Aside column-->
-    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+    {{-- <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10"> --}}
         <!--begin::Thumbnail settings-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
@@ -229,10 +234,10 @@
         <!--end::Description-->
     </div>
     <!--end::Card body-->
-</div>
+</div> --}}
 <!--end::Thumbnail settings-->
         <!--begin::Status-->
-<div class="card card-flush py-4">
+{{-- <div class="card card-flush py-4">
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
@@ -264,7 +269,7 @@
         <!--end::Description-->
     </div>
     <!--end::Card body-->
-</div>
+</div> --}}
 
 <!--end::Status-->
         <!--begin::Template settings-->
@@ -301,7 +306,7 @@
     </div>
     <!--end::Card body-->
 </div> --}}
-<!--end::Template settings-->    </div>
+{{-- <!--end::Template settings-->    </div> --}}
     <!--end::Aside column-->
 
     <!--begin::Main column-->
@@ -335,6 +340,20 @@
            
             <!--end::Description-->
         </div>
+        <div class="mb-10 fv-row">
+    <label class="required form-label">Danh mục cha</label>
+    <select name="parent_id" class="form-control mb-2">
+        <option value="">-- Chọn danh mục cha --</option>
+        @foreach ($parents as $parentCategory)
+    <option value="{{ $parentCategory->id }}" 
+        {{ old('parent_id', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}>
+        {{ $parentCategory->name }}
+    </option>
+@endforeach
+    </select>
+   
+</div>
+
         <!--end::Input group-->
    
         <!--begin::Input group-->
@@ -346,13 +365,13 @@
            
         </div>
          
-        <div class="mb-10 fv-row">
+        {{-- <div class="mb-10 fv-row">
     <label class="form-label">Đường dẫn (tự sinh nếu bỏ trống)</label>
     <input type="text" name="slug" class="form-control mb-2" placeholder="Tự động tạo từ tên nếu để trống" value="{{ old('slug' , $category->slug) }}" />
     @error('slug')
         <div class="text-danger">{{ $message }}</div>
     @enderror
-</div>
+</div> --}}
          
 
         <!--end::Input group-->
