@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\PostCategoryController;
+use App\Http\Controllers\Admin\TagController;
 
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -134,8 +135,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
 
     // Marketing
-    Route::resource('coupons', CouponController::class)->names('admin.coupons');
+    Route::resource('coupons', CouponController::class);
 
     // System Settings
-    Route::resource('brands', BrandController::class)->names('admin.brands');
+    Route::resource('brands', BrandController::class);
+    // Tag
+    Route::resource('tags', TagController::class)->names('admin.tags');
 });
