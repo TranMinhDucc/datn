@@ -19,6 +19,8 @@ use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResp
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\CustomLoginValidation;
+use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,11 +30,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(ResetsUserPasswords::class, ResetUserPassword::class);
+        $this->app->bind(ResetPasswordResponse::class, CustomResetPasswordResponse::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot()
     {
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
