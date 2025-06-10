@@ -4,20 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category; 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-     $categories = Category::orderBy('id', 'asc')->paginate(10);
-return view('admin.categories.index', compact('categories'));
+        $categories = Category::orderBy('id', 'asc')->paginate(10);
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create()
@@ -28,24 +22,16 @@ return view('admin.categories.index', compact('categories'));
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-           
-            'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        $validated = $request->validate([
             'name'        => 'required|string|max:255',
-            
+            'parent_id'   => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
-            
-            'slug'        => 'required|string|max:255|unique:categories,slug',
-            
-            'status'      => 'required|boolean',
+        ], [
+            'name.required' => 'Vui lòng nhập tên danh mục.',
+            'parent_id.exists' => 'Danh mục cha không hợp lệ.',
         ]);
-    $data['slug'] = $data['slug'] ?? str::slug($data['name']);
 
-        if ($request->hasFile('icon')) {
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
-        }
-
-        Category::create($data);
+        Category::create($validated);
 
         return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
     }
@@ -58,41 +44,27 @@ return view('admin.categories.index', compact('categories'));
 
     public function update(Request $request, Category $category)
     {
-        $data = $request->validate([
-           
-            'icon'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        $validated = $request->validate([
             'name'        => 'required|string|max:255',
-            
+            'parent_id'   => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
-           
-            'slug'        => 'required|string|max:255|unique:categories,slug,' . $category->id,
-          
-            'status'      => 'required|boolean',
+        ], [
+            'name.required' => 'Vui lòng nhập tên danh mục.',
+            'parent_id.exists' => 'Danh mục cha không hợp lệ.',
         ]);
 
-        if ($request->hasFile('icon')) {
-            if ($category->icon && Storage::disk('public')->exists($category->icon)) {
-                Storage::disk('public')->delete($category->icon);
-            }
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
-        }
-
-        $category->update($data);
+        $category->update($validated);
 
         return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công!');
     }
 
     public function destroy(Category $category)
     {
-        if ($category->icon && Storage::disk('public')->exists($category->icon)) {
-            Storage::disk('public')->delete($category->icon);
-        }
-
         $category->delete();
-
         return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công!');
     }
-    public function show (Category $category)
+
+    public function show(Category $category)
     {
         return view('admin.categories.show', compact('category'));
     }

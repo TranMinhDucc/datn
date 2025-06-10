@@ -1,15 +1,27 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\AccountController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
+// ========== CLIENT CONTROLLERS ==========
 use App\Http\Controllers\Client\HomeController;
-// use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Client\AccountController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\ContactController;
+use App\Http\Controllers\Client\WishlistController;
+
+// ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
@@ -18,73 +30,109 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
-use App\Http\Controllers\Admin\PostCategoryController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
-use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\PostCategoryController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Auth\RegisterController;
+// GHI ĐÈ route đăng ký Fortify
+Route::post('/register', [RegisterController::class, 'store'])->name('register');
+// ========== PUBLIC CLIENT ROUTES ==========
 
-// Giao diện client
-Route::controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('client.home');
-    Route::get('/policy', 'policy')->name('client.policy');
-    Route::get('/contact', 'contact')->name('client.contact');
-    Route::get('/faq', 'faq')->name('client.faq');
-    Route::get('/login', 'login')->name('client.login');
-    Route::get('/reset-password', 'reset_password')->name('client.reset_password');
-    Route::get('/register', 'register')->name('client.register');
-    Route::get('/blogs', 'blogs')->name('client.blogs');
-    Route::get('/wallet', 'wallet')->name('client.wallet');
-    Route::get('/product_detail', 'productDetail')->name('client.product_detail');
+Route::prefix('/')->name('client.')->group(function () {
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/', 'index')->name('home');
+        Route::get('/policy', 'policy')->name('policy');
+        Route::get('/faq', 'faq')->name('faq');
+    });
+
+    Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+    Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{slug}', 'show')->name('show');
+    });
+
+    Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{slug}', 'show')->name('show');
+    });
+
+    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show', 'show')->name('show');
+    });
+
+    Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
 });
 
+// ========== PROTECTED ROUTES ==========
+Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
+    Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
+    Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
+    Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
+    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+});
 
+// ========== LOGOUT ==========
 
-// Routes cho giao diện admin
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
 
-// Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
-Route::prefix('admin')->group(function () {
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+    return redirect('/')->with([
+        'success' => 'Đăng xuất thành công!',
+        'action' => 'logout' // 👈 Thêm dòng này để JS biết đây là hành động đăng xuất
+    ]);
+})->name('logout');
 
-    // Main
-    // Route::get('/history', [HistoryController::class, 'index'])->name('admin.history');
-    // Route::get('/automation', [AutomationController::class, 'index'])->name('admin.automation');
+// ========== EMAIL VERIFICATION ==========
+Route::get('/email/verify', function () {
+    return view('client.auth.verify-email');
+})->middleware(['auth'])->name('verification.notice');
 
-    // Security
-    // Route::get('/ip-blocks', [IpBlockController::class, 'index'])->name('admin.ip-block');
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('client.home')->with('success', 'Xác minh email thành công!');
+})->middleware(['auth', 'signed'])->name('verification.verify');
 
-    // Banner
-    Route::resource('banners', BannerController::class)->names('admin.banners');
-    // Products & Services
-    Route::resource('categories', CategoryController::class)->names('admin.categories');
-    Route::resource('products', ProductController::class)->names('admin.products');
-    // Route::get('/products/api', [ApiConnectionController::class, 'index'])->name('admin.api');
-    // Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders');
-    // Route::get('/accounts/sold', [AccountController::class, 'sold'])->name('admin.accounts.sold');
-    // Route::get('/accounts/in-stock', [AccountController::class, 'stock'])->name('admin.accounts.stock');
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('success', 'Email xác minh đã được gửi lại!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-    // Users & Roles
-    Route::resource('users', UserController::class)->names('admin.users');
-    // Route::resource('roles', RoleController::class)->names('admin.roles');
+// ========== ADMIN ROUTES ==========
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Topup & Campaigns
-    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
-    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
-    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
+    Route::resource('banners', BannerController::class);
+    Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
-    // Marketing
-    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
-    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
-    // Route::resource('posts', PostController::class)->names('admin.posts');
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('faq', FaqController::class);
+   
 
-    // System Settings
-    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-    //faq
-    Route::resource('faq', FaqController::class)->names('admin.faq');
+    Route::resource('coupons', CouponController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('tags', TagController::class);
+    Route::resource('blogs', BlogController::class);
 
-    // Blogs
+        // Blogs
     Route::resource('blogs', BlogController::class)->names('admin.blogs');
     Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+
+    
 });

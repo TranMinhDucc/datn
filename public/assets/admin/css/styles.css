@@ -1,0 +1,11 @@
+.btn-gradient-warehouse {
+    background: linear-gradient(to right, #F5B849 0%, #7FA53A 100%);
+    color: #fff !important;
+    border: 0;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient-warehouse:hover {
+    filter: brightness(1.05);
+    transform: scale(1.02);
+}

@@ -3,60 +3,113 @@
 @section('title', 'Đăng nhập')
 
 @section('content')
-    <!--=====================================
-                                                        USER FORM PART START
-                                            =======================================-->
-    <section class="user-form-part">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 col-sm-10 col-md-12 col-lg-12 col-xl-10">
-                    <div class="user-form-logo">
-                        <a href='index.html'> <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo"></a>
+
+    <section class="section-b-space pt-0">
+        <div class="heading-banner">
+            <div class="custom-container container">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <h4>Login</h4>
                     </div>
-                    <div class="user-form-card">
-                        <div class="user-form-title">
-                            <h2>welcome!</h2>
-                            <p>Use your credentials to access</p>
-                        </div>
-                        <div class="user-form-group">
-                            <ul class="user-form-social">
-                                <li><a href="#" class="facebook"><i class="fab fa-facebook-f"></i>login with facebook</a>
-                                </li>
-                                <li><a href="#" class="twitter"><i class="fab fa-twitter"></i>login with twitter</a></li>
-                                <li><a href="#" class="google"><i class="fab fa-google"></i>login with google</a></li>
-                                <li><a href="#" class="instagram"><i class="fab fa-instagram"></i>login with instagram</a>
-                                </li>
-                            </ul>
-                            <div class="user-form-divider">
-                                <p>or</p>
-                            </div>
-                            <form class="user-form">
-                                <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Enter your email">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Enter your password">
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="" id="check">
-                                    <label class="form-check-label" for="check">Remember Me</label>
-                                </div>
-                                <div class="form-button">
-                                    <button type="submit">login</button>
-                                    <p>Forgot your password?<a href="{{route('client.reset_password')}}">reset here</a></p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="user-form-remind">
-                        <p>Don't have any account?<a href="{{route('client.register')}}">register here</a></p>
-                    </div>
-                    <div class="user-form-footer">
-                        <p>Greeny | &COPY; Copyright by <a href="#">Mironcoder</a></p>
+                    <div class="col-sm-6">
+                        <ul class="breadcrumb float-end">
+                            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
+                            <li class="breadcrumb-item active"> <a href="#">Login</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <section class="section-b-space pt-0 login-bg-img">
+        <div class="custom-container container login-page">
+            <div class="row align-items-center">
+                <div class="col-xxl-7 col-6 d-none d-lg-block">
+                    <div class="login-img"> <img class="img-fluid"
+                            src="https://themes.pixelstrap.net/katie/assets/images/login/1.svg" alt=""></div>
+                </div>
+                <div class="col-xxl-4 col-lg-6 mx-auto">
+                    <div class="log-in-box">
+                        <div class="log-in-title">
+                            <h4>Chào mừng đến với katie</h4>
+                            <p>Register Your Account</p>
+                        </div>
+                        <div class="login-box">
+                            @push('alert')
+                                <script>
+                                    @if (session('success'))
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '🎉 {{ session('success') }}',
+                                            showConfirmButton: false,
+                                            timer: 2500,
+                                            timerProgressBar: true
+                                        });
+                                    @endif
+                                </script>
+                            @endpush
 
+                            <form method="POST" action="{{ route('login') }}" class="row g-3">
+                                @csrf
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="floatingInputValue" name="email" type="text"
+                                            placeholder="name@example.com" value="{{ old('email') }}">
+                                        <label for="floatingInputValue">Tài khoản hoặc email</label>
+                                        @error('email')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="floatingInputValue1" name="password" type="password"
+                                            placeholder="Password">
+                                        <label for="floatingInputValue1">Mật khẩu</label>
+                                        @error('password')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="forgot-box">
+                                        <div>
+                                            <input class="custom-checkbox me-2" id="remember" type="checkbox"
+                                                name="remember">
+                                            <label for="remember">Remember me</label>
+                                        </div>
+                                        <a href="{{ route('password.request') }}">Quên mật khẩu?</a>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn login btn_black sm" type="submit">Đăng nhập</button>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="other-log-in">
+                            <h6>HOẶC</h6>
+                        </div>
+                        <div class="log-in-button">
+                            <ul>
+                                <li> <a href="https://www.google.com/" target="_blank"> <i class="fa-brands fa-google me-2">
+                                        </i>Google</a></li>
+                                <li> <a href="https://www.facebook.com/" target="_blank"><i
+                                            class="fa-brands fa-facebook-f me-2"></i>Facebook </a></li>
+                            </ul>
+                        </div>
+                        <div class="other-log-in"></div>
+                        <div class="sign-up-box">
+                            <p>Bạn chưa có tài khoản?</p><a href="{{ route('register') }}">Đăng ký</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection
