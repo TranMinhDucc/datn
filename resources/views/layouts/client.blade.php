@@ -24,7 +24,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
 </head>
+
 
 
 <body>
@@ -109,11 +113,9 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i
-                                                class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i
-                                                class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -136,8 +138,7 @@
         </div>
         <div class="offcanvas-body theme-scrollbar">
             <ul class="offcanvas-cart">
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/1.jpg') }}"
-                            alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/1.jpg') }}" alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -157,8 +158,7 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/2.jpg') }}"
-                            alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/2.jpg') }}" alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -178,8 +178,7 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/3.jpg') }}"
-                            alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/3.jpg') }}" alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -199,8 +198,7 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/4.jpg') }}"
-                            alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/4.jpg') }}" alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -254,18 +252,18 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans Women</a></li>
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                            Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans Men</a></li>
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                            Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Shoes Men</a></li>
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
+                            Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
@@ -430,8 +428,7 @@
         </div>
     </div>
     {{-- <div class="wrapper">
-        <div class="title-box"> <img src="{{ asset('assets/client/images/other-img/cookie.png') }}"
-                alt="">
+        <div class="title-box"> <img src="{{ asset('assets/client/images/other-img/cookie.png') }}" alt="">
             <h3>Cookies Consent</h3>
         </div>
         <div class="info">
@@ -468,6 +465,34 @@
     <script src="{{ asset('assets/client/js/theme-setting.js') }}"></script>
     @yield('js')
     <script src="{{ asset('assets/client/js/script.js') }}"></script>
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.4/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- SweetAlert2 JS (bắt buộc để Swal.fire hoạt động) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        @if (session('success'))
+            let timerInterval;
+            Swal.fire({
+                title: "🎉 {{ session('success') }}",
+                html: "Sẽ tự đóng trong <b></b> ms.",
+                timer: 900,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    const timer = Swal.getPopup().querySelector("b");
+                    timerInterval = setInterval(() => {
+                        timer.textContent = Swal.getTimerLeft();
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                }
+            });
+        @endif
+    </script>
+
+
 </body>
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
