@@ -45,9 +45,8 @@
                         </div>
                     </div>
                     <div class="shape-images"> <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
-                            class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
-                            alt=""></div>
+                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img class="img-2 img-fluid"
+                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt=""></div>
                 </div>
             </div>
         </div>
@@ -114,9 +113,8 @@
                         </div>
                     </div>
                     <div class="shape-images"> <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
-                            class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
-                            alt=""></div>
+                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img class="img-2 img-fluid"
+                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt=""></div>
                 </div>
             </div>
         </div>
@@ -209,8 +207,7 @@
                     <div class="row">
                         <div class="col-12 ratio_square">
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="features-products" role="tabpanel"
-                                    tabindex="0">
+                                <div class="tab-pane fade show active" id="features-products" role="tabpanel" tabindex="0">
                                     <div class="row g-4">
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
@@ -219,8 +216,7 @@
                                                             src="{{ asset('assets/client/images/product/3.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
                                                     <div class="product-image"><a
-                                                            href="{{ route('client.products.index') }}"> <img
-                                                                class="bg-img"
+                                                            href="{{ route('client.products.index') }}"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/1.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -230,17 +226,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -264,8 +259,7 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/2.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -275,17 +269,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -306,8 +299,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/3.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -317,9 +309,8 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -353,8 +344,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -375,8 +366,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/4.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -386,17 +376,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -420,8 +409,7 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/5.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -431,9 +419,8 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -467,8 +454,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -489,8 +476,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/6.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -500,17 +486,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -531,8 +516,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/7.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -542,17 +526,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -573,8 +556,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -584,17 +566,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -622,8 +603,7 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/3.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/11.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -633,17 +613,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -667,8 +646,7 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/12.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -678,17 +656,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -709,8 +686,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/13.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -720,9 +696,8 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -756,8 +731,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -778,8 +753,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/14.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -789,17 +763,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -823,8 +796,7 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/15.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -834,9 +806,8 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -870,8 +841,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -892,8 +863,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/16.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -903,17 +873,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -934,8 +903,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/17.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -945,17 +913,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -976,8 +943,7 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/18.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
@@ -987,17 +953,16 @@
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1025,28 +990,26 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/3.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/17.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1070,28 +1033,26 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/18.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1112,20 +1073,18 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/19.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -1159,8 +1118,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1181,28 +1140,26 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/20.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1226,20 +1183,18 @@
                                                     <div class="label-block"><img
                                                             src="{{ asset('assets/client/images/product/2.png') }}"
                                                             alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/21.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
@@ -1273,8 +1228,8 @@
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1295,28 +1250,26 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1337,28 +1290,26 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/2.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1379,28 +1330,26 @@
                                         <div class="col-xxl-3 col-md-4 col-6">
                                             <div class="product-box">
                                                 <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img
-                                                                class="bg-img"
+                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
                                                                 src="{{ asset('assets/client/images/product/product-4/15.jpg') }}"
                                                                 alt="product"></a></div>
                                                     <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i
-                                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                                data-icon="heart" aria-hidden="true"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-title="Add to Wishlist"></i></a><a
                                                             href="compare.html" tabindex="0"><i class="iconsax"
                                                                 data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Compare"></i></a><a href="#"
-                                                            data-bs-toggle="modal" data-bs-target="#quick-view"
+                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
                                                             tabindex="0"><i class="iconsax" data-icon="eye"
                                                                 aria-hidden="true" data-bs-toggle="tooltip"
                                                                 data-bs-title="Quick View"></i></a></div>
                                                 </div>
                                                 <div class="product-detail">
                                                     <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product"
-                                                            tabindex="0"><i class="fa-solid fa-plus"></i> Add To
+                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                                                class="fa-solid fa-plus"></i> Add To
                                                             Cart</a></div>
                                                     <div class="color-box">
                                                         <ul class="color-variant">
@@ -1435,8 +1384,8 @@
                         <div class="col-md-5">
                             <div class="best-seller-img ratio_square-3"><a href="collection-left-sidebar.html"> <img
                                         class="bg-img"
-                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}"
-                                        alt=""></a></div>
+                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}" alt=""></a>
+                            </div>
                         </div>
                         <div class="col-md-7 ratio_landscape">
                             <div class="style-content">
@@ -1458,8 +1407,7 @@
                                             </use>
                                         </svg></a></div>
                             </div><a href="collection-left-sidebar.html"> <img class="bg-img"
-                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}"
-                                    alt=""></a>
+                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}" alt=""></a>
                         </div>
                     </div>
                 </div>
@@ -1507,21 +1455,20 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/2.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
-                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
-                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                    tabindex="0"><i class="iconsax" data-icon="eye" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a></div>
+                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}" alt="product"></a>
+                            </div>
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
+                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
+                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
-                            <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                        class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                            <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1540,16 +1487,16 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
-                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
-                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                    tabindex="0"><i class="iconsax" data-icon="eye" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a></div>
+                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}" alt="product"></a>
+                            </div>
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
+                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
+                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv4">
                                     <li>
@@ -1579,9 +1526,8 @@
                             </div>
                         </div>
                         <div class="product-detail">
-                            <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                        class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                            <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1602,21 +1548,20 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/3.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
-                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
-                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                    tabindex="0"><i class="iconsax" data-icon="eye" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a></div>
+                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}" alt="product"></a>
+                            </div>
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
+                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
+                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
-                            <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                        class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                            <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1637,14 +1582,14 @@
                             <div class="product-image"><a href="#"> <img class="bg-img"
                                         src="{{ asset('assets/client/images/product/product-4/10.jpg') }}"
                                         alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
-                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
-                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                    tabindex="0"><i class="iconsax" data-icon="eye" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a></div>
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
+                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
+                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv5">
                                     <li>
@@ -1674,9 +1619,8 @@
                             </div>
                         </div>
                         <div class="product-detail">
-                            <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                        class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                            <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1695,21 +1639,20 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
-                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
-                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                    tabindex="0"><i class="iconsax" data-icon="eye" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a></div>
+                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}" alt="product"></a>
+                            </div>
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
+                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
+                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
-                            <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                        class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                            <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1743,9 +1686,8 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="blog-main">
-                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img
-                                        class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}"
-                                        alt=""></a></div>
+                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img class="bg-img"
+                                        src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}" alt=""></a></div>
                             <div class="blog-txt">
                                 <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
                                     <h5>Many desktop publishing pack-ages abd page editor...</h5>
@@ -1757,8 +1699,8 @@
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                             </use>
-                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                        href="#">Read More
+                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                        More
                                         <svg>
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -1768,9 +1710,8 @@
                         </div>
                     </div>
                     <div class="swiper-slide blog-main">
-                        <div class="blog-box ratio_55"><a class="blog-img" href="blog-details.html"><img
-                                    class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/2.jpg') }}"
-                                    alt=""></a>
+                        <div class="blog-box ratio_55"><a class="blog-img" href="blog-details.html"><img class="bg-img"
+                                    src="{{ asset('assets/client/images/blog/layout-4/2.jpg') }}" alt=""></a>
                         </div>
                         <div class="blog-txt">
                             <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
@@ -1782,8 +1723,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                    href="#">Read More
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
@@ -1791,9 +1732,8 @@
                         </div>
                     </div>
                     <div class="swiper-slide blog-main">
-                        <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img
-                                    class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/3.jpg') }}"
-                                    alt=""></a>
+                        <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img class="bg-img"
+                                    src="{{ asset('assets/client/images/blog/layout-4/3.jpg') }}" alt=""></a>
                         </div>
                         <div class="blog-txt">
                             <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
@@ -1805,8 +1745,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                    href="#">Read More
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
@@ -1814,9 +1754,8 @@
                         </div>
                     </div>
                     <div class="swiper-slide blog-main">
-                        <div class="blog-box ratio_55"><a class="blog-img" href="blog-details.html"><img
-                                    class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/4.jpg') }}"
-                                    alt=""></a>
+                        <div class="blog-box ratio_55"><a class="blog-img" href="blog-details.html"><img class="bg-img"
+                                    src="{{ asset('assets/client/images/blog/layout-4/4.jpg') }}" alt=""></a>
                         </div>
                         <div class="blog-txt">
                             <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
@@ -1828,8 +1767,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                    href="#">Read More
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>

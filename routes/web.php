@@ -4,8 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-// ========== Client Controllers ==========
+// ========== CLIENT CONTROLLERS ==========
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
@@ -15,7 +16,7 @@ use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
 
-// ========== Admin Controllers ==========
+// ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -33,15 +34,15 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\PostCategoryController;
-
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Auth\RegisterController;
+// GHI ĐÈ route đăng ký Fortify
+Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // ========== PUBLIC CLIENT ROUTES ==========
+
 Route::prefix('/')->name('client.')->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
-        Route::get('/login', 'login')->name('login');
-        Route::get('/register', 'register')->name('register');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
     });
@@ -82,35 +83,29 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
 });
 
-// ========== PASSWORD RESET ==========
-Route::get('/forgot-password', function () {
-    return view('client.auth.request-reset-password');
-})->middleware('guest')->name('client.auth.reset_password');
+// ========== LOGOUT ==========
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/')->with([
+        'success' => 'Đăng xuất thành công!',
+        'action' => 'logout' // 👈 Thêm dòng này để JS biết đây là hành động đăng xuất
+    ]);
+})->name('logout');
 
 // ========== EMAIL VERIFICATION ==========
 Route::get('/email/verify', function () {
-    if (Auth::check() && Auth::user()->hasVerifiedEmail()) {
-        return redirect()->route('client.home');
-    }
     return view('client.auth.verify-email');
 })->middleware(['auth'])->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (Request $request) {
-    $user = User::findOrFail($request->route('id'));
-    $expectedHash = sha1($user->getEmailForVerification());
-
-    if (!hash_equals((string) $request->route('hash'), $expectedHash)) {
-        abort(403, 'Liên kết xác minh không hợp lệ.');
-    }
-
-    if (!$user->hasVerifiedEmail()) {
-        $user->markEmailAsVerified();
-    }
-
-    Auth::login($user);
-
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
     return redirect()->route('client.home')->with('success', 'Xác minh email thành công!');
-})->middleware(['signed'])->name('verification.verify');
+})->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -124,7 +119,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('banners', BannerController::class);
     Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
-    // Admin Content
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
@@ -133,9 +127,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('faq', FaqController::class);
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
 
-    // Marketing
-    Route::resource('coupons', CouponController::class)->names('admin.coupons');
-
-    // System Settings
-    Route::resource('brands', BrandController::class)->names('admin.brands');
+    Route::resource('coupons', CouponController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('tags', TagController::class);
 });
