@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-    $table->id();
-    $table->string('icon')->nullable();
-    $table->string('name');
-    $table->text('description')->nullable();
-    $table->string('slug')->unique();
-    $table->boolean('status')->default(1);
-    $table->timestamps();
-});
+        Schema::table('products', function (Blueprint $table) {
+            $table->boolean('status')->default(1)->after('stock_quantity');
+        });
     }
 
     /**
@@ -27,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
     }
 };

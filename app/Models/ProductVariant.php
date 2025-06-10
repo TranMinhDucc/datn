@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductVariant extends Model
 {
-    protected $fillable = ['product_id', 'price', 'stock', 'status'];
+    protected $fillable = [
+        'product_id',
+        'sku',
+        'price',
+        'quantity',
+    ];
 
+    // Quan hệ với sản phẩm
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function attributes()
-    {
-        return $this->belongsToMany(VariantAttribute::class, 'product_variant_options')
-            ->withPivot('value');
-    }
-
+    // Quan hệ với các thuộc tính biến thể
     public function options()
     {
-        return $this->hasMany(ProductVariantOption::class, 'variant_id');
+        return $this->hasMany(ProductVariantOption::class);
     }
 }
