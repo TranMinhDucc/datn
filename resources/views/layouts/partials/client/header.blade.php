@@ -1,95 +1,75 @@
-<div class="backdrop"></div>
-<a class="backtop fas fa-solid fa-arrow-up" href="#"></a>
-<div class="header-top">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-lg-5">
-                <div class="header-top-welcome">
-                    <p>Chào mừng bạn đến với Cho MMO!</p>
-                </div>
-            </div>
-            <div class="col-md-5 col-lg-3">
-                <div class="header-top-select">
-                    <div class="header-select">
-                        <i class="icofont-world"></i>
-                        <select class="select">
-                            <option value="english" selected>english</option>
-                            <option value="bangali">bangali</option>
-                            <option value="arabic">arabic</option>
-                        </select>
-                    </div>
-                    <div class="header-select">
-                        <i class="icofont-money"></i>
-                        <select class="select">
-                            <option value="english" selected>doller</option>
-                            <option value="bangali">pound</option>
-                            <option value="arabic">taka</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7 col-lg-4">
-                <ul class="header-top-list">
-                    <li><a href='{{ route('client.policy') }}'>chính sách</a></li>
-                    <li><a href='{{ route('client.faq') }}'>faqs</a></li>
-                    <li><a href='{{ route('client.contact') }}'>liên hệ</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!--=====================================
-                    HEADER TOP PART END
-        =======================================-->
+ <div class="custom-container container header-1">
+     <div class="row">
+         <div class="col-12 p-0">
+             <div class="mobile-fix-option">
+                 <ul>
+                     <li> <a href="index.html"><i class="iconsax" data-icon="home-1"></i>Home</a></li>
+                     <li><a href="search.html"><i class="iconsax" data-icon="search-normal-2"></i>Search</a>
+                     </li>
+                     <li class="shopping-cart"> <a href="cart.html"><i class="iconsax"
+                                 data-icon="shopping-cart"></i>Cart</a></li>
+                     <li><a href="wishlist.html"><i class="iconsax" data-icon="heart"></i>My Wish</a></li>
+                     <li> <a href="dashboard.html"><i class="iconsax" data-icon="user-2"></i>Account</a></li>
+                 </ul>
+             </div>
+             <div class="offcanvas offcanvas-start" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1"
+                 aria-labelledby="staticBackdropLabel">
+                 <div class="offcanvas-header">
+                     <h3 class="offcanvas-title" id="staticBackdropLabel">Offcanvas</h3>
+                     <button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                 </div>
+                 <div class="offcanvas-body">
+                     <div></div>I will not close if you click outside of me.
+                 </div>
+             </div>
+         </div>
+         <div class="col-12">
+             <div class="main-menu">
+                 <a class="brand-logo" href="{{ url('/') }}">
+                     <img class="img-fluid for-light" src="{{ asset('assets/client/images/logo/logo-4.png') }}"
+                         alt="logo">
+                     <img class="img-fluid for-dark" src="{{ asset('assets/client/images/logo/logo-white-4.png') }}"
+                         alt="logo">
+                 </a>
+                 @include('layouts.partials.client.navbar')
 
+                 <div class="sub_header">
+                     <div class="toggle-nav" id="toggle-nav">
+                         <i class="fa-solid fa-bars-staggered sidebar-bar"></i>
+                     </div>
+                     <ul class="justify-content-end">
+                         <li>
+                             <button href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop"
+                                 aria-controls="offcanvasTop"><i class="iconsax"
+                                     data-icon="search-normal-2"></i></button>
+                         </li>
+                         <li>
+                             <a href="{{ route('client.wishlist.index') }}"><i class="iconsax" data-icon="heart"></i>
+                                 <span class="cart_qty_cls">2</span></a>
+                         </li>
+                         <li class="onhover-div">
+                             <a href="#"><i class="iconsax" data-icon="user-2"></i></a>
+                             <div class="onhover-show-div user">
+                                 <ul>
+                                     <li><a href="{{ route('client.login') }}">Đăng nhập</a>
+                                     </li>
+                                     <li><a href="{{ route('client.register') }}">Đăng ký</a>
+                                     </li>
+                                 </ul>
+                             </div>
+                         </li>
+                         <li class="onhover-div shopping-cart">
+                             <a class="p-0" href="#" data-bs-toggle="offcanvas"
+                                 data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                                 <div class="shoping-prize">
+                                     <i class="iconsax pe-2" data-icon="basket-2"></i>0 items
+                                 </div>
+                             </a>
+                         </li>
+                     </ul>
+                 </div>
+             </div>
+         </div>
 
-
-<!--=====================================
-                    HEADER PART START
-        =======================================-->
-<header class="header-part">
-    <div class="container">
-        <div class="header-content">
-            <div class="header-media-group">
-                <button class="header-user"><img src="images/user.png" alt="user"></button>
-                <a href='index.html'><img src="images/logo.png" alt="logo"></a>
-                <button class="header-src"><i class="fas fa-search"></i></button>
-            </div>
-
-            <a class='header-logo' href="{{ route('client.home') }}">
-                <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo">
-            </a>
-            <a class='header-widget' href="{{ url('login') }}" title='My Account'>
-                <img src="{{ asset('assets/client/images/user.png') }}" alt="user">
-
-                @if (Auth::check())
-                <span class="fw-semibold text-success">{{ Auth::user()->fullname }}</span>
-                @endif
-
-            </a>
-
-            <form class="header-form">
-                <input type="text" placeholder="Tìm kiếm sản phẩm...">
-                <button><i class="fas fa-search"></i></button>
-            </form>
-
-            <div class="header-widget-group">
-                <a class='header-widget' href='compare.html' title='Đơn hàng'>
-                    <i class="fas fa-solid fa-cart-arrow-down"></i>
-                </a>
-                <a class='header-widget' href='wishlist.html' title='Wishlist'>
-                    <i class="fas fa-heart"></i>
-                    <sup>0</sup>
-                </a>
-                <button class="header-widget header-cart" title="Nạp tiền">
-                    {{-- <i class="fas fa-shopping-basket"></i> --}}
-                    <i class="fa-solid fa-building-columns"></i>
-                    <span>total price<small>$345.00</small></span>
-                </button>
-            </div>
-        </div>
-    </div>
-</header>
-<!--=====================================
-                    HEADER PART END
-        =======================================-->
+     </div>
+ </div>

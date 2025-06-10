@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm mới danh mục')
+@section('title', 'Thêm mới sản phẩm')
 @section('content')
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
 
@@ -50,6 +51,7 @@
                     <li class="breadcrumb-item text-muted">
                         Catalog </li>
                     <!--end::Item-->
+
 
                 </ul>
                 <!--end::Breadcrumb-->
@@ -138,6 +140,7 @@
 
                             <!--begin::Input group-->
                             <div class="mb-10">
+
                                 <!--begin::Label-->
                                 <label class="form-label fw-semibold">Notifications:</label>
                                 <!--end::Label-->
@@ -193,7 +196,7 @@
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
             <!--begin::Form-->
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
+            <form id="product-form" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data"
                 id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
                 data-kt-redirect="{{ route('admin.products.index') }}">
                 @csrf
@@ -239,7 +242,7 @@
                                     <i class="ki-duotone ki-pencil fs-7"><span class="path1"></span><span
                                             class="path2"></span></i>
                                     <!--begin::Inputs-->
-                                    <input type="file" name="images" accept=".png, .jpg, .jpeg"
+                                    <input type="file" name="image" accept=".png, .jpg, .jpeg"
                                         class="form-control mb-2" />
 
                                     <!--end::Inputs-->
@@ -389,6 +392,69 @@
                         </div>
                         <!--end::Card body-->
                     </div>
+
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <!--begin::Card title-->
+                            <div class="card-title">
+                                <h2>Thương hiệu Sản Phẩm</h2>
+                            </div>
+                            <!--end::Card title-->
+                        </div>
+                        <!--end::Card header-->
+
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <!--begin::Label-->
+                            <label class="form-label">Thương hiệu:</label>
+                            <!--end::Label-->
+                            <!--begin::Select2-->
+                            <select name="brand_id" class="form-select mb-2" data-control="select2"
+                                data-placeholder="Chọn thương hiệu" data-allow-clear="true">
+                                <option></option>
+                                @foreach ($brands as $brand)
+                                <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id ?? '') == $brand->id ? 'selected' : '' }}>
+                                    {{ $brand->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('brand_id')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <!--end::Select2-->
+
+                            <!--begin::Description-->
+                            <div class="text-muted fs-7 mb-7">Add product to a brand.</div>
+                            <!--end::Description-->
+                            <!--end::Input group-->
+
+                            <!--begin::Button-->
+                            {{-- <a href="add-category.html" class="btn btn-light-primary btn-sm mb-10">
+                                    <i class="ki-duotone ki-plus fs-2"></i> Create new category
+                                </a> --}}
+                            <!--end::Button-->
+
+                            <!--begin::Input group-->
+                            <!--begin::Label-->
+                            {{-- <label class="form-label d-block">Tags</label>
+                                <!--end::Label-->
+
+                                <!--begin::Input-->
+                                <input id="kt_ecommerce_add_product_tags" name="kt_ecommerce_add_product_tags"
+                                    class="form-control mb-2" value="" />
+                                <!--end::Input-->
+
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Add tags to a product.</div> --}}
+                            <!--end::Description-->
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+
+
                     <!--end::Category & tags-->
                     <!--begin::Weekly sales-->
                     {{-- <div class="card card-flush py-4">
@@ -478,6 +544,7 @@
                         <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
 
+
                                 <!--begin::General options-->
                                 <div class="card card-flush py-4">
                                     <!--begin::Card header-->
@@ -493,19 +560,66 @@
                                         <!--begin::Input group-->
                                         <div class="mb-10 fv-row">
                                             <!--begin::Label-->
-                                            <label class="required form-label">Tên Sản phẩm</label>
+                                            <div class="mb-10 fv-row">
+                                                <label class="required form-label">Tên Sản phẩm</label>
+                                                <input type="text" id="product-name" name="name" class="form-control mb-2"
+                                                    placeholder="Tên Sản Phẩm"
+                                                    value="{{ old('name', $product->name ?? '') }}" />
+
+                                                @error('name')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="mb-10 fv-row">
+                                                <label class="form-label">Slug (tự động tạo)</label>
+                                                <input type="text" name="slug" id="product-slug" class="form-control mb-2"
+                                                    placeholder="slug-tinh-tu-name"
+                                                    value="{{ old('slug', $product->slug ?? '') }}" />
+                                                @error('slug')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-10 fv-row">
+                                                        <label class="required form-label">Giá nhập (Import Price)</label>
+                                                        <input type="number" name="import_price" class="form-control" value="{{ old('import_price') }}">
+                                                        @error('import_price')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="mb-10 fv-row">
+                                                        <label class="required form-label">Giá gốc (Base Price)</label>
+                                                        <input type="number" name="base_price" class="form-control" value="{{ old('base_price') }}">
+                                                        @error('base_price')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="mb-10 fv-row">
+                                                        <label class="form-label">Giá khuyến mãi (Sale Price)</label>
+                                                        <input type="number" name="sale_price" class="form-control" value="{{ old('sale_price') }}">
+                                                        @error('sale_price')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="mb-10 fv-row">
+                                                        <label class="required form-label">Số lượng tồn kho (Stock Quantity)</label>
+                                                        <input type="number" name="stock_quantity" class="form-control" value="{{ old('stock_quantity') }}">
+                                                        @error('stock_quantity')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
                                             <!--end::Label-->
 
                                             <!--begin::Input-->
-                                            <input type="text" name="name" class="form-control mb-2"
-                                                placeholder="Tên Sản Phẩm"
-                                                value="{{ old('name', $product->
-@error('name')
-<div class="text-danger mt-1">{{ $message }}</div>
-@enderrorname ?? '') }}" />
-                                            @error('name')
-                                            <div class="text-danger">{{ $message }}</div>
-                                            @enderror
+
+
                                             <!--end::Input-->
 
                                             <!--begin::Description-->
@@ -589,15 +703,16 @@
                                     <div class="mb-10 fv-row">
                                         <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
                                         <textarea id="description" name="description" class="form-control" rows="5">{{ old("description") }}</textarea>
-@error("description")
-<div class="text-danger mt-1">{{ $message }}</div>
-@enderror
+                                        @error("description")
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
                                         @error('description') <div class="text-danger">{{ $message }}</div> @enderror
                                     </div>
 
                                     <div class="mt-3">
                                         <label>Ảnh phụ</label>
-                                        <input type="file" class="form-control" id="image-input" multiple>
+                                        <input type="file" id="image-input" name="images[]" multiple accept=".png, .jpg, .jpeg" class="form-control mb-2" />
+
                                         <div id="image-preview-container" class="mt-2 d-flex flex-wrap gap-3"></div>
                                     </div>
 
@@ -668,7 +783,7 @@
                                 <!--begin::Card header-->
                                 <div class="card-header">
                                     <div class="card-title">
-                                        <h2>Giá Bán</h2>
+                                        <h2>Biến thể</h2>
                                     </div>
                                 </div>
                                 <!--end::Card header-->
@@ -676,24 +791,7 @@
                                 <!--begin::Card body-->
                                 <div class="card-body pt-0">
                                     <!--begin::Input group-->
-                                    <div class="mb-10 fv-row">
-                                        <!--begin::Label-->
-                                        <label class="required form-label">Giá</label>
-                                        <!--end::Label-->
 
-                                        <!--begin::Input-->
-                                        <input type="text" name="price" class="form-control mb-2"
-                                            placeholder="Giá sản phẩm"
-                                            value="{{ old('price', $product->price ?? '') }}" />
-                                        @error('price')
-                                        <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                        <!--end::Input-->
-
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7">Set the product price.</div>
-                                        <!--end::Description-->
-                                    </div>
 
                                     <!--begin::Product Variants-->
                                     {{-- Biến thể thêm tay dạng card --}}
@@ -707,9 +805,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-success">Lưu sản phẩm</button>
-                                    </div>
+
                                     <!--end::Product Variants-->
 
 
@@ -1038,47 +1134,37 @@
                                                                         <option value="material">Material</option>
                                                                         <option value="style">Style</option>
                                                                     </select>
+
                                                                 </div>
-                                                                <!--end::Select2-->
-
-                                                                <!--begin::Input-->
-                                                                <input type="text" class="form-control mw-100 w-200px"
-                                                                    name="product_option_value" placeholder="Variation" />
-                                                                <!--end::Input-->
-
-                                                                <button type="button" data-repeater-delete
-                                                                    class="btn btn-sm btn-icon btn-light-danger">
-                                                                    <i class="ki-duotone ki-cross fs-1"><span
-                                                                            class="path1"></span><span
-                                                                            class="path2"></span></i> </button>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <!--end::Form group-->
-
-                                                    <!--begin::Form group-->
-                                                    <div class="form-group mt-5">
-                                                        <button type="button" data-repeater-create
-                                                            class="btn btn-sm btn-light-primary">
-                                                            <i class="ki-duotone ki-plus fs-2"></i> Add another variation
-                                                        </button>
-                                                    </div>
-                                                    <!--end::Form group-->
-                                                </div>
-                                                <!--end::Repeater-->
+                                                        <button type="button" id="add-variant"
+                                                            class="btn btn-light-primary btn-sm">+ Thêm biến thể</button>
+                                               
+                                                <!--end::Product Variants-->
                                             </div>
-                                            <!--end::Input group-->
-                                        </div>
-                                        <!--end::Card header-->
-                                    </div>
-                                    <!--end::Variations-->
+                                            <!--end::Tab content-->
 
-                                    <!--begin::Shipping-->
-                                    <div class="card card-flush py-4">
-                                        <!--begin::Card header-->
-                                        <div class="card-header">
-                                            <div class="card-title">
-                                                <h2>Shipping</h2>
+                                            <div class="d-flex justify-content-end">
+                                                <!--begin::Button-->
+                                                <a href="products.html" id="kt_ecommerce_add_product_cancel"
+                                                    class="btn btn-light me-5">
+                                                    Cancel
+                                                </a>
+                                                <!--end::Button-->
+
+                                                <!--begin::Button-->
+                                                <button type="submit" id="kt_ecommerce_add_product_submit"
+                                                    class="btn btn-primary">
+                                                    <span class="indicator-label">
+                                                        Save Changes
+                                                    </span>
+                                                    <span class="indicator-progress">
+                                                        Please wait... <span
+                                                            class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                    </span>
+                                                </button>
+                                                <!--end::Button-->
                                             </div>
                                         </div>
                                         <!--end::Card header-->
@@ -1250,6 +1336,7 @@
                     </button>
                     <!--end::Button-->
                 </div>
+
         </div>
         <!--end::Main column-->
         </form>
@@ -1262,16 +1349,32 @@
 </div>
 @push('scripts')
 <script>
+
+    document.getElementById('product-form').addEventListener('submit', function (e) {
+    const variantList = document.getElementById('manual-variant-list');
+
+    if (!variantList || variantList.children.length === 0) {
+        e.preventDefault(); // Ngăn form submit
+        Swal.fire({
+            icon: 'warning',
+            title: 'Thiếu biến thể',
+            text: 'Vui lòng thêm ít nhất một biến thể sản phẩm trước khi lưu.',
+            confirmButtonText: 'OK'
+        });
+    }
+});
+
+
     const attributes = @json($variantAttributes);
     let variantIndex = 0;
 
     function slugify(str) {
         return str.toString().toLowerCase()
-            .replace(/\s+/g, '-')          
-            .replace(/[^\w\-]+/g, '')     
-            .replace(/\-\-+/g, '-')       
-            .replace(/^-+/, '')            
-            .replace(/-+$/, '');           
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-')
+            .replace(/^-+/, '')
+            .replace(/-+$/, '');
     }
 
     function generateSKU(productName, selectedValues) {
@@ -1281,51 +1384,52 @@
     }
 
     function addVariantCard() {
-        const container = document.getElementById('manual-variant-list');
-        const div = document.createElement('div');
-        div.className = 'border rounded p-3 mb-3 bg-light';
-        div.id = `variant_card_${variantIndex}`;
+    const container = document.getElementById('manual-variant-list');
+    const div = document.createElement('div');
+    div.className = 'border rounded p-3 mb-3 bg-light';
+    div.id = `variant_card_${variantIndex}`;
 
-        let html = '<div class="row g-3 align-items-end">';
-        attributes.forEach(attr => {
-            html += `
-                <div class="col-md-3">
-                    <label class="form-label">${attr.name}</label>
-                    <select name="manual_variants[${variantIndex}][attributes][${attr.id}]" class="form-select attribute-select" data-index="${variantIndex}">
-                        <option value="">-- Chọn ${attr.name} --</option>`;
-            attr.values.forEach(val => {
-                html += `<option value="${val.id}">${val.value}</option>`;
-            });
-            html += '</select></div>';
-        });
-
+    let html = '<div class="row g-3 align-items-end">';
+    attributes.forEach(attr => {
         html += `
-            <div class="col-md-2">
-                <label class="form-label">SKU</label>
-                <input type="text" name="manual_variants[${variantIndex}][sku]" class="form-control sku-input" required>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Giá</label>
-                <input type="number" name="manual_variants[${variantIndex}][price]" class="form-control" min="0" required>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Tồn kho</label>
-                <input type="number" name="manual_variants[${variantIndex}][quantity]" class="form-control" min="0" required>
-            </div>
+            <div class="col-md-3">
+                <label class="form-label">${attr.name}</label>
+                <select name="manual_variants[${variantIndex}][attributes][${attr.id}]" class="form-select attribute-select" data-index="${variantIndex}">
+                    <option value="">-- Chọn ${attr.name} --</option>`;
+        attr.values.forEach(val => {
+            html += `<option value="${val.id}">${val.value}</option>`;
+        });
+        html += '</select></div>';
+    });
 
-            <div class="col-md-1 text-center">
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Xoá biến thể" onclick="removeVariantCard(${variantIndex})">
-                    <i class="fa fa-trash"></i>
-                </button>
-            </div>
-        </div>`;
+    html += `
+        <div class="col-md-2">
+            <label class="form-label">SKU</label>
+            <input type="text" name="manual_variants[${variantIndex}][sku]" class="form-control sku-input" required>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Giá</label>
+            <input type="number" name="manual_variants[${variantIndex}][price]" class="form-control" min="0" required>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Tồn kho</label>
+            <input type="number" name="manual_variants[${variantIndex}][quantity]" class="form-control" min="0" required>
+        </div>
 
-        div.innerHTML = html;
-        container.appendChild(div);
+        <div class="col-md-1 text-center">
+            <button type="button" class="btn btn-sm btn-outline-danger" title="Xoá biến thể" onclick="removeVariantCard(${variantIndex})">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+    </div>`;
 
-        attachSKUListener(variantIndex);
-        variantIndex++;
-    }
+    div.innerHTML = html;
+    container.appendChild(div);
+
+    attachSKUListener(variantIndex);
+    variantIndex++;
+}
+
 
     function removeVariantCard(index) {
         const card = document.getElementById('variant_card_' + index);
@@ -1353,19 +1457,15 @@
         });
     }
 
-    let imageFiles = []; // Mảng chứa các File ảnh đã chọn
-    let previewId = 0; // ID để định danh ảnh trong DOM
+    let previewId = 0;
 
     document.getElementById('image-input').addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
+        const previewContainer = document.getElementById('image-preview-container');
 
-        files.forEach(file => {
-            const localId = previewId++;
-            imageFiles.push({
-                id: localId,
-                file
-            });
+        previewContainer.innerHTML = ''; // Reset ảnh cũ nếu chọn lại
 
+        files.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function(event) {
                 const imgWrapper = document.createElement('div');
@@ -1384,36 +1484,51 @@
                 removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
                 removeBtn.innerHTML = '&times;';
                 removeBtn.onclick = function() {
-                    imageFiles = imageFiles.filter(img => img.id !== localId);
+                    // ❌ Không xóa khỏi mảng vì không dùng FormData custom
                     imgWrapper.remove();
+                    // 👇 Trick: xóa ảnh khỏi input bằng cách clone lại input
+                    const input = document.getElementById('image-input');
+                    const dt = new DataTransfer();
+                    Array.from(input.files).forEach((f, i) => {
+                        if (i !== index) dt.items.add(f);
+                    });
+                    input.files = dt.files;
                 };
 
                 imgWrapper.appendChild(img);
                 imgWrapper.appendChild(removeBtn);
-                document.getElementById('image-preview-container').appendChild(imgWrapper);
+                previewContainer.appendChild(imgWrapper);
             };
             reader.readAsDataURL(file);
         });
-
-        // Reset input để chọn cùng 1 ảnh lại không bị chặn
-        e.target.value = '';
     });
 
-    // Trước khi gửi, thêm ảnh vào FormData
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const formData = new FormData(this);
-        imageFiles.forEach(({
-            file
-        }) => formData.append('images[]', file));
 
-        // Nếu dùng JavaScript gửi AJAX thì:
-        // fetch(this.action, { method: 'POST', body: formData })
 
-        // Nếu dùng submit bình thường thì:
-        // this.submit() sẽ gửi input file cũ, cần thêm ảnh vào controller (nâng cao)
+    function slugify(str) {
+        return str.toString().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // loại dấu tiếng Việt
+            .replace(/[^a-z0-9 -]/g, '') // chỉ giữ chữ cái, số, dấu cách và gạch
+            .replace(/\s+/g, '-') // chuyển dấu cách thành -
+            .replace(/-+/g, '-') // loại bớt dấu -
+            .replace(/^-+|-+$/g, ''); // loại - ở đầu/cuối
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.getElementById('product-name');
+        const slugInput = document.getElementById('product-slug');
+
+        if (nameInput && slugInput) {
+            nameInput.addEventListener('input', function() {
+                slugInput.value = slugify(nameInput.value);
+            });
+        }
     });
 </script>
+
+
 @endpush
 
 <!--end::Content wrapper-->
+
 @endsection
