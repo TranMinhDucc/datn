@@ -8,7 +8,8 @@ class ResetPasswordViewResponse implements ResetPasswordViewResponseContract
 {
     public function toResponse($request)
     {
-        return view('auth.reset-password', [
+        return view('client.auth.reset-password', [
+            'request' => $request,
             'token' => $request->route('token'),
             'email' => $request->email,
         ]);

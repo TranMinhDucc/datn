@@ -3,59 +3,58 @@
 @section('title', 'Quên mật khẩu')
 
 @section('content')
-@if (session('status'))
-    <script>
-        toastr.success("{{ session('status') }}");
-    </script>
-@endif
 
-@if (session('error'))
-    <script>
-        toastr.error("{{ session('error') }}");
-    </script>
-@endif
-<section class="user-form-part">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-                <div class="user-form-logo">
-                    <a href='{{ url('/') }}'><img src="{{ asset('assets/client/images/logo.png') }}" alt="logo"></a>
-                </div>
-                <div class="user-form-card">
-                    <div class="user-form-title">
-                        <h2>Worried?</h2>
-                        <p>No Problem! Just Follow The Simple Way</p>
+    @if (session('status'))
+        <script>
+            toastr.success("{{ session('status') }}");
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            toastr.error("{{ session('error') }}");
+        </script>
+    @endif
+
+    <section class="section-b-space pt-0 login-bg-img">
+        <div class="custom-container container login-page">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-6">
+                    <div class="log-in-box">
+                        <div class="log-in-title text-center mb-4">
+                            <h4>Khôi phục mật khẩu</h4>
+                            <p>Nhập email đã đăng ký để nhận đường dẫn đặt lại mật khẩu</p>
+                        </div>
+
+                        <div class="login-box">
+                            <form method="POST" action="{{ route('password.email') }}" class="row g-3">
+                                @csrf
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control @error('email') is-invalid @enderror" name="email"
+                                            type="email" placeholder="Nhập email" value="{{ old('email') }}" required>
+                                        <label for="email">Email</label>
+                                        @error('email')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-12 text-center">
+                                    <button class="btn login btn_black sm w-100" type="submit">
+                                        Gửi đường dẫn khôi phục
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p>Quay lại <a href="{{ route('login') }}" class="text-decoration-underline">Đăng nhập</a></p>
+                        </div>
                     </div>
-
-
-                    {{-- ✅ Form gửi email để nhận link --}}
-                    <form class="user-form" method="POST" action="{{ route('password.email') }}">
-                        @csrf
-
-                        <div class="form-group">
-                            <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                            @error('email')
-                                <small class="text-danger d-block mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </small>
-                            @enderror
-                        </div>
-
-                        <div class="form-button">
-                            <button type="submit">Get reset link</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="user-form-remind">
-                    <p>Go Back To <a href="{{ route('login') }}">Login here</a></p>
-                </div>
-
-                <div class="user-form-footer">
-                    <p>Greeny | &copy; Copyright by <a href="#">Mironcoder</a></p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 @endsection
