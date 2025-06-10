@@ -469,14 +469,20 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.4/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- SweetAlert2 JS (bắt buộc để Swal.fire hoạt động) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        @if (session('success'))
+    @if (session('success'))
+        <script>
             let timerInterval;
+            let timeout = 3000;
+            let action = "{{ session('action') }}";
+
+            if (action === "register") timeout = 5000;
+            else if (action === "logout") timeout = 600;
+            else if (action === "reset") timeout = 4000;
+
             Swal.fire({
                 title: "🎉 {{ session('success') }}",
                 html: "Sẽ tự đóng trong <b></b> ms.",
-                timer: 900,
+                timer: timeout,
                 timerProgressBar: true,
                 didOpen: () => {
                     Swal.showLoading();
@@ -489,8 +495,11 @@
                     clearInterval(timerInterval);
                 }
             });
-        @endif
-    </script>
+        </script>
+    @endif
+
+
+
 
 
 </body>

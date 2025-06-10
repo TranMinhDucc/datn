@@ -28,6 +28,6 @@ class RegisterController extends Controller
 
         event(new Registered($user));
 
-        return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
+        return redirect()->route('login')->with('success', 'Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.');
     }
 }

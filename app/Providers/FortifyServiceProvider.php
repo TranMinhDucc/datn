@@ -32,7 +32,12 @@ class FortifyServiceProvider extends ServiceProvider
                 return null;
             }
 
+
             return $user;
+        });
+        // Giao diện Reset Password (khi người dùng click link trong email)
+        Fortify::resetPasswordView(function ($request) {
+            return view('auth.reset-password', ['request' => $request]);
         });
     }
 }
