@@ -84,11 +84,17 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 });
 
 // ========== LOGOUT ==========
+
 Route::post('/logout', function (Request $request) {
     Auth::logout();
+
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return redirect('/')->with('success', 'Đăng xuất thành công!');
+
+    return redirect('/')->with([
+        'success' => 'Đăng xuất thành công!',
+        'action' => 'logout' // 👈 Thêm dòng này để JS biết đây là hành động đăng xuất
+    ]);
 })->name('logout');
 
 // ========== EMAIL VERIFICATION ==========
