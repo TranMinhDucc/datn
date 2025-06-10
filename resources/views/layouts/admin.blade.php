@@ -2,7 +2,7 @@
 
 <html lang="en">
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-   <head>
+<head>
     <title>
         @yield('title')
     </title>
@@ -29,9 +29,12 @@
     <!-- Global Stylesheets Bundle -->
     <link href="{{ asset('assets/admin/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/admin/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    @stack('styles')
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6"></script>
+
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>
@@ -17289,8 +17292,8 @@
         <script>
             var hostUrl = "assets/index.html";
         </script>
-
-      <!--begin::Global Javascript Bundle (mandatory for all pages)-->
+@stack('scripts')
+<!--begin::Global Javascript Bundle (mandatory for all pages)-->
 <script src="{{ asset('assets/admin/plugins/global/plugins.bundle.js') }}"></script>
 <script src="{{ asset('assets/admin/js/scripts.bundle.js') }}"></script>
 <!--end::Global Javascript Bundle-->

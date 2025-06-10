@@ -3,26 +3,46 @@
 @section('title', 'FAQ')
 
 @section('content')
+<!--begin::Content-->
+<div id="kt_app_content" class="app-content flex-column-fluid">
+    <!--begin::Content container-->
+    <div id="kt_app_content_container" class="app-container container-xxl">
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Thêm câu hỏi mới</h3>
-    </div>
-    <div class="card-body">
-        <form action="{{ route('faq.store') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label class="form-label">Câu hỏi</label>
-                <input type="text" name="question" class="form-control" value="{{ old('question') }}" required>
+        <div class="card card-flush">
+            <!--begin::Card header-->
+            <div class="card-header pt-8">
+                <div class="card-title">
+                    <h2 class="fw-bold">Thêm câu hỏi mới</h2>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Trả lời</label>
-                <textarea name="answer" class="form-control" rows="4" required>{{ old('answer') }}</textarea>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body">
+                <form action="{{ route('admin.faq.store') }}" method="POST">
+                    @csrf
+                    <!--begin::Input group-->
+                    <div class="mb-10">
+                        <label class="form-label fw-semibold">Câu hỏi</label>
+                        <input type="text" name="question" class="form-control form-control-solid" value="{{ old('question') }}" required>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="mb-10">
+                        <label class="form-label fw-semibold">Trả lời</label>
+                        <textarea name="answer" class="form-control form-control-solid" rows="6" required>{{ old('answer') }}</textarea>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Actions-->
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('admin.faq.index') }}" class="btn btn-light btn-active-light-primary me-2">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                    <!--end::Actions-->
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('faq.index') }}" class="btn btn-secondary">Quay lại</a>
-        </form>
+            <!--end::Card body-->
+        </div>
     </div>
 </div>
-
+<!--end::Content-->
 @endsection

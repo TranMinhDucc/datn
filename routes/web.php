@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SigninController;
 use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\BlogController;
 
 // Giao diện client
 Route::controller(HomeController::class)->group(function () {
@@ -80,14 +81,10 @@ Route::prefix('admin')->group(function () {
     // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
     // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
     // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-    Route::resource('faq', FaqController::class);
+    //faq
+    Route::resource('faq', FaqController::class)->names('admin.faq');
 
-    // Posts
-    Route::resource('posts', PostController::class)->names('admin.posts');
-
-    //post categories
-    Route::resource('post-categories', PostCategoryController::class) ->names('admin.post-categories');
-
-    // Route để bật/tắt trạng thái bài viết
-    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
+    // Blogs
+    Route::resource('blogs', BlogController::class)->names('admin.blogs');
+    Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
 });
