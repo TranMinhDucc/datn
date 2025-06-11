@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -134,6 +135,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
 
+    // Variant Attributes
+    Route::resource('variant_attributes', VariantAttributeController::class);
+    // Setting
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
