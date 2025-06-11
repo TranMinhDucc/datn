@@ -2,24 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
+        'category_id',
+        'brand_id',
         'name',
         'slug',
-        'code',
-        'short_desc',
         'description',
+        'image',
         'import_price',
         'base_price',
         'sale_price',
         'stock_quantity',
-        'status',
-        'image',
-        'category_id',
-        'brand_id',
+        'rating_avg',
+        'is_active',
     ];
 
     // Quan hệ với danh mục
@@ -27,7 +30,7 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
+   
     // Quan hệ với thương hiệu
     public function brand()
     {

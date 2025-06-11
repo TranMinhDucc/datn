@@ -9,16 +9,13 @@ class CreateProductVariantsTable extends Migration
     public function up(): void
     {
         Schema::create('product_variants', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('product_id');
+            $table->id();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('variant_name')->nullable(); // VD: "Đỏ - M"
             $table->string('sku')->unique();
             $table->decimal('price', 10, 2);
-            $table->integer('quantity');
-
+            $table->integer('quantity')->default(0);
             $table->timestamps();
-
-            // Foreign key
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 
