@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -78,7 +79,10 @@ Route::prefix('/')->name('client.')->group(function () {
 // ========== PROTECTED ROUTES ==========
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
-    Route::get('/profile', [AccountController::class, 'profile'])->name('profile');
+    Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile/edit', [AccountController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [AccountController::class, 'update'])->name('profile.update');
+
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
 });
@@ -130,4 +134,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('coupons', CouponController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
+
+    // Variant Attributes
+    Route::resource('variant_attributes', VariantAttributeController::class);
+    // Setting
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
 });

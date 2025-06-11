@@ -79,7 +79,7 @@
                              </div>
                              <!--end:Menu item--><!--begin:Menu item-->
                              <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href=""><span
+                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.variant_attributes.index') }}"><span
                                          class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                          class="menu-title">Thêm thuộc tính</span></a><!--end:Menu link-->
                              </div>
@@ -135,6 +135,12 @@
                              target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
                                          class="path1"></span><span class="path2"></span></i></span><span
                                  class="menu-title">Thành viên</span></a><!--end:Menu link-->
+                     </div>
+                     <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.dashboard') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                         class="path1"></span><span class="path2"></span></i></span><span
+                                 class="menu-title">Theme</span></a><!--end:Menu link-->
                      </div>
                      <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                          <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
@@ -295,9 +301,8 @@
                                  class="menu-title">Banner</span></a><!--end:Menu link-->
                      </div>
                      <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link"
-                             href="{{ route('admin.categories.index') }}"><span class="menu-icon"><i
-                                     class="fa-solid fa-gear fs-4"><span class="path1"></span><span
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.settings.index') }}"><span
+                                 class="menu-icon"><i class="fa-solid fa-gear fs-4"><span class="path1"></span><span
                                          class="path2"></span></i></span><span class="menu-title">Cài
                                  đặt</span></a><!--end:Menu link-->
                      </div>
