@@ -64,18 +64,18 @@
                             <!--end::Slug-->
                             <!--begin::Author-->
                             <div class="fs-6 text-muted mb-8">
-                                <span class="fw-semibold">Tác giả:</span> {{ $blog->author->name ?? 'N/A' }}
+                                <span class="fw-semibold">Tác giả:</span> {{ $blog->author->username ?? 'N/A' }}
                             </div>
                             <!--end::Author-->
                             <!--begin::Category-->
-                            <div class="fs-6 text-muted mb-8">
+                            <!-- <div class="fs-6 text-muted mb-8">
                                 <span class="fw-semibold">Danh mục:</span> 
                                 @if($blog->category)
                                     <span class="badge badge-light-primary">{{ $blog->category->name }}</span>
                                 @else
                                     N/A
                                 @endif
-                            </div>
+                            </div> -->
                             <!--end::Category-->
                             <!--begin::Status-->
                             <div class="fs-6 text-muted mb-8">
@@ -90,11 +90,11 @@
                             </div>
                             <!--end::Status-->
                             <!--begin::Featured Image-->
-                            @if($blog->featured_image)
+                            @if($blog->thumbnail)
                             <div class="mb-8">
                                 <div class="fs-6 fw-bold text-gray-700 mb-3">Ảnh đại diện:</div>
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}" class="rounded mw-100" style="max-height: 300px;">
+                                    <img src="{{ asset('storage/' . $blog->thumbnail) }}" alt="{{ $blog->title }}" class="rounded mw-100" style="max-height: 300px;">
                                 </div>
                             </div>
                             @endif

@@ -37,7 +37,7 @@ class BlogController extends Controller
      */
     public function create()
     {
-        $users = User::select('id', 'name')->get();
+        $users = User::select('id', 'username')->get();
         return view('admin.blogs.create', compact('users'));
     }
 
@@ -86,7 +86,7 @@ class BlogController extends Controller
      */
     public function edit(Blog $blog)
     {
-        $users = User::select('id', 'name')->get();
+        $users = User::select('id', 'username')->get();
         return view('admin.blogs.edit', compact('blog', 'users'));
     }
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('thumbnail')->nullable();
             $table->text('content');
             $table->unsignedBigInteger('author_id')->nullable();
             $table->timestamps();

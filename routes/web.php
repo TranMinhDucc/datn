@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
@@ -21,7 +21,6 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
@@ -33,9 +32,10 @@ use App\Http\Controllers\Admin\SigninController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
-use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\BlogController;
+
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // ========== PUBLIC CLIENT ROUTES ==========
@@ -56,7 +56,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/{slug}', 'show')->name('show');
     });
 
-    Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+    Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
@@ -128,10 +128,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('coupons', CouponController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
-    Route::resource('blogs', BlogController::class);
-
-        // Blogs
-    Route::resource('blogs', BlogController::class)->names('admin.blogs');
+    Route::resource('blogs', BlogController::class)->names('blogs');
     Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
 
     
