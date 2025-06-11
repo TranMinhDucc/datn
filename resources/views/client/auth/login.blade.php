@@ -35,35 +35,61 @@
                             <p>Register Your Account</p>
                         </div>
                         <div class="login-box">
-                            <form class="row g-3">
+                            @push('alert')
+                                <script>
+                                    @if (session('success'))
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '🎉 {{ session('success') }}',
+                                            showConfirmButton: false,
+                                            timer: 2500,
+                                            timerProgressBar: true
+                                        });
+                                    @endif
+                                </script>
+                            @endpush
+
+                            <form method="POST" action="{{ route('login') }}" class="row g-3">
+                                @csrf
+
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input class="form-control" id="floatingInputValue" type="email"
-                                            placeholder="name@example.com" value="test@example.com">
+                                        <input class="form-control" id="floatingInputValue" name="email" type="text"
+                                            placeholder="name@example.com" value="{{ old('email') }}">
                                         <label for="floatingInputValue">Tài khoản hoặc email</label>
+                                        @error('email')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input class="form-control" id="floatingInputValue1" type="password"
-                                            placeholder="Password" value="password">
+                                        <input class="form-control" id="floatingInputValue1" name="password" type="password"
+                                            placeholder="Password">
                                         <label for="floatingInputValue1">Mật khẩu</label>
+                                        @error('password')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-12">
                                     <div class="forgot-box">
                                         <div>
-                                            <input class="custom-checkbox me-2" id="category1" type="checkbox"
-                                                name="text">
-                                            <label for="category1">Remember me</label>
-                                        </div><a href="forget-password.html">Quên mật khẩu?</a>
+                                            <input class="custom-checkbox me-2" id="remember" type="checkbox"
+                                                name="remember">
+                                            <label for="remember">Remember me</label>
+                                        </div>
+                                        <a href="{{ route('password.request') }}">Quên mật khẩu?</a>
                                     </div>
                                 </div>
+
                                 <div class="col-12">
-                                    <button class="btn login btn_black sm" type="submit" data-bs-dismiss="modal"
-                                        aria-label="Close">Đăng nhập</button>
+                                    <button class="btn login btn_black sm" type="submit">Đăng nhập</button>
                                 </div>
                             </form>
+
                         </div>
                         <div class="other-log-in">
                             <h6>HOẶC</h6>
@@ -78,7 +104,8 @@
                         </div>
                         <div class="other-log-in"></div>
                         <div class="sign-up-box">
-                            <p>Bạn chưa có tài khoản?</p><a href="{{ route('client.register') }}">Đăng ký</a>
+                            <p>Bạn chưa có tài khoản?</p><a href="{{ route('register') }}">Đăng ký</a>
+
                         </div>
                     </div>
                 </div>
