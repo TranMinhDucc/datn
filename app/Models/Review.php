@@ -1,22 +1,23 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Review extends Model
 {
-    public $timestamps = true; // <-- Cái này mặc định là true, nhưng nếu bạn override thì đảm bảo đúng
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',
         'product_id',
+        'parent_id',
         'rating',
         'comment',
-        'created_at',
         'verified_purchase',
+        'approved', // <-- Cho phép cập nhật duyệt/bỏ duyệt
     ];
 
     // Quan hệ với User
@@ -30,4 +31,18 @@ class Review extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    // Quan hệ phản hồi: Review có thể có nhiều phản hồi
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Review::class, 'parent_id');
+    }
+
+    // Quan hệ với review cha nếu đây là phản hồi
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Review::class, 'parent_id');
+    }
 }
+
+

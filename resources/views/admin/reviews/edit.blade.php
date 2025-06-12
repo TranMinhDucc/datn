@@ -31,6 +31,17 @@
                             </ul>
                         </div>
                     @endif
+@php
+    $badwords = $badwords ?? [];
+    $comment = strtolower($review->comment ?? '');
+    $isViolated = false;
+    foreach ($badwords as $word) {
+        if (str_contains($comment, strtolower($word))) {
+            $isViolated = true;
+            break;
+        }
+    }
+@endphp
 
                     <form action="{{ route('admin.reviews.update', $review->id) }}" method="POST">
                         @csrf
@@ -100,6 +111,25 @@
                                 @enderror
                             </div>
                         </div>
+   <div class="col-md-4">
+    <label class="form-label">Trạng thái duyệt</label>
+    @if ($isViolated)
+        <div class="form-control bg-danger text-white">
+            Vi phạm từ khóa cấm
+        </div>
+        <input type="hidden" name="approved" value="0">
+    @else
+        <select name="approved" class="form-select @error('approved') is-invalid @enderror" required>
+            <option value="1" {{ $review->approved ? 'selected' : '' }}>Hiển thị công khai</option>
+            <option value="0" {{ !$review->approved ? 'selected' : '' }}>Chờ kiểm duyệt</option>
+        </select>
+        @error('approved')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    @endif
+</div>
+
+
 
                         <div class="mb-5">
                             <label class="form-label">Bình luận</label>
