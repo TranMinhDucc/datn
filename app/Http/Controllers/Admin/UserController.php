@@ -17,6 +17,7 @@ class UserController extends Controller
     /**
      * Hiển thị danh sách người dùng
      */
+    
     public function index(Request $request)
     {
         $query = User::query();
