@@ -49,11 +49,10 @@
                             <p>Tạo tài khoản</p>
                         </div>
                         <div class="login-box">
-
-
                             <form method="POST" action="{{ route('register') }}" class="row g-3">
                                 @csrf
                                 <div class="col-12">
+                                    <label class="form-label">Tên đăng nhập</label>
                                     <div class="form-floating">
                                         <input class="form-control" name="username" type="text" placeholder="Tên đăng nhập"
                                             value="{{ old('username') }}">
@@ -64,6 +63,7 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
+                                    <label class="form-label">Họ và tên</label>
                                     <div class="form-floating">
                                         <input class="form-control" name="fullname" type="text" placeholder="Nhập họ tên"
                                             value="{{ old('fullname') }}">
@@ -75,6 +75,7 @@
                                 </div>
 
                                 <div class="col-12">
+                                    <label class="form-label">Email</label>
                                     <div class="form-floating">
                                         <input class="form-control" name="email" type="text" placeholder="Email"
                                             value="{{ old('email') }}">
@@ -85,31 +86,36 @@
                                     </div>
                                 </div>
 
+                                <!-- Mật khẩu -->
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <input class="form-control" name="password" type="password" placeholder="Mật khẩu">
-                                        <label>Nhập mật khẩu</label>
-                                        @error('password')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
+                                    <label class="form-label">Mật khẩu</label>
+                                    <div class="position-relative">
+                                        <input class="form-control pe-5" type="password" name="password" id="password"
+                                            placeholder="Nhập mật khẩu">
+                                        <i class="fa fa-eye toggle-password" toggle="#password"></i>
                                     </div>
+                                    @error('password')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
+                                <!-- Nhập lại mật khẩu -->
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <input class="form-control" name="password_confirmation" type="password"
-                                            placeholder="Nhập lại mật khẩu">
-                                        <label>Nhập lại mật khẩu</label>
-                                        @error('password_confirmation')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-
-                                        {{-- Nếu lỗi xác nhận nằm trong 'password' (mặc định của Laravel) --}}
-                                        @if ($errors->has('password') && str_contains($errors->first('password'), 'không khớp'))
-                                            <div class="text-danger mt-1">{{ $errors->first('password') }}</div>
-                                        @endif
+                                    <label class="form-label">Xác nhận mật khẩu</label>
+                                    <div class="position-relative">
+                                        <input class="form-control pe-5" type="password" name="password_confirmation"
+                                            id="password_confirmation" placeholder="Nhập lại mật khẩu">
+                                        <i class="fa fa-eye toggle-password" toggle="#password_confirmation"></i>
                                     </div>
+                                    @error('password_confirmation')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+
+                                    @if ($errors->has('password') && str_contains($errors->first('password'), 'không khớp'))
+                                        <div class="text-danger mt-1">{{ $errors->first('password') }}</div>
+                                    @endif
                                 </div>
+
 
 
                                 <div class="col-12">
@@ -148,4 +154,50 @@
             </div>
         </div>
     </section>
+@endsection
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            z-index: 10;
+        }
+
+        .form-control {
+            padding: 15px;
+        }
+
+        .form-control.pe-5 {
+            padding-right: 2.5rem !important;
+        }
+    </style>
+@endsection
+
+@section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.toggle-password').forEach(function (eye) {
+                eye.addEventListener('click', function () {
+                    const input = document.querySelector(eye.getAttribute('toggle'));
+                    const isPassword = input.getAttribute('type') === 'password';
+
+                    input.setAttribute('type', isPassword ? 'text' : 'password');
+
+                    // Đổi icon từ fa-eye -> fa-eye-slash và ngược lại
+                    eye.classList.toggle('fa-eye');
+                    eye.classList.toggle('fa-eye-slash');
+                });
+
+                // Đặt icon mặc định là fa-eye nếu chưa có
+                if (!eye.classList.contains('fa-eye') && !eye.classList.contains('fa-eye-slash')) {
+                    eye.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 @endsection

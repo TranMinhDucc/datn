@@ -9,6 +9,7 @@ use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResp
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Actions\Fortify\CustomLoginValidation;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -19,23 +20,25 @@ class FortifyServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        // ✅ Override login logic
         Fortify::authenticateUsing(function (Request $request) {
+
+            // 🟡 Gọi validate thủ công để áp dụng rules và messages trong CustomLoginValidation
+            (new CustomLoginValidation)($request);
+
+            // ✅ Tìm user theo email
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
-                session()->flash('login_error', 'Email không tồn tại.');
-                return null;
+            // ✅ Kiểm tra mật khẩu
+            if ($user && Hash::check($request->password, $user->password)) {
+                return $user;
             }
 
-            if (!Hash::check($request->password, $user->password)) {
-                session()->flash('login_error', 'Mật khẩu không đúng.');
-                return null;
-            }
-
-
-            return $user;
+            // ❌ Nếu không đúng, Laravel sẽ tự redirect lại form và bạn có thể xử lý thông báo lỗi tại đó (nếu cần)
+            return null;
         });
-        // Giao diện Reset Password (khi người dùng click link trong email)
+
+        // ✅ Custom view cho Reset Password
         Fortify::resetPasswordView(function ($request) {
             return view('auth.reset-password', ['request' => $request]);
         });

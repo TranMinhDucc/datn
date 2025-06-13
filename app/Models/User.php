@@ -65,4 +65,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'create_date' => 'datetime',
         'update_date' => 'datetime',
     ];
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar && file_exists(public_path($this->avatar))
+            ? asset($this->avatar)
+            : asset('assets/client/images/user/default.jpg'); // ảnh mặc định
+    }
 }
