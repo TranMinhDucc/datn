@@ -15,6 +15,7 @@ use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
@@ -45,6 +46,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
+       
+
     });
 
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -55,7 +58,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
-
+Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
