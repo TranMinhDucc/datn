@@ -15,6 +15,7 @@ use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
@@ -75,6 +76,10 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
+
+
+Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
+
 });
 
 // ========== PROTECTED ROUTES ==========
@@ -133,6 +138,36 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
 
     Route::resource('coupons', CouponController::class);
+
+    // System Settings
+    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+    //reviews crud
+    Route::resource('reviews', ReviewController::class)->names('reviews');
+    
+     Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
+    // Route::resource('roles', RoleController::class)->names('admin.roles');
+
+    // Topup & Campaigns
+    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
+    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
+    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
+
+    // Marketing
+    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
+    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
+    // Route::resource('posts', PostController::class)->names('admin.posts');
+
+    // System Settings
+    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
 
