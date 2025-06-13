@@ -10,10 +10,19 @@ class PaymentBankController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index()
+    public function index()
     {
-        $banks = PaymentBank::all();
-        return view('admin.payment_banks.index', compact('banks'));
+        return view('admin.payment_banks.index');
+    }
+
+    public function config()
+    {
+        return view('admin.payment_banks.config');
+    }
+
+    public function config_add()
+    {
+        return view('admin.payment_banks.config_add');
     }
 
     /**
