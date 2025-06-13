@@ -39,8 +39,7 @@
                                             src="{{ asset('assets/client/images/product/slider/3.jpg') }}" alt="">
                                     </div>
                                     <div class="swiper-slide"> <img
-                                            src="{{ asset('assets/client/images/product/slider/4.jpg') }}"
-                                            alt=""><span>
+                                            src="{{ asset('assets/client/images/product/slider/4.jpg') }}" alt=""><span>
                                             <i class="iconsax" data-icon="play"></i></span></div>
                                     <div class="swiper-slide"> <img
                                             src="{{ asset('assets/client/images/product/slider/5.jpg') }}" alt="">
@@ -152,8 +151,8 @@
                                     <input type="number" value="1" min="1" max="20">
                                     <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                 </div>
-                                <div class="d-flex align-items-center gap-3 w-100"> <a class="btn btn_black sm"
-                                        href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                <div class="d-flex align-items-center gap-3 w-100"> <a class="btn btn_black sm" href="#"
+                                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
                                         aria-controls="offcanvasRight">Add To Cart</a><a class="btn btn_outline sm"
                                         href="#">Buy Now</a></div>
                             </div>
@@ -163,9 +162,8 @@
                                             Wishlist</a></li>
                                     <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
                                             Compare</a></li>
-                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
-                                            title="Quick View" tabindex="0"><i
-                                                class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
+                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box" title="Quick View"
+                                            tabindex="0"><i class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
                                 </ul>
                             </div>
                             <div class="sale-box">
@@ -231,8 +229,7 @@
                             </div>
                             <div class="share-option">
                                 <h5>Secure Checkout </h5><img class="img-fluid"
-                                    src="{{ asset('assets/client/images/other-img/secure_payments.png') }}"
-                                    alt="">
+                                    src="{{ asset('assets/client/images/other-img/secure_payments.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -246,8 +243,8 @@
                         <ul class="product-tab theme-scrollbar nav nav-tabs nav-underline" id="Product" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="Description-tab" data-bs-toggle="tab"
-                                    data-bs-target="#Description-tab-pane" role="tab"
-                                    aria-controls="Description-tab-pane" aria-selected="true">Description</button>
+                                    data-bs-target="#Description-tab-pane" role="tab" aria-controls="Description-tab-pane"
+                                    aria-selected="true">Description</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="specification-tab" data-bs-toggle="tab"
@@ -375,8 +372,8 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="question-tab-pane" role="tabpanel"
-                                aria-labelledby="question-tab" tabindex="0">
+                            <div class="tab-pane fade" id="question-tab-pane" role="tabpanel" aria-labelledby="question-tab"
+                                tabindex="0">
                                 <div class="question-main-box">
                                     <h5>Have Doubts Regarding This Product ?</h5>
                                     <h6 data-bs-toggle="modal" data-bs-target="#question-modal" title="Quick View"
@@ -466,15 +463,15 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="Reviews-tab-pane" role="tabpanel"
-                                aria-labelledby="Reviews-tab" tabindex="0">
+                            <div class="tab-pane fade" id="Reviews-tab-pane" role="tabpanel" aria-labelledby="Reviews-tab"
+                                tabindex="0">
                                 <div class="row gy-4">
                                     <div class="col-lg-4">
                                         <div class="review-right">
                                             <div class="customer-rating">
                                                 <div class="global-rating">
                                                     <div>
-                                                        <h5>4.5</h5>
+                                                        <h5>{{number_format($rating_summary['avg_rating'], 2)}}</h5>
                                                     </div>
                                                     <div>
                                                         <h6>Average Ratings</h6>
@@ -484,7 +481,7 @@
                                                             <li><i class="fa-solid fa-star"></i></li>
                                                             <li><i class="fa-solid fa-star"></i></li>
                                                             <li><i class="fa-regular fa-star"></i></li>
-                                                            <li><span>(14)</span></li>
+                                                            <li><span>({{$rating_summary['total_rating']}})</span></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -495,9 +492,9 @@
                                                             aria-label="Animated striped example" aria-valuenow="75"
                                                             aria-valuemin="0" aria-valuemax="100">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                                style="width: 80%"></div>
+                                                                style="width: {{$rating_summary['5_star_percent']}}%"></div>
                                                         </div>
-                                                        <p>80%</p>
+                                                        <p>{{$rating_summary['5_star_percent']}}%</p>
                                                     </li>
                                                     <li>
                                                         <p>4 Star</p>
@@ -505,9 +502,9 @@
                                                             aria-label="Animated striped example" aria-valuenow="75"
                                                             aria-valuemin="0" aria-valuemax="100">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                                style="width: 70%"></div>
+                                                                style="width: {{$rating_summary['4_star_percent']}}%"></div>
                                                         </div>
-                                                        <p>70%</p>
+                                                        <p>{{$rating_summary['4_star_percent']}}%</p>
                                                     </li>
                                                     <li>
                                                         <p>3 Star</p>
@@ -515,9 +512,9 @@
                                                             aria-label="Animated striped example" aria-valuenow="75"
                                                             aria-valuemin="0" aria-valuemax="100">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                                style="width: 55%"></div>
+                                                                style="width: {{$rating_summary['3_star_percent']}}%"></div>
                                                         </div>
-                                                        <p>55%</p>
+                                                        <p>{{$rating_summary['3_star_percent']}}%</p>
                                                     </li>
                                                     <li>
                                                         <p>2 Star</p>
@@ -525,9 +522,9 @@
                                                             aria-label="Animated striped example" aria-valuenow="75"
                                                             aria-valuemin="0" aria-valuemax="100">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                                style="width: 40%"></div>
+                                                                style="width: {{$rating_summary['2_star_percent']}}%"></div>
                                                         </div>
-                                                        <p>40%</p>
+                                                        <p>{{$rating_summary['2_star_percent']}}%</p>
                                                     </li>
                                                     <li>
                                                         <p>1 Star</p>
@@ -535,14 +532,14 @@
                                                             aria-label="Animated striped example" aria-valuenow="75"
                                                             aria-valuemin="0" aria-valuemax="100">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                                style="width: 25%"></div>
+                                                                style="width: {{$rating_summary['1_star_percent']}}%"></div>
                                                         </div>
-                                                        <p>25%</p>
+                                                        <p>{{$rating_summary['1_star_percent']}}%</p>
                                                     </li>
                                                 </ul>
                                                 <button class="btn reviews-modal" data-bs-toggle="modal"
-                                                    data-bs-target="#Reviews-modal" title="Quick View"
-                                                    tabindex="0">Write a review</button>
+                                                    data-bs-target="#Reviews-modal" title="Quick View" tabindex="0">Write a
+                                                    review</button>
                                             </div>
                                         </div>
                                     </div>
@@ -550,93 +547,40 @@
                                         <div class="comments-box">
                                             <h5>Comments </h5>
                                             <ul class="theme-scrollbar">
-                                                <li>
-                                                    <div class="comment-items">
-                                                        <div class="user-img"> <img
-                                                                src="{{ asset('assets/client/images/user/1.jpg') }}"
-                                                                alt=""></div>
-                                                        <div class="user-content">
-                                                            <div class="user-info">
-                                                                <div class="d-flex justify-content-between gap-3">
-                                                                    <h6> <i class="iconsax" data-icon="user-1"></i>Michel
-                                                                        Poe</h6><span> <i class="iconsax"
-                                                                            data-icon="clock"></i>Mar 29, 2022</span>
-                                                                </div>
-                                                                <ul class="rating p-0 mb">
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-regular fa-star"></i></li>
-                                                                </ul>
+                                                @foreach ($reviews as $review)
+                                                    <li style="width:100%">
+                                                        <div class="comment-items">
+                                                            <div class="user-img"> <img
+                                                                    src="{{ $review->user_avatar ?? asset('assets/client/images/user/3.jpg') }}" alt="">
                                                             </div>
-                                                            <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                                buttons and patch pockets showerproof black lightgrey.
-                                                                Printed lining patch pockets jersey blazer built in pocket
-                                                                square wool casual quilted jacket without hood azure.</p><a
-                                                                href="#"> <span> <i class="iconsax"
-                                                                        data-icon="undo"></i> Reply</span></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="reply">
-                                                    <div class="comment-items">
-                                                        <div class="user-img"> <img
-                                                                src="{{ asset('assets/client/images/user/2.jpg') }}"
-                                                                alt=""></div>
-                                                        <div class="user-content">
-                                                            <div class="user-info">
-                                                                <div class="d-flex justify-content-between gap-3">
-                                                                    <h6> <i class="iconsax" data-icon="user-1"></i>Michel
-                                                                        Poe</h6><span> <i class="iconsax"
-                                                                            data-icon="clock"></i>Mar 29, 2022</span>
+                                                            <div class="user-content">
+                                                                <div class="user-info">
+                                                                    <div class="d-flex justify-content-between gap-3">
+                                                                     <h6><i class="iconsax" data-icon="user-1"></i> {{ $review->user->fullname ?? 'Ẩn danh' }}</h6>
+
+
+                                                                        <span> <i class="iconsax"
+                                                                                data-icon="clock"></i>{{ $review->created_at->format('d/m/Y H:i') }}</span>
+                                                                    </div>
+                                                                    <!-- Hiển thị số sao đánh giá -->
+                                                                    <ul class="rating p-0 mb">
+                                                                        @for ($i = 1; $i <= 5; $i++)
+                                                                            <li>
+                                                                                <i class="{{ $i <= $review->rating ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                                                            </li>
+                                                                        @endfor
+                                                                    </ul>
                                                                 </div>
-                                                                <ul class="rating p-0 mb">
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-regular fa-star"></i></li>
-                                                                </ul>
+                                                          @if ($review->approved)
+                                                 <p>{{ $review->comment }}</p>
+                                                         @endif
+
+                                                                {{-- <a href="#"> <span> <i class="iconsax" data-icon="undo"></i>
+                                                                        Replay</span></a> --}}
                                                             </div>
-                                                            <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                                buttons and patch pockets showerproof black lightgrey.
-                                                                Printed lining patch pockets jersey blazer built in pocket
-                                                                square wool casual quilted jacket without hood azure.</p><a
-                                                                href="#"> <span> <i class="iconsax"
-                                                                        data-icon="undo"></i> Replay</span></a>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="comment-items">
-                                                        <div class="user-img"> <img
-                                                                src="{{ asset('assets/client/images/user/3.jpg') }}"
-                                                                alt=""></div>
-                                                        <div class="user-content">
-                                                            <div class="user-info">
-                                                                <div class="d-flex justify-content-between gap-3">
-                                                                    <h6> <i class="iconsax" data-icon="user-1"></i>Michel
-                                                                        Poe</h6><span> <i class="iconsax"
-                                                                            data-icon="clock"></i>Mar 29, 2022</span>
-                                                                </div>
-                                                                <ul class="rating p-0 mb">
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-solid fa-star"></i></li>
-                                                                    <li><i class="fa-regular fa-star"></i></li>
-                                                                </ul>
-                                                            </div>
-                                                            <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                                buttons and patch pockets showerproof black lightgrey.
-                                                                Printed lining patch pockets jersey blazer built in pocket
-                                                                square wool casual quilted jacket without hood azure.</p><a
-                                                                href="#"> <span> <i class="iconsax"
-                                                                        data-icon="undo"></i> Replay</span></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
+                                                    </li>
+                                                @endforeach
                                             </ul>
                                         </div>
                                     </div>
@@ -668,17 +612,15 @@
                                             data-bs-title="Add to Wishlist"></i></a></div>
                                 <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
+                                            alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
                                             alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                        tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                            data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                        href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                            aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                        href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                             class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                             data-bs-title="Quick View"></i></a></div>
                                 <div class="countdown">
@@ -735,17 +677,15 @@
                                             data-bs-title="Add to Wishlist"></i></a></div>
                                 <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
+                                            alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
                                             alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                        tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                            data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                        href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                            aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                        href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                             class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                             data-bs-title="Quick View"></i></a></div>
                             </div>
@@ -775,17 +715,15 @@
                                             data-bs-title="Add to Wishlist"></i></a></div>
                                 <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
+                                            alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
                                             alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                        tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                            data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                        href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                            aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                        href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                             class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                             data-bs-title="Quick View"></i></a></div>
                             </div>
@@ -815,17 +753,15 @@
                                             data-bs-title="Add to Wishlist"></i></a></div>
                                 <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
+                                            alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
                                             alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                        tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                            data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                        href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                            aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                        href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                             class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                             data-bs-title="Quick View"></i></a></div>
                                 <div class="countdown">
@@ -882,17 +818,15 @@
                                             data-bs-title="Add to Wishlist"></i></a></div>
                                 <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
+                                            alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
                                             src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
                                             alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                        tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                            data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                        href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                            aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                        href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                             class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                             data-bs-title="Quick View"></i></a></div>
                                 <div class="countdown">
@@ -944,55 +878,95 @@
             </div>
         </div>
     </section>
-     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog" aria-modal="true">
-      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4>Write A Review</h4>
-            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body pt-0">
-            <div class="row g-3">
-              <div class="col-12"> 
-                <div class="reviews-product"> 
-                  <div> <img src="../assets/images/modal/1.jpg" alt="">
-                    <div> 
-                      <h5>Denim Skirts Corset Blazer</h5>
-                      <p>$20.00 
-                        <del>$35.00</del>
-                      </p>
-                    </div>
-                  </div>
+    <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Write A Review</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-              </div>
-              <div class="col-12"> 
-                <div class="customer-rating">
-                  <label class="form-label">Review Content :</label>
-                  <ul class="rating p-0 mb">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-regular fa-star">           </i></li>
-                  </ul>
+                <div class="modal-body pt-0">
+        @auth
+    <form action="{{ route('client.review') }}" method="POST" class="row g-3">
+        @csrf
+        <input type="hidden" name="product_id" value="{{ $test_id }}">
+        <input type="hidden" name="rating" id="rating-value" value="0">
+
+        <div class="col-12">
+            <div class="reviews-product d-flex gap-3">
+                <img src="{{ asset('assets/images/modal/1.jpg') }}" alt="" width="80">
+                <div>
+                    <h5>Denim Skirts Corset Blazer</h5>
+                    <p>$20.00 <del>$35.00</del></p>
                 </div>
-              </div>
-              <div class="col-12">    
-                <div class="from-group"> 
-                  <label class="form-label">Review Content :</label>
-                  <textarea class="form-control" id="comment" cols="30" rows="4" placeholder="Write your comments here..."></textarea>
-                </div>
-              </div>
-              <div class="modal-button-group">
-                <button class="btn btn-cancel" type="submit" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-submit" type="submit" data-bs-dismiss="modal" aria-label="Close">Submit</button>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+
+        <div class="col-12">
+            <div class="customer-rating">
+                <label class="form-label">Rating</label>
+                <ul class="rating p-0 mb-0 d-flex" style="list-style: none; cursor: pointer;">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <li class="star" data-value="{{ $i }}">
+                            <i class="fa-regular fa-star fs-4 me-1"></i>
+                        </li>
+                    @endfor
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Review Content :</label>
+                <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
+                    placeholder="Write your comments here..." required></textarea>
+            </div>
+        </div>
+
+        <div class="modal-button-group d-flex gap-2">
+            <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-submit" type="submit">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating-value');
+
+        stars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                const rating = star.getAttribute('data-value');
+                ratingInput.value = rating;
+
+                stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
+
+                for (let i = 0; i < rating; i++) {
+                    stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
+                }
+            });
+        });
+    </script>
+@endauth
+
+@guest
+<div class="alert alert-warning mt-3 d-flex justify-content-between align-items-center">
+    <div class="me-3">
+        <strong>Bạn cần đăng nhập</strong> để đánh giá và bình luận sản phẩm.
+    </div>
+    <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-sign-in-alt"></i> Đăng nhập
+    </a>
+</div>
+
+@endguest
+
+
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('js')
-    <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
+<script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
 @endsection

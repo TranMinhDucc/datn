@@ -8,9 +8,10 @@ class ProductVariant extends Model
 {
     protected $fillable = [
         'product_id',
-        'sku',
+        'variant_name',
         'price',
         'quantity',
+        'sku'
     ];
 
     // Quan hệ với sản phẩm
@@ -20,8 +21,12 @@ class ProductVariant extends Model
     }
 
     // Quan hệ với các thuộc tính biến thể
-    public function options()
+    public function variantOptions()
     {
         return $this->hasMany(ProductVariantOption::class);
     }
+    public function options()
+{
+    return $this->hasMany(ProductVariantOption::class, 'product_variant_id');
+}
 }
