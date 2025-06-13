@@ -51,7 +51,8 @@
 							</th>
 							<th class="min-w-125px">ID</th>
 							<th class="min-w-300px">Tiêu đề</th>
-							<th class="min-w-200px">Slug</th>
+							<th class="min-w-150px">Slug</th>
+							<th class="min-w-150px">Ảnh đại diện</th>
 							<th class="min-w-150px">Tác giả</th>
 							<th class="min-w-150px">Ngày tạo</th>
 							<th class="text-end min-w-100px">Thao tác</th>
@@ -80,7 +81,14 @@
 								<span class="text-muted">{{ $blog->slug }}</span>
 							</td>
 							<td>
-								<span class="text-gray-800">{{ $blog->author->name ?? 'N/A' }}</span>
+								@if($blog->thumbnail)
+								<img src="{{ asset('storage/' . $blog->thumbnail) }}" alt="Thumbnail" class="w-80px h-45px rounded" />
+								@else
+								<span class="text-muted">Chưa có ảnh</span>
+								@endif
+							</td>
+							<td>
+								<span class="text-gray-800">{{ $blog->author->username ?? 'N/A' }}</span>
 							</td>
 							<td>
 								<span class="text-muted">{{ $blog->created_at->format('d/m/Y H:i') }}</span>

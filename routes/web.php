@@ -15,6 +15,8 @@ use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\FaqController as ClientFaqController;
+
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
@@ -71,6 +73,10 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+    Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 });

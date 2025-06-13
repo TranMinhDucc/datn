@@ -25,46 +25,29 @@
                 <div class="row">
                     <div class="col-lg-10 mx-auto">
                         <div class="faq-parent">
+                            @if(count($faqs) > 0)
+                            @foreach ($faqs as $faq)
                             <div class="faq-child">
                                 <div class="faq-que">
-                                    <button>How to contact with Customer Service?</button>
+                                    <button>{{ $faq->question }}</button>
                                 </div>
                                 <div class="faq-ans">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, repellendus ducimus? Culpa tempore saepe fuga excepturi eius! Nulla quam, minus, id ipsa ad distinctio rem nihil voluptatem eaque quaerat recusandae?</p>
+                                    <p>{{ $faq->answer }}</p>
                                 </div>
                             </div>
+                            @endforeach
+                            @else
                             <div class="faq-child">
                                 <div class="faq-que">
-                                    <button>App installation failed, how to update system information?</button>
+                                    <button>No FAQs available at the moment.</button>
                                 </div>
                                 <div class="faq-ans">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, repellendus ducimus? Culpa tempore saepe fuga excepturi eius! Nulla quam, minus, id ipsa ad distinctio rem nihil voluptatem eaque quaerat recusandae?</p>
+                                    <p>Please check back later or contact support for assistance.</p>
                                 </div>
                             </div>
-                            <div class="faq-child">
-                                <div class="faq-que">
-                                    <button>Website reponse taking time, how to improve?</button>
-                                </div>
-                                <div class="faq-ans">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, repellendus ducimus? Culpa tempore saepe fuga excepturi eius! Nulla quam, minus, id ipsa ad distinctio rem nihil voluptatem eaque quaerat recusandae?</p>
-                                </div>
-                            </div>
-                            <div class="faq-child">
-                                <div class="faq-que">
-                                    <button>How do I create a account?</button>
-                                </div>
-                                <div class="faq-ans">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, repellendus ducimus? Culpa tempore saepe fuga excepturi eius! Nulla quam, minus, id ipsa ad distinctio rem nihil voluptatem eaque quaerat recusandae?</p>
-                                </div>
-                            </div>
-                            <div class="faq-child">
-                                <div class="faq-que">
-                                    <button>I cannot find an answer to my question!</button>
-                                </div>
-                                <div class="faq-ans">
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, repellendus ducimus? Culpa tempore saepe fuga excepturi eius! Nulla quam, minus, id ipsa ad distinctio rem nihil voluptatem eaque quaerat recusandae?</p>
-                                </div>
-                            </div>
+                            @endif
+
+                            
                         </div>
                     </div>
                 </div>
