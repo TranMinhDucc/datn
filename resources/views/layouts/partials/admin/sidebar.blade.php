@@ -152,7 +152,7 @@
                          <div class="menu-sub menu-sub-accordion">
                              <!--begin:Menu item-->
                              <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="toolbars/classic.html"><span
+                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.bank.view_payment') }}"><span
                                          class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                          class="menu-title">Ngân hàng</span></a><!--end:Menu link-->
                              </div>

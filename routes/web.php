@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\WishlistController;
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -141,4 +142,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
+
+    // Banking 
+
+
+    Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
+    Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
+    Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
+    Route::get('/recharge-bank-config/{id}/edit', [BankController::class, 'config_edit'])->name('bank.config_edit');
+    Route::put('/recharge-bank-config/{id}/edit', [BankController::class, 'config_update'])->name('bank.config_update');
+    Route::get('/create', [BankController::class, 'create'])->name('create');
+    Route::post('/', [BankController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [BankController::class, 'update'])->name('update');
+    Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
 });
