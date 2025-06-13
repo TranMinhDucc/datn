@@ -202,50 +202,121 @@
                 <!--begin::Aside column-->
                 <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
                     <!--begin::Thumbnail settings-->
-                    <div class="fv-row mb-7">
-                        <label class="form-label">Ảnh sản phẩm</label>
+                    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+                        <!-- Ảnh đại diện sản phẩm -->
+                        @php
+                        $imageUrl = $product->image
+                        ? asset('storage/' . $product->image)
+                        : 'https://via.placeholder.com/150';
+                        @endphp
 
-                        <!--begin::Image input-->
-                        <div class="image-input image-input-outline image-input-placeholder mb-3"
-                            data-kt-image-input="true"
-                            style="background-image: url('{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/125' }}')">
-
-                            <!--begin::Preview-->
-                            <div class="image-input-wrapper w-125px h-125px"
-                                style="background-image: url('{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/125' }}')">
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Ảnh</h2>
+                                </div>
                             </div>
-                            <!--end::Preview-->
 
-                            <!--begin::Edit button-->
-                            <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
-                                data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Thay ảnh">
-                                <i class="bi bi-pencil-fill fs-7"></i>
-                                <input type="file" name="image" accept=".png, .jpg, .jpeg" />
-                                <input type="hidden" name="avatar_remove" />
-                            </label>
-                            <!--end::Edit button-->
+                            <div class="card-body text-center pt-0">
+                                <div
+                                    class="image-input image-input-outline image-input-placeholder mb-3 {{ $product->image ? '' : 'image-input-empty' }}"
+                                    data-kt-image-input="true"
+                                    style="background-image: url('{{ $imageUrl }}')">
+                                    <!-- Preview -->
+                                    <div
+                                        class="image-input-wrapper w-150px h-150px"
+                                        style="background-image: url('{{ $imageUrl }}')"></div>
 
-                            <!--begin::Cancel button-->
-                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
-                                data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Hủy">
-                                <i class="bi bi-x fs-2"></i>
-                            </span>
-                            <!--end::Cancel button-->
+                                    <!-- Upload -->
+                                    <label
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="change">
+                                        <i class="ki-duotone ki-pencil fs-7"></i>
+                                        <input
+                                            type="file"
+                                            name="image"
+                                            accept=".png, .jpg, .jpeg"
+                                            class="form-control mb-2" />
+                                    </label>
 
-                            <!--begin::Remove button-->
-                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
-                                data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Xóa ảnh">
-                                <i class="bi bi-x fs-2"></i>
-                            </span>
-                            <!--end::Remove button-->
+                                    <!-- Error -->
+                                    @error('image')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+
+                                    <!-- Remove -->
+                                    <span
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="remove">
+                                        <i class="ki-duotone ki-cross fs-2"></i>
+                                    </span>
+                                </div>
+
+                                <div class="text-muted fs-7">
+                                    **Chọn ảnh đại diện sản phẩm (chỉ hỗ trợ *.png, .jpg, .jpeg).
+                                </div>
+                            </div>
                         </div>
-                        <!--end::Image input-->
 
-                        @error('image')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
+                        <!-- Trạng thái -->
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Trạng Thái</h2>
+                                </div>
+                                <div class="card-toolbar">
+                                    <div class="rounded-circle bg-success w-15px h-15px"></div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0">
+                                <select name="is_active" class="form-select mb-2">
+                                    <option value="1" {{ old('is_active', $product->is_active ?? '1') == '1' ? 'selected' : '' }}>Hiện</option>
+                                    <option value="0" {{ old('is_active', $product->is_active ?? '1') == '0' ? 'selected' : '' }}>Ẩn</option>
+                                </select>
+                                @error('is_active')<div class="text-danger">{{ $message }}</div>@enderror
+                                <div class="text-muted fs-7">Set the product status.</div>
+                            </div>
+                        </div>
 
-                        <div class="form-text">Định dạng: png, jpg, jpeg. Dung lượng tối đa: 2MB</div>
+                        <!-- Danh mục -->
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Danh Mục Sản Phẩm</h2>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0">
+                                <label class="form-label">Danh Mục:</label>
+                                <select name="category_id" class="form-select mb-2" data-control="select2">
+                                    <option></option>
+                                    @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('category_id')<div class="text-danger">{{ $message }}</div>@enderror
+                                <div class="text-muted fs-7 mb-7">Add product to a category.</div>
+                            </div>
+                        </div>
+
+                        <!-- Thương hiệu -->
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Thương hiệu Sản Phẩm</h2>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0">
+                                <label class="form-label">Thương hiệu:</label>
+                                <select name="brand_id" class="form-select mb-2" data-control="select2">
+                                    <option></option>
+                                    @foreach ($brands as $brand)
+                                    <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id ?? '') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('brand_id')<div class="text-danger">{{ $message }}</div>@enderror
+                                <div class="text-muted fs-7 mb-7">Add product to a brand.</div>
+                            </div>
+                        </div>
                     </div>
 
 
@@ -713,81 +784,74 @@
                         <!--end::Media-->
 
                         <!--begin::Pricing-->
-                        <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Biến thể sản phẩm (từng dòng)</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div id="manual-variant-list">
-                                        @foreach ($product->variants as $index => $variant)
-                                        <div class="border rounded p-3 mb-3 bg-light" id="variant_card_{{ $index }}">
-                                            <div class="row g-3 align-items-end">
-                                                @foreach ($variantAttributes as $attribute)
-                                                <div class="col-md-3">
-                                                    <label class="form-label">{{ $attribute->name }}</label>
-                                                    <select name="manual_variants[{{ $index }}][attributes][{{ $attribute->id }}]"
-                                                        class="form-select attribute-select" data-index="{{ $index }}">
-                                                        <option value="">-- Chọn {{ $attribute->name }} --</option>
-                                                        @foreach ($attribute->values as $value)
-                                                        @php
-                                                        $selected = $variant->options->contains(function ($opt) use ($attribute, $value) {
-                                                        return $opt->attribute_id == $attribute->id && $opt->value_id == $value->id;
-                                                        });
-                                                        @endphp
-                                                        <option value="{{ $value->id }}" {{ $selected ? 'selected' : '' }}>
-                                                            {{ $value->value }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @endforeach
+                        <!-- Phân Loại & Biến Thể -->
+                        <div class="card card-flush py-4 mb-5">
+                            <div class="card-header">
+                                <h2 class="card-title">Phân Loại & Biến Thể</h2>
+                            </div>
+                            <div class="card-body">
+                                <div id="pf_attribute_groups_wrapper"></div>
+                                <button type="button" class="btn btn-light-primary" id="pf_add_attribute_group">
+                                    <i class="bi bi-plus-circle"></i> Thêm phân loại
+                                </button>
+                            </div>
+                        </div>
 
-                                                <div class="col-md-2">
-                                                    <label class="form-label">SKU</label>
-                                                    <input type="text" name="manual_variants[{{ $index }}][sku]"
-                                                        class="form-control sku-input"
-                                                        value="{{ $variant->sku }}" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Giá</label>
-                                                    <input type="number" name="manual_variants[{{ $index }}][price]"
-                                                        class="form-control" min="0" value="{{ $variant->price }}" required>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label">Tồn kho</label>
-                                                    <input type="number" name="manual_variants[{{ $index }}][quantity]"
-                                                        class="form-control" min="0"
-                                                        value="{{ old('manual_variants.' . $index . '.quantity', $variant->quantity ?? 0) }}" required>
+                        <!-- Biến Thể -->
 
-                                                </div>
-                                                <div class="col-md-1 text-center">
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        title="Xoá biến thể" onclick="removeVariantCard({{ $index }})">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endforeach
+                        <div id="pf_variant_section" class="card card-flush py-4" style="display: none">
+                            <!-- Áp dụng cho tất cả -->
+
+                            <div class="card-header">
+                                <h3 class="card-title">Biến thể sản phẩm</h3>
+                            </div>
+                            <div id="pf_apply_all_wrapper" class="card-body pb-0 mb-4" style="display: none;">
+                                <div class="row mb-4 align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Áp dụng giá cho tất cả</label>
+                                        <input type="number" class="form-control" id="pf_apply_price" placeholder="Nhập giá">
                                     </div>
-
-                                    <button type="button" class="btn btn-sm btn-primary mt-3" onclick="addVariantCard()">+ Thêm biến thể</button>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Áp dụng tồn kho</label>
+                                        <input type="number" class="form-control" id="pf_apply_qty" placeholder="Nhập tồn kho">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Áp dụng SKU</label>
+                                        <input type="text" class="form-control" id="pf_apply_sku" placeholder="SKU chung">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-danger mt-2" onclick="pfApplyToAll()">Áp dụng</button>
+                                    </div>
                                 </div>
                             </div>
 
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Thuộc tính</th>
+                                            <th>Giá</th>
+                                            <th>Tồn kho</th>
+                                            <th>SKU</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pf_variant_list"></tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                            <!-- Nút thêm biến thể -->
+
+                        <!-- Nút thêm biến thể -->
 
 
 
-                            <!--end::Product Variants-->
+                        <!--end::Product Variants-->
 
 
-                            <!--end::Input group-->
+                        <!--end::Input group-->
 
-                            {{-- <!--begin::Input group-->
+                        {{-- <!--begin::Input group-->
                                             <div class="fv-row mb-10">
                                                 <!--begin::Label-->
                                                 <label class="fs-6 fw-semibold mb-2">
@@ -968,16 +1032,16 @@
                                                 <!--end::Input group-->
                                             </div>
                                             <!--end:Tax--> --}}
-                        </div>
-                        <!--end::Card header-->
                     </div>
-                    <!--end::Pricing-->
+                    <!--end::Card header-->
                 </div>
+                <!--end::Pricing-->
         </div>
-        <!--end::Tab pane-->
+    </div>
+    <!--end::Tab pane-->
 
-        <!--begin::Tab pane-->
-        {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+    <!--begin::Tab pane-->
+    {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
                                 <div class="d-flex flex-column gap-7 gap-lg-10">
 
                                     <!--begin::Inventory-->
@@ -1299,29 +1363,29 @@
                                     <!--end::Meta options-->
                                 </div>
                             </div> --}}
-        <!--end::Tab pane-->
+    <!--end::Tab pane-->
 
-    </div>
-    <!--end::Tab content-->
+</div>
+<!--end::Tab content-->
 
-    <div class="d-flex justify-content-end">
-        <!--begin::Button-->
-        <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
-            Cancel
-        </a>
-        <!--end::Button-->
+<div class="d-flex justify-content-end">
+    <!--begin::Button-->
+    <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
+        Cancel
+    </a>
+    <!--end::Button-->
 
-        <!--begin::Button-->
-        <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
-            <span class="indicator-label">
-                Save Changes
-            </span>
-            <span class="indicator-progress">
-                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-            </span>
-        </button>
-        <!--end::Button-->
-    </div>
+    <!--begin::Button-->
+    <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+        <span class="indicator-label">
+            Save Changes
+        </span>
+        <span class="indicator-progress">
+            Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+    </button>
+    <!--end::Button-->
+</div>
 </div>
 <!--end::Main column-->
 </form>
@@ -1335,173 +1399,307 @@
 
 
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('product-form'); // PHẢI đúng ID của <form>
-    const variantList = document.getElementById('manual-variant-list');
+<!-- <script>
+    const PF_ATTRIBUTE_SUGGESTIONS = {
+        "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng"],
+        "Size": ["XS", "S", "M", "L", "XL", "XXL"],
+        "Giới tính": ["Nam", "Nữ", "Unisex"]
+    };
 
-    if (form && variantList) {
-        form.addEventListener('submit', function (e) {
-            if (variantList.children.length === 0) {
-                e.preventDefault(); // Ngăn submit
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Thiếu biến thể',
-                    text: 'Vui lòng thêm ít nhất một biến thể trước khi lưu.',
-                    confirmButtonText: 'OK'
-                });
+    let pfAttributeIndex = 0;
+    let pfAttributeGroups = {};
+
+    document.getElementById("pf_add_attribute_group").addEventListener("click", pfAddAttributeGroup);
+
+    function pfAddAttributeGroup() {
+        const wrapper = document.getElementById("pf_attribute_groups_wrapper");
+        const groupId = `pf_group_${pfAttributeIndex}`;
+        pfAttributeGroups[groupId] = {
+            name: "",
+            values: []
+        };
+
+        const div = document.createElement("div");
+        div.className = "bg-light rounded p-4 border position-relative mb-4";
+        div.id = groupId;
+
+        div.innerHTML = `
+            <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" onclick="pfRemoveAttributeGroup('${groupId}')"></button>
+            <div class="mb-3 d-flex align-items-center gap-3">
+                <label class="form-label fw-bold mb-0" style="min-width: 90px;">Phân loại</label>
+                <input type="text" class="form-control w-50 pf-attribute-name-input" placeholder="Chọn hoặc nhập phân loại" />
+            </div>
+            <div class="mb-1">
+                <label class="form-label fw-bold">Tuỳ chọn</label>
+                <div id="${groupId}_tags" class="pf-attribute-option-container d-flex flex-wrap gap-2 align-items-center"></div>
+                <div class="form-text text-muted">Nhập và nhấn Enter hoặc chọn từ gợi ý</div>
+            </div>
+            <input type="hidden" name="attributeGroups[]" value="">
+        `;
+
+        wrapper.appendChild(div);
+
+        const selectInput = div.querySelector(".pf-attribute-name-input");
+        const used = Object.values(pfAttributeGroups).map(g => g.name).filter(Boolean);
+        const options = Object.keys(PF_ATTRIBUTE_SUGGESTIONS).map(name => ({
+            value: name,
+            text: name,
+            group: "suggested",
+            disabled: used.includes(name)
+        }));
+
+        new TomSelect(selectInput, {
+            create: true,
+            maxItems: 1,
+            mode: "input",
+            options,
+            optgroups: [{
+                value: "suggested",
+                label: "Giá trị đề xuất"
+            }],
+            optgroupField: "group",
+            placeholder: "Chọn hoặc nhập phân loại",
+            onChange: (value) => {
+                pfAttributeGroups[groupId].name = value;
+                div.querySelector('input[type="hidden"]').value = value;
+                pfAttributeGroups[groupId].values = [];
+                pfRenderTags(groupId);
             }
         });
+
+        pfRenderTags(groupId);
+        pfAttributeIndex++;
+        document.getElementById("pf_variant_section").style.display = "block";
     }
-});
 
-    const attributes = @json($variantAttributes);
-    let variantIndex = 0;
+    function pfRenderTags(groupId) {
+        const container = document.getElementById(`${groupId}_tags`);
+        container.innerHTML = "";
 
+        const selected = pfAttributeGroups[groupId].values;
+        const list = document.createElement("div");
+        list.className = "d-flex flex-wrap gap-2 align-items-center";
+
+        selected.forEach(val => {
+            const tag = document.createElement("div");
+            tag.className = "d-inline-flex align-items-center bg-white border rounded p-2";
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.className = "form-control form-control-sm border-0 p-0";
+            input.style.background = "transparent";
+            input.value = val;
+            input.readOnly = true;
+
+            const trash = document.createElement("i");
+            trash.className = "bi bi-trash text-danger ms-2 cursor-pointer";
+            trash.onclick = () => pfRemoveTag(groupId, val);
+
+            tag.appendChild(input);
+            tag.appendChild(trash);
+            list.appendChild(tag);
+        });
+
+        container.appendChild(list);
+
+        const input = document.createElement("input");
+        container.appendChild(input);
+
+        const suggest = pfGetSuggestions(groupId);
+        const ts = new TomSelect(input, {
+            create: true,
+            maxItems: 1,
+            persist: false,
+            options: [],
+            onItemAdd(value) {
+                if (!pfAttributeGroups[groupId].values.includes(value)) {
+                    pfAttributeGroups[groupId].values.push(value);
+                    pfRenderTags(groupId);
+                }
+                ts.clear();
+            },
+            onBlur() {
+                const val = ts.getValue().trim();
+                if (val && !pfAttributeGroups[groupId].values.includes(val)) {
+                    ts.addOption({
+                        value: val,
+                        text: val
+                    });
+                    ts.addItem(val);
+                } else ts.clear();
+            }
+        });
+
+        ts.addOptions(suggest);
+        pfGenerateVariants();
+    }
+
+    function pfGetSuggestions(groupId) {
+        const name = pfAttributeGroups[groupId].name;
+        const used = new Set();
+
+        Object.keys(pfAttributeGroups).forEach(id => {
+            if (id !== groupId) {
+                pfAttributeGroups[id].values.forEach(v => used.add(v));
+            }
+        });
+
+        return (PF_ATTRIBUTE_SUGGESTIONS[name] || []).map(val => ({
+            value: val,
+            text: val,
+            disabled: used.has(val)
+        }));
+    }
+
+    function pfRemoveAttributeGroup(id) {
+        delete pfAttributeGroups[id];
+        document.getElementById(id)?.remove();
+        pfGenerateVariants();
+    }
+
+    function pfRemoveTag(groupId, val) {
+        pfAttributeGroups[groupId].values = pfAttributeGroups[groupId].values.filter(v => v !== val);
+        pfRenderTags(groupId);
+        pfGenerateVariants();
+    }
+
+    function pfGenerateVariants() {
+        const section = document.getElementById("pf_variant_section");
+        const tbody = document.getElementById("pf_variant_list");
+
+        const groupIds = Object.keys(pfAttributeGroups);
+        if (groupIds.length === 0 || groupIds.some(id => pfAttributeGroups[id].values.length === 0)) {
+            section.style.display = "none";
+            return;
+        }
+
+        section.style.display = "block";
+        tbody.innerHTML = "";
+
+        const headerRow = document.createElement("tr");
+        headerRow.innerHTML = `
+            <td class="fw-semibold text-muted">Áp dụng cho tất cả</td>
+            <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào"></td>
+            <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0"></td>
+            <td><input type="text" class="form-control form-control-sm" id="pf_apply_sku" placeholder="Nhập vào"></td>
+            <td><button type="button" class="btn btn-danger btn-sm" onclick="pfApplyToAllVariants()">Áp dụng</button></td>
+        `;
+        tbody.appendChild(headerRow);
+
+        const valueLists = groupIds.map(id => pfAttributeGroups[id].values);
+        const combinations = pfCartesian(valueLists);
+
+        combinations.forEach((combo, i) => {
+            const label = combo.join(" / ");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${label}<input type="hidden" name="variants[${i}][attributes]" value="${label}"></td>
+                <td><input type="number" name="variants[${i}][price]" class="form-control"></td>
+                <td><input type="number" name="variants[${i}][quantity]" class="form-control"></td>
+                <td><input type="text" name="variants[${i}][sku]" class="form-control"></td>
+                <td></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function pfApplyToAllVariants() {
+        const price = document.getElementById('pf_apply_price').value;
+        const quantity = document.getElementById('pf_apply_quantity').value;
+        const sku = document.getElementById('pf_apply_sku').value;
+
+        const rows = document.querySelectorAll('#pf_variant_list tr');
+        rows.forEach((row) => {
+            if (row.querySelector('td')?.textContent.includes('Áp dụng cho tất cả')) return;
+
+            if (price) row.querySelector(`input[name$="[price]"]`).value = price;
+            if (quantity) row.querySelector(`input[name$="[quantity]"]`).value = quantity;
+            if (sku) row.querySelector(`input[name$="[sku]"]`).value = sku;
+        });
+    }
+
+    function pfCartesian(arrays) {
+        return arrays.reduce((a, b) => a.flatMap(d => b.map(e => d.concat(e))), [
+            []
+        ]);
+    }
+</script> -->
+
+<script>
+    window.oldAttributeGroups = @json($attributeGroups);
+    window.oldVariants = @json($productVariants);
+    window.allAttributeValues = @json($attributeValues);
+</script>
+
+
+<script>
     function slugify(str) {
         return str.toString().toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu tiếng Việt
-            .replace(/[^a-z0-9 -]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-+|-+$/g, '');
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Bỏ dấu tiếng Việt
+            .replace(/[^a-z0-9 -]/g, '') // Loại bỏ ký tự đặc biệt
+            .replace(/\s+/g, '-') // Thay khoảng trắng bằng -
+            .replace(/-+/g, '-') // Loại bỏ dấu - thừa
+            .replace(/^-+|-+$/g, ''); // Loại bỏ dấu - đầu/cuối
     }
 
-    function generateSKU(productName, selectedValues) {
-        const slug = slugify(productName).toUpperCase();
-        const valueStr = selectedValues.map(val => val.toUpperCase()).join('-');
-        return slug + '-' + valueStr;
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.getElementById('product-name');
+        const slugInput = document.getElementById('product-slug');
 
-    function addVariantCard() {
-        const container = document.getElementById('manual-variant-list');
-        const uniqueId = 'v_' + Date.now();
-
-        const div = document.createElement('div');
-        div.className = 'border rounded p-3 mb-3 bg-light';
-        div.id = `variant_card_${uniqueId}`;
-
-        let html = `<div class="row g-3 align-items-end">`;
-
-        attributes.forEach(attr => {
-            html += `
-                <div class="col-md-3">
-                    <label class="form-label">${attr.name}</label>
-                    <select name="manual_variants[${uniqueId}][attributes][${attr.id}]" class="form-select attribute-select" data-index="${uniqueId}">
-                        <option value="">-- Chọn ${attr.name} --</option>`;
-            attr.values.forEach(val => {
-                html += `<option value="${val.id}">${val.value}</option>`;
-            });
-            html += '</select></div>';
-        });
-
-        html += `
-            <div class="col-md-2">
-                <label class="form-label">SKU</label>
-                <input type="text" name="manual_variants[${uniqueId}][sku]" class="form-control sku-input" required>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Giá</label>
-                <input type="number" name="manual_variants[${uniqueId}][price]" class="form-control" min="0" required>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Tồn kho</label>
-                <input type="number" name="manual_variants[${uniqueId}][quantity]" class="form-control" min="0" required>
-            </div>
-            <div class="col-md-1 text-center">
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Xoá biến thể" onclick="removeVariantCard('${uniqueId}')">
-                    <i class="fa fa-trash"></i>
-                </button>
-            </div>
-        </div>`;
-
-        div.innerHTML = html;
-        container.appendChild(div);
-        attachSKUListener(uniqueId);
-        variantIndex++;
-    }
-
-    function removeVariantCard(index) {
-        const card = document.getElementById('variant_card_' + index);
-        if (card) card.remove();
-
-        // Kiểm tra sau khi xóa
-        const variantList = document.getElementById('manual-variant-list');
-        if (variantList.children.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Tối thiểu một biến thể',
-                text: 'Sản phẩm phải có ít nhất một biến thể. Hãy thêm lại.',
-                confirmButtonText: 'OK'
+        if (nameInput && slugInput) {
+            nameInput.addEventListener('input', function() {
+                slugInput.value = slugify(nameInput.value);
             });
         }
-    }
+    });
 
-    function attachSKUListener(id) {
-        const card = document.getElementById('variant_card_' + id);
-        const selects = card.querySelectorAll('.attribute-select');
-
-        selects.forEach(select => {
-            select.addEventListener('change', () => {
-                const values = [];
-                selects.forEach(s => {
-                    const text = s.options[s.selectedIndex]?.text;
-                    if (text && !text.startsWith('--')) values.push(text.trim());
-                });
-
-                const productName = document.querySelector('input[name=name]').value || 'SP';
-                const sku = generateSKU(productName, values);
-
-                const skuInput = card.querySelector('.sku-input');
-                if (skuInput) skuInput.value = sku;
-            });
-        });
-    }
-
-    // Preview ảnh mới khi chọn
     document.getElementById('image-input').addEventListener('change', function(e) {
-        const previewContainer = document.getElementById('image-preview-container');
-        previewContainer.innerHTML = ''; // Clear ảnh cũ
-
         const files = Array.from(e.target.files);
-        const dt = new DataTransfer();
+        const previewContainer = document.getElementById('image-preview-container');
+
+        previewContainer.innerHTML = ''; // Clear ảnh cũ khi reselect
+        const dt = new DataTransfer(); // Để update input file
 
         files.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function(event) {
-                const imgWrapper = document.createElement('div');
-                imgWrapper.className = 'position-relative';
-                imgWrapper.style.width = '100px';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'position-relative';
+                wrapper.style.width = '100px';
 
                 const img = document.createElement('img');
                 img.src = event.target.result;
                 img.className = 'rounded border';
                 img.style.height = '100px';
-                img.style.objectFit = 'cover';
                 img.style.width = '100%';
+                img.style.objectFit = 'cover';
 
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
                 removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
                 removeBtn.innerHTML = '&times;';
                 removeBtn.onclick = function() {
-                    imgWrapper.remove();
-                    // Xoá file khỏi input
-                    const input = document.getElementById('image-input');
+                    wrapper.remove();
+
+                    // Remove file khỏi input
                     const newDt = new DataTransfer();
-                    Array.from(input.files).forEach((f, i) => {
+                    Array.from(document.getElementById('image-input').files).forEach((f, i) => {
                         if (i !== index) newDt.items.add(f);
                     });
-                    input.files = newDt.files;
+                    document.getElementById('image-input').files = newDt.files;
                 };
 
-                imgWrapper.appendChild(img);
-                imgWrapper.appendChild(removeBtn);
-                previewContainer.appendChild(imgWrapper);
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                previewContainer.appendChild(wrapper);
             };
+
             reader.readAsDataURL(file);
+            dt.items.add(file);
         });
+
+        // Cập nhật lại input
+        document.getElementById('image-input').files = dt.files;
     });
 
     function removeOldImage(imageId) {
@@ -1516,21 +1714,359 @@
         container.appendChild(input);
     }
 
-    // Auto-generate slug nếu có input slug
-    document.addEventListener('DOMContentLoaded', function() {
-        const nameInput = document.getElementById('product-name');
-        const slugInput = document.getElementById('product-slug');
 
-        if (nameInput && slugInput) {
-            nameInput.addEventListener('input', function() {
-                slugInput.value = slugify(nameInput.value);
+
+    const PF_ATTRIBUTE_SUGGESTIONS = {
+        "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng"],
+        "Size": ["XS", "S", "M", "L", "XL", "XXL"],
+        "Giới tính": ["Nam", "Nữ", "Unisex"]
+    };
+
+    let pfAttributeIndex = 0;
+    let pfAttributeGroups = {};
+
+    function cartesian(arrays) {
+        return arrays.reduce((a, b) => a.flatMap(d => b.map(e => d.concat(e))), [
+            []
+        ]);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const oldGroups = window.oldAttributeGroups || [];
+        const oldVariants = window.oldVariants || [];
+
+        oldGroups.forEach(group => {
+            const groupId = `pf_group_${pfAttributeIndex}`;
+            pfAttributeGroups[groupId] = {
+                name: group.name,
+                values: group.values || []
+            };
+            pfRenderAttributeGroup(groupId, group.name, group.values);
+            pfAttributeIndex++;
+        });
+
+        if (oldVariants.length > 0) {
+            const tbody = document.getElementById("pf_variant_list");
+            tbody.innerHTML = "";
+
+            oldVariants.forEach((variant, i) => {
+                const row = document.createElement("tr");
+
+                const tdAttr = document.createElement("td");
+                Object.entries(variant.attribute_map).forEach(([name, value]) => {
+                    const div = document.createElement("div");
+                    div.textContent = `${name}: ${value}`;
+                    const hidden = document.createElement("input");
+                    hidden.type = "hidden";
+                    hidden.name = `variants[${i}][attributes][${name}]`;
+                    hidden.value = value;
+                    tdAttr.appendChild(div);
+                    tdAttr.appendChild(hidden);
+                });
+
+                const tdPrice = document.createElement("td");
+                tdPrice.innerHTML = `<input type="number" name="variants[${i}][price]" class="form-control" value="${variant.price}">`;
+
+                const tdQty = document.createElement("td");
+                tdQty.innerHTML = `<input type="number" name="variants[${i}][quantity]" class="form-control" value="${variant.quantity}">`;
+
+                const tdSku = document.createElement("td");
+                tdSku.innerHTML = `<input type="text" name="variants[${i}][sku]" class="form-control" value="${variant.sku}">`;
+
+                row.appendChild(tdAttr);
+                row.appendChild(tdPrice);
+                row.appendChild(tdQty);
+                row.appendChild(tdSku);
+                tbody.appendChild(row);
             });
+
+            document.getElementById("pf_variant_section").style.display = "block";
+        } else {
+            pfRenderVariants();
         }
+
+        document.getElementById("pf_add_attribute_group")?.addEventListener("click", pfAddAttributeGroup);
     });
+
+    function pfAddAttributeGroup() {
+        const groupId = `pf_group_${pfAttributeIndex}`;
+        pfAttributeGroups[groupId] = {
+            name: '',
+            values: []
+        };
+        pfRenderAttributeGroup(groupId);
+        pfAttributeIndex++;
+    }
+
+    function pfRenderAttributeGroup(groupId, selectedName = '', selectedValues = []) {
+        const wrapper = document.getElementById("pf_attribute_groups_wrapper");
+        const div = document.createElement("div");
+        div.className = "bg-light rounded p-4 border position-relative mb-4";
+        div.id = groupId;
+
+        div.innerHTML = `
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" onclick="pfRemoveAttributeGroup('${groupId}')"></button>
+        <div class="mb-3 d-flex align-items-center gap-3">
+            <label class="form-label fw-bold mb-0" style="min-width: 90px;">Phân loại</label>
+            <input type="text" class="form-control w-50 pf-attribute-name-input" />
+        </div>
+        <div class="mb-1">
+            <label class="form-label fw-bold">Tuỳ chọn</label>
+            <div id="${groupId}_tags" class="pf-attribute-option-container d-flex flex-wrap gap-2 align-items-center"></div>
+            <div class="form-text text-muted">Nhập và nhấn Enter hoặc chọn từ gợi ý</div>
+        </div>
+        <input type="hidden" name="attributeGroups[]" value="${selectedName}">
+    `;
+
+        wrapper.appendChild(div);
+
+        const input = div.querySelector(".pf-attribute-name-input");
+
+        const usedNames = Object.values(pfAttributeGroups)
+            .map(g => g.name)
+            .filter(name => name && name !== selectedName); // Tránh tự disable chính mình khi edit
+
+        const options = Object.keys(PF_ATTRIBUTE_SUGGESTIONS).map(name => ({
+            value: name,
+            text: name,
+            disabled: usedNames.includes(name)
+        }));
+
+        const ts = new TomSelect(input, {
+            create: true,
+            maxItems: 1,
+            mode: "input",
+            options: options,
+            placeholder: "Chọn hoặc nhập phân loại",
+            onInitialize() {
+                if (selectedName) {
+                    this.addOption({
+                        value: selectedName,
+                        text: selectedName
+                    });
+                    this.setValue(selectedName);
+                }
+            },
+            onChange: val => {
+                pfAttributeGroups[groupId].name = val;
+                div.querySelector('input[type=hidden]').value = val;
+                pfRenderTags(groupId);
+                pfRenderVariants();
+            }
+        });
+
+        pfAttributeGroups[groupId].values = selectedValues;
+        pfRenderTags(groupId);
+    }
+
+    function pfRenderTags(groupId) {
+        const container = document.getElementById(`${groupId}_tags`);
+        container.innerHTML = "";
+
+        const selected = pfAttributeGroups[groupId].values || [];
+        const list = document.createElement("div");
+        list.className = "d-flex flex-wrap gap-2 align-items-center";
+
+        selected.forEach(val => {
+            const tag = document.createElement("div");
+            tag.className = "d-inline-flex align-items-center bg-white border rounded p-2";
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.className = "form-control form-control-sm border-0 p-0";
+            input.style.background = "transparent";
+            input.value = val;
+            input.readOnly = true;
+
+            const trash = document.createElement("i");
+            trash.className = "bi bi-trash text-danger ms-2 cursor-pointer";
+            trash.onclick = () => pfRemoveTag(groupId, val);
+
+            tag.appendChild(input);
+            tag.appendChild(trash);
+            list.appendChild(tag);
+        });
+
+        container.appendChild(list);
+
+        const input = document.createElement("input");
+        container.appendChild(input);
+
+        const ts = new TomSelect(input, {
+            create: true,
+            maxItems: 1,
+            persist: false,
+            options: selected.map(val => ({
+                value: val,
+                text: val
+            })),
+            onItemAdd(value) {
+                if (!pfAttributeGroups[groupId].values.includes(value)) {
+                    pfAttributeGroups[groupId].values.push(value);
+                    pfRenderTags(groupId);
+                    pfRenderVariants();
+                }
+                ts.clear();
+            },
+            onBlur() {
+                const val = ts.getValue().trim();
+                if (val && !pfAttributeGroups[groupId].values.includes(val)) {
+                    ts.addOption({
+                        value: val,
+                        text: val
+                    });
+                    ts.addItem(val);
+                } else {
+                    ts.clear();
+                }
+            }
+        });
+
+        const suggest = PF_ATTRIBUTE_SUGGESTIONS[pfAttributeGroups[groupId].name] || window.allAttributeValues?.[pfAttributeGroups[groupId].name] || [];
+        if (suggest.length > 0) {
+            ts.addOptions(suggest.map(val => ({
+                value: val,
+                text: val
+            })));
+        }
+    }
+
+
+    function pfRenderVariants() {
+        const tbody = document.getElementById("pf_variant_list");
+        if (!tbody) return;
+
+        // 1. Lưu lại dữ liệu cũ
+        const oldData = {};
+        document.querySelectorAll("#pf_variant_list tr").forEach((row) => {
+            const attrs = Array.from(row.querySelectorAll("input[type=hidden]"))
+                .map(input => `${input.name}:${input.value}`)
+                .sort()
+                .join("|");
+            const price = row.querySelector('input[name$="[price]"]')?.value || '0';
+            const quantity = row.querySelector('input[name$="[quantity]"]')?.value || '0';
+            const sku = row.querySelector('input[name$="[sku]"]')?.value || '';
+            oldData[attrs] = {
+                price,
+                quantity,
+                sku
+            };
+        });
+
+        tbody.innerHTML = "";
+
+        const keys = Object.keys(pfAttributeGroups).filter(id => pfAttributeGroups[id].name && pfAttributeGroups[id].values.length);
+        if (keys.length === 0) return;
+
+        const combinations = cartesian(keys.map(id => pfAttributeGroups[id].values.map(val => ({
+            groupName: pfAttributeGroups[id].name,
+            value: val
+        }))));
+
+        combinations.forEach((combo, i) => {
+            const row = document.createElement("tr");
+
+            const tdAttr = document.createElement("td");
+            const attrSignature = [];
+
+            combo.forEach(opt => {
+                const text = document.createElement("div");
+                text.textContent = `${opt.groupName}: ${opt.value}`;
+
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = `variants[${i}][attributes][${opt.groupName}]`;
+                hidden.value = opt.value;
+
+                attrSignature.push(`${hidden.name}:${hidden.value}`);
+
+                tdAttr.appendChild(text);
+                tdAttr.appendChild(hidden);
+            });
+
+            const signatureKey = attrSignature.sort().join("|");
+            const existing = oldData[signatureKey] || {
+                price: '0',
+                quantity: '0',
+                sku: ''
+            };
+
+            const tdPrice = document.createElement("td");
+            tdPrice.innerHTML = `
+    <input type="number"
+           name="variants[${i}][price]"
+           class="form-control"
+           value="${existing.price !== '0' ? existing.price : ''}"
+           min="1"
+           required>
+`;
+
+            const tdQty = document.createElement("td");
+            tdQty.innerHTML = `
+    <input type="number"
+           name="variants[${i}][quantity]"
+           class="form-control"
+           value="${existing.quantity !== '0' ? existing.quantity : ''}"
+           min="1"
+           required>
+`;
+
+
+            const tdSku = document.createElement("td");
+            tdSku.innerHTML = `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
+
+            row.appendChild(tdAttr);
+            row.appendChild(tdPrice);
+            row.appendChild(tdQty);
+            row.appendChild(tdSku);
+            tbody.appendChild(row);
+        });
+
+        document.getElementById("pf_variant_section").style.display = "block";
+        document.getElementById("pf_apply_all_wrapper").style.display = "block";
+    }
+
+
+    function pfRemoveTag(groupId, val) {
+        pfAttributeGroups[groupId].values = pfAttributeGroups[groupId].values.filter(v => v !== val);
+        pfRenderTags(groupId);
+        pfRenderVariants();
+    }
+
+    function pfRemoveAttributeGroup(id) {
+        delete pfAttributeGroups[id];
+        document.getElementById(id)?.remove();
+        pfRenderVariants();
+        delete pfAttributeGroups[id];
+        document.getElementById(id)?.remove();
+        pfRenderVariants();
+
+        const keys = Object.keys(pfAttributeGroups).filter(id => pfAttributeGroups[id].name && pfAttributeGroups[id].values.length);
+        if (keys.length === 0) {
+            document.getElementById("pf_apply_all_wrapper").style.display = "none";
+            document.getElementById("pf_variant_section").style.display = "none";
+        }
+    }
+
+    function pfApplyToAll() {
+        const price = document.getElementById('pf_apply_price').value;
+        const qty = document.getElementById('pf_apply_qty').value;
+        const sku = document.getElementById('pf_apply_sku').value;
+
+        document.querySelectorAll("#pf_variant_list tr").forEach((row, i) => {
+            if (price !== '') row.querySelector(`[name="variants[${i}][price]"]`).value = price;
+            if (qty !== '') row.querySelector(`[name="variants[${i}][quantity]"]`).value = qty;
+            if (sku !== '') row.querySelector(`[name="variants[${i}][sku]"]`).value = sku;
+        });
+
+
+    }
 </script>
 
 
 
-@endpush
+
+
+
 <!--end::Content wrapper-->
 @endsection
