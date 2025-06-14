@@ -209,6 +209,7 @@
                                         </div>
                                     </th>
                                     <th class="min-w-40px">STT</th>
+                                    <th class="min-w-40px">Ảnh</th>
                                     <th class="min-w-200px">Tên</th>
                                     <th class="min-w-150px">Danh mục cha</th>
                                     <th class="min-w-150px">Mô tả </th>
@@ -228,6 +229,12 @@
                                         </td>
                                         <td>{{ $category->id }}</td>
 
+                                        <td>
+                                            <div class="symbol symbol-50px">
+                                                <span class="symbol-label"
+                                                    style="background-image:url('{{ asset('storage/' . $category->image) }}')"></span>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="ms-5">
                                                 <!--begin::Title-->

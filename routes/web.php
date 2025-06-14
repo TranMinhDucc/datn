@@ -15,7 +15,9 @@ use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
+
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
@@ -39,8 +41,15 @@ use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
+// GHI ĐÈ route đăng nhập Fortify
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+// GHI ĐÈ route đăng nhập Fortify
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
 // ========== PUBLIC CLIENT ROUTES ==========
 
 Route::prefix('/')->name('client.')->group(function () {
@@ -48,6 +57,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
+       
+
     });
 
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -58,7 +69,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
-
+Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
@@ -82,15 +93,17 @@ Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('a
 
 });
 
-// ========== PROTECTED ROUTES ==========
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
     Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile/edit', [AccountController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/update', [AccountController::class, 'update'])->name('profile.update');
 
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+    // UPDATE PROFILE
+    Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
+    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+    Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
 });
 
 // ========== LOGOUT ==========
