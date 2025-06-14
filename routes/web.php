@@ -40,10 +40,9 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\ProductLabelController;
 use App\Http\Controllers\Admin\BlogCategoryController;
-
 use App\Http\Controllers\Admin\BlogController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
@@ -173,6 +172,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reviews', ReviewController::class)->names('reviews');
     
      Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
+   Route::resource('product-labels', ProductLabelController::class);
+
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
