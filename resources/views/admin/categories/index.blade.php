@@ -197,6 +197,7 @@
                     <div class="card-body pt-0">
 
                         <!--begin::Table-->
+                        <div class="table-responsive">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_category_table">
                             <thead>
                                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
@@ -208,6 +209,7 @@
                                         </div>
                                     </th>
                                     <th class="min-w-40px">STT</th>
+                                    <th class="min-w-40px">Ảnh</th>
                                     <th class="min-w-200px">Tên</th>
                                     <th class="min-w-150px">Danh mục cha</th>
                                     <th class="min-w-150px">Mô tả </th>
@@ -227,6 +229,12 @@
                                         </td>
                                         <td>{{ $category->id }}</td>
 
+                                        <td>
+                                            <div class="symbol symbol-50px">
+                                                <span class="symbol-label"
+                                                    style="background-image:url('{{ asset('storage/' . $category->image) }}')"></span>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="ms-5">
                                                 <!--begin::Title-->
@@ -301,6 +309,7 @@
                             </tbody>
                             <!--end::Table body-->
                         </table>
+                        </div>
                         <!--end::Table-->
                     </div>
                     <!--end::Card body-->
