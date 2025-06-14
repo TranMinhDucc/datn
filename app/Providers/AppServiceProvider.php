@@ -20,7 +20,8 @@ use Laravel\Fortify\Contracts\ResetsUserPasswords;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\CustomLoginValidation;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
-
+// Removed import for non-existent ResetPasswordRequest
+use App\Http\Requests\CustomResetPasswordRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(ResetsUserPasswords::class, ResetUserPassword::class);
-        $this->app->bind(ResetPasswordResponse::class, CustomResetPasswordResponse::class);
+        // Removed binding for ResetPasswordRequest as it does not exist in Fortify
     }
 
     public function boot()
@@ -45,9 +46,8 @@ class AppServiceProvider extends ServiceProvider
         // Gán view reset mật khẩu từ token (bắt buộc để fix lỗi)
         $this->app->singleton(
             ResetPasswordViewResponse::class,
-            ResetPasswordViewResponse::class
+            CustomResetPasswordViewResponse::class
         );
-
         // Custom xác thực
         Fortify::authenticateUsing(function (Request $request) {
             app(CustomLoginValidation::class)($request);

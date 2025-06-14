@@ -6,22 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 
-class RegisterController extends Controller
+class ResetPasswordController extends Controller
 {
-    public function store(Request $request)
+    public function reset(Request $request)
     {
+        // ✅ VALIDATE theo phong cách giống RegisterController
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255|unique:users',
-            'fullname' => 'required|string|max:255',
+            'token' => 'required',
             'email' => [
                 'required',
                 'string',
                 'max:255',
-                'unique:users',
                 function ($attribute, $value, $fail) {
                     if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                         return $fail('Email không đúng định dạng, ví dụ: example@gmail.com');
@@ -34,24 +32,20 @@ class RegisterController extends Controller
                     if (!preg_match('/\.[a-z]{2,}$/', $value)) {
                         return $fail('Email phải có đuôi tên miền như ".com", ".vn"...');
                     }
-                },
+                }
             ],
             'password' => [
                 'required',
                 'string',
                 'min:8',
                 'confirmed',
-                'regex:/[A-Z]/', // Chữ cái in hoa
-                'regex:/[0-9]/', // Có số
-                'regex:/[\W]/',  // Ký tự đặc biệt
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[\W]/',
             ],
         ], [
-            'username.required' => 'Vui lòng nhập tên đăng nhập.',
-            'username.unique' => 'Tên đăng nhập đã tồn tại.',
-            'fullname.required' => 'Vui lòng nhập họ tên.',
-            'email.required' => 'Vui lòng nhập địa chỉ email.',
-            'email.unique' => 'Email đã tồn tại.',
-            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'email.required' => 'Vui lòng nhập email.',
+            'password.required' => 'Vui lòng nhập mật khẩu mới.',
             'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
             'password.regex' => 'Mật khẩu phải có ít nhất 1 chữ cái in hoa, 1 số và 1 ký tự đặc biệt.',
@@ -63,16 +57,21 @@ class RegisterController extends Controller
                 ->withInput();
         }
 
-        $user = User::create([
-            'username' => $request->username,
-            'fullname' => $request->fullname,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'registered_at' => now(),
-        ]);
+        // ✅ Kiểm tra email có tồn tại
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email không tồn tại trong hệ thống.'])->withInput();
+        }
 
-        event(new Registered($user));
+        // ✅ Kiểm tra token
+        if (!Password::tokenExists($user, $request->token)) {
+            return back()->withErrors(['token' => 'Mã token không hợp lệ hoặc đã hết hạn.'])->withInput();
+        }
 
-        return redirect()->route('login')->with('success', 'Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.');
+        // ✅ Cập nhật mật khẩu
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('login')->with('success', 'Mật khẩu đã được thay đổi thành công!');
     }
 }
