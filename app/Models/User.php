@@ -71,8 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->avatar && file_exists(public_path($this->avatar))
             ? asset($this->avatar)
             : asset('assets/client/images/user/default.jpg'); // ảnh mặc định
-
-      public function orders()
+    }
+    public function orders()
     {
         return $this->hasMany(Order::class);
     }
