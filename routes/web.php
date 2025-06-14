@@ -10,11 +10,12 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 
@@ -25,7 +26,6 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
@@ -37,12 +37,15 @@ use App\Http\Controllers\Admin\SigninController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
-use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
+
+use App\Http\Controllers\Admin\BlogController;
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
@@ -69,10 +72,15 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{slug}', 'show')->name('show');
     });
+
+
+    Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
+
 Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+
         Route::get('/', 'index')->name('index');
-        Route::get('/{slug}', 'show')->name('show');
+        Route::get('/{blog}', 'show')->name('show');
     });
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
@@ -89,7 +97,13 @@ Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('c
     });
 
 
+    Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+
 Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
+
 
 });
 
@@ -145,10 +159,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
-    Route::resource('posts', PostController::class);
-    Route::resource('post-categories', PostCategoryController::class);
     Route::resource('faq', FaqController::class);
-    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+   
 
     Route::resource('coupons', CouponController::class);
 
@@ -184,6 +196,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
 
+    Route::resource('blogs', BlogController::class)->names('blogs');
+    Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+
+
+
     // Variant Attributes
     Route::resource('variant_attributes', VariantAttributeController::class);
     // Setting
@@ -204,4 +221,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
     Route::put('/{id}', [BankController::class, 'update'])->name('update');
     Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+
 });
