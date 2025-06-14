@@ -60,7 +60,7 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/{slug}', 'show')->name('show');
+        Route::get('/{blog}', 'show')->name('show');
     });
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {

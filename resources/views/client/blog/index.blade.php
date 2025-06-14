@@ -31,7 +31,7 @@
                             <div>
                                 <div class="blog-img">
                                     <img class="img-fluid bg-img"
-                                        src="{{ asset('storage/' . ($blog->thumbnail ?? 'assets/client/images/blog/blog-page/1.jpg')) }}"
+                                        src="{{ asset('storage/' . ($blog->thumbnail)) }}"
                                         alt="{{ $blog->title }}">
                                 </div>
                             </div>
