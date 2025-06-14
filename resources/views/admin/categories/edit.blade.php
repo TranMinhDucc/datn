@@ -163,19 +163,19 @@
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
             
-           <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" action="{{ route('admin.categories.update' , $category->id) }}" method="POST" enctype="multipart/form-data">
+           <div id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" action="{{ route('admin.categories.update' , $category->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
                 @method('PUT')
 
     <!--begin::Aside column-->
-    {{-- <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10"> --}}
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10"> 
         <!--begin::Thumbnail settings-->
-{{-- <div class="card card-flush py-4">
+ <div class="card card-flush py-4"> 
     <!--begin::Card header-->
     <div class="card-header">
         <!--begin::Card title-->
         <div class="card-title">
-            <h2>Thumbnail</h2>
+            <h2>Ảnh</h2>
         </div>
         <!--end::Card title-->
     </div>
@@ -197,12 +197,12 @@
             <!--end::Image input placeholder-->
         
         <!--begin::Image input-->
-        <div  class="image-input image-input-outline {{ $category->icon  ? '' : 'image-input-empty' }}" 
+        <div  class="image-input image-input-outline {{ $category->image  ? '' : 'image-input-empty' }}" 
         data-kt-image-input="true" 
-        style="background-image: url('{{ $category->icon ? asset('storage/' . $category->icon) : '' }}')">
+        style="background-image: url('{{ $category->image ? asset('storage/' . $category->image) : '' }}')">
             <!--begin::Preview existing avatar-->
                             <div  class="image-input-wrapper w-150px h-150px" 
-            style="background-image: url('{{ $category->icon ? asset('storage/' . $category->icon) : '/assets/media/svg/files/blank-image.svg' }}')"></div>
+            style="background-image: url('{{ $category->image ? asset('storage/' . $category->image) : '/assets/media/svg/files/blank-image.svg' }}')"></div>
                         <!--end::Preview existing avatar-->
 
             <!--begin::Label-->
@@ -211,8 +211,8 @@
                 <i class="fa-solid fa-image"><span class="path1"></span><span class="path2"></span></i>                <!--end::Icon-->
 
                 <!--begin::Inputs-->
-                <input type="file" name="icon" accept=".png, .jpg, .jpeg" />
-                <input type="hidden" name="img_old "  value="{{ $category->icon }}" />
+                <input type="file" name="image" accept=".png, .jpg, .jpeg" />
+                <input type="hidden" name="img_old "  value="{{ $category->image  }}" />
                 <!--end::Inputs-->
             </label>
             <!--end::Label-->
@@ -234,7 +234,8 @@
         <!--end::Description-->
     </div>
     <!--end::Card body-->
-</div> --}}
+</div>
+
 <!--end::Thumbnail settings-->
         <!--begin::Status-->
 {{-- <div class="card card-flush py-4">
@@ -308,7 +309,7 @@
 </div> --}}
 {{-- <!--end::Template settings-->    </div> --}}
     <!--end::Aside column-->
-
+</div>
     <!--begin::Main column-->
     <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
         <!--begin::General options-->
@@ -378,7 +379,7 @@
     </div>
     <!--end::Card header-->
 </div>
-
+    
 <!--end::Automation-->
         <div class="d-flex justify-content-end">
              <!--begin::Button-->
@@ -397,6 +398,7 @@
             <!--end::Button-->
         </div>
     </div>
+
     <!--end::Main column-->
 </form>        </div>
         <!--end::Content container-->

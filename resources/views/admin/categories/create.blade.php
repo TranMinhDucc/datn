@@ -169,19 +169,19 @@
     <!--begin::Aside column-->
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
         <!--begin::Thumbnail settings-->
-{{-- <div class="card card-flush py-4"> --}}
+<div class="card card-flush py-4">
     <!--begin::Card header-->
-    {{-- <div class="card-header">
+    <div class="card-header">
         <!--begin::Card title-->
         <div class="card-title">
-            <h2>Thumbnail</h2>
+            <h2>Ảnh</h2>
         </div>
         <!--end::Card title-->
-    </div> --}}
+    </div> 
     <!--end::Card header-->
 
     <!--begin::Card body-->
-    {{-- <div class="card-body text-center pt-0">
+    <div class="card-body text-center pt-0">
         <!--begin::Image input-->
                     <!--begin::Image input placeholder-->
             <style>
@@ -207,7 +207,7 @@
               <i class="fa-solid fa-image"><span class="path1"></span><span class="path2"></span></i>                <!--end::Icon-->
 
                 <!--begin::Inputs-->
-                <input type="file" name="icon" accept=".png, .jpg, .jpeg" />
+                <input type="file" name="image" accept=".png, .jpg, .jpeg" />
                 <input type="hidden" name="icon" />
                 <!--end::Inputs-->
             </label>
@@ -228,9 +228,9 @@
         <!--begin::Description-->
         <div class="text-muted fs-7">Set the category thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
         <!--end::Description-->
-    </div> --}}
+    </div>
     <!--end::Card body-->
-{{-- </div> --}}
+ </div> 
 <!--end::Thumbnail settings-->
         <!--begin::Status-->
 {{-- <div class="card card-flush py-4">
@@ -302,7 +302,8 @@
     </div>
     <!--end::Card body-->
 </div> --}}
-<!--end::Template settings-->    </div>
+
+<!--end::Template settings-->    
     <!--end::Aside column-->
 
     <!--begin::Main column-->
@@ -386,6 +387,7 @@
             <!--end::Button-->
         </div>
     </div>
+    
     <!--end::Main column-->
 </form>        </div>
         <!--end::Content container-->

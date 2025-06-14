@@ -3,20 +3,34 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    public function index()
+    /**
+     * Hiển thị danh sách bài viết blog.
+     */
+    public function index(Request $request)
     {
-        // Lấy danh sách sản phẩm, có thể dùng paginate
+        // $search = $request->input('search');
 
-        return view('client.blog.index');
+        $blogs = Blog::with('author')
+            // published()
+            // ->when($search, function ($query, $search) {
+            //     return $query->search($search);
+            // })
+            ->latest()
+            ->paginate(10);
+
+        return view('client.blog.index', compact('blogs'));
     }
-    public function show()
-    {
-        // Lấy danh sách sản phẩm, có thể dùng paginate
 
-        return view('client.blog.show');
+    /**
+     * Hiển thị chi tiết một bài viết blog.
+     */
+    public function show(Blog $blog)
+    {
+        return view('client.blog.show', compact('blog'));
     }
 }
