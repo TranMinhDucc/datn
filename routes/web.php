@@ -40,6 +40,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\BlogCategoryController;
 
 use App\Http\Controllers\Admin\BlogController;
 
@@ -75,13 +76,11 @@ Route::prefix('/')->name('client.')->group(function () {
 
 
     Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
-
-Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
-    Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
-
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
+
+    Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -195,10 +194,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
-
+    //Blog
     Route::resource('blogs', BlogController::class)->names('blogs');
     Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
-
+    Route::resource('blog-categories', BlogCategoryController::class) ->names('blog-categories');
 
 
     // Variant Attributes
@@ -223,3 +222,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
 
 });
+

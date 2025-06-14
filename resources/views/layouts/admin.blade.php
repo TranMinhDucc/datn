@@ -281,7 +281,6 @@
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/users-search.js') }}"></script>
     <!--end::Custom Javascript-->
     {{-- <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
-    @stack('scripts') 
     @yield('js')
     
     <script>
