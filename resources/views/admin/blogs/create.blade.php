@@ -85,6 +85,31 @@
                         <!--begin::Input group-->
                         <div class="mb-10 fv-row">
                             <!--begin::Label-->
+                            <label class="form-label required">Chuyên mục</label>
+                            <!--end::Label-->
+
+                            <!--begin::Select-->
+                            <select name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                <option value="">-- Chọn chuyên mục --</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <!--end::Select-->
+
+                            @error('category_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+
+                            <div class="text-muted fs-7 mt-2">Chọn chuyên mục cho bài viết.</div>
+                        </div>
+                        <!--end::Input group-->
+
+                        <!--begin::Input group-->
+                        <div class="mb-10 fv-row">
+                            <!--begin::Label-->
                             <label class="form-label">Tác giả</label>
                             <!--end::Label-->
                             <!--begin::Select-->

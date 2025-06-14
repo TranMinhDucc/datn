@@ -269,12 +269,21 @@
                                          class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                          class="menu-title">Viết bài mới</span></a><!--end:Menu link-->
                              </div>
-                             <!--end:Menu item--><!--begin:Menu item-->
+                             <!--end:Menu item-->
+                             <!--begin:Menu item-->
                              <div class="menu-item">
                                  <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blogs.index') }}"><span
                                          class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
                                          class="menu-title">Tất cả bài viết</span></a><!--end:Menu link-->
                              </div>
+                            <!--end:Menu item-->
+                            <!--begin:Menu item-->
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blog-categories.index') }}"><span
+                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
+                                         class="menu-title">Chuyên mục</span></a><!--end:Menu link-->
+                             </div>
+                            <!--end:Menu item-->
                          </div>
                          <!--end:Menu sub-->
                      </div>

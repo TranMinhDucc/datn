@@ -19,6 +19,7 @@ class Blog extends Model
         'title',
         'slug',
         'content',
+        'category_id',
         'thumbnail',
         'author_id',
     ];
@@ -33,6 +34,11 @@ class Blog extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(BlogCategory::class, 'category_id');
+    }
 
     /**
      * Get the author that owns the blog.
@@ -63,10 +69,16 @@ class Blog extends Model
      */
     public function scopeSearch($query, $search)
     {
-        return $query->where(function($q) use ($search) {
+        return $query->where(function ($q) use ($search) {
             $q->where('title', 'LIKE', '%' . $search . '%')
-              ->orWhere('content', 'LIKE', '%' . $search . '%')
-              ->orWhere('slug', 'LIKE', '%' . $search . '%');
+                ->orWhere('content', 'LIKE', '%' . $search . '%')
+                ->orWhere('slug', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                    $categoryQuery->where('name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('author', function ($authorQuery) use ($search) {
+                    $authorQuery->where('username', 'LIKE', '%' . $search . '%');
+                });
         });
     }
 
@@ -85,7 +97,7 @@ class Blog extends Model
     {
         $wordCount = str_word_count(strip_tags($this->content));
         $readingTime = ceil($wordCount / 200); // Average reading speed: 200 words per minute
-        
+
         return $readingTime;
     }
 }
