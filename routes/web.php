@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\ProductLabelController;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // ========== PUBLIC CLIENT ROUTES ==========
@@ -148,6 +149,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reviews', ReviewController::class)->names('reviews');
     
      Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
+   Route::resource('product-labels', ProductLabelController::class);
+
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
