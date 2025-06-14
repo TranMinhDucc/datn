@@ -41,6 +41,7 @@ use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\EmailCampaignController;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
@@ -85,8 +86,7 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
 
-Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
-
+    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
@@ -147,6 +147,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
 
     Route::resource('coupons', CouponController::class);
+    // Marketing
+
+    Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
+    Route::resource('email_campaigns', EmailCampaignController::class);
+
+
+
 
     // System Settings
     // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
@@ -156,8 +163,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     //reviews crud
     Route::resource('reviews', ReviewController::class)->names('reviews');
-    
-     Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
+    Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
 
