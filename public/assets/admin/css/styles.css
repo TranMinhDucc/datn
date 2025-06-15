@@ -9,3 +9,6 @@
     filter: brightness(1.05);
     transform: scale(1.02);
 }
+#cke_notifications_area_email_body {
+  display: none !important;
+}

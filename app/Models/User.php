@@ -71,7 +71,6 @@ public function getAvatarUrlAttribute()
             ? asset($this->avatar)
             : asset('assets/client/images/user/12.jpg');
     }
-chuẩn
     public function orders()
     {
         return $this->hasMany(Order::class);
