@@ -89,7 +89,7 @@
              <ul class="nav-submenu">
                  <li> <a href="search.html">Search</a></li>
                  <li> <a href="wishlist.html">Wishlist</a></li>
-                 <li> <a href="faq.html">Faq</a></li>
+                 <li> <a href="{{ route('client.faq.index') }}">Faq</a></li>
                  <li> <a href="dashboard.html">My Dashboard <span class="badge-sm theme-default">new</span></a></li>
                  <li> <a href="order-success.html">Order Success</a></li>
                  <li> <a href="order-tracking.html">Order Tracking</a></li>

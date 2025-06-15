@@ -280,9 +280,11 @@ if (isset($_SESSION['success'])) {
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/new-target.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/users-search.js') }}"></script>
     <!--end::Custom Javascript-->
-    {{--
-    <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
+
     @yield('scripts')
+
+    {{-- <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
+
     @yield('js')
 
     <script>

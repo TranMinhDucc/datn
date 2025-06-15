@@ -8,9 +8,9 @@
         <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
             <!--begin::Toolbar container-->
-            <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
-
-
+        <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
+            
+    
 
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
@@ -209,6 +209,7 @@
                                         </div>
                                     </th>
                                     <th class="min-w-40px">STT</th>
+                                    <th class="min-w-40px">Ảnh</th>
                                     <th class="min-w-200px">Tên</th>
                                     <th class="min-w-150px">Danh mục cha</th>
                                     <th class="min-w-150px">Mô tả </th>
@@ -228,6 +229,12 @@
                                         </td>
                                         <td>{{ $category->id }}</td>
 
+                                        <td>
+                                            <div class="symbol symbol-50px">
+                                                <span class="symbol-label"
+                                                    style="background-image:url('{{ asset('storage/' . $category->image) }}')"></span>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="ms-5">
                                                 <!--begin::Title-->
@@ -257,13 +264,12 @@
                                         </td>
 
 
-                                        <td class="text-end">
-                                            <a href="#"
-                                                class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
-                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                Hành động
-                                                <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
-                                            </a>
+    <td class="text-end">
+        <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
+           data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+            Hành động
+            <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
+        </a>
 
                                             <!--begin::Menu-->
                                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
