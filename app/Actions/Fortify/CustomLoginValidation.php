@@ -4,39 +4,44 @@ namespace App\Actions\Fortify;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Fortify\Fortify;
 
 class CustomLoginValidation
 {
     public function __invoke(Request $request)
     {
+        $loginInput = $request->input('login');
+
+        $loginField = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        // Bắt đầu validate
         $rules = [
-            Fortify::username() => [
+            'login' => [
                 'required',
                 'string',
-                'email',
                 'max:255',
-                'exists:users,email'
+                $loginField === 'email'
+                    ? 'email'
+                    : 'regex:/^[a-zA-Z0-9_]{4,20}$/', // validate username theo định dạng
+                "exists:users,{$loginField}",
             ],
             'password' => [
                 'required',
                 'string',
                 'min:8',
-                'regex:/[A-Z]/',
-                'regex:/[a-z]/',
-                'regex:/[0-9]/',
-                'regex:/[\W_]/',
+                'regex:/[A-Z]/',     // ít nhất 1 chữ in hoa
+                'regex:/[a-z]/',     // ít nhất 1 chữ thường
+                'regex:/[0-9]/',     // ít nhất 1 số
+                'regex:/[\W_]/',     // ít nhất 1 ký tự đặc biệt hoặc gạch dưới
             ],
         ];
 
         $messages = [
-            // ✅ Ghi đè đầy đủ message, Laravel sẽ dùng những dòng này thay vì lang/vi/validation.php
-
-            'email.required' => 'Vui lòng nhập email.',
-            'email.string' => 'Email không hợp lệ.',
-            'email.email' => 'Email phải đúng định dạng (ví dụ: example@gmail.com).',
-            'email.max' => 'Email không được vượt quá 255 ký tự.',
-            'email.exists' => 'Email này chưa được đăng ký trong hệ thống.',
+            'login.required' => 'Vui lòng nhập email hoặc tên đăng nhập.',
+            'login.string' => 'Thông tin đăng nhập không hợp lệ.',
+            'login.max' => 'Thông tin đăng nhập không được vượt quá 255 ký tự.',
+            'login.email' => 'Email không đúng định dạng (ví dụ: example@gmail.com).',
+            'login.regex' => 'Tên đăng nhập chỉ được chứa chữ cái, số, dấu gạch dưới và từ 4–20 ký tự.',
+            'login.exists' => 'Tài khoản này chưa được đăng ký trong hệ thống.',
 
             'password.required' => 'Vui lòng nhập mật khẩu.',
             'password.string' => 'Mật khẩu không hợp lệ.',
