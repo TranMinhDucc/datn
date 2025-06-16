@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,11 +14,15 @@ class HomeController extends Controller
     {
         $banners = Banner::with('buttons')
             ->where('status', 1)
-            ->orderBy('thu_tu', 'asc') // 🔥 ĐẢM BẢO thứ tự luôn đúng
+            ->orderBy('thu_tu', 'asc')
             ->get();
 
+        $products = Product::where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
 
-        return view('client.home', compact('banners'));
+        return view('client.home', compact('banners', 'products'));
     }
     public function policy()
     {

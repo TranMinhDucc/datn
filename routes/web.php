@@ -73,9 +73,9 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
-    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
+    // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+    //     Route::get('/', 'index')->name('index');
+    // });
 
 
 Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
@@ -91,6 +91,8 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 });
 
 // ========== LOGOUT ==========

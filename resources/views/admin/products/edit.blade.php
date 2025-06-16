@@ -2,6 +2,7 @@
 
 @section('title', 'Cập nhật danh mục')
 @section('content')
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
 
@@ -655,13 +656,28 @@
                                             </div>
 
                                             <div class="col-md-6">
-                                                <label class="form-label">Số lượng tồn kho</label>
-                                                <input type="number" name="stock_quantity" class="form-control"
-                                                    value="{{ old('stock_quantity', $product->stock_quantity ?? 0) }}" min="0">
+                                                <label class="form-label">Tồn kho</label>
+
+                                                <input
+                                                    type="number"
+                                                    id="stock_quantity"
+                                                    name="stock_quantity"
+                                                    class="form-control"
+                                                    value="{{ old('stock_quantity', $product->stock_quantity) }}"
+                                                    {{ $product->variants->count() > 0 ? 'readonly disabled' : '' }}>
+
+                                                @if($product->variants->count() > 0)
+                                                <input type="hidden" name="stock_quantity" id="hidden_stock_quantity" value="{{ old('stock_quantity', $product->stock_quantity) }}">
+                                                <small class="text-muted">Tự động tính từ các biến thể.</small>
+                                                @endif
+
                                                 @error('stock_quantity')
-                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                                <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
+
+
+
                                         </div>
 
                                         <!-- Mô tả ngắn -->
@@ -833,7 +849,7 @@
                                             <th>Giá</th>
                                             <th>Tồn kho</th>
                                             <th>SKU</th>
-                                            <th></th>
+                                            <th>Xoá</th>
                                         </tr>
                                     </thead>
                                     <tbody id="pf_variant_list"></tbody>
@@ -1399,232 +1415,6 @@
 
 
 
-<!-- <script>
-    const PF_ATTRIBUTE_SUGGESTIONS = {
-        "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng"],
-        "Size": ["XS", "S", "M", "L", "XL", "XXL"],
-        "Giới tính": ["Nam", "Nữ", "Unisex"]
-    };
-
-    let pfAttributeIndex = 0;
-    let pfAttributeGroups = {};
-
-    document.getElementById("pf_add_attribute_group").addEventListener("click", pfAddAttributeGroup);
-
-    function pfAddAttributeGroup() {
-        const wrapper = document.getElementById("pf_attribute_groups_wrapper");
-        const groupId = `pf_group_${pfAttributeIndex}`;
-        pfAttributeGroups[groupId] = {
-            name: "",
-            values: []
-        };
-
-        const div = document.createElement("div");
-        div.className = "bg-light rounded p-4 border position-relative mb-4";
-        div.id = groupId;
-
-        div.innerHTML = `
-            <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" onclick="pfRemoveAttributeGroup('${groupId}')"></button>
-            <div class="mb-3 d-flex align-items-center gap-3">
-                <label class="form-label fw-bold mb-0" style="min-width: 90px;">Phân loại</label>
-                <input type="text" class="form-control w-50 pf-attribute-name-input" placeholder="Chọn hoặc nhập phân loại" />
-            </div>
-            <div class="mb-1">
-                <label class="form-label fw-bold">Tuỳ chọn</label>
-                <div id="${groupId}_tags" class="pf-attribute-option-container d-flex flex-wrap gap-2 align-items-center"></div>
-                <div class="form-text text-muted">Nhập và nhấn Enter hoặc chọn từ gợi ý</div>
-            </div>
-            <input type="hidden" name="attributeGroups[]" value="">
-        `;
-
-        wrapper.appendChild(div);
-
-        const selectInput = div.querySelector(".pf-attribute-name-input");
-        const used = Object.values(pfAttributeGroups).map(g => g.name).filter(Boolean);
-        const options = Object.keys(PF_ATTRIBUTE_SUGGESTIONS).map(name => ({
-            value: name,
-            text: name,
-            group: "suggested",
-            disabled: used.includes(name)
-        }));
-
-        new TomSelect(selectInput, {
-            create: true,
-            maxItems: 1,
-            mode: "input",
-            options,
-            optgroups: [{
-                value: "suggested",
-                label: "Giá trị đề xuất"
-            }],
-            optgroupField: "group",
-            placeholder: "Chọn hoặc nhập phân loại",
-            onChange: (value) => {
-                pfAttributeGroups[groupId].name = value;
-                div.querySelector('input[type="hidden"]').value = value;
-                pfAttributeGroups[groupId].values = [];
-                pfRenderTags(groupId);
-            }
-        });
-
-        pfRenderTags(groupId);
-        pfAttributeIndex++;
-        document.getElementById("pf_variant_section").style.display = "block";
-    }
-
-    function pfRenderTags(groupId) {
-        const container = document.getElementById(`${groupId}_tags`);
-        container.innerHTML = "";
-
-        const selected = pfAttributeGroups[groupId].values;
-        const list = document.createElement("div");
-        list.className = "d-flex flex-wrap gap-2 align-items-center";
-
-        selected.forEach(val => {
-            const tag = document.createElement("div");
-            tag.className = "d-inline-flex align-items-center bg-white border rounded p-2";
-
-            const input = document.createElement("input");
-            input.type = "text";
-            input.className = "form-control form-control-sm border-0 p-0";
-            input.style.background = "transparent";
-            input.value = val;
-            input.readOnly = true;
-
-            const trash = document.createElement("i");
-            trash.className = "bi bi-trash text-danger ms-2 cursor-pointer";
-            trash.onclick = () => pfRemoveTag(groupId, val);
-
-            tag.appendChild(input);
-            tag.appendChild(trash);
-            list.appendChild(tag);
-        });
-
-        container.appendChild(list);
-
-        const input = document.createElement("input");
-        container.appendChild(input);
-
-        const suggest = pfGetSuggestions(groupId);
-        const ts = new TomSelect(input, {
-            create: true,
-            maxItems: 1,
-            persist: false,
-            options: [],
-            onItemAdd(value) {
-                if (!pfAttributeGroups[groupId].values.includes(value)) {
-                    pfAttributeGroups[groupId].values.push(value);
-                    pfRenderTags(groupId);
-                }
-                ts.clear();
-            },
-            onBlur() {
-                const val = ts.getValue().trim();
-                if (val && !pfAttributeGroups[groupId].values.includes(val)) {
-                    ts.addOption({
-                        value: val,
-                        text: val
-                    });
-                    ts.addItem(val);
-                } else ts.clear();
-            }
-        });
-
-        ts.addOptions(suggest);
-        pfGenerateVariants();
-    }
-
-    function pfGetSuggestions(groupId) {
-        const name = pfAttributeGroups[groupId].name;
-        const used = new Set();
-
-        Object.keys(pfAttributeGroups).forEach(id => {
-            if (id !== groupId) {
-                pfAttributeGroups[id].values.forEach(v => used.add(v));
-            }
-        });
-
-        return (PF_ATTRIBUTE_SUGGESTIONS[name] || []).map(val => ({
-            value: val,
-            text: val,
-            disabled: used.has(val)
-        }));
-    }
-
-    function pfRemoveAttributeGroup(id) {
-        delete pfAttributeGroups[id];
-        document.getElementById(id)?.remove();
-        pfGenerateVariants();
-    }
-
-    function pfRemoveTag(groupId, val) {
-        pfAttributeGroups[groupId].values = pfAttributeGroups[groupId].values.filter(v => v !== val);
-        pfRenderTags(groupId);
-        pfGenerateVariants();
-    }
-
-    function pfGenerateVariants() {
-        const section = document.getElementById("pf_variant_section");
-        const tbody = document.getElementById("pf_variant_list");
-
-        const groupIds = Object.keys(pfAttributeGroups);
-        if (groupIds.length === 0 || groupIds.some(id => pfAttributeGroups[id].values.length === 0)) {
-            section.style.display = "none";
-            return;
-        }
-
-        section.style.display = "block";
-        tbody.innerHTML = "";
-
-        const headerRow = document.createElement("tr");
-        headerRow.innerHTML = `
-            <td class="fw-semibold text-muted">Áp dụng cho tất cả</td>
-            <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào"></td>
-            <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0"></td>
-            <td><input type="text" class="form-control form-control-sm" id="pf_apply_sku" placeholder="Nhập vào"></td>
-            <td><button type="button" class="btn btn-danger btn-sm" onclick="pfApplyToAllVariants()">Áp dụng</button></td>
-        `;
-        tbody.appendChild(headerRow);
-
-        const valueLists = groupIds.map(id => pfAttributeGroups[id].values);
-        const combinations = pfCartesian(valueLists);
-
-        combinations.forEach((combo, i) => {
-            const label = combo.join(" / ");
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${label}<input type="hidden" name="variants[${i}][attributes]" value="${label}"></td>
-                <td><input type="number" name="variants[${i}][price]" class="form-control"></td>
-                <td><input type="number" name="variants[${i}][quantity]" class="form-control"></td>
-                <td><input type="text" name="variants[${i}][sku]" class="form-control"></td>
-                <td></td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function pfApplyToAllVariants() {
-        const price = document.getElementById('pf_apply_price').value;
-        const quantity = document.getElementById('pf_apply_quantity').value;
-        const sku = document.getElementById('pf_apply_sku').value;
-
-        const rows = document.querySelectorAll('#pf_variant_list tr');
-        rows.forEach((row) => {
-            if (row.querySelector('td')?.textContent.includes('Áp dụng cho tất cả')) return;
-
-            if (price) row.querySelector(`input[name$="[price]"]`).value = price;
-            if (quantity) row.querySelector(`input[name$="[quantity]"]`).value = quantity;
-            if (sku) row.querySelector(`input[name$="[sku]"]`).value = sku;
-        });
-    }
-
-    function pfCartesian(arrays) {
-        return arrays.reduce((a, b) => a.flatMap(d => b.map(e => d.concat(e))), [
-            []
-        ]);
-    }
-</script> -->
-
 <script>
     window.oldAttributeGroups = @json($attributeGroups);
     window.oldVariants = @json($productVariants);
@@ -1773,19 +1563,34 @@
                 const tdSku = document.createElement("td");
                 tdSku.innerHTML = `<input type="text" name="variants[${i}][sku]" class="form-control" value="${variant.sku}">`;
 
+                const tdDelete = document.createElement("td");
+                tdDelete.innerHTML = `
+<button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
+    <i class="bi bi-trash text-danger fs-5"></i>
+</button>
+`;
+
                 row.appendChild(tdAttr);
                 row.appendChild(tdPrice);
                 row.appendChild(tdQty);
                 row.appendChild(tdSku);
+                row.appendChild(tdDelete);
                 tbody.appendChild(row);
             });
 
             document.getElementById("pf_variant_section").style.display = "block";
+            calculateTotalStock();
+
         } else {
             pfRenderVariants();
         }
 
         document.getElementById("pf_add_attribute_group")?.addEventListener("click", pfAddAttributeGroup);
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.name && e.target.name.includes('[quantity]')) {
+                calculateTotalStock();
+            }
+        });
     });
 
     function pfAddAttributeGroup() {
@@ -1929,6 +1734,18 @@
                 text: val
             })));
         }
+
+        // Remove old hidden input nếu tồn tại
+        const oldHiddenInput = container.querySelector(`input[name="attributeValues[${groupId}]"]`);
+        if (oldHiddenInput) oldHiddenInput.remove();
+
+        // Tạo hidden input lưu các giá trị tuỳ chọn của phân loại
+        const hiddenValues = document.createElement("input");
+        hiddenValues.type = "hidden";
+        hiddenValues.name = `attributeValues[${groupId}]`; // Key này dùng trong Laravel
+        hiddenValues.value = JSON.stringify(pfAttributeGroups[groupId].values || []);
+        container.appendChild(hiddenValues);
+
     }
 
 
@@ -1956,7 +1773,22 @@
         tbody.innerHTML = "";
 
         const keys = Object.keys(pfAttributeGroups).filter(id => pfAttributeGroups[id].name && pfAttributeGroups[id].values.length);
-        if (keys.length === 0) return;
+        if (keys.length === 0) {
+            // Nếu không còn biến thể → mở lại tồn kho
+            const stockInput = document.getElementById("stock_quantity");
+            if (stockInput) {
+                stockInput.value = '';
+                stockInput.readOnly = false;
+                stockInput.disabled = false;
+            }
+
+            // Ẩn bảng biến thể
+            document.getElementById("pf_variant_section").style.display = "none";
+            document.getElementById("pf_apply_all_wrapper").style.display = "none";
+
+            return;
+        }
+
 
         const combinations = cartesian(keys.map(id => pfAttributeGroups[id].values.map(val => ({
             groupName: pfAttributeGroups[id].name,
@@ -1999,7 +1831,7 @@
            value="${existing.price !== '0' ? existing.price : ''}"
            min="1"
            required>
-`;
+    `;
 
             const tdQty = document.createElement("td");
             tdQty.innerHTML = `
@@ -2009,21 +1841,34 @@
            value="${existing.quantity !== '0' ? existing.quantity : ''}"
            min="1"
            required>
-`;
+    `;
 
 
             const tdSku = document.createElement("td");
             tdSku.innerHTML = `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
 
+            const tdDelete = document.createElement("td");
+            tdDelete.innerHTML = `
+<button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
+    <i class="bi bi-trash text-danger fs-5"></i>
+</button>
+`;
+
             row.appendChild(tdAttr);
             row.appendChild(tdPrice);
             row.appendChild(tdQty);
             row.appendChild(tdSku);
+            row.appendChild(tdDelete);
+
             tbody.appendChild(row);
+
         });
 
         document.getElementById("pf_variant_section").style.display = "block";
         document.getElementById("pf_apply_all_wrapper").style.display = "block";
+
+        calculateTotalStock();
+
     }
 
 
@@ -2061,7 +1906,44 @@
 
 
     }
+
+    function calculateTotalStock() {
+        const stockInput = document.getElementById("stock_quantity");
+        const hiddenStockInput = document.getElementById("hidden_stock_quantity");
+
+        if (!stockInput || !hiddenStockInput) return;
+
+        const qtyInputs = document.querySelectorAll('input[name^="variants"][name$="[quantity]"]');
+        if (qtyInputs.length === 0) {
+            stockInput.readOnly = false;
+            stockInput.disabled = false;
+            stockInput.value = '';
+            hiddenStockInput.value = '';
+            return;
+        }
+
+        let total = 0;
+        qtyInputs.forEach(input => {
+            const val = parseInt(input.value);
+            if (!isNaN(val)) total += val;
+        });
+
+        stockInput.value = total;
+        hiddenStockInput.value = total; // ✅ gửi về Laravel
+        stockInput.readOnly = true;
+        stockInput.disabled = true;
+    }
+
+
+    function removeVariantRow(button) {
+        const row = button.closest("tr");
+        if (row) {
+            row.remove();
+            calculateTotalStock(); // cập nhật tồn kho lại sau xoá
+        }
+    }
 </script>
+
 
 
 

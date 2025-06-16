@@ -451,20 +451,25 @@ class ProductController extends Controller
                 ]);
 
                 foreach ($variantData['attributes'] ?? [] as $attributeName => $valueName) {
-                    $attributeId = $attributeMap[$attributeName] ?? null;
+                    // Tìm hoặc tạo mới Attribute
+                    $attribute = Attribute::firstOrCreate(
+                        ['name' => $attributeName],
+                        ['slug' => Str::slug($attributeName)]
+                    );
 
-                    if ($attributeId) {
-                        $valueId = AttributeValue::where('attribute_id', $attributeId)
-                            ->where('value', $valueName)
-                            ->value('id');
+                    // Tìm hoặc tạo mới Value
+                    $value = AttributeValue::firstOrCreate(
+                        [
+                            'attribute_id' => $attribute->id,
+                            'value' => $valueName
+                        ]
+                    );
 
-                        if ($valueId) {
-                            $variant->options()->create([
-                                'attribute_id' => $attributeId,
-                                'value_id' => $valueId,
-                            ]);
-                        }
-                    }
+                    // Lưu vào option
+                    $variant->options()->create([
+                        'attribute_id' => $attribute->id,
+                        'value_id' => $value->id,
+                    ]);
                 }
             }
 

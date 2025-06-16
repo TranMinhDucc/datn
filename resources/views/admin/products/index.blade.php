@@ -366,12 +366,13 @@
 
                                 {{-- Trạng thái --}}
                                 <td class="text-center">
-                                    @if ($product->status)
+                                    @if ($product->is_active)
                                     <span class="badge badge-light-success">Hiện</span>
                                     @else
                                     <span class="badge badge-light-danger">Ẩn</span>
                                     @endif
                                 </td>
+
                                 {{-- Thao tác --}}
                                 <td class="text-center">
                                     <div class="dropdown">
