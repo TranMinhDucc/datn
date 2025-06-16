@@ -5,12 +5,6 @@
         <div id="kt_app_content" class="app-content  flex-column-fluid ">
             <div id="kt_app_content_container" class="app-container  container-xxl ">
                 <div class="card card-flush">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
                             <form method="GET" action="{{ route('admin.users.index') }}"
@@ -85,7 +79,8 @@
                                                         data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                                         Actions <i class="fa fa-chevron-down ms-1"></i>
                                                     </button>
-                                                    <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
+                                                    <div class="menu menu-sub menu-sub-dropdown w-125px"
+                                                        data-kt-menu="true">
                                                         <div class="menu-item px-3">
                                                             <a href="{{ route('admin.users.edit', $user->id) }}"
                                                                 class="menu-link px-3">Edit</a>
@@ -111,18 +106,20 @@
 @push('scripts')
     <script>
         document.querySelectorAll('.toggle-status').forEach(switchEl => {
-            switchEl.addEventListener('change', function () {
+            switchEl.addEventListener('change', function() {
                 const id = this.getAttribute('data-id');
                 const status = this.checked ? 0 : 1; // 0: active, 1: banned
 
                 fetch(`/admin/users/${id}/toggle-status`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ banned: status })
-                })
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            banned: status
+                        })
+                    })
                     .then(res => res.json())
                     .then(data => {
                         if (!data.success) {
