@@ -47,7 +47,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
 use App\Http\Controllers\Admin\EmailCampaignController;
-
+use App\Http\Middleware\AdminMiddleware;
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
@@ -62,8 +62,6 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
-       
-
     });
 
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -103,10 +101,7 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
 
-Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
-
-
-
+    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
@@ -152,87 +147,88 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // ========== ADMIN ROUTES ==========
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('admin')
+    ->middleware(['auth', AdminMiddleware::class])
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('banners', BannerController::class);
-    Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+        Route::resource('banners', BannerController::class);
+        Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
-    Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('users', UserController::class);
-    Route::resource('faq', FaqController::class);
-   
-
-    Route::resource('coupons', CouponController::class);
-    // Marketing
-
-    Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
-    Route::resource('email_campaigns', EmailCampaignController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('products', ProductController::class);
+        Route::resource('users', UserController::class);
+        Route::resource('faq', FaqController::class);
 
 
+        Route::resource('coupons', CouponController::class);
+        // Marketing
+
+        Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
+        Route::resource('email_campaigns', EmailCampaignController::class);
 
 
-    // System Settings
-    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
-    //reviews crud
-    Route::resource('reviews', ReviewController::class)->names('reviews');
-
-    Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
-
-   Route::resource('product-labels', ProductLabelController::class);
 
 
-    // Route::resource('roles', RoleController::class)->names('admin.roles');
+        // System Settings
+        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 
-    // Topup & Campaigns
-    // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
-    // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
-    // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
+        //reviews crud
+        Route::resource('reviews', ReviewController::class)->names('reviews');
 
-    // Marketing
-    // Route::resource('coupons', CouponController::class)->names('admin.coupons');
-    // Route::resource('promotions', PromoController::class)->names('admin.promotions');
-    // Route::resource('posts', PostController::class)->names('admin.posts');
+        Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
 
-    // System Settings
-    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
-    Route::resource('brands', BrandController::class);
-    Route::resource('tags', TagController::class);
-    //Blog
-    Route::resource('blogs', BlogController::class)->names('blogs');
-    Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
-    Route::resource('blog-categories', BlogCategoryController::class) ->names('blog-categories');
+        Route::resource('product-labels', ProductLabelController::class);
 
 
-    // Variant Attributes
-    Route::resource('variant_attributes', VariantAttributeController::class);
-    // Setting
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
+        // Route::resource('roles', RoleController::class)->names('admin.roles');
 
-    // Banking 
+        // Topup & Campaigns
+        // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
+        // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
+        // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
+
+        // Marketing
+        // Route::resource('coupons', CouponController::class)->names('admin.coupons');
+        // Route::resource('promotions', PromoController::class)->names('admin.promotions');
+        // Route::resource('posts', PostController::class)->names('admin.posts');
+
+        // System Settings
+        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+        Route::resource('brands', BrandController::class);
+        Route::resource('tags', TagController::class);
+        //Blog
+        Route::resource('blogs', BlogController::class)->names('blogs');
+        Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
 
 
-    Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
-    Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
-    Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
-    Route::get('/recharge-bank-config/{id}/edit', [BankController::class, 'config_edit'])->name('bank.config_edit');
-    Route::put('/recharge-bank-config/{id}/edit', [BankController::class, 'config_update'])->name('bank.config_update');
-    Route::get('/create', [BankController::class, 'create'])->name('create');
-    Route::post('/', [BankController::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [BankController::class, 'update'])->name('update');
-    Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+        // Variant Attributes
+        Route::resource('variant_attributes', VariantAttributeController::class);
+        // Setting
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+        Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
 
-});
+        // Banking 
 
+
+        Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
+        Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
+        Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
+        Route::get('/recharge-bank-config/{id}/edit', [BankController::class, 'config_edit'])->name('bank.config_edit');
+        Route::put('/recharge-bank-config/{id}/edit', [BankController::class, 'config_update'])->name('bank.config_update');
+        Route::get('/create', [BankController::class, 'create'])->name('create');
+        Route::post('/', [BankController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [BankController::class, 'update'])->name('update');
+        Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+    });

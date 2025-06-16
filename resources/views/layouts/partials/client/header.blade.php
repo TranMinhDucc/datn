@@ -9,7 +9,8 @@
                     <li class="shopping-cart"> <a href="cart.html"><i class="iconsax"
                                 data-icon="shopping-cart"></i>Cart</a></li>
                     <li><a href="wishlist.html"><i class="iconsax" data-icon="heart"></i>My Wish</a></li>
-                    <li> <a href="{{route('client.account.dashboard')}}"><i class="iconsax" data-icon="user-2"></i>Account</a></li>
+                    <li> <a href="{{route('client.account.dashboard')}}"><i class="iconsax"
+                                data-icon="user-2"></i>Account</a></li>
                 </ul>
             </div>
             <div class="offcanvas offcanvas-start" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1"
@@ -51,6 +52,9 @@
                             <div class="onhover-show-div user">
                                 <ul>
                                     @auth
+                                        @if (Auth::user()->role === 'admin')
+                                            <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+                                        @endif
                                         <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}">
