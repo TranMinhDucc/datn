@@ -49,15 +49,17 @@
                                 </script>
                             @endpush
 
+
+
                             <form method="POST" action="{{ route('login') }}" class="row g-3">
                                 @csrf
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input class="form-control" id="floatingInputValue" name="email" type="text"
-                                            placeholder="name@example.com" value="{{ old('email') }}">
-                                        <label for="floatingInputValue">Tài khoản hoặc email</label>
-                                        @error('email')
+                                        <input class="form-control" id="floatingInputValue" name="login" type="text"
+                                            placeholder="Email hoặc tên đăng nhập" value="{{ old('login') }}">
+                                        <label for="floatingInputValue">Email hoặc tên đăng nhập</label>
+                                        @error('login')
                                             <div class="text-danger small mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>

@@ -26,12 +26,12 @@ class FaqController extends Controller
         ]);
 
         Faq::create($request->only(['question', 'answer']));
-        return redirect()->route('faq.index')->with('success', 'Đã thêm FAQ mới');
+        return redirect()->route('admin.faq.index')->with('success', 'Đã thêm FAQ mới');
     }
 
     public function edit(Faq $faq)
     {
-        return view('faq.edit', compact('faq'));
+        return view('admin.faq.edit', compact('faq'));
     }
 
     public function update(Request $request, Faq $faq)
@@ -42,12 +42,12 @@ class FaqController extends Controller
         ]);
 
         $faq->update($request->only(['question', 'answer']));
-        return redirect()->route('faq.index')->with('success', 'Đã cập nhật FAQ');
+        return redirect()->route('admin.faq.index')->with('success', 'Đã cập nhật FAQ');
     }
 
     public function destroy(Faq $faq)
     {
         $faq->delete();
-        return redirect()->route('faq.index')->with('success', 'Đã xóa FAQ');
+        return redirect()->route('admin.faq.index')->with('success', 'Đã xóa FAQ');
     }
 }

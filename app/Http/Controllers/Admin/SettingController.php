@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
@@ -30,6 +31,7 @@ class SettingController extends Controller
                     'description' => 'nullable|string',
                     'keywords' => 'nullable|string',
                     'author' => 'nullable|string',
+                    'address' => 'nullable|string',
                 ];
                 break;
             case 'set_images':
@@ -48,26 +50,6 @@ class SettingController extends Controller
         // $settings = Setting::whereIn('name', $imageFields)->get()->keyBy('name');
         $settings = Setting::all()->keyBy('name');
         $tab = $request->input('tab');
-        // foreach ($imageFields as $field) {
-        //     if ($request->hasFile($field)) {
-        //         // Xóa ảnh cũ nếu tồn tại
-        //         if (isset($settings[$field]) && $settings[$field]->value) {
-        //             Storage::delete('settings/' . $settings[$field]->value); // Xóa từ thư mục settings
-        //         }
-        //         // Lưu ảnh mới vào storage/app/settings
-        //         $path = $request->file($field)->store('settings', 'public'); // Lưu vào storage/app/settings
-        //         $validatedData[$field] = $path; // Lưu đường dẫn tương đối
-        //     }
-        // }
-        // foreach ($imageFields as $field) {
-        //     if ($request->hasFile($field)) {
-        //         if (isset($settings[$field]) && $settings[$field]->value && Storage::disk('public')->exists('settings/' . $settings[$field]->value)) {
-        //             Storage::delete('settings/' . $settings[$field]->value);
-        //         }
-        //         $path = $request->file($field)->store('settings', 'public');
-        //         $validatedData[$field] = $path;
-        //     }
-        // }
         foreach ($imageFields as $field) {
             if ($request->hasFile($field)) {
                 // Xóa ảnh cũ
@@ -85,14 +67,10 @@ class SettingController extends Controller
         foreach ($validatedData as $key => $value) {
             Setting::where('name', $key)->update(['value' => $value]);
         }
+        Cache::forget('global_settings');
         return redirect()->route('admin.settings.index', ['tab' => $tab])->with('success', 'Cài đặt đã được cập nhật.');
     }
-    // public function destroy($id)
-    // {
-    //     $setting = Setting::findOrFail($id);
-    //     $setting->delete();
-    //     return redirect()->route('admin.settings.index')->with('success', 'Cài đặt đã được xóa.');
-    // }
+  
     public function destroy($id)
     {
         $setting = Setting::findOrFail($id);

@@ -2,9 +2,6 @@
 @section('title', 'Danh sách sản phẩm')
 @section('content')
 
-
-
-
 <div class="d-flex flex-column flex-column-fluid">
     @if (session('success'))
     {{-- <div class="notice d-flex bg-light-success rounded border-success border border-dashed p-6 mb-5">

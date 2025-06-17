@@ -65,7 +65,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'create_date' => 'datetime',
         'update_date' => 'datetime',
     ];
-      public function orders()
+public function getAvatarUrlAttribute()
+    {
+        return $this->avatar && file_exists(public_path($this->avatar))
+            ? asset($this->avatar)
+            : asset('assets/client/images/user/12.jpg');
+    }
+    public function orders()
     {
         return $this->hasMany(Order::class);
     }
