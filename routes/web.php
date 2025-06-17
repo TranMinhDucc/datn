@@ -90,9 +90,9 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
-    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
+    // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+    //     Route::get('/', 'index')->name('index');
+    // });
 
 
 
@@ -111,10 +111,15 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
+
 });
 
 // ========== LOGOUT ==========

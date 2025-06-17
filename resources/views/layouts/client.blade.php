@@ -3,11 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ $settings['description']}}">
-    <meta name="keywords" content="{{ $settings['keywords']}}">
-    <meta name="author" content="{{ $settings['author']}}">
-
     <title>@yield('title')</title>
 
     <!-- Google Fonts -->
@@ -30,12 +25,51 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    @yield('css')
 
 
 </head>
 
+<script>
+    @auth
+    localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
+    @else
+    localStorage.setItem('currentUser', 'guest');
+    @endauth
+</script>
 
+<script>
+    @auth
+    const userId = '{{ auth()->user()->id }}';
+    const guestKey = 'cartItems_guest';
+    const userKey = `cartItems_${userId}`;
+
+    const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
+    const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
+
+    // Hàm merge
+    function mergeCarts(userCart, guestCart) {
+        guestCart.forEach(gItem => {
+            const index = userCart.findIndex(
+                uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
+            );
+
+            if (index !== -1) {
+                userCart[index].quantity += gItem.quantity;
+            } else {
+                userCart.push(gItem);
+            }
+        });
+
+        return userCart;
+    }
+
+    const mergedCart = mergeCarts(userCart, guestCart);
+
+    localStorage.setItem(userKey, JSON.stringify(mergedCart));
+    localStorage.removeItem(guestKey); // xoá cart guest
+    localStorage.setItem('currentUser', userId); // cập nhật currentUser
+    @endauth
+</script>
 
 <body>
     <div class="tap-top">
@@ -119,11 +153,9 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i
-                                                class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i
-                                                class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -146,90 +178,7 @@
         </div>
         <div class="offcanvas-body theme-scrollbar">
             <ul class="offcanvas-cart">
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/1.jpg') }}"
-                            alt=""></a>
-                    <div>
-                        <h6 class="mb-0">Shirts Men's Clothing</h6>
-                        <p>$35
-                            <del>$40</del><span class="btn-cart">$<span class="btn-cart__total"
-                                    id="total">105</span></span>
-                        </p>
-                        <div class="btn-containter">
-                            <div class="btn-control">
-                                <button class="btn-control__remove" id="btn-remove">&minus;</button>
-                                <div class="btn-control__quantity">
-                                    <div id="quantity-previous">2</div>
-                                    <div id="quantity-current">3</div>
-                                    <div id="quantity-next">4</div>
-                                </div>
-                                <button class="btn-control__add" id="btn-add">+</button>
-                            </div>
-                        </div>
-                    </div><i class="iconsax delete-icon" data-icon="trash"></i>
-                </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/2.jpg') }}"
-                            alt=""></a>
-                    <div>
-                        <h6 class="mb-0">Shirts Men's Clothing</h6>
-                        <p>$35
-                            <del>$40</del><span class="btn-cart">$<span class="btn-cart__total"
-                                    id="total1">105</span></span>
-                        </p>
-                        <div class="btn-containter">
-                            <div class="btn-control">
-                                <button class="btn-control__remove" id="btn-remove1">&minus;</button>
-                                <div class="btn-control__quantity">
-                                    <div id="quantity1-previous">2</div>
-                                    <div id="quantity1-current">3</div>
-                                    <div id="quantity1-next">4</div>
-                                </div>
-                                <button class="btn-control__add" id="btn-add1">+</button>
-                            </div>
-                        </div>
-                    </div><i class="iconsax delete-icon" data-icon="trash"></i>
-                </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/3.jpg') }}"
-                            alt=""></a>
-                    <div>
-                        <h6 class="mb-0">Shirts Men's Clothing</h6>
-                        <p>$35
-                            <del>$40</del><span class="btn-cart">$<span class="btn-cart__total"
-                                    id="total2">105</span></span>
-                        </p>
-                        <div class="btn-containter">
-                            <div class="btn-control">
-                                <button class="btn-control__remove" id="btn-remove2">&minus;</button>
-                                <div class="btn-control__quantity">
-                                    <div id="quantity2-previous">2</div>
-                                    <div id="quantity2-current">3</div>
-                                    <div id="quantity2-next">4</div>
-                                </div>
-                                <button class="btn-control__add" id="btn-add2">+</button>
-                            </div>
-                        </div>
-                    </div><i class="iconsax delete-icon" data-icon="trash"></i>
-                </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/4.jpg') }}"
-                            alt=""></a>
-                    <div>
-                        <h6 class="mb-0">Shirts Men's Clothing</h6>
-                        <p>$35
-                            <del>$40</del><span class="btn-cart">$<span class="btn-cart__total"
-                                    id="total3">105</span></span>
-                        </p>
-                        <div class="btn-containter">
-                            <div class="btn-control">
-                                <button class="btn-control__remove" id="btn-remove3">&minus;</button>
-                                <div class="btn-control__quantity">
-                                    <div id="quantity3-previous">2</div>
-                                    <div id="quantity3-current">3</div>
-                                    <div id="quantity3-next">4</div>
-                                </div>
-                                <button class="btn-control__add" id="btn-add3">+</button>
-                            </div>
-                        </div>
-                    </div><i class="iconsax delete-icon" data-icon="trash"></i>
-                </li>
+
             </ul>
         </div>
         <div class="offcanvas-footer">
@@ -264,20 +213,17 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
                             Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Shoes
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>
@@ -444,16 +390,16 @@
     </div>
     {{-- <div class="wrapper">
         <div class="title-box"> <img src="{{ asset('assets/client/images/other-img/cookie.png') }}" alt="">
-            <h3>Cookies Consent</h3>
-        </div>
-        <div class="info">
-            <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you
-                accept our cookie policy.</p>
-        </div>
-        <div class="buttons">
-            <button class="button btn btn_outline sm" id="acceptBtn">Accept</button>
-            <button class="button btn btn_black sm">Decline</button>
-        </div>
+    <h3>Cookies Consent</h3>
+    </div>
+    <div class="info">
+        <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you
+            accept our cookie policy.</p>
+    </div>
+    <div class="buttons">
+        <button class="button btn btn_outline sm" id="acceptBtn">Accept</button>
+        <button class="button btn btn_black sm">Decline</button>
+    </div>
     </div> --}}
     <div class="theme-btns">
         <button class="btntheme" id="dark-btn"><i class="fa-regular fa-moon"></i>
@@ -485,48 +431,32 @@
     <!-- SweetAlert2 JS (bắt buộc để Swal.fire hoạt động) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
-        <script>
-            let timerInterval;
-            let action = "{{ session('action') ?? '' }}";
-            let timeout = 3000;
+    <script>
+        let timerInterval;
+        let timeout = 3000;
+        let action = "{{ session('action') }}";
 
-            // ⏱ Tuỳ chỉnh thời gian hiển thị thông báo theo hành động
-            switch (action) {
-                case "register":
-                    timeout = 5000;
-                    break;
-                case "logout":
-                    timeout = 800;
-                    break;
-                case "reset":
-                    timeout = 3500;
-                    break;
-                case "avatar":
-                    timeout = 1000; // ✅ Hiển thị rất nhanh cho cập nhật avatar
-                    break;
-                default:
-                    timeout = 3000;
+        if (action === "register") timeout = 5000;
+        else if (action === "logout") timeout = 600;
+        else if (action === "reset") timeout = 4000;
+
+        Swal.fire({
+            title: "🎉 {{ session('success') }}",
+            html: "Sẽ tự đóng trong <b></b> ms.",
+            timer: timeout,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                timerInterval = setInterval(() => {
+                    timer.textContent = Swal.getTimerLeft();
+                }, 100);
+            },
+            willClose: () => {
+                clearInterval(timerInterval);
             }
-
-            Swal.fire({
-                icon: action === 'avatar' ? 'success' : 'info',
-                title: action === 'avatar' ? '🎉 Ảnh đại diện đã được cập nhật!' : '🎉 {{ session('success') }}',
-                html: "Đóng sau <b></b> ms.",
-                timer: timeout,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                    const b = Swal.getPopup().querySelector("b");
-                    timerInterval = setInterval(() => {
-                        if (b) b.textContent = Swal.getTimerLeft();
-                    }, 100);
-                },
-                willClose: () => {
-                    clearInterval(timerInterval);
-                }
-            });
-        </script>
+        });
+    </script>
     @endif
 
 
@@ -534,6 +464,155 @@
 
 
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cartList = document.querySelector('.offcanvas-cart');
+
+        let currentUser = localStorage.getItem('currentUser') || 'guest';
+        let cartKey = `cartItems_${currentUser}`;
+        let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+        renderCartItems();
+
+        // Sự kiện Add to Cart
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseFloat(this.dataset.price);
+                const originalPrice = parseFloat(this.dataset.originalPrice);
+                const image = this.dataset.image;
+
+                const selectedSize = document.querySelector('.size-box ul li.active');
+                const size = selectedSize ? selectedSize.textContent.trim() : 'Default';
+
+                const selectedColor = document.querySelector('.color-variant li.active');
+                const color = selectedColor ? selectedColor.dataset.color || selectedColor.title || 'Default' : 'Default';
+
+                const quantityInput = document.querySelector('.quantity input');
+                const quantity = parseInt(quantityInput?.value || 1);
+
+                const index = cartItems.findIndex(p => p.id === id && p.size === size && p.color === color);
+                if (index !== -1) {
+                    cartItems[index].quantity += quantity;
+                } else {
+                    cartItems.push({
+                        id,
+                        name,
+                        price,
+                        originalPrice,
+                        image,
+                        quantity,
+                        size,
+                        color
+                    });
+                }
+
+                saveAndRender();
+            });
+        });
+
+        function renderCartItems() {
+            cartItems = JSON.parse(localStorage.getItem(cartKey)) || []; // Cập nhật từ localStorage mới nhất
+            cartList.innerHTML = '';
+            cartItems.forEach(item => renderCartItem(item));
+            updateTotal();
+        }
+
+        function renderCartItem(item) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <a href="#"><img src="${item.image}" alt=""></a>
+                <div>
+                    <h6 class="mb-0">${item.name}</h6>
+                    <p>$${item.price.toLocaleString()}
+                        <del>$${item.originalPrice.toLocaleString()}</del>
+                        <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
+                    </p>
+                    <p>Size: <span>${item.size || 'Default'}</span></p>
+                    <p>Color: <span>${item.color || 'Default'}</span></p>
+
+                    <div class="btn-containter">
+                        <div class="btn-control">
+                            <button class="btn-control__remove">&minus;</button>
+                            <div class="btn-control__quantity">
+                                <div id="quantity-previous">${item.quantity - 1}</div>
+                                <div id="quantity-current">${item.quantity}</div>
+                                <div id="quantity-next">${item.quantity + 1}</div>
+                            </div>
+                            <button class="btn-control__add">+</button>
+                        </div>
+                    </div>
+                </div>
+                <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+            `;
+
+            li.querySelector('.btn-control__add').addEventListener('click', () => {
+                item.quantity += 1;
+                saveAndRender();
+            });
+
+            li.querySelector('.btn-control__remove').addEventListener('click', () => {
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                    saveAndRender();
+                }
+            });
+
+            li.querySelector('.delete-icon').addEventListener('click', () => {
+                cartItems = cartItems.filter(p =>
+                    !(p.id === item.id && p.size === item.size && p.color === item.color)
+                );
+                saveAndRender();
+            });
+
+            cartList.appendChild(li);
+        }
+
+        function updateTotal() {
+            let total = 0;
+            cartItems.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            const totalElement = document.querySelector('.price-box p');
+            if (totalElement) {
+                totalElement.textContent = `$ ${total.toFixed(2)} USD`;
+            }
+        }
+
+        function saveAndRender() {
+            localStorage.setItem(cartKey, JSON.stringify(cartItems));
+            renderCartItems();
+        }
+
+        // Xử lý chọn size
+        const sizeItems = document.querySelectorAll('.size-box ul li');
+        sizeItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                sizeItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                this.parentNode.classList.add('selected');
+            });
+        });
+
+        // Xử lý chọn màu
+        const colorItems = document.querySelectorAll('.color-variant li');
+        colorItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                colorItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+            window.location.reload();
+        }
+    });
+</script>
+
+
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
