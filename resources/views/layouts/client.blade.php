@@ -3,6 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ $settings['description']}}">
+    <meta name="keywords" content="{{ $settings['keywords']}}">
+    <meta name="author" content="{{ $settings['author']}}">
+
     <title>@yield('title')</title>
 
     <!-- Google Fonts -->
@@ -114,9 +119,11 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i
+                                                class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i
+                                                class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -139,7 +146,8 @@
         </div>
         <div class="offcanvas-body theme-scrollbar">
             <ul class="offcanvas-cart">
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/1.jpg') }}" alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/1.jpg') }}"
+                            alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -159,7 +167,8 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/2.jpg') }}" alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/2.jpg') }}"
+                            alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -179,7 +188,8 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/3.jpg') }}" alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/3.jpg') }}"
+                            alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -199,7 +209,8 @@
                         </div>
                     </div><i class="iconsax delete-icon" data-icon="trash"></i>
                 </li>
-                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/4.jpg') }}" alt=""></a>
+                <li> <a href="#"> <img src="{{ asset('assets/client/images/cart/4.jpg') }}"
+                            alt=""></a>
                     <div>
                         <h6 class="mb-0">Shirts Men's Clothing</h6>
                         <p>$35
@@ -253,17 +264,20 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Shoes
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>

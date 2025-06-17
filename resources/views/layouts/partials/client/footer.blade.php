@@ -13,13 +13,13 @@
 
                           <ul>
                               <li> <i class="iconsax" data-icon="location"></i>
-                                  <h6>1418 Riverwood Drive, Suite 3245 Cottonwood, CA 96052, United States</h6>
+                                  <h6>{{ $settings['address']}}</h6>
                               </li>
                               <li> <i class="iconsax" data-icon="phone-calling"></i>
-                                  <h6>+ 185659635</h6>
+                                  <h6>{{ $settings['hotline']}}</h6>
                               </li>
                               <li> <i class="iconsax" data-icon="mail"></i>
-                                  <h6>contact@katie.com</h6>
+                                  <h6>{{ $settings['email']}}</h6>
                               </li>
                           </ul>
                       </div>

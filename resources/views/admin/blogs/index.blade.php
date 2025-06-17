@@ -18,7 +18,9 @@
 					<!--begin::Search-->
 					<div class="d-flex align-items-center position-relative my-1">
 						<i class="fas fa-search fs-3 position-absolute ms-5"></i>
-						<input type="text" data-kt-blog-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Tìm kiếm blog..." />
+						<input type="text" name="search" id="searchInput"
+							class="form-control form-control-solid w-250px ps-13"
+							placeholder="Tìm kiếm blog..." value="{{ request('search') }}" />
 					</div>
 					<!--end::Search-->
 				</div>
@@ -49,12 +51,13 @@
 									<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_blogs_table .form-check-input" value="1" />
 								</div>
 							</th>
-							<th class="min-w-125px">ID</th>
-							<th class="min-w-300px">Tiêu đề</th>
-							<th class="min-w-150px">Slug</th>
-							<th class="min-w-150px">Ảnh đại diện</th>
+							<th class="min-w-50px">ID</th>
+							<th class="min-w-270px">Tiêu đề</th>
+							<th class="min-w-130px">Slug</th>
+							<th class="min-w-130px">Ảnh đại diện</th>
+							<th class="min-w-130px">Danh mục</th>
 							<th class="min-w-150px">Tác giả</th>
-							<th class="min-w-150px">Ngày tạo</th>
+							<th class="min-w-130px">Ngày tạo</th>
 							<th class="text-end min-w-100px">Thao tác</th>
 						</tr>
 					</thead>
@@ -88,7 +91,26 @@
 								@endif
 							</td>
 							<td>
-								<span class="text-gray-800">{{ $blog->author->username ?? 'N/A' }}</span>
+								@if($blog->category)
+								<span class="badge badge-light-primary">{{ $blog->category->name }}</span>
+								@else
+								<span class="badge badge-light-secondary">Chưa phân loại</span>
+								@endif
+							</td>
+							<td>
+								<div class="d-flex align-items-center">
+									<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+										<div class="symbol-label">
+											<div class="symbol-label fs-6 bg-light-info text-info">
+												{{ strtoupper(substr($blog->author->username ?? 'N', 0, 1)) }}
+											</div>
+										</div>
+									</div>
+									<div class="d-flex flex-column">
+										<span class="text-gray-800 fw-bold">{{ $blog->author->username ?? 'N/A' }}</span>
+										<span class="text-muted fs-7">{{ $blog->author->email ?? '' }}</span>
+									</div>
+								</div>
 							</td>
 							<td>
 								<span class="text-muted">{{ $blog->created_at->format('d/m/Y H:i') }}</span>
@@ -127,12 +149,11 @@
 						</tr>
 						@empty
 						<tr>
-							<td colspan="7" class="text-center py-10">
+							<td colspan="9" class="text-center py-10">
 								<div class="text-gray-400">
 									<i class="fa-solid fa-file-circle-xmark fs-3x mb-3"></i>
 									<div class="fw-semibold">Chưa có blog nào</div>
 								</div>
-							</td>
 						</tr>
 						@endforelse
 					</tbody>
@@ -164,38 +185,67 @@
 
 @push('scripts')
 <script>
-document.querySelectorAll('[data-kt-blog-table-filter="delete_row"]').forEach(el => {
-    el.addEventListener('click', function(e) {
-        e.preventDefault();
+	document.querySelectorAll('[data-kt-blog-table-filter="delete_row"]').forEach(el => {
+		el.addEventListener('click', function(e) {
+			e.preventDefault();
 
-        if (!confirm('Bạn có chắc chắn muốn xóa blog này?')) return;
+			if (!confirm('Bạn có chắc chắn muốn xóa blog này?')) return;
 
-        const url = this.dataset.url;
-        
-        // Tạo form để submit
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = url;
-        form.style.display = 'none';
+			const url = this.dataset.url;
 
-        // Thêm CSRF token (từ Blade)
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = '{{ csrf_token() }}';
-        form.appendChild(csrfInput);
+			// Tạo form để submit
+			const form = document.createElement('form');
+			form.method = 'POST';
+			form.action = url;
+			form.style.display = 'none';
 
-        // Thêm method DELETE
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
-        form.appendChild(methodInput);
+			// Thêm CSRF token (từ Blade)
+			const csrfInput = document.createElement('input');
+			csrfInput.type = 'hidden';
+			csrfInput.name = '_token';
+			csrfInput.value = '{{ csrf_token() }}';
+			form.appendChild(csrfInput);
 
-        // Submit form
-        document.body.appendChild(form);
-        form.submit();
-    });
-});
+			// Thêm method DELETE
+			const methodInput = document.createElement('input');
+			methodInput.type = 'hidden';
+			methodInput.name = '_method';
+			methodInput.value = 'DELETE';
+			form.appendChild(methodInput);
+
+			// Submit form
+			document.body.appendChild(form);
+			form.submit();
+		});
+	});
+	let searchInput = document.getElementById('searchInput');
+	let timer;
+
+	document.addEventListener('DOMContentLoaded', function () {
+		console.log("Script đã chạy");
+
+		const searchInput = document.getElementById('searchInput');
+		let timer;
+
+		if (searchInput) {
+			searchInput.addEventListener('input', function () {
+				clearTimeout(timer);
+				timer = setTimeout(function () {
+					let search = searchInput.value.trim();
+					let params = new URLSearchParams(window.location.search);
+
+					if (search.length) {
+						params.set('search', search);
+					} else {
+						params.delete('search');
+					}
+
+					window.location.href = `${window.location.pathname}?${params.toString()}`;
+				}, 500);
+			});
+		} else {
+			console.warn("Không tìm thấy phần tử #searchInput");
+		}
+	});
 </script>
 @endpush

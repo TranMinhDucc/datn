@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\User;
+use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -19,30 +20,24 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Blog::with('author');
+        $blogs = Blog::with(['author', 'category'])
+            ->when($request->filled('search'), fn($q) => $q->search($request->search))
+            ->when($request->filled('category'), fn($q) => $q->where('category_id', $request->category))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        // Search functionality
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', '%' . $search . '%')
-                    ->orWhere('content', 'LIKE', '%' . $search . '%')
-                    ->orWhere('slug', 'LIKE', '%' . $search . '%');
-            });
-        }
+        $categories = BlogCategory::orderBy('name')->get();
 
-        $blogs = $query->orderBy('created_at', 'desc')->paginate(10);
-
-        return view('admin.blogs.index', compact('blogs'));
+        return view('admin.blogs.index', compact('blogs', 'categories'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $users = User::select('id', 'username')->get();
-        return view('admin.blogs.create', compact('users'));
+        $categories = BlogCategory::select('id', 'name')->get();
+        return view('admin.blogs.create', compact('users', 'categories'));
     }
 
     /**
@@ -50,9 +45,11 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:blogs,slug',
+            'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'author_id' => 'nullable|exists:users,id',
             'thumbnail' => 'nullable|image|max:2048'
@@ -64,8 +61,10 @@ class BlogController extends Controller
             'slug.max' => 'Slug không được quá 255 ký tự.',
             'content.required' => 'Nội dung không được để trống.',
             'author_id.exists' => 'Tác giả không tồn tại.',
+            'category_id.required' => 'Chuyên mục không được để trống.',
+            'category_id.exists' => 'Chuyên mục không hợp lệ.',
             'thumbnail.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
-            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.'
+            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',         
         ]);
 
         // Nếu có ảnh đại diện được upload
@@ -80,6 +79,7 @@ class BlogController extends Controller
             'title' => $request->title,
             'slug' => $request->slug,
             'content' => $request->content,
+            'category_id' => $request->category_id,
             'author_id' => $request->author_id ?: auth()->id(),
             'thumbnail' => $data['thumbnail'] ?? null,
         ]);
@@ -103,7 +103,8 @@ class BlogController extends Controller
     public function edit(Blog $blog)
     {
         $users = User::select('id', 'username')->get();
-        return view('admin.blogs.edit', compact('blog', 'users'));
+        $categories = BlogCategory::select('id', 'name')->get();
+        return view('admin.blogs.edit', compact('blog', 'users', 'categories'));
     }
 
     /**
@@ -116,6 +117,7 @@ class BlogController extends Controller
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $blog->id,
             'content' => 'required|string',
             'author_id' => 'nullable|exists:users,id',
+            'category_id' => 'required|exists:blog_categories,id',
             'thumbnail' => 'nullable|image|max:2048', // max 2MB
         ], [
             'title.required' => 'Tiêu đề không được để trống.',
@@ -125,6 +127,8 @@ class BlogController extends Controller
             'slug.max' => 'Slug không được quá 255 ký tự.',
             'content.required' => 'Nội dung không được để trống.',
             'author_id.exists' => 'Tác giả không tồn tại.',
+            'category_id.required' => 'Vui lòng chọn chuyên mục.',
+            'category_id.exists' => 'Chuyên mục không hợp lệ.',
             'thumbnail.image' => 'File phải là hình ảnh.',
             'thumbnail.max' => 'Ảnh không được vượt quá 2MB.',
         ]);
@@ -145,6 +149,7 @@ class BlogController extends Controller
             'slug' => $request->slug,
             'content' => $request->content,
             'author_id' => $request->author_id,
+            'category_id' => $request->category_id,
             'thumbnail' => $data['thumbnail'] ?? $blog->thumbnail,
         ]);
 

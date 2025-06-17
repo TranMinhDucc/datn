@@ -22,6 +22,9 @@ use App\Actions\Fortify\CustomLoginValidation;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 // Removed import for non-existent ResetPasswordRequest
 use App\Http\Requests\CustomResetPasswordRequest;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,5 +56,12 @@ class AppServiceProvider extends ServiceProvider
             app(CustomLoginValidation::class)($request);
             return User::where('email', $request->email)->first();
         });
+        // ✅ Auto load settings và cache trong 1 giờ
+        $settings = Cache::remember('global_settings', 3600, function () {
+            return Setting::all()->pluck('value', 'name');
+        });
+
+        // ✅ Chia sẻ cho tất cả view
+        View::share('settings', $settings);
     }
 }

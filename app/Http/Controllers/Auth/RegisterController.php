@@ -15,7 +15,14 @@ class RegisterController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255|unique:users',
+            'username' => [
+                'required',
+                'string',
+                'min:4',
+                'max:20',
+                'unique:users',
+                'regex:/^[a-zA-Z0-9_]+$/',
+            ],
             'fullname' => 'required|string|max:255',
             'email' => [
                 'required',
@@ -48,6 +55,10 @@ class RegisterController extends Controller
         ], [
             'username.required' => 'Vui lòng nhập tên đăng nhập.',
             'username.unique' => 'Tên đăng nhập đã tồn tại.',
+            'username.min' => 'Tên đăng nhập phải từ 4 ký tự trở lên.',
+            'username.max' => 'Tên đăng nhập không được dài quá 20 ký tự.',
+            'username.regex' => 'Tên đăng nhập chỉ chứa chữ cái, số và dấu gạch dưới (_), không khoảng trắng.',
+
             'fullname.required' => 'Vui lòng nhập họ tên.',
             'email.required' => 'Vui lòng nhập địa chỉ email.',
             'email.unique' => 'Email đã tồn tại.',

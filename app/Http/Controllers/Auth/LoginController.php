@@ -13,19 +13,21 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Gọi file validate tùy chỉnh
+        // Gọi validate custom
         (new CustomLoginValidation)($request);
 
-        $user = User::where('email', $request->email)->first();
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $user = User::where($loginField, $request->login)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return back()->withErrors([
-                'email' => 'Email hoặc mật khẩu không đúng.',
+                'login' => 'Tài khoản hoặc mật khẩu không đúng.',
             ])->withInput();
         }
 
         Auth::login($user, $request->remember);
 
-        return redirect()->intended('/'); // hoặc route('client.home')
+        return redirect()->intended('/');
     }
 }
