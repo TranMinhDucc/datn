@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-     public function index()
+    public function index()
     {
         $banners = Banner::with('buttons')
             ->where('status', 1)
@@ -23,8 +23,7 @@ class HomeController extends Controller
             ->get();
         $categories = Category::whereNull('parent_id')->get(); // ← thêm dòng này
 
-        return view('client.home', compact('banners', 'categories','products'));
-    }
+        return view('client.home', compact('banners', 'categories', 'products'));
     }
     public function policy()
     {
@@ -71,5 +70,4 @@ class HomeController extends Controller
     {
         return view('client.product_detail');
     }
-
 }
