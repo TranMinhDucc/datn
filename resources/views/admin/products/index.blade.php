@@ -2,9 +2,6 @@
 @section('title', 'Danh sách sản phẩm')
 @section('content')
 
-
-
-
 <div class="d-flex flex-column flex-column-fluid">
     @if (session('success'))
     {{-- <div class="notice d-flex bg-light-success rounded border-success border border-dashed p-6 mb-5">
@@ -366,12 +363,13 @@
 
                                 {{-- Trạng thái --}}
                                 <td class="text-center">
-                                    @if ($product->status)
+                                    @if ($product->is_active)
                                     <span class="badge badge-light-success">Hiện</span>
                                     @else
                                     <span class="badge badge-light-danger">Ẩn</span>
                                     @endif
                                 </td>
+
                                 {{-- Thao tác --}}
                                 <td class="text-center">
                                     <div class="dropdown">

@@ -41,7 +41,7 @@
           <div class="profile-image position-relative" onclick="document.getElementById('avatarInput').click()"
             style="cursor:pointer;">
             <div class="avatar-wrapper">
-            <img src="{{ $user->avatar_url }}" alt="avatar" class="avatar-img" style="width: 130px;
+            <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img" style="width: 130px;
     height: 130px;
     border-radius: 50%;
     overflow: hidden;

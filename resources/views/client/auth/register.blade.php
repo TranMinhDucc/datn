@@ -52,11 +52,11 @@
                             <form method="POST" action="{{ route('register') }}" class="row g-3">
                                 @csrf
                                 <div class="col-12">
-                                    <label class="form-label">Tên đăng nhập</label>
+                                    <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
                                     <div class="form-floating">
                                         <input class="form-control" name="username" type="text" placeholder="Tên đăng nhập"
                                             value="{{ old('username') }}">
-                                        <label>Tên đăng nhập</label>
+                                        <label>Tên đăng nhập (chỉ chữ, số, dấu _)</label>
                                         @error('username')
                                             <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror

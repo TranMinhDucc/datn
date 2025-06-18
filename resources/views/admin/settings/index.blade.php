@@ -86,8 +86,8 @@
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_localization">
-                                    <i class="ki-duotone ki-compass fs-2 me-2"><span class="path1"></span><span
-                                            class="path2"></span></i> Localization
+                                    <i class="fa-solid fa-plug fs-2 me-2"><span class="path1"></span><span
+                                            class="path2"></span></i> Kết nối
                                 </a>
                             </li>
                             <!--end:::Tab item-->
@@ -119,16 +119,6 @@
                         <div class="tab-content" id="myTabContent">
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade show active" id="kt_ecommerce_settings_general" role="tabpanel">
-
-
-                                <!--begin::Form-->
-                                @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                @endif
 
                                 <!--begin::Form-->
                                 <form id="kt_ecommerce_settings_general_form" class="form"
@@ -327,7 +317,7 @@
 
                                         <div class="col-md-9">
                                             <!--begin::Input-->
-                                            <textarea class="form-control form-control-solid" name="store_address"></textarea>
+                                            <textarea class="form-control form-control-solid" name="address">{{ $settings['address']->value ?? '' }}</textarea>
                                             <!--end::Input-->
                                         </div>
                                     </div>
@@ -404,7 +394,7 @@
                                     <div class="row fv-row mb-7">
                                         <div class="col-md-3 text-md-end">
                                             <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Logo Light</span>
+                                                <span>Logo Dark</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
                                                     <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
@@ -483,8 +473,112 @@
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_localization" role="tabpanel">
                                 <!--begin::Form-->
+
                                 <form id="kt_ecommerce_settings_general_localization" class="form" action="#">
                                     <!--begin::Heading-->
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered table-striped table-hover mb-3">
+                                            <thead class="table-dark text-center">
+                                                <tr>
+                                                    <th colspan="2">
+                                                        <img src="https://sieustore.com/assets/img/icon-smtp.png"
+                                                            width="20px" class="me-1">
+                                                        SMTP
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Bật/Tắt SMTP -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fa fa-toggle-on text-success"></i>
+                                                        SMTP Mail
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" name="smtp_status">
+                                                            <option value="1" selected="">
+                                                                ON
+                                                            </option>
+                                                            <option value="0">
+                                                                OFF
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- SMTP Host -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fas fa-server text-primary"></i>
+                                                        SMTP Host
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="smtp_host" class="form-control"
+                                                            placeholder="VD: smtp.gmail.com" value="smtp.gmail.com">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- SMTP Encryption -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fas fa-shield-alt text-warning"></i>
+                                                        SMTP Encryption
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="smtp_encryption" class="form-control"
+                                                            placeholder="VD: ssl/tls" value="tls">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- SMTP Port -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fas fa-network-wired text-info"></i>
+                                                        SMTP Port
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="smtp_port" class="form-control"
+                                                            placeholder="VD: 465, 587" value="587">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- SMTP Email -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fa fa-envelope text-danger"></i>
+                                                        SMTP Email
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="smtp_email" class="form-control"
+                                                            placeholder="VD: yourmail@gmail.com"
+                                                            value="sieustoremmo@gmail.com">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- SMTP Password -->
+                                                <tr>
+                                                    <td>
+                                                        <i class="fas fa-key text-secondary"></i>
+                                                        SMTP Password
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="smtp_password" class="form-control"
+                                                            placeholder="Nhập mật khẩu SMTP..."
+                                                            value="t d l o f r y y n y h o n y i n">
+                                                        <small class="text-muted">
+
+                                                            Hướng dẫn tích hợp SMTP Gmail miễn phí tại <a
+                                                                href="https://help.cmsnt.co/huong-dan/huong-dan-cau-hinh-smtp-vao-website-shopclone7/"
+                                                                target="_blank" class="text-primary">đây</a>, hoặc sử dụng
+                                                            Email theo tên miền tại <a href="https://ntlink.co/TMtoW"
+                                                                target="_blank" class="text-primary">đây</a>.
+
+                                                        </small>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <div class="row mb-7">
                                         <div class="col-md-9 offset-md-3">
                                             <h2>Localization Settings</h2>
@@ -493,7 +587,7 @@
                                     <!--end::Heading-->
 
                                     <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
+                                    {{-- <div class="row fv-row mb-7">
                                         <div class="col-md-3 text-md-end">
                                             <!--begin::Label-->
                                             <label class="fs-6 fw-semibold form-label mt-3">
@@ -1315,7 +1409,7 @@
                                                 <!--end::Select2-->
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <!--end::Input group-->
 
                                     <!--begin::Action buttons-->

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
             $table->string('name');  // VD: Màu sắc
-            $table->string('slug')->unique(); // mau-sac
+            $table->string('slug')->nullable()->unique();
             $table->timestamps();
         });
     }
