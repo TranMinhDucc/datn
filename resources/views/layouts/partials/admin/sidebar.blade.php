@@ -138,6 +138,13 @@
                                         class="path1"></span><span class="path2"></span></i></span><span
                                 class="menu-title">Thành viên</span></a><!--end:Menu link-->
                     </div>
+                     <div class="menu-item">
+                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-addresses.index') }}"
+                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                        class="path1"></span><span class="path2"></span></i></span><span
+                                class="menu-title">Quản Lý Giao Hàng</span></a><!--end:Menu link-->
+                    </div>
+                    
                     <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.reviews.index') }}" target="_blank">

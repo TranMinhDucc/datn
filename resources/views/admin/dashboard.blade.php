@@ -5702,5 +5702,4 @@
                             </div>
                             <!--end::Content-->
                         </div>
-
 @endsection
