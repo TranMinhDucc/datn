@@ -120,7 +120,7 @@
         </div>
     </section>
     <section class="section-t-space">
-        <div class="container-fluid fashion-images">
+        {{-- <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
                     <div class="swiper-slide">
@@ -129,51 +129,33 @@
                         </div>
                         <h5>Top Wear</h5>
                     </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/2.png') }}" alt=""></a>
-                        </div>
-                        <h5>dresses</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/3.png') }}" alt=""></a>
-                        </div>
-                        <h5>bottom</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/4.png') }}" alt=""></a>
-                        </div>
-                        <h5>inner/sleep</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/5.png') }}" alt=""></a>
-                        </div>
-                        <h5>footwear</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/6.png') }}" alt=""></a>
-                        </div>
-                        <h5>sports/active</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/7.png') }}" alt=""></a>
-                        </div>
-                        <h5>Mini dresses</h5>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/3.png') }}" alt=""></a>
-                        </div>
-                        <h5>footwear</h5>
-                    </div>
+                   
+                   
+                   
+                   
+                   
                 </div>
             </div>
+        </div> --}}
+        <div class="container-fluid fashion-images">
+    <div class="swiper fashion-images-slide">
+        <div class="swiper-wrapper ratio_square-2">
+            @foreach ($categories as $category)
+                <div class="swiper-slide text-center">
+                    <div class="fashion-box mb-2">
+                        <a href="{{ route('client.category.show', $category->id) }}">
+                            <img class="img-fluid rounded-circle category-circle-img"
+                                 src="{{ asset('storage/' . $category->image) }}"
+                                 alt="{{ $category->name }}">
+                        </a>
+                    </div>
+                    <h5>{{ $category->name }}</h5>
+                </div>
+            @endforeach
         </div>
+    </div>
+</div>
+
     </section>
     <section class="section-t-space">
         <div class="custom-container container product-contain">

@@ -10,20 +10,23 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\FaqController as ClientFaqController;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
 
+
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\StatusController;
@@ -35,13 +38,22 @@ use App\Http\Controllers\Admin\SigninController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\FaqController;
-use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\ProductLabelController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
+// GHI ĐÈ route đăng nhập Fortify
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+// GHI ĐÈ route đăng nhập Fortify
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
 // ========== PUBLIC CLIENT ROUTES ==========
 
 Route::prefix('/')->name('client.')->group(function () {
@@ -49,6 +61,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
+       
+
     });
 
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -60,10 +74,13 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/{slug}', 'show')->name('show');
     });
 
-    Route::controller(BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+
+    Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/{slug}', 'show')->name('show');
+        Route::get('/{blog}', 'show')->name('show');
     });
+
+    Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -80,16 +97,20 @@ Route::prefix('/')->name('client.')->group(function () {
     
 
 
-    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+    Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+
+
+Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
+
 
 });
 
-// ========== PROTECTED ROUTES ==========
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
     Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile/edit', [AccountController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/update', [AccountController::class, 'update'])->name('profile.update');
 
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
@@ -102,6 +123,10 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
         Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
     });
+    // UPDATE PROFILE
+    Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
+    Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
+    Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
 });
 
 // ========== LOGOUT ==========
@@ -143,10 +168,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
-    Route::resource('posts', PostController::class);
-    Route::resource('post-categories', PostCategoryController::class);
     Route::resource('faq', FaqController::class);
-    Route::put('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+   
 
     Route::resource('coupons', CouponController::class);
 
@@ -186,6 +209,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('brands', BrandController::class);
     Route::resource('tags', TagController::class);
+    //Blog
+    Route::resource('blogs', BlogController::class)->names('blogs');
+    Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+    Route::resource('blog-categories', BlogCategoryController::class) ->names('blog-categories');
+
 
     // Variant Attributes
     Route::resource('variant_attributes', VariantAttributeController::class);
@@ -193,4 +221,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
+
+    // Banking 
+
+
+    Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
+    Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
+    Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
+    Route::get('/recharge-bank-config/{id}/edit', [BankController::class, 'config_edit'])->name('bank.config_edit');
+    Route::put('/recharge-bank-config/{id}/edit', [BankController::class, 'config_update'])->name('bank.config_update');
+    Route::get('/create', [BankController::class, 'create'])->name('create');
+    Route::post('/', [BankController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [BankController::class, 'update'])->name('update');
+    Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+
 });
+

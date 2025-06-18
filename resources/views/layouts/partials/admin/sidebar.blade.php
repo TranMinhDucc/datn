@@ -157,32 +157,52 @@
                         <!--end:Menu link-->
                     </div>
                     <div class="menu-item">
+<!--begin:Menu link-->
+<a class="menu-link" href="{{ route('admin.dashboard') }}" target="_blank">
+    <span class="menu-icon"><i class="fa-solid fa-user fs-4"><span class="path1"></span><span class="path2"></span></i></span>
+    <span class="menu-title">Theme</span>
+</a>
+<!--end:Menu link-->
+</div>
 
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.dashboard') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
-                                        class="path1"></span><span class="path2"></span></i></span><span
-                                class="menu-title">Theme</span></a><!--end:Menu link-->
-                    </div>
-                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                        <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
-                                    class="fa-solid fa-wallet fs-4"><span class="path1"></span><span
-                                        class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Nạp
-                                tiền</span><span
-                                class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
-                        <div class="menu-sub menu-sub-accordion">
-                            <!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="toolbars/classic.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Ngân hàng</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="toolbars/saas.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Thẻ cào</span></a><!--end:Menu link-->
-                            </div>
+<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+    <!--begin:Menu link-->
+    <span class="menu-link">
+        <span class="menu-icon"><i class="fa-solid fa-wallet fs-4">
+            <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span>
+        </i></span>
+        <span class="menu-title">Nạp tiền</span>
+        <span class="menu-arrow"></span>
+    </span>
+    <!--end:Menu link-->
+
+    <!--begin:Menu sub-->
+    <div class="menu-sub menu-sub-accordion">
+        <!--begin:Menu item-->
+        <div class="menu-item">
+            <!--begin:Menu link-->
+            <a class="menu-link" href="{{ route('admin.bank.view_payment') }}">
+                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                <span class="menu-title">Ngân hàng</span>
+            </a>
+            <!--end:Menu link-->
+        </div>
+        <!--end:Menu item-->
+
+        <!--begin:Menu item-->
+        <div class="menu-item">
+            <!--begin:Menu link-->
+            <a class="menu-link" href="toolbars/saas.html">
+                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                <span class="menu-title">Thẻ cào</span>
+            </a>
+            <!--end:Menu link-->
+        </div>
+        <!--end:Menu item-->
+    </div>
+    <!--end:Menu sub-->
+</div>
+
 
                         </div>
                         <!--end:Menu sub-->
@@ -215,95 +235,27 @@
                                         class="menu-title">Cấu hình</span></a><!--end:Menu link-->
                             </div>
 
-                        </div>
-                        <!--end:Menu sub-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link"
-                            href="https://preview.keenthemes.com/html/metronic/docs" target="_blank"><span
-                                class="menu-icon"><i class="fa-solid fa-envelope fs-4"><span class="path1"></span><span
-                                        class="path2"></span></i></span><span class="menu-title">Email
-                                Campaigns</span></a><!--end:Menu link-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.coupons.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-percent fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Mã giảm
-                                giá</span></a><!--end:Menu link-->
-                    </div>
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.brands.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Thương
-                                hiệu</span></a><!--end:Menu link-->
-                    </div>
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link"
-                            href="https://preview.keenthemes.com/html/metronic/docs/getting-started/changelog"
-                            target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Khuyến mãi nạp
-                                tiền</span></a><!--end:Menu link-->
-                    </div>
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link"
-                            href="https://preview.keenthemes.com/html/metronic/docs/getting-started/changelog"
-                            target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Khuyến mãi nạp
-                                tiền</span></a><!--end:Menu link-->
-                    </div>
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.tags.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span
-                                class="menu-title">Tags</span></a><!--end:Menu link-->
-                    </div>
-                    <!--end:Menu item-->
-                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                        <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
-                                    class="fa-brands fa-blogger-b fs-4"><span class="path1"></span><span
-                                        class="path2"></span><span class="path3"></span><span
-                                        class="path4"></span></i></span><span class="menu-title">Bài
-                                viết</span><span
-                                class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
-                        <div class="menu-sub menu-sub-accordion">
-                            <!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="toolbars/classic.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Viết bài mới</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="toolbars/saas.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Tất cả bài viết</span></a><!--end:Menu link-->
-                            </div>
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="toolbars/saas.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Chuyên mục</span></a><!--end:Menu link-->
-                            </div>
+<div class="menu-item">
+    <!--begin:Menu link-->
+    <a class="menu-link" href="{{ route('admin.faq.index') }}" target="_blank">
+        <span class="menu-icon">
+            <i class="fa-regular fa-money-bill-1 fs-4">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span>
+            </i>
+        </span>
+        <span class="menu-title">FAQ</span>
+    </a>
+    <!--end:Menu link-->
+</div>
 
-                        </div>
-                        <!--end:Menu sub-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item pt-5">
-                        <!--begin:Menu content-->
-                        <div class="menu-content">
-                            <span class="menu-heading fw-bold text-uppercase fs-7">Cài đặt hệ thống
-                            </span>
-                        </div>
-                        <!--end:Menu content-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
+<div class="menu-item pt-5">
+    <!--begin:Menu content-->
+    <div class="menu-content">
+        <span class="menu-heading fw-bold text-uppercase fs-7">Cài đặt hệ thống</span>
+    </div>
+    <!--end:Menu content-->
+</div>
+
 
 
 

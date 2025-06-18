@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Product;
+
+use App\Models\Category;
+
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -12,12 +16,13 @@ class HomeController extends Controller
     public function index()
     {
         $banners = Banner::with('buttons')
-            ->where('status', 1)
-            ->orderBy('thu_tu', 'asc') // 🔥 ĐẢM BẢO thứ tự luôn đúng
-            ->get();
+        ->where('status', 1)
+        ->orderBy('thu_tu', 'asc')
+        ->get();
 
+    $categories = Category::whereNull('parent_id')->get(); // ← thêm dòng này
 
-        return view('client.home', compact('banners'));
+    return view('client.home', compact('banners', 'categories'));
     }
     public function policy()
     {
@@ -64,4 +69,5 @@ class HomeController extends Controller
     {
         return view('client.product_detail');
     }
+
 }

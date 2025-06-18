@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('post_categories', function (Blueprint $table) {
+        Schema::create('blog_categories', function (Blueprint $table) {
             $table->id();
-            $table->text('title');
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->longText('description')->nullable();
-            $table->text('icon')->nullable();
-            $table->integer('status')->default(1); // 0: Nháp, 1: Đã đăng, 2: Bị ẩn
-            $table->timestamps(); // created_at & updated_at
+            $table->text('description')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('post_categories');
+        Schema::dropIfExists('blog_categories');
     }
 };

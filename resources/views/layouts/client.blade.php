@@ -25,6 +25,7 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    @yield('css')
 
 
 </head>
@@ -472,23 +473,39 @@
     @if (session('success'))
         <script>
             let timerInterval;
+            let action = "{{ session('action') ?? '' }}";
             let timeout = 3000;
-            let action = "{{ session('action') }}";
 
-            if (action === "register") timeout = 5000;
-            else if (action === "logout") timeout = 600;
-            else if (action === "reset") timeout = 4000;
+            // ⏱ Tuỳ chỉnh thời gian hiển thị thông báo theo hành động
+            switch (action) {
+                case "register":
+                    timeout = 5000;
+                    break;
+                case "logout":
+                    timeout = 800;
+                    break;
+                case "reset":
+                    timeout = 3500;
+                    break;
+                case "avatar":
+                    timeout = 1000; // ✅ Hiển thị rất nhanh cho cập nhật avatar
+                    break;
+                default:
+                    timeout = 3000;
+            }
 
             Swal.fire({
-                title: "🎉 {{ session('success') }}",
-                html: "Sẽ tự đóng trong <b></b> ms.",
+                icon: action === 'avatar' ? 'success' : 'info',
+                title: action === 'avatar' ? '🎉 Ảnh đại diện đã được cập nhật!' : '🎉 {{ session('success') }}',
+                html: "Đóng sau <b></b> ms.",
                 timer: timeout,
                 timerProgressBar: true,
+                showConfirmButton: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    const timer = Swal.getPopup().querySelector("b");
+                    const b = Swal.getPopup().querySelector("b");
                     timerInterval = setInterval(() => {
-                        timer.textContent = Swal.getTimerLeft();
+                        if (b) b.textContent = Swal.getTimerLeft();
                     }, 100);
                 },
                 willClose: () => {
