@@ -72,6 +72,8 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
+
     });
 
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
@@ -181,6 +183,7 @@ Route::prefix('admin')
 
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+        Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class);
 
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
@@ -189,14 +192,6 @@ Route::prefix('admin')
 
 
         Route::resource('coupons', CouponController::class);
-
-
-        // System Settings
-        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
 
@@ -218,14 +213,6 @@ Route::prefix('admin')
         Route::resource('email_campaigns', EmailCampaignController::class);
 
 
-
-
-        // System Settings
-        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
 
@@ -238,19 +225,6 @@ Route::prefix('admin')
         Route::resource('product-labels', ProductLabelController::class);
 
 
-        // Route::resource('roles', RoleController::class)->names('admin.roles');
-
-        // Topup & Campaigns
-        // Route::get('/topups', [TopupController::class, 'index'])->name('admin.topups');
-        // Route::get('/affiliates', [AffiliateController::class, 'index'])->name('admin.affiliates');
-        // Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns');
-
-        // Marketing
-        // Route::resource('coupons', CouponController::class)->names('admin.coupons');
-        // Route::resource('promotions', PromoController::class)->names('admin.promotions');
-        // Route::resource('posts', PostController::class)->names('admin.posts');
-
-
         Route::resource('brands', BrandController::class);
         Route::resource('tags', TagController::class);
         //Blog
@@ -261,12 +235,6 @@ Route::prefix('admin')
         Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
         Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
-
-        // System Settings
-        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
 
 
         Route::resource('brands', BrandController::class);
@@ -285,9 +253,6 @@ Route::prefix('admin')
         Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
 
         // Banking 
-
-
-
         Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
         Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
         Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
