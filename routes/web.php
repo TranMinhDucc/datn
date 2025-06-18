@@ -45,8 +45,10 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-
 use App\Http\Controllers\Admin\EmailCampaignController;
+use App\Http\Controllers\Admin\ShippingFeeController;
+use App\Http\Controllers\Admin\ShippingMethodController;
+use App\Http\Controllers\Admin\ShippingZoneController;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -62,8 +64,6 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('home');
         Route::get('/policy', 'policy')->name('policy');
         Route::get('/faq', 'faq')->name('faq');
-       
-
     });
 
     Route::controller(ContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -103,10 +103,7 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
 
-Route::post('/review', [ClientReviewController::class, 'store']) ->middleware('auth') ->name('review');
-
-
-
+    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
@@ -162,7 +159,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
     Route::resource('faq', FaqController::class);
-   
+
 
     Route::resource('coupons', CouponController::class);
     // Marketing
@@ -184,7 +181,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
 
-   Route::resource('product-labels', ProductLabelController::class);
+    Route::resource('product-labels', ProductLabelController::class);
 
 
     // Route::resource('roles', RoleController::class)->names('admin.roles');
@@ -210,7 +207,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     //Blog
     Route::resource('blogs', BlogController::class)->names('blogs');
     Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
-    Route::resource('blog-categories', BlogCategoryController::class) ->names('blog-categories');
+    Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
+    //Shipping
+    Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
+    Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
+    Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
 
 
     // Variant Attributes
@@ -233,6 +234,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
     Route::put('/{id}', [BankController::class, 'update'])->name('update');
     Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
-
 });
-
