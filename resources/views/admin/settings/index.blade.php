@@ -321,6 +321,27 @@
                                             <!--end::Input-->
                                         </div>
                                     </div>
+                                    <div class="row fv-row mb-7">
+                                        <div class="col-md-3 text-md-end">
+                                            <!--begin::Label-->
+                                            <label class="fs-6 fw-semibold form-label mt-3">
+                                                <span>Thuế</span>
+                                                <span class="ms-1" data-bs-toggle="tooltip"
+                                                    title="Thiết lập hotline của cửa hàng.">
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
+                                                            class="path1"></span><span class="path2"></span><span
+                                                            class="path3"></span></i>
+                                                </span>
+                                            </label>
+                                            <!--end::Label-->
+                                        </div>
+                                        <div class="col-md-9">
+                                            <!--begin::Input-->
+                                            <input type="text" class="form-control form-control-solid" name="vat"
+                                                value="{{ $settings['vat']->value ?? '' }}" />
+                                            <!--end::Input-->
+                                        </div>
+                                    </div>
                                     <!--end::Input group-->
                                     <!--begin::Action buttons-->
                                     <div class="row py-5">
