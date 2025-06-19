@@ -322,13 +322,16 @@
                                         id="stock_quantity"
                                         name="stock_quantity"
                                         class="form-control"
-                                        value="{{ old('stock_quantity') }}"
-                                        @if (!empty(old('variants'))) readonly disabled @endif>
-                                    @if (!empty(old('variants')))
-                                    <small class="text-muted">Tự động tính từ các biến thể.</small>
-                                    @endif
-                                    @error('stock_quantity')<div class="text-danger">{{ $message }}</div>@enderror
+                                        value="{{ old('stock_quantity') }}">
+
+                                    <small class="text-muted">Tự động tính từ các biến thể (nếu có)</small>
+
+                                    @error('stock_quantity')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
+
+
 
                             </div>
 
@@ -421,6 +424,7 @@
             const slug = slugify(this.value);
             slugInput.value = slug;
         });
+        calculateTotalStock();
     });
 
 
@@ -716,8 +720,9 @@
         const qtyInputs = document.querySelectorAll('input[name^="variants"][name$="[quantity]"]');
         if (qtyInputs.length === 0) {
             stockInput.readOnly = false;
-            stockInput.disabled = false;
+            // ❌ BỎ DÒNG NÀY stockInput.disabled = false;
             stockInput.value = '';
+            updateStockInputState();
             return;
         }
 
@@ -729,14 +734,36 @@
 
         stockInput.value = total;
         stockInput.readOnly = true;
-        stockInput.disabled = true;
+        // ❌ BỎ DÒNG NÀY stockInput.disabled = true;
+
+        updateStockInputState();
     }
+
+
 
     function removeVariantRow(button) {
         const row = button.closest("tr");
         if (row) {
             row.remove();
             calculateTotalStock(); // cập nhật lại tổng
+        }
+    }
+
+    function updateStockInputState() {
+        const stockInput = document.getElementById("stock_quantity");
+        const stockNote = document.getElementById("stock_note");
+
+        const qtyInputs = document.querySelectorAll('input[name^="variants"][name$="[quantity]"]');
+        const hasVariants = qtyInputs.length > 0;
+
+        if (hasVariants) {
+            stockInput.readOnly = true;
+            stockInput.classList.add('bg-light'); // ✅ nền xám giống disabled
+            if (stockNote) stockNote.style.display = 'block';
+        } else {
+            stockInput.readOnly = false;
+            stockInput.classList.remove('bg-light'); // ✅ trở về nền trắng
+            if (stockNote) stockNote.style.display = 'none';
         }
     }
 </script>

@@ -658,18 +658,20 @@
                                             <div class="col-md-6">
                                                 <label class="form-label">Tồn kho</label>
 
-                                                <input
-                                                    type="number"
+                                                {{-- ⛔ KHÔNG dùng disabled, chỉ dùng readonly --}}
+                                                <input type="number"
                                                     id="stock_quantity"
                                                     name="stock_quantity"
                                                     class="form-control"
-                                                    value="{{ old('stock_quantity', $product->stock_quantity) }}"
-                                                    {{ $product->variants->count() > 0 ? 'readonly disabled' : '' }}>
+                                                    value="{{ old('stock_quantity', $product->stock_quantity ?? '') }}"
+                                                    readonly>
 
-                                                @if($product->variants->count() > 0)
-                                                <input type="hidden" name="stock_quantity" id="hidden_stock_quantity" value="{{ old('stock_quantity', $product->stock_quantity) }}">
-                                                <small class="text-muted">Tự động tính từ các biến thể.</small>
-                                                @endif
+                                                {{-- ✅ Luôn gửi giá trị về server --}}
+                                                <input type="hidden" id="hidden_stock_quantity"
+                                                    name="stock_quantity"
+                                                    value="{{ old('stock_quantity', $product->stock_quantity ?? '') }}">
+
+                                                <small class="text-muted">Tự động tính từ các biến thể (nếu có).</small>
 
                                                 @error('stock_quantity')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -678,17 +680,11 @@
 
 
 
+
+
                                         </div>
 
                                         <!-- Mô tả ngắn -->
-                                        <div class="mb-3">
-                                            <label for="short_desc" class="form-label">Mô tả ngắn</label>
-                                            <textarea name="short_desc" id="short_desc" class="form-control"
-                                                rows="3">{{ old('short_desc', $product->short_desc ?? '') }}</textarea>
-                                            @error('short_desc')
-                                            <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
 
                                         <!-- Mô tả chi tiết -->
                                         <div class="mb-10 fv-row">
@@ -1384,24 +1380,28 @@
 </div>
 <!--end::Tab content-->
 
-<div class="d-flex justify-content-end">
-    <!--begin::Button-->
-    <a href="products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
+<!--end::Tab content-->
+
+<!--begin::Action buttons-->
+<div class="d-flex justify-content-end gap-3 mt-5" style="padding-right: 2rem;">
+    <!--begin::Button Cancel-->
+    <a href="{{ route('admin.products.index') }}" class="btn btn-light">
         Cancel
     </a>
-    <!--end::Button-->
+    <!--end::Button Cancel-->
 
-    <!--begin::Button-->
-    <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
-        <span class="indicator-label">
-            Save Changes
-        </span>
+    <!--begin::Button Save-->
+    <button type="submit" class="btn btn-primary">
+        <span class="indicator-label">Save Changes</span>
         <span class="indicator-progress">
             Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
         </span>
     </button>
-    <!--end::Button-->
+    <!--end::Button Save-->
 </div>
+<!--end::Action buttons-->
+
+
 </div>
 <!--end::Main column-->
 </form>
@@ -1773,13 +1773,19 @@
         tbody.innerHTML = "";
 
         const keys = Object.keys(pfAttributeGroups).filter(id => pfAttributeGroups[id].name && pfAttributeGroups[id].values.length);
+
+        const stockInput = document.getElementById("stock_quantity");
+        const hiddenStockInput = document.getElementById("hidden_stock_quantity");
+
         if (keys.length === 0) {
-            // Nếu không còn biến thể → mở lại tồn kho
-            const stockInput = document.getElementById("stock_quantity");
+            // ✅ Nếu không có biến thể → mở lại tồn kho, không reset giá trị
             if (stockInput) {
-                stockInput.value = '';
                 stockInput.readOnly = false;
                 stockInput.disabled = false;
+            }
+
+            if (hiddenStockInput) {
+                hiddenStockInput.value = stockInput?.value || '';
             }
 
             // Ẩn bảng biến thể
@@ -1788,7 +1794,6 @@
 
             return;
         }
-
 
         const combinations = cartesian(keys.map(id => pfAttributeGroups[id].values.map(val => ({
             groupName: pfAttributeGroups[id].name,
@@ -1825,34 +1830,33 @@
 
             const tdPrice = document.createElement("td");
             tdPrice.innerHTML = `
-    <input type="number"
-           name="variants[${i}][price]"
-           class="form-control"
-           value="${existing.price !== '0' ? existing.price : ''}"
-           min="1"
-           required>
-    `;
+            <input type="number"
+                   name="variants[${i}][price]"
+                   class="form-control"
+                   value="${existing.price !== '0' ? existing.price : ''}"
+                   min="1"
+                   required>
+        `;
 
             const tdQty = document.createElement("td");
             tdQty.innerHTML = `
-    <input type="number"
-           name="variants[${i}][quantity]"
-           class="form-control"
-           value="${existing.quantity !== '0' ? existing.quantity : ''}"
-           min="1"
-           required>
-    `;
-
+            <input type="number"
+                   name="variants[${i}][quantity]"
+                   class="form-control"
+                   value="${existing.quantity !== '0' ? existing.quantity : ''}"
+                   min="1"
+                   required>
+        `;
 
             const tdSku = document.createElement("td");
             tdSku.innerHTML = `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
 
             const tdDelete = document.createElement("td");
             tdDelete.innerHTML = `
-<button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
-    <i class="bi bi-trash text-danger fs-5"></i>
-</button>
-`;
+            <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
+                <i class="bi bi-trash text-danger fs-5"></i>
+            </button>
+        `;
 
             row.appendChild(tdAttr);
             row.appendChild(tdPrice);
@@ -1861,15 +1865,20 @@
             row.appendChild(tdDelete);
 
             tbody.appendChild(row);
-
         });
+
+        // ✅ Có biến thể → khóa tồn kho và cập nhật tổng số lượng
+        if (stockInput) {
+            stockInput.readOnly = true;
+            stockInput.disabled = true;
+        }
 
         document.getElementById("pf_variant_section").style.display = "block";
         document.getElementById("pf_apply_all_wrapper").style.display = "block";
 
         calculateTotalStock();
-
     }
+
 
 
     function pfRemoveTag(groupId, val) {
@@ -1907,32 +1916,39 @@
 
     }
 
-    function calculateTotalStock() {
-        const stockInput = document.getElementById("stock_quantity");
-        const hiddenStockInput = document.getElementById("hidden_stock_quantity");
+function calculateTotalStock() {
+    const stockInput = document.getElementById("stock_quantity");
+    const hiddenStockInput = document.getElementById("hidden_stock_quantity");
 
-        if (!stockInput || !hiddenStockInput) return;
+    const qtyInputs = document.querySelectorAll('input[name^="variants"][name$="[quantity]"]');
 
-        const qtyInputs = document.querySelectorAll('input[name^="variants"][name$="[quantity]"]');
-        if (qtyInputs.length === 0) {
-            stockInput.readOnly = false;
-            stockInput.disabled = false;
-            stockInput.value = '';
-            hiddenStockInput.value = '';
-            return;
-        }
+    if (!stockInput) return;
 
-        let total = 0;
-        qtyInputs.forEach(input => {
-            const val = parseInt(input.value);
-            if (!isNaN(val)) total += val;
-        });
-
-        stockInput.value = total;
-        hiddenStockInput.value = total; // ✅ gửi về Laravel
-        stockInput.readOnly = true;
-        stockInput.disabled = true;
+    if (qtyInputs.length === 0) {
+        // Không có biến thể → cho phép nhập tay
+        stockInput.readOnly = false;
+        stockInput.disabled = false;
+        if (hiddenStockInput) hiddenStockInput.value = stockInput.value || '';
+        return;
     }
+
+    let total = 0;
+    qtyInputs.forEach(input => {
+        const val = parseInt(input.value);
+        if (!isNaN(val)) {
+            total += val;
+        }
+    });
+
+    // Gán tồn kho tổng vào cả input và hidden
+    stockInput.value = total;
+    stockInput.readOnly = true;
+    stockInput.disabled = true;
+
+    if (hiddenStockInput) {
+        hiddenStockInput.value = total;
+    }
+}
 
 
     function removeVariantRow(button) {
