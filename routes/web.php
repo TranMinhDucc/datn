@@ -45,7 +45,7 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-
+use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Middleware\AdminMiddleware;
 // GHI ĐÈ route đăng ký Fortify
@@ -119,7 +119,6 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
-
 });
 
 // ========== LOGOUT ==========
@@ -173,6 +172,8 @@ Route::prefix('admin')
         Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
         Route::resource('email_campaigns', EmailCampaignController::class);
 
+        // Route tìm kiếm đa module
+        Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 
 

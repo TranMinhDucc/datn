@@ -89,23 +89,38 @@
                                 <!-- Mật khẩu -->
                                 <div class="col-12">
                                     <label class="form-label">Mật khẩu</label>
-                                    <div class="position-relative">
+                                    <div class="password-wrapper position-relative">
                                         <input class="form-control pe-5" type="password" name="password" id="password"
                                             placeholder="Nhập mật khẩu">
-                                        <i class="fa fa-eye toggle-password" toggle="#password"></i>
+                                        <i class="fa fa-eye toggle-password" data-toggle="#password" type="button" style="position: absolute;
+                top: 50%;
+                right: 15px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #888;
+                z-index: 10;
+                font-size: 16px;"></i>
                                     </div>
                                     @error('password')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- Nhập lại mật khẩu -->
+                                <!-- Xác nhận mật khẩu -->
                                 <div class="col-12">
                                     <label class="form-label">Xác nhận mật khẩu</label>
-                                    <div class="position-relative">
+                                    <div class="password-wrapper position-relative">
                                         <input class="form-control pe-5" type="password" name="password_confirmation"
                                             id="password_confirmation" placeholder="Nhập lại mật khẩu">
-                                        <i class="fa fa-eye toggle-password" toggle="#password_confirmation"></i>
+                                        <i class="fa fa-eye toggle-password" data-toggle="#password_confirmation"
+                                            type="button" style="position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            z-index: 10;
+            font-size: 16px;"></i>
                                     </div>
                                     @error('password_confirmation')
                                         <div class="text-danger mt-1">{{ $message }}</div>
@@ -115,6 +130,7 @@
                                         <div class="text-danger mt-1">{{ $errors->first('password') }}</div>
                                     @endif
                                 </div>
+
 
 
 
@@ -156,9 +172,14 @@
     </section>
 @endsection
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-pVjEq7HzKfsOqSpP..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        .toggle-password {
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .toggle-password {
             position: absolute;
             top: 50%;
             right: 15px;
@@ -166,14 +187,13 @@
             cursor: pointer;
             color: #888;
             z-index: 10;
-        }
-
-        .form-control {
-            padding: 15px;
+            font-size: 16px;
         }
 
         .form-control.pe-5 {
             padding-right: 2.5rem !important;
+            height: 45px !important;
+            /* ép chiều cao để đảm bảo top: 50% hoạt động */
         }
     </style>
 @endsection
@@ -183,17 +203,17 @@
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.toggle-password').forEach(function (eye) {
                 eye.addEventListener('click', function () {
-                    const input = document.querySelector(eye.getAttribute('toggle'));
-                    const isPassword = input.getAttribute('type') === 'password';
+                    const targetSelector = eye.getAttribute('data-toggle');
+                    const input = document.querySelector(targetSelector);
+                    if (!input) return;
 
+                    const isPassword = input.getAttribute('type') === 'password';
                     input.setAttribute('type', isPassword ? 'text' : 'password');
 
-                    // Đổi icon từ fa-eye -> fa-eye-slash và ngược lại
                     eye.classList.toggle('fa-eye');
                     eye.classList.toggle('fa-eye-slash');
                 });
 
-                // Đặt icon mặc định là fa-eye nếu chưa có
                 if (!eye.classList.contains('fa-eye') && !eye.classList.contains('fa-eye-slash')) {
                     eye.classList.add('fa-eye');
                 }

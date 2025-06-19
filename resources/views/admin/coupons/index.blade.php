@@ -96,15 +96,18 @@
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <!--begin::Card title-->
                         <div class="card-title">
-                            <!--begin::Search-->
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-                                <input type="text" data-kt-ecommerce-coupon-filter="search"
-                                    class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm kiếm mã giảm giá" />
-                            </div>
-                            <!--end::Search-->
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="coupons">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"><span
+                                            class="path1"></span><span class="path2"></span></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12" placeholder="Search Coupon" />
+                                </div>
+                            </form>
                         </div>
+
+
                         <!--end::Card title-->
                         <!--begin::Card toolbar-->
                         <div class="card-toolbar">
@@ -146,8 +149,7 @@
                                         <tr>
                                             <td>
                                                 <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $coupon->id }}" />
+                                                    <input class="form-check-input" type="checkbox" value="{{ $coupon->id }}" />
                                                 </div>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
@@ -192,8 +194,7 @@
                                                     <!--begin::Menu item-->
                                                     <div class="menu-item px-3">
                                                         <form action="{{ route('admin.coupons.destroy', $coupon->id) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                                                            method="POST" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit"
@@ -214,9 +215,12 @@
                                 </tbody>
                             </table>
                             <!--end::Table-->
-                            <div class="d-flex justify-content-center mt-4">
-                                {{ $coupons->links() }}
+                            {{-- Pagination links --}}
+                            <div class="d-flex justify-content-end mt-4">
+                                {{ $coupons->appends(request()->query())->links('pagination::bootstrap-5') }}
+
                             </div>
+                            {{-- end pagination --}}
                         </div>
                     </div>
                     <!--end::Card body-->

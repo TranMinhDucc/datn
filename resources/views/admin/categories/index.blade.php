@@ -92,8 +92,7 @@
 
                                         <!--begin::Options-->
                                         <label class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="2"
-                                                checked="checked" />
+                                            <input class="form-check-input" type="checkbox" value="2" checked="checked" />
                                             <span class="form-check-label">
                                                 Customer
                                             </span>
@@ -168,12 +167,13 @@
                             <!--begin::Search-->
                             <div class="d-flex align-items-center position-relative my-1">
                                 <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"><span
-                                        class="path1"></span><span class="path2"></span></i> <input type="text"
-                                    data-kt-ecommerce-category-filter="search"
-                                    class="form-control form-control-solid w-250px ps-12" placeholder="Search Category" />
+                                        class="path1"></span><span class="path2"></span></i>
+                                <input type="text" data-kt-ecommerce-product-filter="search"
+                                    class="form-control form-control-solid w-250px ps-12" placeholder="Tìm kiếm sản phẩm" />
                             </div>
                             <!--end::Search-->
                         </div>
+
                         <!--end::Card title-->
 
                         <!--begin::Card toolbar-->
@@ -289,8 +289,7 @@
                                                     <!--begin::Menu item-->
                                                     <div class="menu-item px-3">
                                                         <form action="{{ route('admin.categories.destroy', $category) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                                                            method="POST" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="menu-link px-3">Xóa</button>

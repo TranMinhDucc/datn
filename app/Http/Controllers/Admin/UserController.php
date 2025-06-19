@@ -17,7 +17,7 @@ class UserController extends Controller
     /**
      * Hiển thị danh sách người dùng
      */
-    
+
     public function index(Request $request)
     {
         $query = User::query();
@@ -33,7 +33,8 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->orderBy('created_at', 'desc')->get();
+        $users = $query->orderBy('created_at', 'desc')->paginate(5); // ✅
+
 
         return view('admin.users.index', compact('users'));
     }

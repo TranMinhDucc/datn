@@ -96,15 +96,17 @@
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <!--begin::Card title-->
                         <div class="card-title">
-                            <!--begin::Search-->
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-                                <input type="text" data-kt-ecommerce-brand-filter="search"
-                                    class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm kiếm thương hiệu" />
-                            </div>
-                            <!--end::Search-->
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="brands">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12"
+                                        placeholder="Tìm kiếm thương hiệu" />
+                                </div>
+                            </form>
                         </div>
+
                         <!--end::Card title-->
                         <!--begin::Card toolbar-->
                         <div class="card-toolbar">
@@ -144,8 +146,7 @@
                                         <tr>
                                             <td>
                                                 <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $brand->id }}" />
+                                                    <input class="form-check-input" type="checkbox" value="{{ $brand->id }}" />
                                                 </div>
                                             </td>
                                             <td>{{ $brand->id }}</td>
@@ -160,9 +161,8 @@
                                             </td>
                                             <td>
                                                 @if ($brand->logo)
-                                                    <img src="{{ asset('storage/' . $brand->logo) }}"
-                                                        alt="{{ $brand->name }}" class="img-thumbnail"
-                                                        style="max-height: 60px;">
+                                                    <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}"
+                                                        class="img-thumbnail" style="max-height: 60px;">
                                                 @else
                                                     <span class="text-muted">Chưa có logo</span>
                                                 @endif
@@ -193,8 +193,7 @@
                                                     <!--end::Menu item-->
                                                     <!--begin::Menu item-->
                                                     <div class="menu-item px-3">
-                                                        <form action="{{ route('admin.brands.destroy', $brand) }}"
-                                                            method="POST"
+                                                        <form action="{{ route('admin.brands.destroy', $brand) }}" method="POST"
                                                             onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
                                                             @csrf
                                                             @method('DELETE')
@@ -216,6 +215,10 @@
                                 </tbody>
                             </table>
                             <!--end::Table-->
+                            <div class="d-flex justify-content-end mt-4">
+                                {{ $brands->appends(request()->query())->links('pagination::bootstrap-5') }}
+                            </div>
+
                         </div>
                     </div>
                     <!--end::Card body-->
