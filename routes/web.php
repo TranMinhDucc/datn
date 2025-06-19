@@ -47,6 +47,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
+
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Middleware\AdminMiddleware;
 // GHI ĐÈ route đăng ký Fortify
