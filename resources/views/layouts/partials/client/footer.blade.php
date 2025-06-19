@@ -13,7 +13,7 @@
 
                           <ul>
                               <li> <i class="iconsax" data-icon="location"></i>
-                                  <h6>{{ $settings['address']}}</h6>
+                                  <p>{{ $settings['address'] ?? 'Chưa cập nhật địa chỉ' }}</p>
                               </li>
                               <li> <i class="iconsax" data-icon="phone-calling"></i>
                                   <h6>{{ $settings['hotline']}}</h6>
