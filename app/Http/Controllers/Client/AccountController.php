@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use App\Models\ShippingAddress;
+
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,7 +17,10 @@ class AccountController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        return view('client.account.dashboard', compact('user'));
+$addresses = ShippingAddress::with('user')->where('user_id',$user->id)->latest()->get();
+
+        // dd($user->id);
+        return view('client.account.dashboard', compact('addresses','user'));
     }
 
     public function wallet()

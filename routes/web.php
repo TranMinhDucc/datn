@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\WishlistController;
 use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
+use App\Http\Controllers\Client\ShippingAddressController;
 
 
 // ========== ADMIN CONTROLLERS ==========
@@ -95,6 +96,10 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
+    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+    });
+    
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -117,6 +122,14 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::get('/change-password', [AccountController::class, 'changePasswordForm'])->name('change_password');
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
 
+    Route::middleware(['auth'])->prefix('address')->name('address.')->group(function () {
+           Route::get('/', [ShippingAddressController::class, 'index'])->name('index');
+        Route::post('/store', action: [ShippingAddressController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [ShippingAddressController::class, 'edit'])->name('edit');
+    Route::put('{id}', [ShippingAddressController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
+        Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
+    });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 
@@ -166,15 +179,37 @@ Route::prefix('admin')
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
 
-        Route::resource('categories', CategoryController::class);
-        Route::resource('products', ProductController::class);
-        Route::resource('users', UserController::class);
-        Route::resource('faq', FaqController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('faq', FaqController::class);
+   
 
+    Route::resource('coupons', CouponController::class);
+
+
+    // System Settings
+    // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+    // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+    // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+    //reviews crud
+    Route::resource('reviews', ReviewController::class)->names('reviews');
+
+    Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
+
+
+    Route::resource('product-labels', ProductLabelController::class);
+
+    Route::resource('shipping-addresses', \App\Http\Controllers\Admin\ShippingAddressController::class);
+    // Route::resource('roles', RoleController::class)->names('admin.roles');
 
 
         Route::resource('coupons', CouponController::class);
         // Marketing
+
 
         Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
         Route::resource('email_campaigns', EmailCampaignController::class);
