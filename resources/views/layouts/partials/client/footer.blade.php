@@ -12,9 +12,9 @@
                           </div>
 
                           <ul>
-                              <li> <i class="iconsax" data-icon="location"></i>
+                              {{-- <li> <i class="iconsax" data-icon="location"></i>
                                   <h6>{{ $settings['address']}}</h6>
-                              </li>
+                              </li> --}}
                               <li> <i class="iconsax" data-icon="phone-calling"></i>
                                   <h6>{{ $settings['hotline']}}</h6>
                               </li>

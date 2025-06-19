@@ -221,6 +221,12 @@
                              </div>
 
                          </div>
+                           <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.contacts.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                         class="path1"></span><span class="path2"></span></i></span><span
+                                 class="menu-title">Liên hệ </span></a><!--end:Menu link-->
+                     </div>
                          <!--end:Menu sub-->
                      </div>
                      <!--end:Menu item--><!--begin:Menu item-->
