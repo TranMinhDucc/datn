@@ -5,109 +5,110 @@
 @section('content')
   <section class="section-b-space pt-0">
     <div class="heading-banner">
-    <div class="custom-container container">
-      <div class="row align-items-center">
-      <div class="col-sm-6">
-        <h4>Dashboard</h4>
+      <div class="custom-container container">
+        <div class="row align-items-center">
+          <div class="col-sm-6">
+            <h4>Dashboard</h4>
+          </div>
+          <div class="col-sm-6">
+            <ul class="breadcrumb float-end">
+            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
+            <li class="breadcrumb-item active"> <a href="#">Dashboard</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="col-sm-6">
-        <ul class="breadcrumb float-end">
-        <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
-        <li class="breadcrumb-item active"> <a href="#">Dashboard</a></li>
-        </ul>
-      </div>
-      </div>
-    </div>
     </div>
   </section>
   <section class="section-b-space pt-0">
     <div class="custom-container container user-dashboard-section">
-    <div class="row">
-      <div class="col-xl-3 col-lg-4">
-      <div class="left-dashboard-show">
-        <button class="btn btn_black sm rounded bg-primary">Show Menu</button>
-      </div>
-      <div class="dashboard-left-sidebar sticky">
-        <div class="profile-box">
-        <div class="profile-bg-img"></div>
-        <div class="dashboard-left-sidebar-close"><i class="fa-solid fa-xmark"></i></div>
-        <div class="profile-contain text-center">
-          <form id="avatarForm" method="POST" action="{{ route('client.account.avatar.update') }}"
-          enctype="multipart/form-data">
-          @csrf
-          <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;"
-            onchange="document.getElementById('avatarForm').submit()">
+      <div class="row">
+        <div class="col-xl-3 col-lg-4">
+          <div class="left-dashboard-show">
+            <button class="btn btn_black sm rounded bg-primary">Show Menu</button>
+          </div>
+          <div class="dashboard-left-sidebar sticky">
+            <div class="profile-box">
+            <div class="profile-bg-img"></div>
+            <div class="dashboard-left-sidebar-close"><i class="fa-solid fa-xmark"></i></div>
+            <div class="profile-contain text-center">
+              <form id="avatarForm" method="POST" action="{{ route('client.account.avatar.update') }}"
+              enctype="multipart/form-data">
+              @csrf
+              <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;"
+                onchange="document.getElementById('avatarForm').submit()">
 
-          <div class="profile-image position-relative" onclick="document.getElementById('avatarInput').click()"
-            style="cursor:pointer;">
-            <div class="avatar-wrapper">
-            <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img" style="width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-    margin: auto;
-    border: 3px solid #fff;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
+              <div class="profile-image position-relative" onclick="document.getElementById('avatarInput').click()"
+                style="cursor:pointer;">
+                <div class="avatar-wrapper">
+                <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img" style="width: 130px;
+                                  height: 130px;
+                                  border-radius: 50%;
+                                  overflow: hidden;
+                                  position: relative;
+                                  margin: auto;
+                                  border: 3px solid #fff;
+                                  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
+                </div>
+
+                <div class="camera-icon-overlay d-flex justify-content-center align-items-center">
+                {{-- <i class="fas fa-camera"></i> --}}
+                </div>
+              </div>
+              </form>
+              <div class="profile-name mt-3">
+              <h4>{{ $user['fullname'] }}</h4>
+              <h6>{{ $user['email'] }}</h6>
+              <span data-bs-toggle="modal" data-bs-target="#edit-box" title="Quick View" tabindex="0">Edit
+                Profile</span>
+              </div>
             </div>
 
-            <div class="camera-icon-overlay d-flex justify-content-center align-items-center">
-            {{-- <i class="fas fa-camera"></i> --}}
             </div>
-          </div>
-          </form>
-          <div class="profile-name mt-3">
-          <h4>{{ $user['fullname'] }}</h4>
-          <h6>{{ $user['email'] }}</h6>
-          <span data-bs-toggle="modal" data-bs-target="#edit-box" title="Quick View" tabindex="0">Edit
-            Profile</span>
+            <ul class="nav flex-column nav-pills dashboard-tab" id="v-pills-tab" role="tablist"
+            aria-orientation="vertical">
+            <li>
+              <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard"
+              role="tab" aria-controls="dashboard" aria-selected="true"><i class="iconsax" data-icon="home-1"></i>
+              Dashboard</button>
+            </li>
+            <li>
+              <button class="nav-link" id="notifications-tab" data-bs-toggle="pill" data-bs-target="#notifications"
+              role="tab" aria-controls="notifications" aria-selected="false"><i class="iconsax"
+                data-icon="lamp-2"></i>Notifications </button>
+            </li>
+            <li>
+              <button class="nav-link" id="order-tab" data-bs-toggle="pill" data-bs-target="#order" role="tab"
+              aria-controls="order" aria-selected="false"><i class="iconsax" data-icon="receipt-square"></i>
+              Order</button>
+            </li>
+            <li>
+              <button class="nav-link" id="wishlist-tab" data-bs-toggle="pill" data-bs-target="#wishlist" role="tab"
+              aria-controls="wishlist" aria-selected="false"> <i class="iconsax" data-icon="heart"></i>Wishlist
+              </button>
+            </li>
+            <li>
+              <button class="nav-link" id="saved-card-tab" data-bs-toggle="pill" data-bs-target="#saved-card" role="tab"
+              aria-controls="saved-card" aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Saved
+              Card</button>
+            </li>
+            <li>
+              <button class="nav-link" id="address-tab" data-bs-toggle="pill" data-bs-target="#address" role="tab"
+              aria-controls="address" aria-selected="false"><i class="iconsax"
+                data-icon="cue-cards"></i>Address</button>
+            </li>
+            <li>
+              <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" role="tab"
+              aria-controls="privacy" aria-selected="false"> <i class="iconsax"
+                data-icon="security-user"></i>Privacy</button>
+            </li>
+            </ul>
+            <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
+              data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
+              data-icon="logout-1"></i> Logout </a></div>
           </div>
         </div>
-        </div>
-        <ul class="nav flex-column nav-pills dashboard-tab" id="v-pills-tab" role="tablist"
-        aria-orientation="vertical">
-        <li>
-          <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard"
-          role="tab" aria-controls="dashboard" aria-selected="true"><i class="iconsax" data-icon="home-1"></i>
-          Dashboard</button>
-        </li>
-        <li>
-          <button class="nav-link" id="notifications-tab" data-bs-toggle="pill" data-bs-target="#notifications"
-          role="tab" aria-controls="notifications" aria-selected="false"><i class="iconsax"
-            data-icon="lamp-2"></i>Notifications </button>
-        </li>
-        <li>
-          <button class="nav-link" id="order-tab" data-bs-toggle="pill" data-bs-target="#order" role="tab"
-          aria-controls="order" aria-selected="false"><i class="iconsax" data-icon="receipt-square"></i>
-          Order</button>
-        </li>
-        <li>
-          <button class="nav-link" id="wishlist-tab" data-bs-toggle="pill" data-bs-target="#wishlist" role="tab"
-          aria-controls="wishlist" aria-selected="false"> <i class="iconsax" data-icon="heart"></i>Wishlist
-          </button>
-        </li>
-        <li>
-          <button class="nav-link" id="saved-card-tab" data-bs-toggle="pill" data-bs-target="#saved-card" role="tab"
-          aria-controls="saved-card" aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Saved
-          Card</button>
-        </li>
-        <li>
-          <button class="nav-link" id="address-tab" data-bs-toggle="pill" data-bs-target="#address" role="tab"
-          aria-controls="address" aria-selected="false"><i class="iconsax"
-            data-icon="cue-cards"></i>Address</button>
-        </li>
-        <li>
-          <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" role="tab"
-          aria-controls="privacy" aria-selected="false"> <i class="iconsax"
-            data-icon="security-user"></i>Privacy</button>
-        </li>
-        </ul>
-        <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
-          data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
-          data-icon="logout-1"></i> Logout </a></div>
-      </div>
-      </div>
-      <div class="col-xl-9 col-lg-8">
+        <div class="col-xl-9 col-lg-8">
         <div class="tab-content" id="v-pills-tabContent">
           <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
           <div class="dashboard-right-box">
@@ -119,11 +120,15 @@
               </h4>
             </div>
             <div class="dashboard-user-name">
-              <h6>Xin chào, <b>{{$user['fullname']}}</b></h6>
-              <p>My dashboard provides a comprehensive overview of key metrics and data relevant to your operations.
-              It offers real-time insights into performance, including sales figures, website traffic, customer
-              engagement, and more. With customizable widgets and intuitive visualizations, it facilitates quick
-              decision-making and allows you to track progress towards your goals effectively.</p>
+              <h6>Xin chào, <b>{{ $user['fullname'] }}</b></h6>
+              <p>My dashboard provides a comprehensive overview of key metrics and data relevant
+              to your operations.
+              It offers real-time insights into performance, including sales figures, website
+              traffic, customer
+              engagement, and more. With customizable widgets and intuitive visualizations, it
+              facilitates quick
+              decision-making and allows you to track progress towards your goals effectively.
+              </p>
             </div>
             <div class="total-box">
               <div class="row gy-4">
@@ -175,11 +180,11 @@
                 <ul class="profile-information">
                 <li>
                   <h6>Tên :</h6>
-                  <p>{{$user['fullname']}}</p>
+                  <p>{{ $user['fullname'] }}</p>
                 </li>
                 <li>
                   <h6>Số điện thoại:</h6>
-                  @if(!empty($user['phone']))
+                  @if (!empty($user['phone']))
             <p>{{ $user['phone'] }}</p>
             @else
             <p>
@@ -191,7 +196,7 @@
                 </li>
                 <li>
                   <h6>Địa chỉ:</h6>
-                  @if(!empty($user['address']))
+                  @if (!empty($user['address']))
             <p>{{ $user['address'] }}</p>
             @else
             <p>
@@ -238,725 +243,747 @@
           </div>
           </div>
           <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
-            <div class="dashboard-right-box">
-              <div class="notification-tab">
-              <div class="sidebar-title">
-                <div class="loader-line"></div>
-                <h4>Notifications</h4>
-              </div>
-              <ul class="notification-body">
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/1.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Mint - is your budget ready for spring spending?<span>2:14PM</span></h6>
-                  <p>A quick weekend trip, a staycation in your own town, or a weeklong vacay with the family—it’s
-                  your choice if it’s in the budget. No matter what you plan on doing during spring break, budget
-                  ahead for it.</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/2.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                  <p>Thanks for signing up for CodePen! We're happy you're here. Let's get your email address
-                  verified:</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/3.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                  <p>Hello, Everyone understands why a new language would be advantageous: one could refuse to pay
-                  for high-priced translators.</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/4.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Trip Reminder.<span>2:14PM</span></h6>
-                  <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that the title is the most
-                  crucial component of any article. Your reader won't even make it to the first sentence without
-                  an engaging title. </p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/5.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                  <p>Thanks for signing up for CodePen! We're happy you're here. Let's get your email address
-                  verified:</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/6.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                  <p>Thanks for signing up for CodePen! We're happy you're here. Let's get your email address
-                  verified:</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/7.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                  <p>Hello, Everyone understands why a new language would be advantageous: one could refuse to pay
-                  for high-priced translators.</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/8.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Trip Reminder.<span>2:14PM</span></h6>
-                  <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that the title is the most
-                  crucial component of any article. Your reader won't even make it to the first sentence without
-                  an engaging title.</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/9.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                  <p>Thanks for signing up for CodePen! We're happy you're here. Let's get your email address
-                  verified:</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/10.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                  <p>Thanks for signing up for CodePen! We're happy you're here. Let's get your email address
-                  verified:</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/11.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                  <p>Hello, Everyone understands why a new language would be advantageous: one could refuse to pay
-                  for high-priced translators.</p>
-                </div>
-                </li>
-                <li>
-                <div class="user-img"> <img src="{{ asset('assets/client/images/notification/12.jpg') }}" alt="">
-                </div>
-                <div class="user-contant">
-                  <h6>Trip Reminder.<span>2:14PM</span></h6>
-                  <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that the title is the most
-                  crucial component of any article. Your reader won't even make it to the first sentence without
-                  an engaging title. </p>
-                </div>
-                </li>
-              </ul>
-              </div>
+          <div class="dashboard-right-box">
+            <div class="notification-tab">
+            <div class="sidebar-title">
+              <div class="loader-line"></div>
+              <h4>Notifications</h4>
             </div>
+            <ul class="notification-body">
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/1.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Mint - is your budget ready for spring spending?<span>2:14PM</span></h6>
+                <p>A quick weekend trip, a staycation in your own town, or a weeklong vacay
+                with the family—it’s
+                your choice if it’s in the budget. No matter what you plan on doing
+                during spring break, budget
+                ahead for it.</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/2.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
+                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
+                your email address
+                verified:</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/3.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Figma - Move work forward<span>2:14PM</span></h6>
+                <p>Hello, Everyone understands why a new language would be advantageous: one
+                could refuse to pay
+                for high-priced translators.</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/4.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Trip Reminder.<span>2:14PM</span></h6>
+                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
+                the title is the most
+                crucial component of any article. Your reader won't even make it to the
+                first sentence without
+                an engaging title. </p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/5.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
+                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
+                your email address
+                verified:</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/6.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
+                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
+                your email address
+                verified:</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/7.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Figma - Move work forward<span>2:14PM</span></h6>
+                <p>Hello, Everyone understands why a new language would be advantageous: one
+                could refuse to pay
+                for high-priced translators.</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/8.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Trip Reminder.<span>2:14PM</span></h6>
+                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
+                the title is the most
+                crucial component of any article. Your reader won't even make it to the
+                first sentence without
+                an engaging title.</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/9.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
+                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
+                your email address
+                verified:</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/10.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
+                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
+                your email address
+                verified:</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/11.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Figma - Move work forward<span>2:14PM</span></h6>
+                <p>Hello, Everyone understands why a new language would be advantageous: one
+                could refuse to pay
+                for high-priced translators.</p>
+              </div>
+              </li>
+              <li>
+              <div class="user-img"> <img src="{{ asset('assets/client/images/notification/12.jpg') }}" alt="">
+              </div>
+              <div class="user-contant">
+                <h6>Trip Reminder.<span>2:14PM</span></h6>
+                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
+                the title is the most
+                crucial component of any article. Your reader won't even make it to the
+                first sentence without
+                an engaging title. </p>
+              </div>
+              </li>
+            </ul>
+            </div>
+          </div>
           </div>
           <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
-            <div class="dashboard-right-box">
-              <div class="wishlist-box ratio1_3">
-              <div class="sidebar-title">
-                <div class="loader-line"></div>
-                <h4>Wishlist</h4>
-              </div>
-              <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="#"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/1.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="#"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/20.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  <div class="countdown">
-                    <ul class="clockdiv1">
-                    <li>
-                      <div class="timer">
-                      <div class="days"></div>
-                      </div><span class="title">Days</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="hours"></div>
-                      </div><span class="title">Hours</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="minutes"></div>
-                      </div><span class="title">Min</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="seconds"></div>
-                      </div><span class="title">Sec</span>
-                    </li>
-                    </ul>
-                  </div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                    <li><i class="fa-regular fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="#">
-                    <h6>Greciilooks Women's Stylish Top</h6>
-                  </a>
-                  <p>$100.00
-                    <del>$140.00</del><span>-20%</span>
-                  </p>
-                  </div>
+          <div class="dashboard-right-box">
+            <div class="wishlist-box ratio1_3">
+            <div class="sidebar-title">
+              <div class="loader-line"></div>
+              <h4>Wishlist</h4>
+            </div>
+            <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="#"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/1.jpg') }}" alt="product"></a><a
+                  class="pro-sec" href="#">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
+                    alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                <div class="countdown">
+                  <ul class="clockdiv1">
+                  <li>
+                    <div class="timer">
+                    <div class="days"></div>
+                    </div><span class="title">Days</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="hours"></div>
+                    </div><span class="title">Hours</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="minutes"></div>
+                    </div><span class="title">Min</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="seconds"></div>
+                    </div><span class="title">Sec</span>
+                  </li>
+                  </ul>
                 </div>
                 </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/2.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/19.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-regular fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Wide Linen-Blend Trousers</h6>
-                  </a>
-                  <p>$100.00
-                    <del>$18.00 </del>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/3.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/18.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Long Sleeve Rounded T-Shirt</h6>
-                  </a>
-                  <p>$120.30
-                    <del>$140.00</del><span>-20%</span>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/4.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/17.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  <div class="countdown">
-                    <ul class="clockdiv2">
-                    <li>
-                      <div class="timer">
-                      <div class="days"></div>
-                      </div><span class="title">Days</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="hours"></div>
-                      </div><span class="title">Hours</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="minutes"></div>
-                      </div><span class="title">Min</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="seconds"></div>
-                      </div><span class="title">Sec</span>
-                    </li>
-                    </ul>
-                  </div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Blue lined White T-Shirt</h6>
-                  </a>
-                  <p>$190.00
-                    <del>$210.00</del>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/9.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/16.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  <div class="countdown">
-                    <ul class="clockdiv3">
-                    <li>
-                      <div class="timer">
-                      <div class="days"></div>
-                      </div><span class="title">Days</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="hours"></div>
-                      </div><span class="title">Hours</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="minutes"></div>
-                      </div><span class="title">Min</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="seconds"></div>
-                      </div><span class="title">Sec</span>
-                    </li>
-                    </ul>
-                  </div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                    <li><i class="fa-regular fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Greciilooks Women's Stylish Top</h6>
-                  </a>
-                  <p>$100.00
-                    <del>$140.00</del><span>-20%</span>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/10.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/15.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-regular fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Wide Linen-Blend Trousers</h6>
-                  </a>
-                  <p>$100.00
-                    <del>$18.00 </del>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/11.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/14.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Long Sleeve Rounded T-Shirt</h6>
-                  </a>
-                  <p>$120.30
-                    <del>$140.00</del><span>-20% </span>
-                  </p>
-                  </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="product-box-3 product-wishlist">
-                  <div class="img-wrapper">
-                  <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-                    href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-                      data-icon="trash" aria-hidden="true"></i></a></div>
-                  <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/12.jpg') }}" alt="product"></a><a
-                    class="pro-sec" href="product.html"> <img class="bg-img"
-                      src="{{ asset('assets/client/images/product/product-3/13.jpg') }}" alt="product"></a>
-                  </div>
-                  <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                    title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-                    </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-                      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-                    data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-                      data-icon="eye" aria-hidden="true"></i></a></div>
-                  <div class="countdown">
-                    <ul class="clockdiv4">
-                    <li>
-                      <div class="timer">
-                      <div class="days"></div>
-                      </div><span class="title">Days</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="hours"></div>
-                      </div><span class="title">Hours</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="minutes"></div>
-                      </div><span class="title">Min</span>
-                    </li>
-                    <li class="dot"> <span>:</span></li>
-                    <li>
-                      <div class="timer">
-                      <div class="seconds"></div>
-                      </div><span class="title">Sec</span>
-                    </li>
-                    </ul>
-                  </div>
-                  </div>
-                  <div class="product-detail">
-                  <ul class="rating">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                    <li>4.3</li>
-                  </ul><a href="product.html">
-                    <h6>Blue lined White T-Shirt</h6>
-                  </a>
-                  <p>$190.00
-                    <del>$210.00</del>
-                  </p>
-                  </div>
-                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                  <li><i class="fa-regular fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="#">
+                  <h6>Greciilooks Women's Stylish Top</h6>
+                </a>
+                <p>$100.00
+                  <del>$140.00</del><span>-20%</span>
+                </p>
                 </div>
               </div>
               </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/2.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/19.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-regular fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Wide Linen-Blend Trousers</h6>
+                </a>
+                <p>$100.00
+                  <del>$18.00 </del>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/3.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/18.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Long Sleeve Rounded T-Shirt</h6>
+                </a>
+                <p>$120.30
+                  <del>$140.00</del><span>-20%</span>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/4.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/17.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                <div class="countdown">
+                  <ul class="clockdiv2">
+                  <li>
+                    <div class="timer">
+                    <div class="days"></div>
+                    </div><span class="title">Days</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="hours"></div>
+                    </div><span class="title">Hours</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="minutes"></div>
+                    </div><span class="title">Min</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="seconds"></div>
+                    </div><span class="title">Sec</span>
+                  </li>
+                  </ul>
+                </div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Blue lined White T-Shirt</h6>
+                </a>
+                <p>$190.00
+                  <del>$210.00</del>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/16.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                <div class="countdown">
+                  <ul class="clockdiv3">
+                  <li>
+                    <div class="timer">
+                    <div class="days"></div>
+                    </div><span class="title">Days</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="hours"></div>
+                    </div><span class="title">Hours</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="minutes"></div>
+                    </div><span class="title">Min</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="seconds"></div>
+                    </div><span class="title">Sec</span>
+                  </li>
+                  </ul>
+                </div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                  <li><i class="fa-regular fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Greciilooks Women's Stylish Top</h6>
+                </a>
+                <p>$100.00
+                  <del>$140.00</del><span>-20%</span>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/15.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-regular fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Wide Linen-Blend Trousers</h6>
+                </a>
+                <p>$100.00
+                  <del>$18.00 </del>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/14.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Long Sleeve Rounded T-Shirt</h6>
+                </a>
+                <p>$120.30
+                  <del>$140.00</del><span>-20% </span>
+                </p>
+                </div>
+              </div>
+              </div>
+              <div class="col">
+              <div class="product-box-3 product-wishlist">
+                <div class="img-wrapper">
+                <div class="label-block"><a class="label-2 wishlist-icon delete-button"
+                  href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
+                    data-icon="trash" aria-hidden="true"></i></a></div>
+                <div class="product-image"><a class="pro-first" href="product.html">
+                  <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
+                    alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                    src="{{ asset('assets/client/images/product/product-3/13.jpg') }}" alt="product"></a>
+                </div>
+                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                  title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
+                  </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
+                    data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
+                  data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
+                    data-icon="eye" aria-hidden="true"></i></a></div>
+                <div class="countdown">
+                  <ul class="clockdiv4">
+                  <li>
+                    <div class="timer">
+                    <div class="days"></div>
+                    </div><span class="title">Days</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="hours"></div>
+                    </div><span class="title">Hours</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="minutes"></div>
+                    </div><span class="title">Min</span>
+                  </li>
+                  <li class="dot"> <span>:</span></li>
+                  <li>
+                    <div class="timer">
+                    <div class="seconds"></div>
+                    </div><span class="title">Sec</span>
+                  </li>
+                  </ul>
+                </div>
+                </div>
+                <div class="product-detail">
+                <ul class="rating">
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star"></i></li>
+                  <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                  <li>4.3</li>
+                </ul><a href="product.html">
+                  <h6>Blue lined White T-Shirt</h6>
+                </a>
+                <p>$190.00
+                  <del>$210.00</del>
+                </p>
+                </div>
+              </div>
+              </div>
+            </div>
             </div>
           </div>
+          </div>
           <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
-            <div class="dashboard-right-box">
-              <div class="order">
-              <div class="sidebar-title">
-                <div class="loader-line"></div>
-                <h4>My Orders History</h4>
+          <div class="dashboard-right-box">
+            <div class="order">
+            <div class="sidebar-title">
+              <div class="loader-line"></div>
+              <h4>My Orders History</h4>
+            </div>
+            <div class="row gy-4">
+              <div class="col-12">
+              <div class="order-box">
+                <div class="order-container">
+                <div class="order-icon"><i class="iconsax" data-icon="box"></i>
+                  <div class="couplet"><i class="fa-solid fa-check"></i></div>
+                </div>
+                <div class="order-detail">
+                  <h5>Delivered</h5>
+                  <p>on Fri, 1 Mar</p>
+                </div>
+                </div>
+                <div class="product-order-detail">
+                <div class="product-box"> <a href="product.html"> <img
+                    src="{{ asset('assets/client/images/notification/1.jpg') }}" alt=""></a>
+                  <div class="order-wrap">
+                  <h5>Rustic Minidress with Halterneck</h5>
+                  <p>Versatile sporty slogans short sleeve quirky laid back orange
+                    lux hoodies vests pins
+                    badges.</p>
+                  <ul>
+                    <li>
+                    <p>Prize : </p><span>$20.00</span>
+                    </li>
+                    <li>
+                    <p>Size : </p><span>M</span>
+                    </li>
+                    <li>
+                    <p>Order Id :</p><span>ghat56han50</span>
+                    </li>
+                  </ul>
+                  </div>
+                </div>
+                </div>
+                <div class="return-box">
+                <div class="review-box">
+                  <ul class="rating">
+                  <li> <i class="fa-solid fa-star"> </i><i class="fa-solid fa-star"> </i><i
+                    class="fa-solid fa-star"> </i><i class="fa-solid fa-star-half-stroke"></i><i
+                    class="fa-regular fa-star"></i></li>
+                  </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal" title="Quick View"
+                  tabindex="0">Write Review</span>
+                </div>
+                <h6> <span> </span>* Exchange/Return window closed on 20 mar</h6>
+                </div>
               </div>
-              <div class="row gy-4">
-                <div class="col-12">
-                <div class="order-box">
-                  <div class="order-container">
-                  <div class="order-icon"><i class="iconsax" data-icon="box"></i>
-                    <div class="couplet"><i class="fa-solid fa-check"></i></div>
-                  </div>
-                  <div class="order-detail">
-                    <h5>Delivered</h5>
-                    <p>on Fri, 1 Mar</p>
-                  </div>
-                  </div>
-                  <div class="product-order-detail">
-                  <div class="product-box"> <a href="product.html"> <img
-                      src="{{ asset('assets/client/images/notification/1.jpg') }}" alt=""></a>
-                    <div class="order-wrap">
-                    <h5>Rustic Minidress with Halterneck</h5>
-                    <p>Versatile sporty slogans short sleeve quirky laid back orange lux hoodies vests pins
-                      badges.</p>
-                    <ul>
-                      <li>
-                      <p>Prize : </p><span>$20.00</span>
-                      </li>
-                      <li>
-                      <p>Size : </p><span>M</span>
-                      </li>
-                      <li>
-                      <p>Order Id :</p><span>ghat56han50</span>
-                      </li>
-                    </ul>
-                    </div>
-                  </div>
-                  </div>
-                  <div class="return-box">
-                  <div class="review-box">
-                    <ul class="rating">
-                    <li> <i class="fa-solid fa-star"> </i><i class="fa-solid fa-star"> </i><i
-                      class="fa-solid fa-star"> </i><i class="fa-solid fa-star-half-stroke"></i><i
-                      class="fa-regular fa-star"></i></li>
-                    </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal" title="Quick View"
-                    tabindex="0">Write Review</span>
-                  </div>
-                  <h6> <span> </span>* Exchange/Return window closed on 20 mar</h6>
+              </div>
+              <div class="col-12">
+              <div class="order-box">
+                <div class="order-container">
+                <div class="order-icon"><i class="iconsax" data-icon="undo"></i>
+                  <div class="couplet"><i class="fa-solid fa-check"></i></div>
+                </div>
+                <div class="order-detail">
+                  <h5>Refund Credited</h5>
+                  <p>
+                  Your Refund Of <b> $389.00 </b>For then return has been
+                  processed Successfully on 4th Apr.<a href="#"> View
+                    Refund details</a></p>
+                </div>
+                </div>
+                <div class="product-order-detail">
+                <div class="product-box"> <a href="product.html"> <img
+                    src="{{ asset('assets/client/images/notification/9.jpg') }}" alt=""></a>
+                  <div class="order-wrap">
+                  <h5>Rustic Minidress with Halterneck</h5>
+                  <p>Versatile sporty slogans short sleeve quirky laid back orange
+                    lux hoodies vests pins
+                    badges.</p>
+                  <ul>
+                    <li>
+                    <p>Prize : </p><span>$20.00</span>
+                    </li>
+                    <li>
+                    <p>Size : </p><span>M</span>
+                    </li>
+                    <li>
+                    <p>Order Id :</p><span>ghat56han50</span>
+                    </li>
+                  </ul>
                   </div>
                 </div>
                 </div>
-                <div class="col-12">
-                <div class="order-box">
-                  <div class="order-container">
-                  <div class="order-icon"><i class="iconsax" data-icon="undo"></i>
-                    <div class="couplet"><i class="fa-solid fa-check"></i></div>
-                  </div>
-                  <div class="order-detail">
-                    <h5>Refund Credited</h5>
-                    <p>
-                    Your Refund Of <b> $389.00 </b>For then return has been processed Successfully on 4th Apr.<a
-                      href="#"> View Refund details</a></p>
-                  </div>
-                  </div>
-                  <div class="product-order-detail">
-                  <div class="product-box"> <a href="product.html"> <img
-                      src="{{ asset('assets/client/images/notification/9.jpg') }}" alt=""></a>
-                    <div class="order-wrap">
-                    <h5>Rustic Minidress with Halterneck</h5>
-                    <p>Versatile sporty slogans short sleeve quirky laid back orange lux hoodies vests pins
-                      badges.</p>
-                    <ul>
-                      <li>
-                      <p>Prize : </p><span>$20.00</span>
-                      </li>
-                      <li>
-                      <p>Size : </p><span>M</span>
-                      </li>
-                      <li>
-                      <p>Order Id :</p><span>ghat56han50</span>
-                      </li>
-                    </ul>
-                    </div>
-                  </div>
-                  </div>
-                  <div class="return-box">
-                  <div class="review-box">
-                    <ul class="rating">
-                    <li> <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
-                      class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
-                      class="fa-regular fa-star"></i></li>
-                    </ul>
-                  </div>
-                  <h6>
-                    * Exchange/Return window closed on 20 mar</h6>
+                <div class="return-box">
+                <div class="review-box">
+                  <ul class="rating">
+                  <li> <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                    class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                    class="fa-regular fa-star"></i></li>
+                  </ul>
+                </div>
+                <h6>
+                  * Exchange/Return window closed on 20 mar</h6>
+                </div>
+              </div>
+              </div>
+              <div class="col-12">
+              <div class="order-box">
+                <div class="order-container">
+                <div class="order-icon"><i class="iconsax" data-icon="box"></i>
+                  <div class="couplet"><i class="fa-solid fa-check"></i></div>
+                </div>
+                <div class="order-detail">
+                  <h5>Delivered</h5>
+                  <p>on Fri, 1 Mar</p>
+                </div>
+                </div>
+                <div class="product-order-detail">
+                <div class="product-box"> <a href="product.html"> <img
+                    src="{{ asset('assets/client/images/notification/2.jpg') }}" alt=""></a>
+                  <div class="order-wrap">
+                  <h5>Rustic Minidress with Halterneck</h5>
+                  <p>Versatile sporty slogans short sleeve quirky laid back orange
+                    lux hoodies vests pins
+                    badges.</p>
+                  <ul>
+                    <li>
+                    <p>Prize : </p><span>$20.00</span>
+                    </li>
+                    <li>
+                    <p>Size : </p><span>M</span>
+                    </li>
+                    <li>
+                    <p>Order Id :</p><span>ghat56han50</span>
+                    </li>
+                  </ul>
                   </div>
                 </div>
                 </div>
-                <div class="col-12">
-                <div class="order-box">
-                  <div class="order-container">
-                  <div class="order-icon"><i class="iconsax" data-icon="box"></i>
-                    <div class="couplet"><i class="fa-solid fa-check"></i></div>
-                  </div>
-                  <div class="order-detail">
-                    <h5>Delivered</h5>
-                    <p>on Fri, 1 Mar</p>
-                  </div>
-                  </div>
-                  <div class="product-order-detail">
-                  <div class="product-box"> <a href="product.html"> <img
-                      src="{{ asset('assets/client/images/notification/2.jpg') }}" alt=""></a>
-                    <div class="order-wrap">
-                    <h5>Rustic Minidress with Halterneck</h5>
-                    <p>Versatile sporty slogans short sleeve quirky laid back orange lux hoodies vests pins
-                      badges.</p>
-                    <ul>
-                      <li>
-                      <p>Prize : </p><span>$20.00</span>
-                      </li>
-                      <li>
-                      <p>Size : </p><span>M</span>
-                      </li>
-                      <li>
-                      <p>Order Id :</p><span>ghat56han50</span>
-                      </li>
-                    </ul>
-                    </div>
-                  </div>
-                  </div>
-                  <div class="return-box">
-                  <div class="review-box">
-                    <ul class="rating">
-                    <li> <i class="fa-solid fa-star"> </i><i class="fa-solid fa-star"> </i><i
-                      class="fa-solid fa-star"> </i><i class="fa-solid fa-star-half-stroke"></i><i
-                      class="fa-regular fa-star"></i></li>
-                    </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal" title="Quick View"
-                    tabindex="0">Write Review</span>
-                  </div>
-                  <h6>
-                    * Exchange/Return window closed on 20 mar</h6>
+                <div class="return-box">
+                <div class="review-box">
+                  <ul class="rating">
+                  <li> <i class="fa-solid fa-star"> </i><i class="fa-solid fa-star"> </i><i
+                    class="fa-solid fa-star"> </i><i class="fa-solid fa-star-half-stroke"></i><i
+                    class="fa-regular fa-star"></i></li>
+                  </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal" title="Quick View"
+                  tabindex="0">Write Review</span>
+                </div>
+                <h6>
+                  * Exchange/Return window closed on 20 mar</h6>
+                </div>
+              </div>
+              </div>
+              <div class="col-12">
+              <div class="order-box">
+                <div class="order-container">
+                <div class="order-icon"><i class="iconsax" data-icon="box-add"></i>
+                  <div class="couplet"><i class="fa-solid fa-xmark"></i></div>
+                </div>
+                <div class="order-detail">
+                  <h5>Cancelled</h5>
+                  <p>on Fri, 1 Mar</p>
+                  <h6> <b>Refund lanitiated : </b>$774.00 on Thu, 24 Feb 2024. <a href="#"> View
+                    Refunddetails</a></h6>
+                </div>
+                </div>
+                <div class="product-order-detail">
+                <div class="product-box"> <a href="product.html"> <img
+                    src="{{ asset('assets/client/images/notification/6.jpg') }}" alt=""></a>
+                  <div class="order-wrap">
+                  <h5>Rustic Minidress with Halterneck</h5>
+                  <p>Versatile sporty slogans short sleeve quirky laid back orange
+                    lux hoodies vests pins
+                    badges.</p>
+                  <ul>
+                    <li>
+                    <p>Prize : </p><span>$20.00</span>
+                    </li>
+                    <li>
+                    <p>Size : </p><span>M</span>
+                    </li>
+                    <li>
+                    <p>Order Id :</p><span>ghat56han50</span>
+                    </li>
+                  </ul>
                   </div>
                 </div>
                 </div>
-                <div class="col-12">
-                <div class="order-box">
-                  <div class="order-container">
-                  <div class="order-icon"><i class="iconsax" data-icon="box-add"></i>
-                    <div class="couplet"><i class="fa-solid fa-xmark"></i></div>
-                  </div>
-                  <div class="order-detail">
-                    <h5>Cancelled</h5>
-                    <p>on Fri, 1 Mar</p>
-                    <h6> <b>Refund lanitiated : </b>$774.00 on Thu, 24 Feb 2024. <a href="#"> View
-                      Refunddetails</a></h6>
-                  </div>
-                  </div>
-                  <div class="product-order-detail">
-                  <div class="product-box"> <a href="product.html"> <img
-                      src="{{ asset('assets/client/images/notification/6.jpg') }}" alt=""></a>
-                    <div class="order-wrap">
-                    <h5>Rustic Minidress with Halterneck</h5>
-                    <p>Versatile sporty slogans short sleeve quirky laid back orange lux hoodies vests pins
-                      badges.</p>
-                    <ul>
-                      <li>
-                      <p>Prize : </p><span>$20.00</span>
-                      </li>
-                      <li>
-                      <p>Size : </p><span>M</span>
-                      </li>
-                      <li>
-                      <p>Order Id :</p><span>ghat56han50</span>
-                      </li>
-                    </ul>
-                    </div>
-                  </div>
-                  </div>
-                  <div class="return-box">
-                  <div class="review-box">
-                    <ul class="rating">
-                    <li> <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
-                      class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
-                      class="fa-regular fa-star"></i></li>
-                    </ul>
-                  </div>
-                  <h6>
-                    * Exchange/Return window closed on 20 mar</h6>
-                  </div>
+                <div class="return-box">
+                <div class="review-box">
+                  <ul class="rating">
+                  <li> <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                    class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                    class="fa-regular fa-star"></i></li>
+                  </ul>
                 </div>
+                <h6>
+                  * Exchange/Return window closed on 20 mar</h6>
                 </div>
               </div>
               </div>
             </div>
+            </div>
+          </div>
           </div>
           <div class="tab-pane fade" id="saved-card" role="tabpanel" aria-labelledby="saved-card-tab">
           <div class="dashboard-right-box">
@@ -1330,11 +1357,11 @@
           </div>
           </div>
         </div>
+        </div>
       </div>
     </div>
-    </div>
-  </section>
 
+  </section>
   {{-- Edit Email Doashboar START --}}
   <div class="reviews-modal modal theme-modal fade" id="edit-email" tabindex="-1" role="dialog" aria-modal="true">
     <div class="modal-dialog modal-md modal-dialog-centered" role="document">
@@ -1593,64 +1620,59 @@
   {{-- END Edit Email Doashboar --}}
 
   <div class="reviews-modal modal theme-modal fade" id="edit-box" tabindex="-1" role="dialog" aria-modal="true">
-      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h4>Edit Profile</h4>
-                  <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Edit Profile</h4>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <form id="update-profile-form">
+          @csrf
+          <div class="modal-body pt-0">
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="from-group">
+                <label class="form-label">Họ tên</label>
+                <input class="form-control" type="text" name="fullname" value="{{ $user->fullname ?? '' }}">
+                <div class="text-danger error-fullname"></div>
+                </div>
               </div>
 
-              <form id="update-profile-form">
-                  @csrf
-                  <div class="modal-body pt-0">
-                      <div class="row g-3">
+              <div class="col-6">
+                <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="text" name="email" value="{{ $user->email ?? '' }}">
+                <div class="text-danger error-email"></div>
+                </div>
+              </div>
+            </div>
 
-                          <div class="col-6">
-                              <div class="from-group">
-                                  <label class="form-label">Họ tên</label>
-                                  <input class="form-control" type="text" name="fullname"
-                                      value="{{ $user->fullname ?? '' }}">
-                                  <div class="text-danger error-fullname"></div>
-                              </div>
-                          </div>
+            <div class="col-6">
+              <div class="from-group">
+              <label class="form-label">Số điện thoại</label>
+              <input class="form-control" type="text" name="phone" value="{{ $user->phone ?? '' }}">
+              <div class="text-danger error-phone"></div>
+              </div>
+            </div>
 
-                          <div class="col-6">
-                              <div class="form-group">
-                                  <label class="form-label">Email</label>
-                                  <input class="form-control" type="text" name="email"
-                                      value="{{ $user->email ?? '' }}">
-                                  <div class="text-danger error-email"></div>
-                              </div>
-                          </div>
+            <div class="col-12">
+              <div class="from-group">
+              <label class="form-label">Địa chỉ</label>
+              <textarea class="form-control" name="address" cols="30" rows="3">{{ $user->address ?? '' }}</textarea>
+              <div class="text-danger error-address"></div>
+              </div>
+            </div>
 
-                          <div class="col-6">
-                              <div class="from-group">
-                                  <label class="form-label">Số điện thoại</label>
-                                  <input class="form-control" type="text" name="phone"
-                                      value="{{ $user->phone ?? '' }}">
-                                  <div class="text-danger error-phone"></div>
-                              </div>
-                          </div>
-
-                          <div class="col-12">
-                              <div class="from-group">
-                                  <label class="form-label">Địa chỉ</label>
-                                  <textarea class="form-control" name="address" cols="30" rows="3">{{ $user->address ?? '' }}</textarea>
-                                  <div class="text-danger error-address"></div>
-                              </div>
-                          </div>
-
-                          <div class="col-12 text-end">
-                              <button class="btn btn-submit" type="submit">Cập nhật</button>
-                          </div>
-
-                      </div>
-                  </div>
-              </form>
-
+            <div class="col-12 text-end">
+              <button class="btn btn-submit" type="submit">Cập nhật</button>
+            </div>
           </div>
+        </form>
       </div>
+    </div>
   </div>
+  {{-- END Edit Email Doashboar --}}
 
   {{-- Tự động mở lại modal nếu có lỗi --}}
   @if ($errors->any())
@@ -1684,6 +1706,7 @@
 
 
 @endsection
+
 @section('css')
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -1711,138 +1734,165 @@
   </style>
 @endsection
 
-
-
 @section('js')
   <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
-
-  {{-- TOGGLE PASSWORD --}}
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.toggle-password').forEach(el => {
-        el.addEventListener('click', function () {
-          const input = document.querySelector(this.getAttribute('toggle'));
-          const icon = this.querySelector('i');
-          if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-          } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-          }
+    const form = document.getElementById('update-profile-form');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // Ngăn reload
+
+      const formData = new FormData(form);
+      const url = '{{ route('client.account.profile.update') }}';
+
+      // Xóa lỗi cũ
+      form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
+
+      fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+      },
+      body: formData
+      })
+
+      .catch(error => {
+        console.error('Lỗi:', error);
+      });
+    });
+    });
+  </script>
+  {{-- EYE --}}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.toggle-password').forEach(el => {
+      el.addEventListener('click', function () {
+      const input = document.querySelector(this.getAttribute('toggle'));
+      const icon = this.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa - eye - slash ');
+        icon.classList.add('fa-eye');
+      }
+      });
+    });
+    });
+  </script>
+  {{-- END EYE --}}
+  {{-- AJAX UPDATE EMAIL --}}
+  {{-- EDIT PASSWORD --}}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('change-password-form');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const url = '{{ route('client.account.change_password.submit') }}';
+      form.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+
+      fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': form.querySelector('[name="_token"]').value
+      },
+      body: formData
+      })
+      .then(async response => {
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Đổi mật khẩu thành công!',
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => {
+          form.reset();
+          const modal = bootstrap.Modal.getInstance(document
+          .getElementById('edit-password'));
+          modal.hide();
+        });
+        } else if (data.errors) {
+        Object.entries(data.errors).forEach(([field, message]) => {
+          const errorEl = document.querySelector('.error-' + field);
+          if (errorEl) errorEl.textContent = message[0];
+        });
+        }
+      })
+      .catch(error => {
+        console.error('Lỗi:', error);
+        Swal.fire({
+        icon: 'error',
+        title: 'Lỗi máy chủ',
+        text: 'Vui lòng thử lại.'
         });
       });
     });
-  </script>
-
-  {{-- ĐỔI MẬT KHẨU --}}
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('change-password-form');
-      if (!form) return;
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-        const url = '{{ route("client.account.change_password.submit") }}';
-        form.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
-
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': form.querySelector('[name="_token"]').value
-          },
-          body: formData
-        })
-        .then(async response => {
-          const data = await response.json();
-
-          if (response.ok && data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Đổi mật khẩu thành công!',
-              timer: 1500,
-              showConfirmButton: false
-            }).then(() => {
-              form.reset();
-              const modal = bootstrap.Modal.getInstance(document.getElementById('edit-password'));
-              modal.hide();
-            });
-          } else if (data.errors) {
-            Object.entries(data.errors).forEach(([field, message]) => {
-              const errorEl = document.querySelector('.error-' + field);
-              if (errorEl) errorEl.textContent = message[0];
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Lỗi:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi máy chủ',
-            text: 'Vui lòng thử lại.'
-          });
-        });
-      });
     });
   </script>
-
-  {{-- CẬP NHẬT THÔNG TIN CÁ NHÂN --}}
+  {{-- END EDIT PASSWORD --}}
+  {{-- AJAX UPDATE PROFILE --}}
   <script>
-
     document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('update-profile-form');
-      if (!form) return;
+    const form = document.getElementById('update-profile-form');
 
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
+    if (!form) return;
 
-        const formData = new FormData(form);
-        const url = '{{ route("client.account.profile.update") }}';
-        form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-          },
-          body: formData
-        })
-        .then(async response => {
-          const data = await response.json();
+      const formData = new FormData(form);
+      const url = '{{ route('client.account.profile.update') }}';
 
-          if (response.ok && data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: '🎉 Cập nhật thành công!',
-              html: 'Thông tin cá nhân của bạn đã được lưu.',
-              timer: 1000,
-              timerProgressBar: true,
-              showConfirmButton: false,
-              willClose: () => location.reload() // Hoặc thay bằng cập nhật DOM nếu muốn
-            });
-          } else if (data.errors) {
-            Object.keys(data.errors).forEach(field => {
-              const errorDiv = document.querySelector('.error-' + field);
-              if (errorDiv) errorDiv.innerText = data.errors[field][0];
-            });
-          }
-        })
-        .catch(err => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi máy chủ',
-            text: 'Vui lòng thử lại sau.',
-            confirmButtonText: 'OK'
-          });
-          console.error(err);
+      // Xóa lỗi cũ
+      form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
+
+      fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+      },
+      body: formData
+      })
+      .then(async response => {
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: '🎉 Cập nhật thành công!',
+          html: 'Thông tin cá nhân của bạn đã được lưu.',
+          timer: 800,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          willClose: () => location.reload()
         });
+        } else if (data.errors) {
+        Object.keys(data.errors).forEach(field => {
+          const errorDiv = document.querySelector('.error-' + field);
+          if (errorDiv) errorDiv.innerText = data.errors[field][0];
+        });
+        }
+      })
+      .catch(err => {
+        Swal.fire({
+        icon: 'error',
+        title: 'Lỗi máy chủ',
+        text: 'Vui lòng thử lại sau.',
+        confirmButtonText: 'OK'
+        });
+        console.error(err);
       });
+    });
     });
   </script>
 @endsection

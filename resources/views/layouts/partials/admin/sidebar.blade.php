@@ -35,135 +35,85 @@
                  data-kt-scroll-wrappers="#kt_app_sidebar_menu" data-kt-scroll-offset="5px"
                  data-kt-scroll-save-state="true">
 
-                <!--begin::Menu-->
-                <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6" id="#kt_app_sidebar_menu"
-                    data-kt-menu="true" data-kt-menu-expand="false">
-                    <!--begin:Menu item-->
-                    <div class="menu-item pt-5">
-                        <!--begin:Menu content-->
-                        <div class="menu-content">
-                            <span class="menu-heading fw-bold text-uppercase fs-7">Main
-                            </span>
-                        </div>
-                        <!--end:Menu content-->
-                    </div>
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.dashboard') }}"><span
-                                class="menu-icon"><i class="fa-solid fa-table-columns fs-4"><span
-                                        class="path1"></span><span class="path2"></span></i></span><span
-                                class="menu-title">Dashboard</span></a><!--end:Menu link-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item pt-5">
-                        <!--begin:Menu content-->
-                        <div class="menu-content">
-                            <span class="menu-heading fw-bold text-uppercase fs-7">Dịch vụ
-                            </span>
-                        </div>
-                        <!--end:Menu content-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                        <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
-                                    class="fa-solid fa-cart-shopping fs-4"></i><span class="path1"></span><span
-                                    class="path2"></span><span class="path3"></span></i></span><span
-                                class="menu-title">Sản phẩm</span><span
-                                class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
-                        <div class="menu-sub menu-sub-accordion">
-                            <!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="{{ route('admin.categories.index') }}"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span class="menu-title">Chuyên
-                                        mục</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="{{ route('admin.variant_attributes.index') }}"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span class="menu-title">Thêm thuộc
-                                        tính</span></a><!--end:Menu link-->
-                            </div>
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="{{ route('admin.products.index') }}"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span class="menu-title">Tất cả sản
-                                        phẩm</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link-->
-                                <a class="menu-link" href="{{ route('admin.product-labels.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Nhãn dán</span>
-                                </a>
-                                <!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="pages/user-profile/documents.html"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Documents</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="pages/user-profile/followers.html"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Followers</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item--><!--begin:Menu item-->
-                            <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link" href="pages/user-profile/activity.html"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Activity</span></a><!--end:Menu link-->
-                            </div>
-                            <!--end:Menu item-->
-                        </div>
-                        <!--end:Menu sub-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item pt-5">
-                        <!--begin:Menu content-->
-                        <div class="menu-content">
-                            <span class="menu-heading fw-bold text-uppercase fs-7">Quản lý</span>
-                        </div>
-                        <!--end:Menu content-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
-                    <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.users.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
-                                        class="path1"></span><span class="path2"></span></i></span><span
-                                class="menu-title">Thành viên</span></a><!--end:Menu link-->
-                    </div>
+                 <!--begin::Menu-->
+                 <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6"
+                     id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
+                     <!--begin:Menu item-->
+                     <div class="menu-item pt-5">
+                         <!--begin:Menu content-->
+                         <div class="menu-content">
+                             <span class="menu-heading fw-bold text-uppercase fs-7">Main
+                             </span>
+                         </div>
+                         <!--end:Menu content-->
+                     </div>
                      <div class="menu-item">
-                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-addresses.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
-                                        class="path1"></span><span class="path2"></span></i></span><span
-                                class="menu-title">Quản Lý Giao Hàng</span></a><!--end:Menu link-->
-                    </div>
-                    
-                    <div class="menu-item">
-                        <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('admin.reviews.index') }}" target="_blank">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-star fs-4"><span class="path1"></span><span
-                                        class="path2"></span></i>
-                            </span>
-                            <span class="menu-title">Đánh giá</span>
-                        </a>
-                        <!--end:Menu link-->
-                    </div>
-                    <div class="menu-item">
-<!--begin:Menu link-->
-<a class="menu-link" href="{{ route('admin.dashboard') }}" target="_blank">
-    <span class="menu-icon"><i class="fa-solid fa-user fs-4"><span class="path1"></span><span class="path2"></span></i></span>
-    <span class="menu-title">Theme</span>
-</a>
-<!--end:Menu link-->
-</div>
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.dashboard') }}"><span
+                                 class="menu-icon"><i class="fa-solid fa-table-columns fs-4"><span
+                                         class="path1"></span><span class="path2"></span></i></span><span
+                                 class="menu-title">Dashboard</span></a><!--end:Menu link-->
+                     </div>
+                     <!--end:Menu item--><!--begin:Menu item-->
+                     <div class="menu-item pt-5">
+                         <!--begin:Menu content-->
+                         <div class="menu-content">
+                             <span class="menu-heading fw-bold text-uppercase fs-7">Dịch vụ
+                             </span>
+                         </div>
+                         <!--end:Menu content-->
+                     </div>
+                     <!--end:Menu item--><!--begin:Menu item-->
+                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
+                                     class="fa-solid fa-cart-shopping fs-4"></i><span class="path1"></span><span
+                                     class="path2"></span><span class="path3"></span></i></span><span
+                                 class="menu-title">Sản phẩm</span><span
+                                 class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
+                         <div class="menu-sub menu-sub-accordion">
+                             <!--begin:Menu item-->
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.categories.index') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Chuyên
+                                         mục</span></a><!--end:Menu link-->
+                             </div>
+                             <!--end:Menu item--><!--begin:Menu item-->
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.products.index') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Tất cả sản
+                                         phẩm</span></a><!--end:Menu link-->
+                             </div>
+                         </div>
+                         <!--end:Menu sub-->
+                     </div>
+                     <!--end:Menu item--><!--begin:Menu item-->
+                     <div class="menu-item pt-5">
+                         <!--begin:Menu content-->
+                         <div class="menu-content">
+                             <span class="menu-heading fw-bold text-uppercase fs-7">Quản lý</span>
+                         </div>
+                         <!--end:Menu content-->
+                     </div>
+                     <!--end:Menu item--><!--begin:Menu item-->
+                     <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.users.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                         class="path1"></span><span class="path2"></span></i></span><span
+                                 class="menu-title">Thành viên</span></a><!--end:Menu link-->
+                     </div>
+                     <div class="menu-item">
+                         <!--begin:Menu link-->
+                         <a class="menu-link" href="{{ route('admin.reviews.index') }}" target="_blank">
+                             <span class="menu-icon">
+                                 <i class="fa-solid fa-star fs-4"><span class="path1"></span><span
+                                         class="path2"></span></i>
+                             </span>
+                             <span class="menu-title">Đánh giá</span>
+                         </a>
+                         <!--end:Menu link-->
+                     </div>
+                     <div class="menu-item">
 
                          <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.dashboard') }}"
                              target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
@@ -196,41 +146,11 @@
                          <!--end:Menu sub-->
                      </div>
                      <!--end:Menu item--><!--begin:Menu item-->
-                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
-                                     class="fa-solid fa-users fs-4"><span class="path1"></span><span
-                                         class="path2"></span><span class="path3"></span><span
-                                         class="path4"></span></i></span><span class="menu-title">Affiliate
-                                 Program</span><span
-                                 class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
-                         <div class="menu-sub menu-sub-accordion">
-                             <!--begin:Menu item-->
-                             <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="toolbars/classic.html"><span
-                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Nhật ký hoa hồng</span></a><!--end:Menu link-->
-                             </div>
-                             <!--end:Menu item--><!--begin:Menu item-->
-                             <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="toolbars/saas.html"><span
-                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Rút tiền</span></a><!--end:Menu link-->
-                             </div>
-                             <!--end:Menu item--><!--begin:Menu item-->
-                             <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="toolbars/saas.html"><span
-                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Cấu hình</span></a><!--end:Menu link-->
-                             </div>
 
-                         </div>
-                         <!--end:Menu sub-->
-                     </div>
                      <!--end:Menu item--><!--begin:Menu item-->
                      <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link"
-                             href="{{ route('admin.email_campaigns.index') }}" target="_blank"><span
-                                 class="menu-icon"><i class="fa-solid fa-envelope fs-4"><span
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.email_campaigns.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-envelope fs-4"><span
                                          class="path1"></span><span class="path2"></span></i></span><span
                                  class="menu-title">Email Campaigns</span></a><!--end:Menu link-->
                      </div>
@@ -249,10 +169,9 @@
                                          class="path3"></span><span class="path4"></span></i></span><span
                                  class="menu-title">Thương hiệu</span></a><!--end:Menu link-->
                      </div>
-                     
+
                      <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link"
-                             href="{{ route('admin.faq.index') }}"
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.faq.index') }}"
                              target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
                                          class="path1"></span><span class="path2"></span><span
                                          class="path3"></span><span class="path4"></span></i></span><span
@@ -265,13 +184,6 @@
                                          class="path3"></span><span class="path4"></span></i></span><span
                                  class="menu-title">Tags</span></a><!--end:Menu link-->
                      </div>
-                     <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-fees.index') }}"
-                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                         class="path1"></span><span class="path2"></span><span
-                                         class="path3"></span><span class="path4"></span></i></span><span
-                                 class="menu-title">Phí ship</span></a><!--end:Menu link-->
-                     </div>
                      <!--end:Menu item-->
                      <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                          <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
@@ -283,22 +195,31 @@
                          <div class="menu-sub menu-sub-accordion">
                              <!--begin:Menu item-->
                              <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blogs.create') }}"><span
-                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Viết bài mới</span></a><!--end:Menu link-->
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blogs.create') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Viết bài
+                                         mới</span></a><!--end:Menu link-->
                              </div>
                              <!--end:Menu item--><!--begin:Menu item-->
                              <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blogs.index') }}"><span
-                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Tất cả bài viết</span></a><!--end:Menu link-->
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blogs.index') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Tất cả
+                                         bài viết</span></a><!--end:Menu link-->
                              </div>
                              <div class="menu-item">
-                                 <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blog-categories.index') }}"><span
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blog-categories.index') }}"><span
                                          class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Chuyên mục</span></a><!--end:Menu link-->
+                                         class="menu-title">Danh mục</span></a><!--end:Menu link-->
                              </div>
 
+                         </div>
+                         <div class="menu-item">
+                             <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.contacts.index') }}"
+                                 target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                             class="path1"></span><span class="path2"></span></i></span><span
+                                     class="menu-title">Liên hệ </span></a><!--end:Menu link-->
                          </div>
                          <!--end:Menu sub-->
                      </div>
@@ -313,22 +234,6 @@
                      </div>
                      <!--end:Menu item--><!--begin:Menu item-->
 
-
-
-
-                     <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link"
-                             href="{{ route('admin.categories.index') }}"><span class="menu-icon"><i
-                                     class="fa-solid fa-images fs-4"><span class="path1"></span><span
-                                         class="path2"></span></i></span><span class="menu-title">Giao
-                                 diện</span></a><!--end:Menu link-->
-                     </div>
-                     <div class="menu-item">
-                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.banners.index') }}"><span
-                                 class="menu-icon"><i class="fa-solid fa-images fs-4"><span
-                                         class="path1"></span><span class="path2"></span></i></span><span
-                                 class="menu-title">Banner</span></a><!--end:Menu link-->
-                     </div>
                      <div class="menu-item">
                          <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.settings.index') }}"><span
                                  class="menu-icon"><i class="fa-solid fa-gear fs-4"><span class="path1"></span><span
