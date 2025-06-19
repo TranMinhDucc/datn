@@ -6,12 +6,6 @@
         <div id="kt_app_content" class="app-content  flex-column-fluid ">
             <div id="kt_app_content_container" class="app-container  container-xxl ">
                 <div class="card card-flush">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
                             <div class="d-flex align-items-center position-relative my-1">

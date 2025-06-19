@@ -93,9 +93,9 @@
                              <!--end:Menu item--><!--begin:Menu item-->
                              <div class="menu-item">
                                  <!--begin:Menu link--><a class="menu-link"
-                                     href="pages/user-profile/campaigns.html"><span class="menu-bullet"><span
+                                     href="{{ route('admin.product-labels.index') }}"><span class="menu-bullet"><span
                                              class="bullet bullet-dot"></span></span><span
-                                         class="menu-title">Campaigns</span></a><!--end:Menu link-->
+                                         class="menu-title">Nhãn dán</span></a><!--end:Menu link-->
                              </div>
                              <!--end:Menu item--><!--begin:Menu item-->
                              <div class="menu-item">

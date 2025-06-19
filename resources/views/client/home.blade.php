@@ -113,8 +113,9 @@
                         </div>
                     </div>
                     <div class="shape-images"> <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img class="img-2 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt=""></div>
+                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
+                            class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
+                            alt=""></div>
                 </div>
             </div>
         </div>
@@ -138,23 +139,22 @@
             </div>
         </div> --}}
         <div class="container-fluid fashion-images">
-    <div class="swiper fashion-images-slide">
-        <div class="swiper-wrapper ratio_square-2">
-            @foreach ($categories as $category)
-                <div class="swiper-slide text-center">
-                    <div class="fashion-box mb-2">
-                        <a href="{{ route('client.category.show', $category->id) }}">
-                            <img class="img-fluid rounded-circle category-circle-img"
-                                 src="{{ asset('storage/' . $category->image) }}"
-                                 alt="{{ $category->name }}">
-                        </a>
-                    </div>
-                    <h5>{{ $category->name }}</h5>
+            <div class="swiper fashion-images-slide">
+                <div class="swiper-wrapper ratio_square-2">
+                    @foreach ($categories as $category)
+                        <div class="swiper-slide text-center">
+                            <div class="fashion-box mb-2">
+                                <a href="{{ route('client.category.show', $category->id) }}">
+                                    <img class="img-fluid rounded-circle category-circle-img"
+                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                                </a>
+                            </div>
+                            <h5>{{ $category->name }}</h5>
+                        </div>
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
         </div>
-    </div>
-</div>
 
     </section>
     <section class="section-t-space">
@@ -186,1174 +186,91 @@
                                 </a></li>
                         </ul>
                     </div>
+
+                    <!-- Fashikart specials -->
                     <div class="row">
                         <div class="col-12 ratio_square">
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="features-products" role="tabpanel" tabindex="0">
+                                <div class="tab-pane fade show active" id="features-products" role="tabpanel"
+                                    tabindex="0">
                                     <div class="row g-4">
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/3.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a
-                                                            href="{{ route('client.products.index') }}"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/1.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>4.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="{{ route('client.products.index') }}">
-                                                        <h6>Greciilooks Women's Stylish Top</h6>
-                                                    </a>
-                                                    <p>$100.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/2.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/3.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv1">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
+                                        @foreach ($products as $product)
+                                            <div class="col-xxl-3 col-md-4 col-6">
+                                                <div class="product-box">
+                                                    <div class="img-wrapper">
+                                                        <div class="label-block">
+                                                            <img src="{{ asset('assets/client/images/product/3.png') }}"
+                                                                alt="lable">
+                                                            <span>on <br>Sale!</span>
+                                                        </div>
+                                                        <a href="{{ route('client.products.show', $product->id) }}"
+                                                            style="display: block;">
+                                                            <div class="product-image bg-size"
+                                                                style="background-image: url('{{ asset('storage/' . $product->image) }}');
+                               background-size: cover;
+                               background-position: center;">
+                                                            </div>
+                                                        </a>
+                                                        <div class="cart-info-icon">
+                                                            <a class="wishlist-icon" href="javascript:void(0)"
+                                                                tabindex="0">
+                                                                <i class="iconsax" data-icon="heart" aria-hidden="true"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-title="Add to Wishlist"></i>
+                                                            </a>
+                                                            <a href="compare.html" tabindex="0">
+                                                                <i class="iconsax" data-icon="arrow-up-down"
+                                                                    aria-hidden="true" data-bs-toggle="tooltip"
+                                                                    data-bs-title="Compare"></i>
+                                                            </a>
+                                                            <a href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#quick-view" tabindex="0">
+                                                                <i class="iconsax" data-icon="eye" aria-hidden="true"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-title="Quick View"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="product-detail">
+                                                        <div class="add-button">
+                                                            <a href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#addtocart" title="add product"
+                                                                tabindex="0">
+                                                                <i class="fa-solid fa-plus"></i> Add To Cart
+                                                            </a>
+                                                        </div>
+                                                        <div class="color-box">
+                                                            <ul class="color-variant">
+                                                                <li class="bg-color-purple"></li>
+                                                                <li class="bg-color-blue"></li>
+                                                                <li class="bg-color-red"></li>
+                                                                <li class="bg-color-yellow"></li>
+                                                            </ul>
+                                                            <span>{{ $product->rating_avg ?? '0' }} <i
+                                                                    class="fa-solid fa-star"></i></span>
+                                                        </div>
+                                                        <a href="{{ route('client.products.show', $product->id) }}">
+                                                            <h6>{{ $product->name }}</h6>
+                                                        </a>
+                                                        <p>
+                                                            ${{ number_format($product->sale_price ?? $product->base_price) }}
+                                                            @if ($product->sale_price)
+                                                                <del>${{ number_format($product->base_price) }}</del>
+                                                            @endif
+                                                        </p>
                                                     </div>
                                                 </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>2.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Beautiful Lycra Solid Women's High Zipper </h6>
-                                                    </a>
-                                                    <p>$1300
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/4.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/5.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv6">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/6.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/7.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Belle Fille Women's Fleece Jacket</h6>
-                                                    </a>
-                                                    <p>$150.00
-                                                        <del>$170.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Arrow Men Yellow Formal Blazer</h6>
-                                                    </a>
-                                                    <p>$100.00
-                                                        <del>$120.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
-                                </div>
-                                <div class="tab-pane fade" id="latest-products" role="tabpanel" tabindex="0">
-                                    <div class="row g-4">
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/3.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/11.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>4.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Greciilooks Women's Stylish Top</h6>
-                                                    </a>
-                                                    <p>$100.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/12.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/13.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv7">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>2.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Beautiful Lycra Solid Women's High Zipper </h6>
-                                                    </a>
-                                                    <p>$1300
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/14.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/15.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv8">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/16.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/17.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Belle Fille Women's Fleece Jacket</h6>
-                                                    </a>
-                                                    <p>$80.00
-                                                        <del>$100.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/18.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Arrow Men Yellow Formal Blazer</h6>
-                                                    </a>
-                                                    <p>$110.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="seller-products" role="tabpanel" tabindex="0">
-                                    <div class="row g-4">
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/3.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/17.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>4.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Greciilooks Women's Stylish Top</h6>
-                                                    </a>
-                                                    <p>$100.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/18.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/19.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv3">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>2.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Beautiful Lycra Solid Women's High Zipper </h6>
-                                                    </a>
-                                                    <p>$1300
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/20.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="label-block"><img
-                                                            src="{{ asset('assets/client/images/product/2.png') }}"
-                                                            alt="lable"><span>on <br>Sale!</span></div>
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/21.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                    <div class="countdown">
-                                                        <ul class="clockdiv2">
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="days"></div>
-                                                                </div><span class="title">Days</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="hours"></div>
-                                                                </div><span class="title">Hours</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="minutes"></div>
-                                                                </div><span class="title">Min</span>
-                                                            </li>
-                                                            <li class="dot"> <span>:</span></li>
-                                                            <li>
-                                                                <div class="timer">
-                                                                    <div class="seconds"></div>
-                                                                </div><span class="title">Sec</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Dennis Lingo Men Casual Shirt</h6>
-                                                    </a>
-                                                    <p>$120.00
-                                                        <del>$140.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/2.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Belle Fille Women's Fleece Jacket</h6>
-                                                    </a>
-                                                    <p>$140.00
-                                                        <del>$145.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xxl-3 col-md-4 col-6">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                                                src="{{ asset('assets/client/images/product/product-4/15.jpg') }}"
-                                                                alt="product"></a></div>
-                                                    <div class="cart-info-icon"> <a class="wishlist-icon"
-                                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
-                                                                data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-title="Add to Wishlist"></i></a><a
-                                                            href="compare.html" tabindex="0"><i class="iconsax"
-                                                                data-icon="arrow-up-down" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                            tabindex="0"><i class="iconsax" data-icon="eye"
-                                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                                data-bs-title="Quick View"></i></a></div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div class="add-button"><a href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="add product" tabindex="0"><i
-                                                                class="fa-solid fa-plus"></i> Add To
-                                                            Cart</a></div>
-                                                    <div class="color-box">
-                                                        <ul class="color-variant">
-                                                            <li class="bg-color-purple"></li>
-                                                            <li class="bg-color-blue"></li>
-                                                            <li class="bg-color-red"></li>
-                                                            <li class="bg-color-yellow"></li>
-                                                        </ul><span>3.5 <i class="fa-solid fa-star"></i></span>
-                                                    </div><a href="product.html">
-                                                        <h6>Arrow Men Yellow Formal Blazer</h6>
-                                                    </a>
-                                                    <p>$70.00
-                                                        <del>$90.00</del>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- end Fashikart specials -->
                 </div>
             </div>
         </div>
@@ -1366,7 +283,8 @@
                         <div class="col-md-5">
                             <div class="best-seller-img ratio_square-3"><a href="collection-left-sidebar.html"> <img
                                         class="bg-img"
-                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}" alt=""></a>
+                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}"
+                                        alt=""></a>
                             </div>
                         </div>
                         <div class="col-md-7 ratio_landscape">
@@ -1389,7 +307,8 @@
                                             </use>
                                         </svg></a></div>
                             </div><a href="collection-left-sidebar.html"> <img class="bg-img"
-                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}" alt=""></a>
+                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}"
+                                    alt=""></a>
                         </div>
                     </div>
                 </div>
@@ -1437,20 +356,22 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/2.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
                             <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                            </div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1469,15 +390,16 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv4">
@@ -1509,7 +431,8 @@
                         </div>
                         <div class="product-detail">
                             <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                            </div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1530,20 +453,22 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/3.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
                             <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                            </div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1564,13 +489,13 @@
                             <div class="product-image"><a href="#"> <img class="bg-img"
                                         src="{{ asset('assets/client/images/product/product-4/10.jpg') }}"
                                         alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv5">
@@ -1602,7 +527,8 @@
                         </div>
                         <div class="product-detail">
                             <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                            </div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1621,20 +547,22 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
                             <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a></div>
+                                    title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                            </div>
                             <div class="color-box">
                                 <ul class="color-variant">
                                     <li class="bg-color-purple"></li>
@@ -1668,8 +596,9 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="blog-main">
-                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img class="bg-img"
-                                        src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}" alt=""></a></div>
+                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img
+                                        class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}"
+                                        alt=""></a></div>
                             <div class="blog-txt">
                                 <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
                                     <h5>Many desktop publishing pack-ages abd page editor...</h5>
@@ -1681,7 +610,8 @@
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                             </use>
-                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                        href="#">Read
                                         More
                                         <svg>
                                             <use
@@ -1705,7 +635,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -1727,7 +658,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -1749,7 +681,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
