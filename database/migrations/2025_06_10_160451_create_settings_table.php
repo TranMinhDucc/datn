@@ -19,18 +19,20 @@ return new class extends Migration
             $table->timestamps();
         });
         DB::table('settings')->insert([
-        ['id' => 1, 'name' => 'title', 'value' => 'Katie - Online Fashion Store', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
-        ['id' => 2, 'name' => 'description', 'value' => 'Katie', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
-        ['id' => 3, 'name' => 'keywords', 'value' => 'Katie', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
-        ['id' => 4, 'name' => 'author', 'value' => 'Chủ shop', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
-        ['id' => 5, 'name' => 'timezone', 'value' => 'Asia/Ho_Chi_Minh', 'created_at' => now(), 'updated_at' => now()],
-        ['id' => 6, 'name' => 'email', 'value' => 'tuongtacsale@gmail.com', 'created_at' => now(), 'updated_at' => now()],
-        ['id' => 7, 'name' => 'hotline', 'value' => '03.56789.087', 'created_at' => now(), 'updated_at' => now()],
-        ['id' => 8, 'name' => 'logo_light', 'value' => 'settings/cWnHB9xjk2vOVnzz2wYSRTlzBQzGAOyt5MsvS0Ng.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:24:02'],
-        ['id' => 9, 'name' => 'logo_dark', 'value' => 'settings/DgIOCtugBgSRrsDe3AHA61t5uPbF9EJw1RiLnBtI.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:24:02'],
-        ['id' => 10, 'name' => 'favicon', 'value' => 'settings/9dax3biFluHA9rhZ0yQYrGUR9w5jBD6BLcCDSSxv.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:25:03'],
-        ['id' => 11, 'name' => 'image', 'value' => null, 'created_at' => now(), 'updated_at' => now()],
-    ]);
+            ['id' => 1, 'name' => 'title', 'value' => 'Katie - Online Fashion Store', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
+            ['id' => 2, 'name' => 'description', 'value' => 'Katie', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
+            ['id' => 3, 'name' => 'keywords', 'value' => 'Katie', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
+            ['id' => 4, 'name' => 'author', 'value' => 'Chủ shop', 'created_at' => now(), 'updated_at' => '2025-06-09 16:20:28'],
+            ['id' => 5, 'name' => 'timezone', 'value' => 'Asia/Ho_Chi_Minh', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'name' => 'email', 'value' => 'tuongtacsale@gmail.com', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'name' => 'hotline', 'value' => '03.56789.087', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'name' => 'logo_light', 'value' => 'settings/cWnHB9xjk2vOVnzz2wYSRTlzBQzGAOyt5MsvS0Ng.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:24:02'],
+            ['id' => 9, 'name' => 'logo_dark', 'value' => 'settings/DgIOCtugBgSRrsDe3AHA61t5uPbF9EJw1RiLnBtI.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:24:02'],
+            ['id' => 10, 'name' => 'favicon', 'value' => 'settings/9dax3biFluHA9rhZ0yQYrGUR9w5jBD6BLcCDSSxv.png', 'created_at' => now(), 'updated_at' => '2025-06-10 14:25:03'],
+            ['id' => 11, 'name' => 'image', 'value' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 12, 'name' => 'address', 'value' => '123 Đường Thời Trang, Quận 1, TP.HCM', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'vat', 'value' => '10', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     /**

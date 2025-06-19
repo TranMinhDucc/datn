@@ -458,11 +458,6 @@
         });
     </script>
     @endif
-
-
-
-
-
 </body>
 
 <script>
@@ -615,5 +610,4 @@
 
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
-
 </html>
