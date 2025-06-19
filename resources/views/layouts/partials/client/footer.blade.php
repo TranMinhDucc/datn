@@ -12,14 +12,14 @@
                           </div>
 
                           <ul>
-                              {{-- <li> <i class="iconsax" data-icon="location"></i>
-                                  <h6>{{ $settings['address']}}</h6>
-                              </li> --}}
+                              <li> <i class="iconsax" data-icon="location"></i>
+                                  <h6>{{ $settings['address'] ?? ''}}</h6>
+                              </li>
                               <li> <i class="iconsax" data-icon="phone-calling"></i>
-                                  <h6>{{ $settings['hotline']}}</h6>
+                                  <h6>{{ $settings['hotline'] ?? ''}}</h6>
                               </li>
                               <li> <i class="iconsax" data-icon="mail"></i>
-                                  <h6>{{ $settings['email']}}</h6>
+                                  <h6>{{ $settings['email'] ?? ''}}</h6>
                               </li>
                           </ul>
                       </div>
