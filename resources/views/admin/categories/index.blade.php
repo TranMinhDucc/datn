@@ -8,9 +8,9 @@
         <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
             <!--begin::Toolbar container-->
-        <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
-            
-    
+            <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
+
+
 
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
@@ -20,12 +20,7 @@
                     </h1>
                     <!--end::Title-->
 
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+
                     <!--begin::Breadcrumb-->
 
                 </div>
@@ -171,12 +166,12 @@
                         <!--begin::Card title-->
                         <div class="card-title">
                             <!--begin::Search-->
-                            <div class="d-flex align-items-center position-relative my-1">
+                            {{-- <div class="d-flex align-items-center position-relative my-1">
                                 <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"><span
                                         class="path1"></span><span class="path2"></span></i> <input type="text"
                                     data-kt-ecommerce-category-filter="search"
                                     class="form-control form-control-solid w-250px ps-12" placeholder="Search Category" />
-                            </div>
+                            </div> --}}
                             <!--end::Search-->
                         </div>
                         <!--end::Card title-->
@@ -198,117 +193,135 @@
 
                         <!--begin::Table-->
                         <div class="table-responsive">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_category_table">
-                            <thead>
-                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                    <th class="w-10px pe-2">
-                                        <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                            <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                                data-kt-check-target="#kt_ecommerce_category_table .form-check-input"
-                                                value="1" />
-                                        </div>
-                                    </th>
-                                    <th class="min-w-40px">STT</th>
-                                    <th class="min-w-40px">Ảnh</th>
-                                    <th class="min-w-200px">Tên</th>
-                                    <th class="min-w-150px">Danh mục cha</th>
-                                    <th class="min-w-150px">Mô tả </th>
+            <style>
+    .child-row { display: none; }
+    .toggle-btn { cursor: pointer; font-weight: bold; color: #3a3a3a; }
+    .category-parent { background-color: #f5f9ff; } /* tô nền cấp 1 */
+    tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+</style>
 
-                                    <th class="text-end min-w-100px">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody class="fw-semibold text-gray-600">
+<table class="table table-bordered align-middle">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Ảnh</th>
+            <th>Tên danh mục</th>
+            <th>Danh mục cha</th>
+            <th>Mô tả</th>
+            <th class="text-end">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @php
+            $stt = 1;
 
-                                @foreach ($categories as $category)
-                                    <tr>
-                                        <td>
-                                            <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $category->id }}" />
-                                            </div>
-                                        </td>
-                                        <td>{{ $category->id }}</td>
+            function renderRows($categories, $parentId = null, $level = 0, &$stt = 1, $categoryMap = [], $breadcrumb = []) {
+                foreach ($categories->where('parent_id', $parentId) as $category) {
+                    $hasChildren = $categories->where('parent_id', $category->id)->count() > 0;
+                    $isParent = $level === 0;
+                    $rowClass = $isParent ? 'category-parent' : 'child-row';
+                    $breadcrumbText = implode(' > ', [...$breadcrumb, $category->name]);
 
-                                        <td>
-                                            <div class="symbol symbol-50px">
-                                                <span class="symbol-label"
-                                                    style="background-image:url('{{ asset('storage/' . $category->image) }}')"></span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="ms-5">
-                                                <!--begin::Title-->
-                                                <a href="{{ route('admin.categories.edit', $category) }}"
-                                                    class="text-gray-800 text-hover-primary fs-5 fw-bold mb-1"
-                                                    data-kt-ecommerce-category-filter="category_name">
-                                                    {{ $category->name }}
-                                                </a>
-                                                <!--end::Title-->
+                    echo '<tr data-id="'.$category->id.'" data-parent="'.$parentId.'" class="parent-'.($parentId ?? 'root').' '.$rowClass.'"'.($isParent ? '' : ' style="display:none"').'>';
 
-                                                <!--begin::Description-->
+                    // Cột STT – chỉ cấp 1
+                    echo '<td>';
+                    if ($isParent) echo $stt++;
+                    echo '</td>';
 
-                                                <!--end::Description-->
-                                            </div>
-                                        </td>
+                    // Ảnh
+                    echo '<td>';
+                    if ($category->image) {
+                        echo '<img src="'.asset("storage/".$category->image).'" width="40" height="40" style="object-fit:cover;border-radius:6px;">';
+                    } else {
+                        echo '<span class="text-muted">Không có</span>';
+                    }
+                    echo '</td>';
 
-                                        <td>
-                                            <div class="text-muted fs-7 fw-bold">
-                                                {{ $category->parent ? $category->parent->name : 'Chưa có danh mục cha' }}
-                                            </div>
-                                        </td>
+                    // Tên danh mục
+                    echo '<td title="'.e($breadcrumbText).'">';
+                    if ($hasChildren) {
+                        echo '<span class="toggle-btn" onclick="toggleChildren('.$category->id.', this)">▸</span> ';
+                    } else {
+                        echo '<span style="display:inline-block; width: 14px;"></span> ';
+                    }
+                    echo str_repeat(' ', $level).' '.$category->name;
+                    echo '</td>';
 
-                                        <td>
-                                            <div class="text-muted fs-7 fw-bold">
-                                                {{ $category->description ?? 'Chưa có mô tả' }}
-                                            </div>
-                                        </td>
+                    // Danh mục cha
+                    echo '<td>';
+                    if ($category->parent_id && isset($categoryMap[$category->parent_id])) {
+                        echo $categoryMap[$category->parent_id];
+                    } else {
+                        echo '<span class="text-muted">Không có</span>';
+                    }
+                    echo '</td>';
+
+                    // Mô tả
+                    echo '<td>'.($category->description ?? 'Không có mô tả').'</td>';
+
+                    // Hành động
+                    echo '<td class="text-end">
+                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
+                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                Hành động
+                                <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
+                            </a>
+
+                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
+                                data-kt-menu="true">
+                                <div class="menu-item px-3">
+                                    <a href="'.route('admin.categories.edit', $category).'" class="menu-link px-3">Sửa</a>
+                                </div>
+                                <div class="menu-item px-3">
+                                    <a href="'.route('admin.categories.show', $category).'" class="menu-link px-3">Xem</a>
+                                </div>
+                                <div class="menu-item px-3">
+                                    <form action="'.route('admin.categories.destroy', $category).'" method="POST" onsubmit="return confirm(\'Bạn chắc chắn muốn xóa?\');">
+                                        '.csrf_field().method_field('DELETE').'
+                                        <button type="submit" class="menu-link px-3">Xóa</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>';
+
+                    echo '</tr>';
+
+                    renderRows($categories, $category->id, $level + 1, $stt, $categoryMap, [...$breadcrumb, $category->name]);
+                }
+            }
+
+            $categoryMap = $categories->pluck('name', 'id')->toArray();
+            renderRows($categories, null, 0, $stt, $categoryMap);
+        @endphp
+    </tbody>
+</table>
+
+<script>
+    function toggleChildren(parentId, toggleIcon) {
+        const rows = document.querySelectorAll('tr[data-parent="' + parentId + '"]');
+        const isOpen = toggleIcon.textContent.trim() === '▾';
+
+        toggleIcon.textContent = isOpen ? '▸' : '▾';
+
+        rows.forEach(row => {
+            if (isOpen) {
+                row.style.display = 'none';
+
+                // Nếu có con, đóng tiếp
+                const childToggle = row.querySelector('.toggle-btn');
+                if (childToggle && childToggle.textContent.trim() === '▾') {
+                    childToggle.textContent = '▸';
+                    toggleChildren(row.dataset.id, childToggle);
+                }
+            } else {
+                row.style.display = 'table-row';
+            }
+        });
+    }
+</script>
 
 
-    <td class="text-end">
-        <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
-           data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-            Hành động
-            <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
-        </a>
-
-                                            <!--begin::Menu-->
-                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                data-kt-menu="true">
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="{{ route('admin.categories.edit', $category) }}"
-                                                        class="menu-link px-3">
-                                                        Sửa
-                                                    </a>
-                                                </div>
-
-                                                <div class="menu-item px-3">
-                                                    <a href="{{ route('admin.categories.show', $category) }}"
-                                                        class="menu-link px-3">
-                                                        Xem
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <form action="{{ route('admin.categories.destroy', $category) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="menu-link px-3">Xóa</button>
-                                                    </form>
-                                                </div>
-                                                <!--end::Menu item-->
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <!--end::Table body-->
-                        </table>
                         </div>
                         <!--end::Table-->
                     </div>

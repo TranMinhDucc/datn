@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->boolean('verified_purchase')->default(false);
-
+            $table->boolean('approved')->default(true);
             // Ràng buộc khóa ngoại
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

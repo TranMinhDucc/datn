@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', callback: function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id(); // chỉ gọi 1 lần
+            $table->string('image')->nullable();
             $table->string('name');
-            $table->unsignedBigInteger(column: 'parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->text('description')->nullable();
-            $table->string('slug')->nullable();
+
             // Khóa ngoại tham chiếu đến bảng chính nó
             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
 

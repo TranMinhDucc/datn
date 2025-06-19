@@ -12,8 +12,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::orderBy('id', 'asc')->paginate(10);
-        return view('admin.categories.index', compact('categories'));
+         $categories = Category::all();
+    return view('admin.categories.index', compact('categories'));
     }
 
     public function create()
@@ -23,27 +23,27 @@ class CategoryController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'name'        => 'required|string|max:255',
-        'parent_id'   => 'nullable|exists:categories,id',
-        'description' => 'nullable|string',
-    ], [
-        'name.required' => 'Vui lòng nhập tên danh mục.',
-        'parent_id.exists' => 'Danh mục cha không hợp lệ.',
-    ]);
+    {
+        $validated = $request->validate([
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'name'        => 'required|string|max:255',
+            'parent_id'   => 'nullable|exists:categories,id',
+            'description' => 'nullable|string',
+        ], [
+            'name.required' => 'Vui lòng nhập tên danh mục.',
+            'parent_id.exists' => 'Danh mục cha không hợp lệ.',
+        ]);
 
-    // Xử lý upload ảnh
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('categories', 'public');
-        $validated['image'] = $path; // Lưu đường dẫn vào DB
+        // Xử lý upload ảnh
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('categories', 'public');
+            $validated['image'] = $path; // Lưu đường dẫn vào DB
+        }
+
+        Category::create($validated);
+
+        return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
     }
-
-    Category::create($validated);
-
-    return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
-}
     public function edit(Category $category)
     {
         $parents = Category::where('id', '!=', $category->id)->get();
@@ -51,39 +51,39 @@ class CategoryController extends Controller
     }
 
     public function update(Request $request, Category $category)
-{
-    $validated = $request->validate([
-        'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'name'        => 'required|string|max:255',
-        'parent_id'   => 'nullable|exists:categories,id',
-        'description' => 'nullable|string',
-    ], [
-        'name.required' => 'Vui lòng nhập tên danh mục.',
-        'parent_id.exists' => 'Danh mục cha không hợp lệ.',
-    ]);
+    {
+        $validated = $request->validate([
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'name'        => 'required|string|max:255',
+            'parent_id'   => 'nullable|exists:categories,id',
+            'description' => 'nullable|string',
+        ], [
+            'name.required' => 'Vui lòng nhập tên danh mục.',
+            'parent_id.exists' => 'Danh mục cha không hợp lệ.',
+        ]);
 
-    // Xử lý upload ảnh mới nếu có
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('categories', 'public');
-        $validated['image'] = $path;
+        // Xử lý upload ảnh mới nếu có
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('categories', 'public');
+            $validated['image'] = $path;
+        }
+
+        $category->update($validated);
+
+        return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công!');
     }
+    public function destroy(Category $category)
+    {
+        // Xóa ảnh khỏi thư mục storage nếu có
+        if ($category->image && Storage::disk('public')->exists($category->image)) {
+            Storage::disk('public')->delete($category->image);
+        }
 
-    $category->update($validated);
+        // Xóa record danh mục
+        $category->delete();
 
-    return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công!');
-}
-   public function destroy(Category $category)
-{
-    // Xóa ảnh khỏi thư mục storage nếu có
-    if ($category->image && Storage::disk('public')->exists($category->image)) {
-        Storage::disk('public')->delete($category->image);
+        return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục và ảnh.');
     }
-
-    // Xóa record danh mục
-    $category->delete();
-
-    return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục và ảnh.');
-}
     public function show(Category $category)
     {
         return view('admin.categories.show', compact('category'));

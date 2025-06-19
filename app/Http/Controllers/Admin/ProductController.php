@@ -338,109 +338,102 @@ class ProductController extends Controller
     }
 
 
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'slug' => 'nullable|string|max:255',
+        'category_id' => 'required|exists:categories,id',
+        'brand_id' => 'required|exists:brands,id',
+        'import_price' => 'required|numeric|min:0',
+        'base_price' => 'required|numeric|min:0',
+        'sale_price' => 'nullable|numeric|min:0',
+        'stock_quantity' => 'required|integer|min:0',
+        'description' => 'nullable|string',
 
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
+        'variants' => 'nullable|array',
+        'variants.*.attributes' => 'required_with:variants|array|min:1',
+        'variants.*.price' => 'required_with:variants|numeric|min:0.01',
+        'variants.*.quantity' => 'required_with:variants|integer|min:0',
+        'variants.*.sku' => 'required_with:variants|string|max:100',
 
+    ], [
+        'name.required' => 'Tên sản phẩm không được để trống.',
+        'category_id.required' => 'Vui lòng chọn danh mục.',
+        'brand_id.required' => 'Vui lòng chọn thương hiệu.',
+        'import_price.required' => 'Vui lòng nhập giá nhập.',
+        'base_price.required' => 'Vui lòng nhập giá gốc.',
+        'stock_quantity.required' => 'Vui lòng nhập tồn kho.',
+        // 'variants.required' => 'Phải có ít nhất một biến thể.', // Bỏ dòng này để cho phép không có biến thể
+        'variants.*.attributes.required_with' => 'Mỗi biến thể phải có ít nhất một thuộc tính.',
+        'variants.*.price.required_with' => 'Vui lòng nhập giá cho biến thể.',
+        'variants.*.quantity.required_with' => 'Vui lòng nhập số lượng tồn kho cho biến thể.',
+        'variants.*.sku.required_with' => 'Vui lòng nhập SKU cho biến thể.',
+    ]);
 
+    $product = Product::findOrFail($id);
 
-    public function update(Request $request, $id)
-    {
+    DB::beginTransaction();
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-            'import_price' => 'required|numeric|min:0',
-            'base_price' => 'required|numeric|min:0',
-            'sale_price' => 'nullable|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
-            'variants' => 'required|array|min:1',
-            'variants.*.attributes' => 'required|array|min:1',
-            'variants.*.price' => 'required|numeric|min:0.01',
-            'variants.*.quantity' => 'required|integer|min:0',
-            'variants.*.sku' => 'required|string|max:100',
-
-        ], [
-            'name.required' => 'Tên sản phẩm không được để trống.',
-            'category_id.required' => 'Vui lòng chọn danh mục.',
-            'brand_id.required' => 'Vui lòng chọn thương hiệu.',
-            'import_price.required' => 'Vui lòng nhập giá nhập.',
-            'base_price.required' => 'Vui lòng nhập giá gốc.',
-            'stock_quantity.required' => 'Vui lòng nhập tồn kho.',
-            'variants.required' => 'Phải có ít nhất một biến thể.',
-            'variants.*.attributes.required' => 'Mỗi biến thể phải có ít nhất một thuộc tính.',
-            'variants.*.price.required' => 'Vui lòng nhập giá cho biến thể.',
-            'variants.*.quantity.required' => 'Vui lòng nhập số lượng tồn kho cho biến thể.',
-            'variants.*.sku.required' => 'Vui lòng nhập SKU cho biến thể.',
+    try {
+        // === 1. Cập nhật thông tin sản phẩm chính ===
+        $product->update([
+            'name' => $request->input('name'),
+            'slug' => $request->input('slug') ?? Str::slug($request->input('name')),
+            'category_id' => $request->input('category_id'),
+            'brand_id' => $request->input('brand_id'),
+            'description' => $request->input('description'),
+            'import_price' => $request->input('import_price'),
+            'base_price' => $request->input('base_price'),
+            'sale_price' => $request->input('sale_price'),
+            'stock_quantity' => $request->input('stock_quantity'),
+            'is_active' => $request->has('is_active'),
         ]);
 
-        $product = Product::findOrFail($id);
-
-        DB::beginTransaction();
-
-        try {
-            // === 1. Cập nhật thông tin sản phẩm chính ===
-            $product->update([
-                'name' => $request->input('name'),
-                'slug' => $request->input('slug') ?? Str::slug($request->input('name')),
-                'category_id' => $request->input('category_id'),
-                'brand_id' => $request->input('brand_id'),
-                'description' => $request->input('description'),
-                'import_price' => $request->input('import_price'),
-                'base_price' => $request->input('base_price'),
-                'sale_price' => $request->input('sale_price'),
-                'stock_quantity' => $request->input('stock_quantity'),
-                'is_active' => $request->has('is_active'),
-            ]);
-
-            // === 2. Cập nhật ảnh đại diện nếu có ===
-            if ($request->hasFile('image')) {
-                if ($product->image) {
-                    Storage::disk('public')->delete($product->image);
-                }
-                $path = $request->file('image')->store('products', 'public');
-                $product->update(['image' => $path]);
+        // === 2. Cập nhật ảnh đại diện nếu có ===
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
             }
+            $path = $request->file('image')->store('products', 'public');
+            $product->update(['image' => $path]);
+        }
 
-            // === 3. Xoá ảnh phụ nếu có yêu cầu ===
-            if ($request->has('delete_image_ids')) {
-                foreach ($request->delete_image_ids as $imageId) {
-                    $image = ProductImage::find($imageId);
-                    if ($image) {
-                        Storage::disk('public')->delete($image->image_url);
-                        $image->delete();
-                    }
+        // === 3. Xoá ảnh phụ nếu có yêu cầu ===
+        if ($request->has('delete_image_ids')) {
+            foreach ($request->delete_image_ids as $imageId) {
+                $image = ProductImage::find($imageId);
+                if ($image) {
+                    Storage::disk('public')->delete($image->image_url);
+                    $image->delete();
                 }
             }
+        }
 
-            // === 4. Thêm ảnh phụ mới ===
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $img) {
-                    $path = $img->store('products', 'public');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_url' => $path,
-                        'is_thumbnail' => false,
-                    ]);
-                }
+        // === 4. Thêm ảnh phụ mới ===
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $path = $img->store('products', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url' => $path,
+                    'is_thumbnail' => false,
+                ]);
             }
+        }
 
-            // === 5. Xoá toàn bộ biến thể cũ và options ===
-            $product->variants()->each(function ($variant) {
-                $variant->options()->delete();
-                $variant->delete();
-            });
+        // === 5. Xoá toàn bộ biến thể cũ và options ===
+        $product->variants()->each(function ($variant) {
+            $variant->options()->delete();
+            $variant->delete();
+        });
 
-            // === 6. Lưu lại biến thể mới ===
-            $manualVariants = $request->input('variants', []);
-
-            // Ánh xạ tên thuộc tính => id
+        // === 6. Lưu lại biến thể mới nếu có ===
+        $manualVariants = $request->input('variants', []);
+        if (!empty($manualVariants)) {
             $attributeMap = Attribute::pluck('id', 'name')->toArray();
 
             foreach ($manualVariants as $variantData) {
@@ -451,31 +444,35 @@ class ProductController extends Controller
                 ]);
 
                 foreach ($variantData['attributes'] ?? [] as $attributeName => $valueName) {
-                    $attributeId = $attributeMap[$attributeName] ?? null;
+                    // Tìm hoặc tạo Attribute
+                    $attribute = Attribute::firstOrCreate(
+                        ['name' => $attributeName],
+                        ['slug' => Str::slug($attributeName)]
+                    );
 
-                    if ($attributeId) {
-                        $valueId = AttributeValue::where('attribute_id', $attributeId)
-                            ->where('value', $valueName)
-                            ->value('id');
+                    // Tìm hoặc tạo Value
+                    $value = AttributeValue::firstOrCreate([
+                        'attribute_id' => $attribute->id,
+                        'value' => $valueName
+                    ]);
 
-                        if ($valueId) {
-                            $variant->options()->create([
-                                'attribute_id' => $attributeId,
-                                'value_id' => $valueId,
-                            ]);
-                        }
-                    }
+                    // Lưu option
+                    $variant->options()->create([
+                        'attribute_id' => $attribute->id,
+                        'value_id' => $value->id,
+                    ]);
                 }
             }
-
-            DB::commit();
-
-            return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Lỗi khi cập nhật: ' . $e->getMessage());
         }
+
+        DB::commit();
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Lỗi khi cập nhật: ' . $e->getMessage());
     }
+}
+
 
 
 
