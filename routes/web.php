@@ -45,9 +45,14 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-
 use App\Http\Controllers\Admin\EmailCampaignController;
+
+use App\Http\Controllers\Admin\ShippingFeeController;
+use App\Http\Controllers\Admin\ShippingMethodController;
+use App\Http\Controllers\Admin\ShippingZoneController;
+
 use App\Http\Middleware\AdminMiddleware;
+
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
@@ -167,6 +172,7 @@ Route::prefix('admin')
         Route::resource('faq', FaqController::class);
 
 
+
         Route::resource('coupons', CouponController::class);
         // Marketing
 
@@ -185,7 +191,11 @@ Route::prefix('admin')
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
 
+
+        Route::resource('product-labels', ProductLabelController::class);
+
         Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+
 
         Route::resource('product-labels', ProductLabelController::class);
 
@@ -202,11 +212,24 @@ Route::prefix('admin')
         // Route::resource('promotions', PromoController::class)->names('admin.promotions');
         // Route::resource('posts', PostController::class)->names('admin.posts');
 
+
+        Route::resource('brands', BrandController::class);
+        Route::resource('tags', TagController::class);
+        //Blog
+        Route::resource('blogs', BlogController::class)->names('blogs');
+        Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
+        //Shipping
+        Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
+        Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
+        Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
+
         // System Settings
         // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
         // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
         // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
         // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
 
         Route::resource('brands', BrandController::class);
         Route::resource('tags', TagController::class);
@@ -226,6 +249,7 @@ Route::prefix('admin')
         // Banking 
 
 
+
         Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
         Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
         Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
@@ -237,3 +261,4 @@ Route::prefix('admin')
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
     });
+
