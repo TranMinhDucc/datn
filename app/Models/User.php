@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'create_date' => 'datetime',
         'update_date' => 'datetime',
     ];
-public function getAvatarUrlAttribute()
+    public function getAvatarUrlAttribute()
     {
         return $this->avatar && file_exists(public_path($this->avatar))
             ? asset($this->avatar)
@@ -82,8 +82,11 @@ public function getAvatarUrlAttribute()
         return $this->hasMany(Review::class);
     }
     public function shippingAddresses()
-{
-    return $this->hasMany(ShippingAddress::class);
-}
-
+    {
+        return $this->hasMany(ShippingAddress::class);
+    }
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_user');
+    }
 }

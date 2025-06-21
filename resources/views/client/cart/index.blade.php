@@ -75,17 +75,54 @@
                     </div>
 
                     <div class="cart-body">
-                        <h6>Đơn hàng  (<span id="item-count">0</span> đơn)</h6>
+                        <h6>Đơn hàng (<span id="item-count">0</span> đơn)</h6>
                         <ul>
                             <li>
-                                <p>	Tạm tính </p><span id="bag-total">0</span>
+                                <p> Tạm tính </p><span id="bag-total">0</span>
                             </li>
+
+                            @php
+                            $coupon = session('coupon');
+                            @endphp
+
+                            @if ($coupon)
                             <li>
-                                <p>Giảm giá </p><span id="bag-savings" class="theme-color">-$20.00</span>
+                                <p>Mã giảm giá</p>
+                                <span id="coupon-discount" class="Coupon">
+                                    {{ $coupon['code'] }}
+                                    (
+                                    @if ($coupon['type'] === 'percent')
+                                    -{{ $coupon['value'] }}%
+                                    @else
+                                    -{{ number_format($coupon['value'], 0, '.', ',') }}đ
+                                    @endif
+                                    )
+                                </span>
                             </li>
+                            @else
                             <li>
-                                <p>Mã giảm giá </p><span id="coupon-discount" class="Coupon">Apply Coupon</span>
+                                <p>Mã giảm giá</p>
+                                @if (session()->has('coupon'))
+                                <span id="coupon-discount" class="Coupon">
+                                    {{ session('coupon.code') }}
+                                    (
+                                    @if (session('coupon.type') === 'percent')
+                                    -{{ session('coupon.value') }}%
+                                    @else
+                                    -{{ number_format(session('coupon.value'), 0, '.', ',') }}đ
+                                    @endif
+                                    )
+                                </span>
+                                @else
+                                <span id="coupon-discount" class="Coupon">Apply Coupon</span>
+                                @endif
                             </li>
+                            @endif
+
+
+
+
+
                             <li>
                                 <p>Phí vận chuyển </p><span id="delivery-fee">$50.00</span>
                             </li>
@@ -95,29 +132,57 @@
                     <div class="cart-bottom">
                         <p><i class="iconsax me-1" data-icon="tag-2"></i>Ưu đãi đặc biệt (<span id="special-offer">-$1.49</span>)</p>
                         <h6>Tạm tính <span id="subtotal">$0</span></h6>
-                        <span>	Thuế và phí vận chuyển sẽ được tính khi thanh toán</span>
+                        <span> Thuế và phí vận chuyển sẽ được tính khi thanh toán</span>
                     </div>
+                    @if (session('success'))
+                    <div class="alert alert-success d-flex align-items-center gap-2 p-2 rounded shadow-sm mt-2" role="alert" id="alert-success">
+                        <i class="fa fa-check-circle text-success"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                    @endif
+
+                    @if ($errors->has('coupon'))
+                    <div class="alert alert-danger d-flex align-items-center gap-2 p-2 rounded shadow-sm mt-2" role="alert" id="alert-error">
+                        <i class="fa fa-times-circle text-danger"></i>
+                        <span>{{ $errors->first('coupon') }}</span>
+                    </div>
+                    @endif
 
                     <div class="coupon-box">
                         <h6>Coupon</h6>
                         <ul>
                             <li>
-                                <span>
-                                    <input type="text" id="coupon-input" placeholder="Apply Coupon">
-                                    <i class="iconsax me-1" data-icon="tag-2"></i>
-                                </span>
-                                <button class="btn" id="apply-coupon-btn">Apply</button>
+                                @if (session()->has('coupon'))
+                                <div class="text-success mb-2">
+                                    ✅ Đã áp dụng mã: <strong>{{ session('coupon.code') }}</strong>
+                                    @if (session('coupon.type') === 'percent')
+                                    (Giảm {{ session('coupon.value') }}%)
+                                    @else
+                                    (Giảm {{ number_format(session('coupon.value'), 0, '.', ',') }}đ)
+                                    @endif
+                                </div>
+                                @endif
+
+                                <form action="{{ route('client.coupon.apply') }}" method="POST" style="display: flex; align-items: center;">
+                                    @csrf
+                                    <span>
+                                        <input type="text" id="coupon-input" name="code" placeholder="Apply Coupon" required>
+                                        <i class="iconsax me-1" data-icon="tag-2"></i>
+                                    </span>
+                                    <button class="btn" id="apply-coupon-btn" type="submit">Apply</button>
+                                </form>
                             </li>
+
                             <li>
                                 @guest
                                 <span>
                                     <a class="theme-color" href="{{ route('login') }}">Login</a> to see best coupon for you
                                 </span>
                                 @endguest
-
                             </li>
                         </ul>
                     </div>
+
 
                     <a class="btn btn_black w-100 rounded sm" href="{{ route('client.account.checkout') }}">Check Out</a>
                 </div>
@@ -225,320 +290,277 @@
         </div>
     </div>
 </section>
-
+@if (session()->has('coupon'))
+<div id="coupon-data"
+    data-type="{{ session('coupon.type') }}"
+    data-value="{{ session('coupon.value') }}"
+    style="display: none;"></div>
+@endif
 @endsection
 @section('js')
 <script src="{{ asset('assets/client/js/cart-timer.js') }}"></script>
 <script src="{{ asset('assets/client/js/cart.js') }}"></script>
 
 <script>
-    let currentUser = localStorage.getItem('currentUser') || 'guest';
-    let cartKey = `cartItems_${currentUser}`;
-    let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+let currentUser = localStorage.getItem('currentUser') || 'guest';
+let cartKey = `cartItems_${currentUser}`;
+let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
+document.addEventListener('DOMContentLoaded', function () {
+  const cartBody = document.getElementById('cart-body');
+  const clearAllButton = document.getElementById('clearAllButton');
+
+  function toggleEmptyMessage() {
+    const emptyBox = document.getElementById('data-show');
+    const cartTable = document.getElementById('cart-table');
+    if (!cartItems.length) {
+      if (emptyBox) emptyBox.style.display = 'block';
+      if (cartTable) cartTable.style.display = 'none';
+    } else {
+      if (emptyBox) emptyBox.style.display = 'none';
+      if (cartTable) cartTable.style.display = 'table';
+    }
+  }
+
+  function saveAndRender() {
+    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+    const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    cartItems.length = 0;
+    cartItems.push(...storedCart);
+    renderCart();
+    updateCartTitle();
+    renderMiniCart();
+    toggleEmptyMessage();
+    updateCartSummary();
+  }
+
+  function fullReload() {
+    const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    cartItems.length = 0;
+    cartItems.push(...storedCart);
+    renderCart();
+    updateCartTitle();
+    renderMiniCart();
+    toggleEmptyMessage();
+  }
+
+  fullReload();
+
+  if (clearAllButton) {
+    clearAllButton.addEventListener('click', () => {
+      const confirmed = confirm('Bạn có chắc muốn xoá toàn bộ giỏ hàng không?');
+      if (confirmed) {
+        localStorage.removeItem(cartKey);
+        cartItems.length = 0;
+        saveAndRender();
+      } else {
+        const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        cartItems.length = 0;
+        cartItems.push(...storedCart);
+        saveAndRender();
+      }
+    });
+  }
+
+  function renderCart() {
+    const cartBody = document.getElementById('cart-body');
+    const cartTable = document.getElementById('cart-table');
+    if (!cartBody || !cartTable) return;
+    cartBody.innerHTML = '';
+    if (!cartItems.length) {
+      cartTable.style.display = 'none';
+      cartBody.innerHTML = `<tr><td colspan="5" class="text-center">Giỏ hàng đang trống.</td></tr>`;
+      return;
+    }
+    cartTable.style.display = 'table';
+    cartItems.forEach((item, index) => {
+      const itemTotal = item.price * item.quantity;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+<td><div class="cart-box">
+<a href="product.html"><img src="${item.image}" alt="" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;"></a>
+<div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
+<p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
+${Object.entries(item.attributes || {}).map(([key, value]) => {
+  return `<p class="mb-0">${key.charAt(0).toUpperCase() + key.slice(1)}:<span>${value}</span></p>`;
+}).join('')}</div></div></td>
+<td class="align-middle">$${item.price.toFixed(2)}</td>
+<td class="align-middle">
+<div class="quantity d-flex align-items-center gap-2">
+<button class="minus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-minus"></i></button>
+<input type="number" value="${item.quantity}" min="1" max="99" data-index="${index}" class="form-control form-control-sm text-center quantity-input" style="width: 60px;">
+<button class="plus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-plus"></i></button>
+</div></td>
+<td class="align-middle">$${itemTotal.toFixed(2)}</td>
+<td class="align-middle"><a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}"><i class="fa fa-trash"></i></a></td>`;
+      cartBody.appendChild(tr);
+    });
+    bindEvents();
+    toggleEmptyMessage();
+    updateCartSummary();
+  }
+
+  function updateCartSummary() {
+    let bagTotal = 0;
+    let itemCount = 0;
+    cartItems.forEach(item => {
+      const total = item.price * item.quantity;
+      bagTotal += total;
+      itemCount += item.quantity;
+    });
+    const delivery = bagTotal >= 300 ? 0 : 50.00;
+    const specialOffer = 1.49;
+    const couponEl = document.getElementById('coupon-data');
+    let couponAmount = 0;
+    if (couponEl) {
+      const type = couponEl.dataset.type;
+      const value = parseFloat(couponEl.dataset.value);
+      if (type === 'percent') {
+        couponAmount = bagTotal * (value / 100);
+      } else if (type === 'fixed') {
+        couponAmount = value;
+      }
+    }
+    const subtotal = bagTotal - couponAmount + delivery - specialOffer;
+    const $ = (id) => document.getElementById(id);
+    $('bag-total').textContent = `$${bagTotal.toFixed(2)}`;
+    $('item-count').textContent = itemCount;
+    $('delivery-fee').textContent = `$${delivery.toFixed(2)}`;
+    $('special-offer').textContent = `- $${specialOffer.toFixed(2)}`;
+    $('coupon-discount').textContent = couponAmount > 0 ? `- $${couponAmount.toFixed(2)}` : 'Apply Coupon';
+    $('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('.plus').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const i = this.dataset.index;
+        cartItems[i].quantity += 1;
+        saveAndRender();
+      });
+    });
+    document.querySelectorAll('.minus').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const i = this.dataset.index;
+        if (cartItems[i].quantity > 1) {
+          cartItems[i].quantity -= 1;
+          saveAndRender();
+        }
+      });
+    });
+    document.querySelectorAll('.quantity-input').forEach(input => {
+      input.addEventListener('change', function () {
+        const i = this.dataset.index;
+        const value = parseInt(this.value);
+        if (value > 0) {
+          cartItems[i].quantity = value;
+          saveAndRender();
+        }
+      });
+    });
+    document.querySelectorAll('.deleteButton').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const i = this.dataset.index;
+        cartItems.splice(i, 1);
+        saveAndRender();
+      });
+    });
+  }
+
+  function updateCartTitle() {
+    const totalOrders = cartItems.length;
+    const cartTitle = document.getElementById('cartTitle');
+    if (cartTitle) {
+      cartTitle.textContent = `(${totalOrders})`;
+    }
+  }
+
+  function renderMiniCart() {
+    const miniCart = document.querySelector('ul.offcanvas-cart');
+    if (!miniCart) return;
+    miniCart.innerHTML = '';
+    if (!cartItems.length) {
+      miniCart.innerHTML = `<li class="text-center p-3">Giỏ hàng trống.</li>`;
+      return;
+    }
+    cartItems.forEach((item) => {
+      const quantity = Number(item.quantity) > 0 ? item.quantity : 1;
+      const attributeString = Object.entries(item.attributes || {})
+        .map(([k, v]) => `${k}:${v}`).join('|');
+      const key = `${item.id}_${attributeString}`;
+      const li = document.createElement('li');
+      li.innerHTML = `
+<a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
+<div>
+<h6 class="mb-0">${item.name}</h6>
+<p class="mb-1">$${item.price.toLocaleString()}
+${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
+<span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
+${Object.entries(item.attributes || {}).map(([key, value]) => {
+  return `<p class="mb-1">${key}:<span>${value}</span></p>`;
+}).join('')}
+<div class="btn-containter">
+<div class="btn-control">
+<button class="btn-control__remove" data-key="${key}">−</button>
+<div class="btn-control__quantity">
+<div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
+<div id="quantity-current">${quantity}</div>
+<div id="quantity-next">${quantity + 1}</div>
+</div>
+<button class="btn-control__add" data-key="${key}">+</button>
+</div>
+</div>
+</div>
+<i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>`;
+      li.querySelector('.delete-icon').addEventListener('click', function () {
+        const key = this.dataset.key;
+        cartItems = cartItems.filter(p => `${p.id}_${p.size}_${p.color}` !== key);
+        saveAndRender();
+      });
+      li.querySelector('.btn-control__add').addEventListener('click', function () {
+        const key = this.dataset.key;
+        const item = cartItems.find(p => {
+          const attrStr = Object.entries(p.attributes || {})
+            .map(([k, v]) => `${k}:${v}`).join('|');
+          return `${p.id}_${attrStr}` === key;
+        });
+        if (item) {
+          item.quantity += 1;
+          saveAndRender();
+        }
+      });
+      li.querySelector('.btn-control__remove').addEventListener('click', function () {
+        const key = this.dataset.key;
+        const item = cartItems.find(p => {
+          const attrStr = Object.entries(p.attributes || {})
+            .map(([k, v]) => `${k}:${v}`).join('|');
+          return `${p.id}_${attrStr}` === key;
+        });
+        if (item && item.quantity > 1) {
+          item.quantity -= 1;
+          saveAndRender();
+        }
+      });
+      miniCart.appendChild(li);
+    });
+  }
+});
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-        const cartBody = document.getElementById('cart-body');
-        const clearAllButton = document.getElementById('clearAllButton');
+        const success = document.getElementById('alert-success');
+        const error = document.getElementById('alert-error');
 
-        function toggleEmptyMessage() {
-            const emptyBox = document.getElementById('data-show');
-            const cartTable = document.getElementById('cart-table');
-
-            if (!cartItems.length) {
-                if (emptyBox) emptyBox.style.display = 'block';
-                if (cartTable) cartTable.style.display = 'none';
-            } else {
-                if (emptyBox) emptyBox.style.display = 'none';
-                if (cartTable) cartTable.style.display = 'table';
+        [success, error].forEach(alert => {
+            if (alert) {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 4000); // tự ẩn sau 4s
             }
-        }
-
-        function saveAndRender() {
-            localStorage.setItem(cartKey, JSON.stringify(cartItems));
-            const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
-            cartItems.length = 0;
-            cartItems.push(...storedCart);
-
-            renderCart();
-            updateCartTitle();
-            renderMiniCart();
-            toggleEmptyMessage();
-            updateCartSummary();
-        }
-
-        function fullReload() {
-            const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
-            cartItems.length = 0;
-            cartItems.push(...storedCart);
-
-            renderCart();
-            updateCartTitle();
-            renderMiniCart();
-            toggleEmptyMessage();
-        }
-
-        fullReload(); // Gọi khi load lần đầu
-
-        if (clearAllButton) {
-            clearAllButton.addEventListener('click', () => {
-                const confirmed = confirm('Bạn có chắc muốn xoá toàn bộ giỏ hàng không?');
-
-                if (confirmed) {
-                    localStorage.removeItem(cartKey);
-                    cartItems.length = 0;
-                    saveAndRender();
-                } else {
-                    const storedCart = JSON.parse(localStorage.getItem(cartKey)) || [];
-                    cartItems.length = 0;
-                    cartItems.push(...storedCart);
-                    saveAndRender();
-                }
-
-            });
-        }
-
-
-
-
-
-
-
-        function renderCart() {
-            const cartBody = document.getElementById('cart-body');
-            const cartTable = document.getElementById('cart-table');
-            if (!cartBody || !cartTable) {
-                console.warn('⛔ cart-body hoặc cart-table không tồn tại trong DOM');
-                return;
-            }
-
-            cartBody.innerHTML = '';
-
-            if (!cartItems.length) {
-                cartTable.style.display = 'none'; // Ẩn bảng
-                cartBody.innerHTML = `<tr><td colspan="5" class="text-center">Giỏ hàng đang trống.</td></tr>`;
-                return;
-            }
-
-            cartTable.style.display = 'table'; // Hiện lại bảng khi có hàng
-
-            cartItems.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-        <td>
-            <div class="cart-box">
-                <a href="product.html">
-                    <img src="${item.image}" alt="" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
-                </a>
-                <div>
-                    <a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
-                    <p class="mb-0">Sold By: <span>${item.seller || 'Unknown'}</span></p>
-                    <p class="mb-0">Size: <span>${item.size || 'Default'}</span></p>
-                    <p class="mb-0">Color: <span>${item.color || 'Default'}</span></p>
-                </div>
-            </div>
-        </td>
-        <td class="align-middle">$${item.price.toFixed(2)}</td>
-        <td class="align-middle">
-            <div class="quantity d-flex align-items-center gap-2">
-                <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-                <input type="number" value="${item.quantity}" min="1" max="99"
-                    data-index="${index}" class="form-control form-control-sm text-center quantity-input" style="width: 60px;">
-                <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
-        </td>
-        <td class="align-middle">$${itemTotal.toFixed(2)}</td>
-        <td class="align-middle">
-            <a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}">
-                <i class="fa fa-trash"></i>
-            </a>
-        </td>
-        `;
-                cartBody.appendChild(tr);
-            });
-
-            bindEvents();
-            toggleEmptyMessage(); // Luôn gọi sau khi render
-            updateCartSummary(); // ← thêm dòng này sau render
-
-            console.log('[renderCart] Items count:', cartItems.length);
-            console.log('[renderCart] Target:', document.getElementById('cart-body'));
-
-        }
-
-
-        function updateCartSummary() {
-            let bagTotal = 0;
-            let itemCount = 0;
-
-            cartItems.forEach(item => {
-                const total = item.price * item.quantity;
-                bagTotal += total;
-                itemCount += item.quantity;
-            });
-
-            const savings = 20.00;
-            const delivery = bagTotal >= 300 ? 0 : 50.00;
-            const specialOffer = 1.49;
-            const coupon = 0.00;
-
-            const subtotal = bagTotal - savings - coupon + delivery - specialOffer;
-
-            const $ = (id) => document.getElementById(id);
-            if (!$('bag-total')) return; // bảo vệ nếu phần bên phải chưa hiển thị
-
-            $('bag-total').textContent = `$${bagTotal.toFixed(2)}`;
-            $('item-count').textContent = itemCount;
-            $('bag-savings').textContent = `-$${savings.toFixed(2)}`;
-            $('delivery-fee').textContent = `$${delivery.toFixed(2)}`;
-            $('special-offer').textContent = `-$${specialOffer.toFixed(2)}`;
-            $('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-            $('coupon-discount').textContent = coupon > 0 ? `-$${coupon.toFixed(2)}` : 'Apply Coupon';
-
-            // Tính số tiền còn thiếu để được free shipping
-            const threshold = 300;
-            const remaining = Math.max(0, threshold - bagTotal);
-            $('free-shipping-remaining').textContent = `$${remaining.toFixed(2)}`;
-        }
-
-
-        function bindEvents() {
-            document.querySelectorAll('.plus').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const i = this.dataset.index;
-                    cartItems[i].quantity += 1;
-                    saveAndRender();
-                });
-            });
-
-            document.querySelectorAll('.minus').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const i = this.dataset.index;
-                    if (cartItems[i].quantity > 1) {
-                        cartItems[i].quantity -= 1;
-                        saveAndRender();
-                    }
-                });
-            });
-
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const i = this.dataset.index;
-                    const value = parseInt(this.value);
-                    if (value > 0) {
-                        cartItems[i].quantity = value;
-                        saveAndRender();
-                    }
-                });
-            });
-
-            document.querySelectorAll('.deleteButton').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const i = this.dataset.index;
-                    cartItems.splice(i, 1);
-                    saveAndRender();
-                });
-            });
-        }
-
-        function updateCartTitle() {
-            const totalOrders = cartItems.length;
-            const cartTitle = document.getElementById('cartTitle');
-            if (cartTitle) {
-                cartTitle.textContent = `(${totalOrders})`;
-            }
-        }
-
-
-        function renderMiniCart() {
-            const miniCart = document.querySelector('ul.offcanvas-cart');
-            if (!miniCart) return;
-
-            miniCart.innerHTML = '';
-
-            if (!cartItems.length) {
-                miniCart.innerHTML = `<li class="text-center p-3">Giỏ hàng trống.</li>`;
-                return;
-            }
-
-            cartItems.forEach((item) => {
-                const quantity = Number(item.quantity) > 0 ? item.quantity : 1;
-                const key = `${item.id}_${item.size}_${item.color}`;
-                const li = document.createElement('li');
-
-                li.innerHTML = `
-        <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
-        <div>
-            <h6 class="mb-0">${item.name}</h6>
-            <p class="mb-1">$${item.price.toLocaleString()}
-                ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
-                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span>
-            </p>
-            <p class="mb-1">Size: <span>${item.size}</span></p>
-            <p class="mb-2">Color: <span>${item.color}</span></p>
-            <div class="btn-containter">
-                <div class="btn-control">
-                    <button class="btn-control__remove" data-key="${key}">−</button>
-                    <div class="btn-control__quantity">
-                        <div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
-                        <div id="quantity-current">${quantity}</div>
-                        <div id="quantity-next">${quantity + 1}</div>
-                    </div>
-                    <button class="btn-control__add" data-key="${key}">+</button>
-                </div>
-            </div>
-        </div>
-        <i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-        `;
-
-                li.querySelector('.delete-icon').addEventListener('click', function() {
-                    const key = this.dataset.key;
-                    cartItems = cartItems.filter(p => `${p.id}_${p.size}_${p.color}` !== key);
-                    saveAndRender();
-                });
-
-                li.querySelector('.btn-control__add').addEventListener('click', function() {
-                    const key = this.dataset.key;
-                    const item = cartItems.find(p => `${p.id}_${p.size}_${p.color}` === key);
-                    if (item) {
-                        item.quantity += 1;
-                        saveAndRender();
-                    }
-                });
-
-                li.querySelector('.btn-control__remove').addEventListener('click', function() {
-                    const key = this.dataset.key;
-                    const item = cartItems.find(p => `${p.id}_${p.size}_${p.color}` === key);
-                    if (item && item.quantity > 1) {
-                        item.quantity -= 1;
-                        saveAndRender();
-                    }
-                });
-
-                miniCart.appendChild(li);
-            });
-        }
-
-        function toggleEmptyMessage() {
-            const emptyBox = document.getElementById('data-show');
-            const cartTable = document.getElementById('cart-table');
-
-            if (!cartItems.length) {
-                if (emptyBox) emptyBox.style.display = 'block';
-                if (cartTable) cartTable.style.display = 'none';
-            } else {
-                if (emptyBox) emptyBox.style.display = 'none';
-                if (cartTable) cartTable.style.display = 'table';
-            }
-        }
-
-
-
-
+        });
     });
 </script>
 

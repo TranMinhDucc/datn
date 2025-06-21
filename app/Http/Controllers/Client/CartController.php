@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách sản phẩm, có thể dùng paginate
-
-        return view('client.cart.index');
+        $products = Product::with('brand')->get(); // 👈 Gán vào biến
+        return view('client.cart.index', compact('products')); // 👈 Truyền vào view
     }
-    
 }

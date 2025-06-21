@@ -19,7 +19,7 @@ use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
-
+use App\Http\Controllers\Client\CouponController as ClientCouponController;
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\AdminController;
@@ -143,6 +143,10 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
 });
 
 // ========== LOGOUT ==========

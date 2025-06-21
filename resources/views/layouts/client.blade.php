@@ -478,17 +478,37 @@
                 const price = parseFloat(this.dataset.price);
                 const originalPrice = parseFloat(this.dataset.originalPrice);
                 const image = this.dataset.image;
-
-                const selectedSize = document.querySelector('.size-box ul li.active');
-                const size = selectedSize ? selectedSize.textContent.trim() : 'Default';
-
-                const selectedColor = document.querySelector('.color-variant li.active');
-                const color = selectedColor ? selectedColor.dataset.color || selectedColor.title || 'Default' : 'Default';
-
                 const quantityInput = document.querySelector('.quantity input');
                 const quantity = parseInt(quantityInput?.value || 1);
 
-                const index = cartItems.findIndex(p => p.id === id && p.size === size && p.color === color);
+                // ✅ Lấy attributes được chọn
+                const selectedAttributes = {};
+                let valid = true;
+
+                document.querySelectorAll('.variant-group').forEach(group => {
+                    const attrName = group.dataset.attribute;
+                    const selected = group.querySelector('.variant-item.active');
+                    const errorDiv = group.querySelector('.variant-error');
+
+                    if (!selected) {
+                        errorDiv.textContent = `Vui lòng chọn ${attrName}`;
+                        errorDiv.style.display = 'block';
+                        valid = false;
+                    } else {
+                        selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
+                        errorDiv.style.display = 'none'; // Ẩn lỗi nếu đã chọn
+                    }
+                });
+
+                if (!valid) return;
+
+
+                // ✅ Kiểm tra xem đã có sản phẩm cùng attributes chưa
+                const index = cartItems.findIndex(p =>
+                    p.id === id &&
+                    JSON.stringify(p.attributes || {}) === JSON.stringify(selectedAttributes)
+                );
+
                 if (index !== -1) {
                     cartItems[index].quantity += quantity;
                 } else {
@@ -499,14 +519,14 @@
                         originalPrice,
                         image,
                         quantity,
-                        size,
-                        color
+                        attributes: selectedAttributes
                     });
                 }
 
                 saveAndRender();
             });
         });
+
 
         function renderCartItems() {
             cartItems = JSON.parse(localStorage.getItem(cartKey)) || []; // Cập nhật từ localStorage mới nhất
@@ -517,31 +537,35 @@
 
         function renderCartItem(item) {
             const li = document.createElement('li');
-            li.innerHTML = `
-                <a href="#"><img src="${item.image}" alt=""></a>
-                <div>
-                    <h6 class="mb-0">${item.name}</h6>
-                    <p>$${item.price.toLocaleString()}
-                        <del>$${item.originalPrice.toLocaleString()}</del>
-                        <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
-                    </p>
-                    <p>Size: <span>${item.size || 'Default'}</span></p>
-                    <p>Color: <span>${item.color || 'Default'}</span></p>
 
-                    <div class="btn-containter">
-                        <div class="btn-control">
-                            <button class="btn-control__remove">&minus;</button>
-                            <div class="btn-control__quantity">
-                                <div id="quantity-previous">${item.quantity - 1}</div>
-                                <div id="quantity-current">${item.quantity}</div>
-                                <div id="quantity-next">${item.quantity + 1}</div>
-                            </div>
-                            <button class="btn-control__add">+</button>
-                        </div>
+            const attributesHTML = Object.entries(item.attributes || {}).map(([key, value]) => {
+                return `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`;
+            }).join('<br>');
+
+            li.innerHTML = `
+        <a href="#"><img src="${item.image}" alt=""></a>
+        <div>
+            <h6 class="mb-0">${item.name}</h6>
+            <p>$${item.price.toLocaleString()}
+                <del>$${item.originalPrice.toLocaleString()}</del>
+                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
+            </p>
+            <p class="attributes">${attributesHTML}</p>
+
+            <div class="btn-containter">
+                <div class="btn-control">
+                    <button class="btn-control__remove">&minus;</button>
+                    <div class="btn-control__quantity">
+                        <div id="quantity-previous">${item.quantity - 1}</div>
+                        <div id="quantity-current">${item.quantity}</div>
+                        <div id="quantity-next">${item.quantity + 1}</div>
                     </div>
+                    <button class="btn-control__add">+</button>
                 </div>
-                <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-            `;
+            </div>
+        </div>
+        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+    `;
 
             li.querySelector('.btn-control__add').addEventListener('click', () => {
                 item.quantity += 1;
@@ -557,13 +581,15 @@
 
             li.querySelector('.delete-icon').addEventListener('click', () => {
                 cartItems = cartItems.filter(p =>
-                    !(p.id === item.id && p.size === item.size && p.color === item.color)
+                    !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
                 );
                 saveAndRender();
             });
 
             cartList.appendChild(li);
         }
+
+
 
         function updateTotal() {
             let total = 0;
@@ -573,6 +599,7 @@
             const totalElement = document.querySelector('.price-box p');
             if (totalElement) {
                 totalElement.textContent = `$ ${total.toFixed(2)} USD`;
+
             }
         }
 
@@ -610,4 +637,5 @@
 
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
+
 </html>

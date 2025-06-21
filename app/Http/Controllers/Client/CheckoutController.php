@@ -9,8 +9,14 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách sản phẩm, có thể dùng paginate
+        $user = auth()->user();
 
-        return view('client.checkout.index');
+        // Lấy toàn bộ địa chỉ của người dùng
+        $addresses = $user->shippingAddresses;
+
+        // Lấy địa chỉ mặc định
+        $defaultAddress = $addresses->firstWhere('is_default', 1);
+
+        return view('client.checkout.index', compact('addresses', 'defaultAddress'));
     }
 }

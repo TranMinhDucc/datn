@@ -26,57 +26,53 @@
             <div class="col-xxl-9 col-lg-8">
                 <div class="left-sidebar-checkout sticky">
                     <div class="address-option">
-                        <div class="address-title">
-                            <h4>Shipping Address </h4><a href="#" data-bs-toggle="modal"
-                                data-bs-target="#address-modal" title="add product" tabindex="0">+ Add New Address</a>
-                        </div>
-                        <div class="row">
-                            <div class="col-xxl-4">
-                                <label for="address-billing-0"> <span class="delivery-address-box"> <span
-                                            class="form-check">
-                                            <input class="custom-radio" id="address-billing-0" type="radio"
-                                                checked="checked" name="radio"></span><span
-                                            class="address-detail"><span class="address"> <span
-                                                    class="address-title">New Home </span></span><span class="address">
-                                                <span class="address-home"> <span class="address-tag">
-                                                        Address:</span>26, Starts Hollow Colony, Denver, Colorado,
-                                                    United States</span></span><span class="address"> <span
-                                                    class="address-home"> <span class="address-tag">Pin
-                                                        Code:</span>80014</span></span><span class="address"> <span
-                                                    class="address-home"> <span class="address-tag">Phone :</span>+1
-                                                    5551855359</span></span></span></span></label>
-                            </div>
-                            <div class="col-xxl-4">
-                                <label for="address-billing-1"> <span class="delivery-address-box"> <span
-                                            class="form-check">
-                                            <input class="custom-radio" id="address-billing-1" type="radio"
-                                                name="radio"></span><span class="address-detail"><span
-                                                class="address"> <span class="address-title">Old Home
-                                                </span></span><span class="address"> <span class="address-home"> <span
-                                                        class="address-tag"> Address:</span>53B, Claire New Street, San
-                                                    Jose, California, United States</span></span><span class="address">
-                                                <span class="address-home"> <span class="address-tag">Pin
-                                                        Code:</span>94088</span></span><span class="address"> <span
-                                                    class="address-home"> <span class="address-tag">Phone :</span>+1
-                                                    5551855359</span></span></span></span></label>
-                            </div>
-                            <div class="col-xxl-4">
-                                <label for="address-billing-2"> <span class="delivery-address-box"> <span
-                                            class="form-check">
-                                            <input class="custom-radio" id="address-billing-2" type="radio"
-                                                name="radio"></span><span class="address-detail"><span
-                                                class="address"> <span class="address-title">IT
-                                                    Office</span></span><span class="address"> <span
-                                                    class="address-home"> <span class="address-tag"> Address:</span>101
-                                                    Maple Drive, Placeholder Town, USA 44556</span></span><span
-                                                class="address"> <span class="address-home"> <span
-                                                        class="address-tag">Pin Code:</span>54786</span></span><span
-                                                class="address"> <span class="address-home"> <span
-                                                        class="address-tag">Phone :</span>+1
-                                                    2547896314</span></span></span></span></label>
-                            </div>
-                        </div>
-                    </div>
+    <div class="address-title">
+        <h4>Shipping Address</h4>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#address-modal" title="add product" tabindex="0">+ Add New Address</a>
+    </div>
+    <div class="row">
+        @foreach ($addresses as $address)
+            <div class="col-xxl-4 mb-3">
+                <label for="address-{{ $address->id }}">
+                    <span class="delivery-address-box">
+                        <span class="form-check">
+                            <input class="custom-radio"
+                                   type="radio"
+                                   id="address-{{ $address->id }}"
+                                   name="shipping_address_id"
+                                   value="{{ $address->id }}"
+                                   {{ $defaultAddress && $defaultAddress->id == $address->id ? 'checked' : '' }}>
+                        </span>
+                        <span class="address-detail">
+                            <span class="address">
+                                <span class="address-title">{{ $address->title }}</span>
+                            </span>
+                            <span class="address">
+                                <span class="address-home">
+                                    <span class="address-tag">Address:</span>
+                                    {{ $address->address }}, {{ $address->city }}, {{ $address->state }}, {{ $address->country }}
+                                </span>
+                            </span>
+                            <span class="address">
+                                <span class="address-home">
+                                    <span class="address-tag">Pin Code:</span>
+                                    {{ $address->pincode }}
+                                </span>
+                            </span>
+                            <span class="address">
+                                <span class="address-home">
+                                    <span class="address-tag">Phone :</span>
+                                    {{ $address->phone }}
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+                </label>
+            </div>
+        @endforeach
+    </div>
+</div>
+
                     <div class="address-option">
                         <div class="address-title">
                             <h4>Billing Address</h4><a href="#" data-bs-toggle="modal"
@@ -129,7 +125,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="payment-options">
+                    <div class="payment-options">   
                         <h4 class="mb-3">Billing Address</h4>
                         <div class="row gy-3">
                             <div class="col-sm-6">
@@ -182,7 +178,7 @@
                                     <p>Shipping</p><span>Enter shipping address</span>
                                 </li>
                                 <li>
-                                    <p>Tax</p><span>$ 2.54</span>
+                                    <p>Thuế</p><span id="tax-value">{{ $settings['vat'] ?? ''}}</span>
                                 </li>
                                 <li>
                                     <p>Points</p><span>$ -10.00</span>
@@ -313,7 +309,16 @@
             <img src="${item.image}" width="50" alt="${item.name}">
             <div>
                 <h6>${item.name}</h6>
-                <span>${item.color} / ${item.size}</span>
+                <span>
+    ${Object.entries(item.attributes || {}).map(([key, value]) => `
+            ${
+                key
+            }: ${
+                value
+            }
+            `).join(' / ')}
+    </span>
+
             </div>
             <p>$${(item.price * item.quantity).toFixed(2)}</p>
         `;

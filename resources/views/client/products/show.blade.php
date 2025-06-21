@@ -92,30 +92,21 @@
                         </div>
                         {{-- Size --}}
                         @foreach($attributeGroups as $groupName => $values)
-                        <div class="d-flex mb-3">
-                            <div>
-                                <h5>{{ ucfirst($groupName) }}:</h5>
-
-                                @if(in_array(strtolower($groupName), ['màu sắc', 'color', 'màu'])) {{-- Nếu là màu sắc thì hiển thị đặc biệt --}}
-                                <div class="color-box">
-                                    <ul class="color-variant">
-                                        @foreach($values as $color)
-                                        <li data-color="{{ $color }}">{{ $color }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                @else {{-- Các thuộc tính khác --}}
-                                <div class="size-box">
-                                    <ul class="selected size-list">
-                                        @foreach($values as $val)
-                                        <li><a href="#">{{ strtolower($val) }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                @endif
-                            </div>
+                        <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+                            <h6>{{ ucfirst($groupName) }}</h6>
+                            <ul class="variant-list d-flex gap-2">
+                                @foreach($values as $val)
+                                <li class="variant-item px-3 py-1 border rounded" data-value="{{ $val }}" style="cursor: pointer;">
+                                    {{ $val }}
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="variant-error text-danger small mt-1" style="display: none;"></div> <!-- thêm dòng này -->
                         </div>
                         @endforeach
+
+
+
 
 
 
@@ -134,13 +125,12 @@
                                     data-price="{{ $product->sale_price }}"
                                     data-original-price="{{ $product->base_price }}"
                                     data-image="{{ asset('storage/' . $product->image) }}"
+                                    data-brand="{{ $product->brand->name ?? 'Unknown' }}"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight">
                                     Add To Cart
                                 </a>
-
-
 
                                 <a class="btn btn_outline sm" href="#">Buy Now</a>
                             </div>
@@ -1230,6 +1220,104 @@
         });
     });
 </script> -->
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ✅ Xử lý chọn thuộc tính
+        document.querySelectorAll('.variant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const group = this.closest('.variant-list');
+                if (!group) return;
+
+                group.querySelectorAll('.variant-item').forEach(i => {
+                    i.classList.remove('active');
+                    i.style.setProperty('border', '1px solid #ddd', 'important');
+                    i.style.fontWeight = 'normal';
+                    i.style.color = '';
+                });
+
+                this.classList.add('active');
+                this.style.setProperty('border', '2px solid #222', 'important');
+                this.style.fontWeight = 'bold';
+                this.style.color = '#222';
+            });
+        });
+
+        // ✅ Thêm vào giỏ hàng
+        // ✅ Sự kiện Add to Cart
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const price = parseFloat(this.dataset.price);
+                const originalPrice = parseFloat(this.dataset.originalPrice);
+                const image = this.dataset.image;
+                const quantity = parseInt(document.querySelector('.quantity input')?.value || 1);
+                const brand = this.dataset.brand || 'Unknown';
+
+
+                let currentUser = localStorage.getItem('currentUser') || 'guest';
+                let cartKey = `cartItems_${currentUser}`;
+                let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+                // ✅ Lấy các thuộc tính đã chọn (màu sắc, size,...)
+                const selectedAttributes = {};
+                let valid = true;
+
+                document.querySelectorAll('.variant-group').forEach(group => {
+                    const attrName = group.dataset.attribute;
+                    const selected = group.querySelector('.variant-item.active');
+
+                    if (!selected) {
+                        valid = false;
+                        return;
+                    }
+
+                    selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
+                });
+
+                if (!valid) return;
+
+                // ✅ Tìm xem sản phẩm đã có chưa
+                const index = cartItems.findIndex(item =>
+                    item.id === id &&
+                    JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)
+                );
+
+                if (index !== -1) {
+                    cartItems[index].quantity += quantity;
+                } else {
+                    cartItems.push({
+                        id,
+                        name,
+                        price,
+                        originalPrice,
+                        image,
+                        quantity,
+                        brand,
+                        attributes: selectedAttributes
+                    });
+                }
+
+                localStorage.setItem(cartKey, JSON.stringify(cartItems));
+
+                // ✅ Gọi lại render nếu có
+                if (typeof renderCartItems === 'function') {
+                    renderCartItems();
+                }
+
+                alert('✅ Đã thêm vào giỏ hàng!');
+            });
+        });
+
+    });
+</script>
+
+
+
+
+
 
 
 
