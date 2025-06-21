@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="d-flex flex-column flex-column-fluid">
-        <!-- Toolbar -->
         <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
             <div id="kt_app_toolbar_container" class="container-xxl d-flex flex-stack">
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -18,7 +17,6 @@
             </div>
         </div>
 
-        <!-- Content -->
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <div id="kt_app_content_container" class="container-xxl">
                 <div class="card card-flush">
@@ -44,7 +42,6 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- Mã và loại -->
                             <div class="row mb-6">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Mã giảm giá</label>
@@ -66,15 +63,13 @@
                                 </div>
                             </div>
 
-                            <!-- Kiểu và giá trị -->
                             <div class="row mb-6">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Kiểu giảm</label>
                                     <select name="value_type" class="form-select form-select-solid" required>
                                         <option value="percentage"
                                             {{ $coupon->value_type === 'percentage' ? 'selected' : '' }}>Phần trăm</option>
-                                        <option value="fixed" {{ $coupon->value_type === 'fixed' ? 'selected' : '' }}>Số
-                                            tiền cố định</option>
+                                        <option value="fixed" {{ $coupon->value_type === 'fixed' ? 'selected' : '' }}>Số tiền cố định</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
@@ -85,7 +80,6 @@
                                 </div>
                             </div>
 
-                            <!-- Hạn chế -->
                             <div class="row mb-6">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Giảm tối đa (nếu là %)</label>
@@ -112,7 +106,6 @@
                                 </div>
                             </div>
 
-                            <!-- Thời gian -->
                             <div class="row mb-6">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Ngày bắt đầu</label>
@@ -126,7 +119,6 @@
                                 </div>
                             </div>
 
-                            <!-- Cờ -->
                             <div class="row mb-6">
                                 <div class="col-md-4">
                                     <label class="form-check form-switch">
@@ -151,41 +143,15 @@
                                 </div>
                             </div>
 
-                            <!-- Vai trò người dùng -->
-                            <div class="mb-6">
-                                <label class="form-label fw-semibold">Áp dụng cho vai trò người dùng</label>
-                                <select name="eligible_user_roles[]"
-                                    class="form-select form-select-solid @error('eligible_user_roles') is-invalid @enderror"
-                                    multiple>
-                                    <option value="vip"
-                                        {{ in_array('vip', $coupon->eligible_user_roles ?? []) ? 'selected' : '' }}>VIP
-                                    </option>
-                                    <option value="agent"
-                                        {{ in_array('agent', $coupon->eligible_user_roles ?? []) ? 'selected' : '' }}>Đại
-                                        lý</option>
-                                    <option value="new_user"
-                                        {{ in_array('new_user', $coupon->eligible_user_roles ?? []) ? 'selected' : '' }}>
-                                        Người dùng mới</option>
-                                </select>
-                                @error('eligible_user_roles')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-
-                            <!-- Checkbox: áp dụng toàn bộ -->
                             <div class="form-check form-switch mb-4">
                                 <input class="form-check-input" type="checkbox" id="applyAllProducts"
                                     name="apply_all_products" value="1"
                                     {{ is_null($coupon->applicable_product_ids) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-semibold" for="applyAllProducts">Áp dụng cho tất cả sản
-                                    phẩm</label>
+                                <label class="form-check-label fw-semibold" for="applyAllProducts">Áp dụng cho tất cả sản phẩm</label>
                             </div>
 
-                            <!-- Sản phẩm/danh mục -->
                             <div class="mb-6">
-                                <label class="form-label fw-semibold">Áp dụng cho sản phẩm (ID, phân cách bằng dấu
-                                    phẩy)</label>
+                                <label class="form-label fw-semibold">Áp dụng cho sản phẩm (ID, phân cách bằng dấu phẩy)</label>
                                 <input type="text" name="applicable_product_ids" id="productIdsInput"
                                     class="form-control form-control-solid"
                                     value="{{ is_array($coupon->applicable_product_ids) ? implode(',', $coupon->applicable_product_ids) : '' }}"
@@ -193,14 +159,12 @@
                             </div>
 
                             <div class="mb-6">
-                                <label class="form-label fw-semibold">Áp dụng cho danh mục (ID, phân cách bằng dấu
-                                    phẩy)</label>
+                                <label class="form-label fw-semibold">Áp dụng cho danh mục (ID, phân cách bằng dấu phẩy)</label>
                                 <input type="text" name="applicable_category_ids"
                                     class="form-control form-control-solid"
                                     value="{{ is_array($coupon->applicable_category_ids) ? implode(',', $coupon->applicable_category_ids) : '' }}">
                             </div>
 
-                            <!-- Submit -->
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{{ route('admin.coupons.index') }}" class="btn btn-light">Hủy</a>
                                 <button type="submit" class="btn btn-primary">Cập nhật</button>
@@ -212,12 +176,10 @@
         </div>
     </div>
 
-    <!-- Script tự động disable field nếu checkbox được chọn -->
     @push('scripts')
         <script>
             document.getElementById('applyAllProducts').addEventListener('change', function() {
-                const productInput = document.getElementById('productIdsInput');
-                productInput.disabled = this.checked;
+                document.getElementById('productIdsInput').disabled = this.checked;
             });
         </script>
     @endpush
