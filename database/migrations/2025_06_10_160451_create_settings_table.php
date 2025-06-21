@@ -32,6 +32,11 @@ return new class extends Migration
             ['id' => 11, 'name' => 'image', 'value' => null, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 12, 'name' => 'address', 'value' => '123 Đường Thời Trang, Quận 1, TP.HCM', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 13, 'name' => 'vat', 'value' => '10', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'prefix_autobank', 'value' => 'naptien', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'bank_min', 'value' => '10000', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'bank_max', 'value' => '10000000000', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'cron_bank_security', 'value' => 'cronbank', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'name' => 'bank_status', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 

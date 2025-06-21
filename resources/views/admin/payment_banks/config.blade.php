@@ -21,21 +21,19 @@
                     <!--end::Title-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            <a href="/metronic8/demo1/index.html" class="text-muted text-hover-primary">
+                        <li class="breadcrumb-item text-primary">
+                            <a href="#" class="text-primary">
                                 Nạp tiền </a>
                         </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
+
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
-                        <!--end::Item-->
+                        <li class="breadcrumb-item text-primary">
+                            <a href="{{ route('admin.bank.view_payment') }}" class="text-primary">
+                                Ngân hàng </a>
+                        </li>
 
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            Ngân hàng </li>
-                        <!--end::Item-->
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
@@ -110,7 +108,7 @@
                                             data-dt-column="2" rowspan="1" colspan="1"
                                             aria-label="SKU: Activate to remove sorting" tabindex="0"
                                             aria-sort="descending"><span class="dt-column-title"
-                                                role="button">#</span><span class="dt-column-order"></span></th>
+                                                role="button">ID</span><span class="dt-column-order"></span></th>
                                         <th class=" min-w-70px dt-type-numeric dt-orderable-asc dt-orderable-desc"
                                             data-dt-column="3" rowspan="1" colspan="1"
                                             aria-label="Qty: Activate to sort" tabindex="0"><span class="dt-column-title"
@@ -157,10 +155,18 @@
                                                     type="button">
                                                     <i class="fas fa-edit mr-1"></i><span class=""> Edit</span>
                                                 </a>
-                                                <button style="color:white;"
-                                                    class="btn btn-danger btn-sm btn-icon-left m-b-10" type="button">
-                                                    <i class="fas fa-trash mr-1"></i><span class=""> Delete</span>
-                                                </button>
+                                                <form action="{{ route('admin.bank.destroy', $bank->id) }}" method="POST"
+                                                    style="display: inline-block;"
+                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa ngân hàng này?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="btn btn-danger btn-sm btn-icon-left m-b-10">
+                                                        <i class="fas fa-trash mr-1"></i><span class="">
+                                                            Delete</span>
+                                                    </button>
+                                                </form>
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -174,10 +180,112 @@
                         </div>
                     </div>
                     <!--end::Table-->
+
                 </div>
                 <!--end::Card body-->
             </div>
             <!--end::Products-->
+        </div>
+        <div id="kt_app_content_container" class="app-container  container-xxl py-3 py-lg-6">
+            <div class="col-xl-12">
+                <div class="card custom-card">
+                    <div class="card-header justify-content-between">
+                        <div class="card-title">
+                            <h3
+                                class="page-heading d-flex text-gray-900 fw-bold fs-5 flex-column justify-content-center my-0">
+                                CẤU HÌNH
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('admin.bank.config_update_two') }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="row">
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="row mb-4">
+                                        <label class="col-sm-4 col-form-label" for="example-hf-email">Trạng
+                                            thái</label>
+                                        <div class="col-sm-8">
+                                            <select name="bank_status" class="form-control form-control-sm">
+                                                <option value="1"
+                                                    {{ ($settings['bank_status'] ?? '') == '1' ? 'selected' : '' }}>
+                                                    ON</option>
+                                                <option value="0"
+                                                    {{ ($settings['bank_status'] ?? '') == '0' ? 'selected' : '' }}>
+                                                    OFF</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <label class="col-sm-4 col-form-label" for="example-hf-email">Prefix</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-control-sm"
+                                                    value="{{ $settings['prefix_autobank'] }}" name="prefix_autobank"
+                                                    placeholder="VD: NAPTIEN">
+                                                <span class="input-group-text">
+                                                    1 </span>
+                                            </div>
+                                            <small>Không được để trống Prefix, Prefix là nội dung nạp tiền vào hệ
+                                                thống.</small>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <label class="col-sm-4 col-form-label" for="example-hf-email">Bảo mật link
+                                            CRON</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control"
+                                                    value="{{ $settings['cron_bank_security'] }}"
+                                                    name="cron_bank_security" placeholder="Token Webhook API nếu có">
+
+                                            </div>
+                                            <small>Bạn không nên công khai route này vì bất cứ ai có thể vào link là hệ
+                                                thống tự cộng tiền!</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="row mb-4">
+                                        <label class="col-sm-6 col-form-label" for="example-hf-email">Số tiền
+                                            nạp tối thiểu</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control form-control-sm"
+                                                value="{{ $settings['bank_min'] }}" name="bank_min">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <label class="col-sm-6 col-form-label" for="example-hf-email">Số tiền
+                                            nạp tối đa</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control form-control-sm"
+                                                value="{{ $settings['bank_max'] }}" name="bank_max">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-12">
+                                    <div class="row mb-4">
+                                        <label class="col-sm-6 col-form-label" for="example-hf-email">Lưu ý nạp
+                                            tiền</label>
+                                        <div class="col-sm-12">
+                                            {{-- box ghi nội dung  --}}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a type="button" class="btn btn-danger btn-sm" href="{{ route('admin.bank.config') }}"><i
+                                    class="fa fa-fw fa-undo me-1"></i>
+                                Reload</a>
+                            <button type="submit" name="SaveSettings" class="btn btn-success btn-sm">
+                                <i class="fa fa-fw fa-save me-1"></i> Save </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
