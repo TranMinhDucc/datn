@@ -81,7 +81,7 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/{slug}', 'show')->name('show');
+        Route::get('{slug}/', 'show')->name('show');
     });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
