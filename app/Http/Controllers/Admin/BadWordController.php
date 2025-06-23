@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +10,8 @@ class BadWordController extends Controller
 {
     public function index()
     {
-        $badwords = BadWord::latest()->get();
         $badwords = BadWord::orderBy('id', 'desc')->paginate(10);
+
         return view('admin.badwords.index', compact('badwords'));
     }
 

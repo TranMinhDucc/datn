@@ -3,136 +3,140 @@
 @section('title', 'Tạo mã giảm giá mới')
 
 @section('content')
-    <div class="d-flex flex-column flex-column-fluid">
-        <!--begin::Toolbar-->
-        <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-            <!--begin::Toolbar container-->
-            <div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
-                <!--begin::Page title-->
-                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                    <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Tạo mã giảm giá mới
-                    </h1>
-                    <!--end::Title-->
-                </div>
-                <!--end::Page title-->
-                <!--begin::Actions-->
-                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-sm btn-light btn-active-light-primary">
-                        <i class="fa-solid fa-arrow-left fs-6 me-1"></i> Quay lại
-                    </a>
-                </div>
-                <!--end::Actions-->
+<div class="d-flex flex-column flex-column-fluid">
+    <div class="app-content container-xxl">
+        <div class="card card-flush">
+            <div class="card-header">
+                <h2 class="card-title">Tạo mã giảm giá</h2>
             </div>
-            <!--end::Toolbar container-->
-        </div>
-        <!--end::Toolbar-->
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <strong>Lỗi!</strong> Vui lòng kiểm tra lại dữ liệu:
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-        <!--begin::Content-->
-        <div id="kt_app_content" class="app-content flex-column-fluid">
-            <!--begin::Content container-->
-            <div id="kt_app_content_container" class="app-container container-xxl">
-                <!--begin::Coupon Create-->
-                <div class="card card-flush">
-                    <!--begin::Card header-->
-                    <div class="card-header align-items-center py-5 gap-2 gap-md-5">
-                        <!--begin::Card title-->
-                        <div class="card-title">
-                            <h2>Tạo mã giảm giá mới</h2>
+                <form action="{{ route('admin.coupons.store') }}" method="POST">
+                    @csrf
+
+                    <div class="row mb-6">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mã giảm giá</label>
+                            <input type="text" name="code" class="form-control form-control-solid" required>
                         </div>
-                        <!--end::Card title-->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Loại áp dụng</label>
+                            <select name="type" class="form-select form-select-solid" required>
+                                <option value="product_discount">Sản phẩm</option>
+                                <option value="shipping_discount">Phí vận chuyển</option>
+                                <option value="order_discount">Toàn đơn hàng</option>
+                            </select>
+                        </div>
                     </div>
-                    <!--end::Card header-->
 
-                    <!--begin::Card body-->
-                    <div class="card-body pt-0">
-                        @if ($errors->any())
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong>Lỗi!</strong> Vui lòng kiểm tra lại dữ liệu bạn nhập.
-                                <ul class="mb-0 mt-2">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-
-                        <form action="{{ route('admin.coupons.store') }}" method="POST">
-                            @csrf
-
-                            <div class="row mb-6">
-                                <div class="col-md-6">
-                                    <label for="code" class="form-label fw-semibold">Mã giảm giá</label>
-                                    <input type="text" name="code" class="form-control form-control-solid @error('code') is-invalid @enderror" required>
-                                    @error('code')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="discount_type" class="form-label fw-semibold">Loại giảm giá</label>
-                                    <select name="discount_type" class="form-select form-select-solid @error('discount_type') is-invalid @enderror" data-kt-select2="true" data-placeholder="Chọn loại" required>
-                                        <option value="percent">Phần trăm</option>
-                                        <option value="fixed">Cố định</option>
-                                    </select>
-                                    @error('discount_type')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-6">
-                                <div class="col-md-6">
-                                    <label for="discount_value" class="form-label fw-semibold">Giá trị giảm</label>
-                                    <input type="number" step="0.01" name="discount_value" class="form-control form-control-solid @error('discount_value') is-invalid @enderror" required>
-                                    @error('discount_value')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="max_usage" class="form-label fw-semibold">Số lượt sử dụng tối đa</label>
-                                    <input type="number" name="max_usage" class="form-control form-control-solid @error('max_usage') is-invalid @enderror" required>
-                                    @error('max_usage')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-6">
-                                <div class="col-md-6">
-                                    <label for="start_date" class="form-label fw-semibold">Ngày bắt đầu</label>
-                                    <input type="datetime-local" name="start_date" class="form-control form-control-solid @error('start_date') is-invalid @enderror" required>
-                                    @error('start_date')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="end_date" class="form-label fw-semibold">Ngày kết thúc</label>
-                                    <input type="datetime-local" name="end_date" class="form-control form-control-solid @error('end_date') is-invalid @enderror" required>
-                                    @error('end_date')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{{ route('admin.coupons.index') }}" class="btn btn-sm btn-light btn-active-light-primary">
-                                    Hủy
-                                </a>
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    Tạo mới
-                                </button>
-                            </div>
-                        </form>
+                    <div class="row mb-6">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kiểu giảm</label>
+                            <select name="value_type" class="form-select form-select-solid" required>
+                                <option value="percentage">Phần trăm</option>
+                                <option value="fixed">Số tiền cố định</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Giá trị giảm</label>
+                            <input type="number" step="0.01" name="discount_value" class="form-control form-control-solid" required>
+                        </div>
                     </div>
-                    <!--end::Card body-->
-                </div>
-                <!--end::Coupon Create-->
+
+                    <div class="row mb-6">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Giảm tối đa (nếu là %)</label>
+                            <input type="number" step="0.01" name="max_discount_amount" class="form-control form-control-solid">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Giá trị đơn tối thiểu</label>
+                            <input type="number" step="0.01" name="min_order_amount" class="form-control form-control-solid">
+                        </div>
+                    </div>
+
+                    <div class="row mb-6">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tổng số lượt sử dụng</label>
+                            <input type="number" name="usage_limit" class="form-control form-control-solid">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số lượt mỗi người dùng</label>
+                            <input type="number" name="per_user_limit" class="form-control form-control-solid">
+                        </div>
+                    </div>
+
+                    <div class="row mb-6">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày bắt đầu</label>
+                            <input type="datetime-local" name="start_date" class="form-control form-control-solid">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày kết thúc</label>
+                            <input type="datetime-local" name="end_date" class="form-control form-control-solid">
+                        </div>
+                    </div>
+
+                    <div class="row mb-6">
+                        <div class="col-md-4">
+                            <label class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input" name="only_for_new_users" value="1">
+                                <span class="form-check-label">Chỉ dành cho người dùng mới</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input" name="is_exclusive" value="1">
+                                <span class="form-check-label">Không dùng chung với mã khác</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input" name="active" value="1" checked>
+                                <span class="form-check-label">Kích hoạt mã</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" id="applyAllProducts" name="apply_all_products" value="1" checked>
+                        <label class="form-check-label fw-semibold" for="applyAllProducts">Áp dụng cho tất cả sản phẩm</label>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="form-label fw-semibold">Áp dụng cho sản phẩm (ID cách nhau bởi dấu phẩy)</label>
+                        <input type="text" name="applicable_product_ids" id="productIdsInput" class="form-control form-control-solid" placeholder="VD: 1,2,3" disabled>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="form-label fw-semibold">Áp dụng cho danh mục (ID cách nhau bởi dấu phẩy)</label>
+                        <input type="text" name="applicable_category_ids" class="form-control form-control-solid" placeholder="VD: 3,4,7">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-light">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Tạo mới</button>
+                    </div>
+                </form>
             </div>
-            <!--end::Content container-->
         </div>
-        <!--end::Content-->
     </div>
-    <!--end::Content wrapper-->
+</div>
+
+@push('scripts')
+<script>
+    document.getElementById('applyAllProducts').addEventListener('change', function () {
+        document.getElementById('productIdsInput').disabled = this.checked;
+    });
+</script>
+@endpush
 @endsection

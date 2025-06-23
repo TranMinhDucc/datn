@@ -19,4 +19,8 @@ class Bank extends Model
         'token',
         'status',
     ];
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
