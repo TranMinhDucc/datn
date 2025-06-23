@@ -17,11 +17,6 @@
                                 </div>
                             </form>
                         </div>
-
-
-
-
-
                         <div class="card-toolbar">
                             <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Thêm người dùng</a>
                         </div>
@@ -48,16 +43,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    {{-- <div class="symbol symbol-50px me-5">
-                                                        <div class="symbol-label">
-                                                            @php
-                                                            $avatarPath = $user->avatar ? 'storage/' . $user->avatar :
-                                                            'assets/default-avatar.png';
-                                                            @endphp
-                                                            <img src="{{ $avatarPath }}" width="60" alt="Avatar"
-                                                                onerror="this.onerror=null;this.src='{{ asset('assets/default-avatar.png') }}';">
-                                                        </div>
-                                                    </div> --}}
+
                                                     <div>
                                                         <div class="fs-5 fw-bold text-gray-900">{{ $user->username }}</div>
                                                         <div class="text-muted">{{ $user->fullname ?? '—' }}</div>

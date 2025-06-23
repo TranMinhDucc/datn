@@ -32,6 +32,7 @@ return new class extends Migration
             $table->dateTime('registered_at')->nullable();
             $table->string('last_login_ip', 45)->nullable();
             $table->string('last_login_device')->nullable();
+            $table->dateTime('last_login_at')->nullable(); // ✅ gộp cột từ migration bổ sung
             $table->timestamp('email_verified_at')->nullable();
             $table->integer('banned')->default(0);
             $table->rememberToken();

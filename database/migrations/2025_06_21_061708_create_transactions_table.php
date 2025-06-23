@@ -13,13 +13,21 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('bank_id')->nullable();
-            $table->string('unique_id')->unique(); // ID từ webhook
+
+            $table->string('unique_id')->unique(); // ID từ webhook hoặc thao tác admin
             $table->string('transactionID')->nullable(); // Mã giao dịch từ ngân hàng
             $table->decimal('amount', 15, 2);
+
+            $table->enum('type', ['add', 'subtract'])->default('add'); // ✅ cộng/trừ số dư
+            $table->integer('balance_before')->default(0);             // ✅ số dư trước
+            $table->integer('balance_after')->default(0);              // ✅ số dư sau
+
             $table->string('description')->nullable();
             $table->string('bank')->nullable();
+
             $table->timestamps();
 
             // Khóa ngoại

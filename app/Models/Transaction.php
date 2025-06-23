@@ -14,9 +14,13 @@ class Transaction extends Model
         'description',
         'bank',
         'unique_id',
+        'type',             // 👈 cộng hoặc trừ
+        'balance_before',   // 👈 số dư trước giao dịch
+        'balance_after',    // 👈 số dư sau giao dịch
         'created_at',
         'updated_at',
     ];
+
 
     public function bank()
     {
