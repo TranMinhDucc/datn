@@ -95,6 +95,7 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
+    Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
         Route::get('/', 'index')->name('index');

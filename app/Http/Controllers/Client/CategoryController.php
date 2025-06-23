@@ -25,4 +25,9 @@ class CategoryController extends Controller
         // $products = Product::whereIn('category_id', $categoryIds)->paginate(12);
         return view('client.categories.show', compact('category'));
     }
+
+    public function index()
+    {
+        return view('client.categories.index');
+    }
 }
