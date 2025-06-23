@@ -107,15 +107,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <label class="form-label fw-semibold">Áp dụng cho vai trò người dùng</label>
-                        <select name="eligible_user_roles[]" class="form-select form-select-solid" multiple>
-                            <option value="vip">VIP</option>
-                            <option value="agent">Đại lý</option>
-                            <option value="new_user">Người dùng mới</option>
-                        </select>
-                    </div>
-
                     <div class="form-check form-switch mb-4">
                         <input class="form-check-input" type="checkbox" id="applyAllProducts" name="apply_all_products" value="1" checked>
                         <label class="form-check-label fw-semibold" for="applyAllProducts">Áp dụng cho tất cả sản phẩm</label>
