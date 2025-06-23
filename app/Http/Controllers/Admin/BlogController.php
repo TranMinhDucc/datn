@@ -64,7 +64,7 @@ class BlogController extends Controller
             'category_id.required' => 'Chuyên mục không được để trống.',
             'category_id.exists' => 'Chuyên mục không hợp lệ.',
             'thumbnail.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
-            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',         
+            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',
         ]);
 
         // Nếu có ảnh đại diện được upload
@@ -93,7 +93,12 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
-        $blog->load('author');
+        $blog->load(['author'])->loadCount([
+            'comments' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ]);
+
         return view('admin.blogs.show', compact('blog'));
     }
 
@@ -156,7 +161,6 @@ class BlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog đã được cập nhật thành công!');
     }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -167,7 +171,25 @@ class BlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog đã được xóa thành công!');
     }
+    /**
+     * Toggle the status of the blog post
+     */
+    public function toggleStatus(Blog $blog)
+    {
+        if ($blog->status === 'published') {
+            // Chuyển về nháp
+            $blog->status = 'draft';
+            $blog->published_at = null;
+        } else {
+            // Chuyển sang xuất bản
+            $blog->status = 'published';
+            $blog->published_at = now();
+        }
+        $blog->save();
 
+        return redirect()->route('admin.blogs.index')
+            ->with('success', 'Cập nhật trạng thái blog thành công!');
+    }
     /**
      * Generate slug from title
      */

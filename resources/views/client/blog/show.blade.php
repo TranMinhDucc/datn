@@ -1,6 +1,6 @@
 @extends('layouts.client')
 
-@section('title', 'Giỏ hàng')
+@section('title', 'Blog Details')
 
 @section('content')
 <section class="section-b-space pt-0">
@@ -12,7 +12,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ul class="breadcrumb float-end">
-                        <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
+                        <li class="breadcrumb-item"> <a href="{{route('client.home')}}">Home </a></li>
                         <li class="breadcrumb-item active"> <a href="#">Blog Details</a></li>
                     </ul>
                 </div>
@@ -32,130 +32,62 @@
                                         src="{{ asset('storage/' . $blog->thumbnail) }}"
                                         alt=""></div>
                             </div>
-                            <div class="blog-content"><span class="blog-date">{{$blog->created_at->format('l, d F Y')}}</span><a
+                            <div class="blog-content"><span class="blog-date">{{$blog->published_at->format('l, d F Y')}}</span><a
                                     href="#">
                                     <h4>{{$blog->title}}</h4>
                                 </a>
                                 {!! $blog->content !!}
-                                <h5 class="pt-3">You Might Be Interested In</h5>
+                                <h5 class="pt-3">Có thể bạn sẽ quan tâm</h5>
                                 <ul>
-                                    <li>Mid seat coverage Non wired powermesh back liner low curve to the reverse fixed
-                                        straps quick drying comfortable.</li>
-                                    <li>Bodycon skirts bright primary colours punchy palette pleated cheerleader vibe
-                                        stripe trims.</li>
-                                    <li>Statement buttons cover-up tweaks patch pockets perennial lapel collar flap
-                                        chest pockets topline stitching cropped jacket.</li>
+                                    @foreach ($relatedBlogs as $related)
+                                    <li>
+                                        <a href="{{ route('client.blog.show', $related->slug) }}">
+                                            {{ $related->title }}
+                                        </a>
+                                    </li>
+                                    @endforeach
                                 </ul>
                                 <div class="comments-box">
                                     <h5>Comments </h5>
                                     <ul class="theme-scrollbar">
+                                        @forelse($blog->comments->whereNull('parent_id') as $comment)
+                                        @include('client.blog.comment', ['comment' => $comment])
+                                        @empty
                                         <li>
                                             <div class="comment-items">
-                                                <div class="user-img"> <img
-                                                        src="{{ asset('assets/client/images/user/1.jpg') }}"
-                                                        alt=""></div>
                                                 <div class="user-content">
-                                                    <div class="user-info">
-                                                        <div class="d-flex justify-content-between gap-3">
-                                                            <h6> <i class="iconsax" data-icon="user-1"></i>Michel Poe
-                                                            </h6><span> <i class="iconsax" data-icon="clock"></i>Mar 29,
-                                                                2022</span>
-                                                        </div>
-                                                        <ul class="rating p-0 mb">
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-regular fa-star"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                    <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                        buttons and patch pockets showerproof black lightgrey. Printed
-                                                        lining patch pockets jersey blazer built in pocket square wool
-                                                        casual quilted jacket without hood azure.</p><a href="#">
-                                                        <span> <i class="iconsax" data-icon="undo"></i>
-                                                            Replay</span></a>
+                                                    <p>No comments yet. Be the first to comment!</p>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="reply">
-                                            <div class="comment-items">
-                                                <div class="user-img"> <img
-                                                        src="{{ asset('assets/client/images/user/2.jpg') }}"
-                                                        alt=""></div>
-                                                <div class="user-content">
-                                                    <div class="user-info">
-                                                        <div class="d-flex justify-content-between gap-3">
-                                                            <h6> <i class="iconsax" data-icon="user-1"></i>Michel Poe
-                                                            </h6><span> <i class="iconsax" data-icon="clock"></i>Mar 29,
-                                                                2022</span>
-                                                        </div>
-                                                        <ul class="rating p-0 mb">
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-regular fa-star"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                    <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                        buttons and patch pockets showerproof black lightgrey. Printed
-                                                        lining patch pockets jersey blazer built in pocket square wool
-                                                        casual quilted jacket without hood azure.</p><a href="#">
-                                                        <span> <i class="iconsax" data-icon="undo"></i>
-                                                            Replay</span></a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="comment-items">
-                                                <div class="user-img"> <img
-                                                        src="{{ asset('assets/client/images/user/3.jpg') }}"
-                                                        alt=""></div>
-                                                <div class="user-content">
-                                                    <div class="user-info">
-                                                        <div class="d-flex justify-content-between gap-3">
-                                                            <h6> <i class="iconsax" data-icon="user-1"></i>Michel Poe
-                                                            </h6><span> <i class="iconsax" data-icon="clock"></i>Mar 29,
-                                                                2022</span>
-                                                        </div>
-                                                        <ul class="rating p-0 mb">
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-regular fa-star"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                    <p>Khaki cotton blend military jacket flattering fit mock horn
-                                                        buttons and patch pockets showerproof black lightgrey. Printed
-                                                        lining patch pockets jersey blazer built in pocket square wool
-                                                        casual quilted jacket without hood azure.</p><a href="#">
-                                                        <span> <i class="iconsax" data-icon="undo"></i>
-                                                            Replay</span></a>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        @endforelse
                                     </ul>
                                 </div>
                                 <h5 class="pt-3">Leave a Comment</h5>
-                                <div class="row gy-3 message-box">
-                                    <div class="col-sm-6">
-                                        <label class="form-label">Full Name</label>
-                                        <input class="form-control" type="text" placeholder="Enter your Name">
+
+                                <form action="{{ route('client.blog-comment.store', $blog) }}" method="POST">
+                                    @csrf
+                                    <div class="row gy-3 message-box">
+                                        @guest
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Full Name</label>
+                                            <input class="form-control" name="guest_name" type="text" placeholder="Enter your Name" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Email address</label>
+                                            <input class="form-control" name="guest_email" type="email" placeholder="Enter your Email" required>
+                                        </div>
+                                        @endguest
+                                        <div class="col-12">
+                                            <label class="form-label">Message</label>
+                                            <textarea class="form-control" name="content" rows="6" placeholder="Enter Your Message" required></textarea>
+                                        </div>
+                                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                                        <div class="col-12">
+                                            <button class="btn btn_black rounded sm" type="submit">Post Comment</button>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <label class="form-label">Email address</label>
-                                        <input class="form-control" type="email" placeholder="Enter your Email">
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" rows="6" placeholder="Enter Your Message"></textarea>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn_black rounded sm" type="submit">Post Comment </button>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -177,21 +109,11 @@
                                     <h5> Categories</h5>
                                 </div>
                                 <ul class="categories">
+                                    @foreach ($categories as $category)
                                     <li>
-                                        <p>Fashion<span>30</span></p>
+                                        <p>{{$category->name}}<span>{{$category->blogs_count}}</span></p>
                                     </li>
-                                    <li>
-                                        <p>Trends<span>20</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Designer<span>3</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Swimwear<span>15</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Handbags<span>11</span></p>
-                                    </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
@@ -202,46 +124,21 @@
                                     <h5> Top Post</h5>
                                 </div>
                                 <ul class="top-post">
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-1.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Study 2020: Fake Engagement is Only Half the Problem</h6>
+                                    @foreach($topViewedBlogs as $top)
+                                    <li>
+                                        <img class="img-fluid" src="{{ asset('storage/' . $top->thumbnail) }}" alt="{{ $top->title }}">
+                                        <div>
+                                            <a href="{{ route('client.blog.show', $top->slug) }}">
+                                                <h6>{{ \Illuminate\Support\Str::limit($top->title, 60) }}</h6>
                                             </a>
-                                            <p>September 28, 2021</p>
+                                            <p>{{ $top->published_at->format('F d, Y') }}</p>
                                         </div>
                                     </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-2.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Top 10 Interior Design in 2020 New York Business</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-3.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Ecommerce Brands Tend to Create Strong Communities</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-4.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>What Do I Need to Make It in the World of Business?</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <!-- <div class="col-12">
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
@@ -265,7 +162,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-12">
                             <div class="sidebar-box">
                                 <div class="sidebar-title">

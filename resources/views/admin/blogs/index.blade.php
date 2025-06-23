@@ -41,9 +41,9 @@
 			</div>
 			<!--end::Card header-->
 			<!--begin::Card body-->
-			<div class="card-body py-4">
+			<div class="card-body py-4 table-responsive">
 				<!--begin::Table-->
-				<table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_blogs_table">
+				<table class="table align-middle table-row-dashed fs-6 gy-3" id="kt_blogs_table">
 					<thead>
 						<tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
 							<th class="w-10px pe-2">
@@ -51,13 +51,14 @@
 									<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_blogs_table .form-check-input" value="1" />
 								</div>
 							</th>
-							<th class="min-w-50px">ID</th>
-							<th class="min-w-270px">Tiêu đề</th>
-							<th class="min-w-130px">Slug</th>
-							<th class="min-w-130px">Ảnh đại diện</th>
-							<th class="min-w-130px">Danh mục</th>
+							<th class="min-w-30px">ID</th>
+							<th class="min-w-200px">Tiêu đề</th>
+							<th class="min-w-100px">Slug</th>
+							<th class="min-w-150px">Ảnh đại diện</th>
+							<th class="min-w-100px">Danh mục</th>
 							<th class="min-w-150px">Tác giả</th>
-							<th class="min-w-130px">Ngày tạo</th>
+							<th class="min-w-100px">Trạng thái</th>
+							<th class="min-w-100px">Ngày tạo</th>
 							<th class="text-end min-w-100px">Thao tác</th>
 						</tr>
 					</thead>
@@ -72,15 +73,15 @@
 							<td>
 								<span class="text-gray-800 text-hover-primary mb-1">#{{ $blog->id }}</span>
 							</td>
-							<td>
+							<td style="max-width: 250px;">
 								<div class="d-flex flex-column">
 									<a href="{{ route('admin.blogs.show', $blog->id) }}" class="text-gray-800 text-hover-primary mb-1">
 										{{ $blog->title }}
 									</a>
-									<span class="text-muted">{{ Str::limit($blog->content, 60) }}</span>
+									<span class="text-muted">{{ Str::limit(strip_tags($blog->content), 60) }}</span>
 								</div>
 							</td>
-							<td>
+							<td style="max-width: 100px;">
 								<span class="text-muted">{{ $blog->slug }}</span>
 							</td>
 							<td>
@@ -113,6 +114,13 @@
 								</div>
 							</td>
 							<td>
+								@if($blog->status === 'published')
+								<span class="badge badge-light-success">Đang hiển thị</span>
+								@elseif($blog->status === 'draft')
+								<span class="badge badge-light-danger">Chưa xuất bản</span>
+								@endif
+							</td>
+							<td>
 								<span class="text-muted">{{ $blog->created_at->format('d/m/Y H:i') }}</span>
 							</td>
 							<td class="text-end">
@@ -122,6 +130,16 @@
 								</a>
 								<!--begin::Menu-->
 								<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+									<!--begin::Menu item-->
+									<div class="menu-item px-3">
+										<a href="#" class="menu-link px-3 text-warning"
+											data-kt-blog-table-filter="toggle_status"
+											data-url="{{ route('admin.blogs.toggle-status', $blog->slug) }}"
+											data-status="{{ $blog->status }}">
+											{{ $blog->status === 'published' ? 'Ẩn bài viết' : 'Xuất bản' }}
+										</a>
+									</div>
+									<!--end::Menu item-->
 									<!--begin::Menu item-->
 									<div class="menu-item px-3">
 										<a href="{{ route('admin.blogs.show', $blog->slug) }}" class="menu-link px-3">
@@ -159,24 +177,23 @@
 					</tbody>
 				</table>
 				<!--end::Table-->
+				<!-- Phần pagination được sửa -->
+				@if($blogs->hasPages())
+				<div class="d-flex flex-stack flex-wrap pt-10">
+					<div class="fs-6 fw-semibold text-gray-700">
+						Hiển thị {{ $blogs->firstItem() ?? 0 }} đến {{ $blogs->lastItem() ?? 0 }}
+						trong tổng số {{ $blogs->total() }} kết quả
+					</div>
+					<div class="d-flex align-items-center">
+						{{-- Giữ lại tham số search khi phân trang --}}
+						{{ $blogs->appends(request()->query())->links('vendor.pagination.adminPagi') }}
+					</div>
+				</div>
+				@endif
 			</div>
 			<!--end::Card body-->
 		</div>
 		<!--end::Card-->
-
-		<!--begin::Pagination-->
-		@if($blogs->hasPages())
-		<div class="d-flex flex-stack flex-wrap pt-10">
-			<div class="fs-6 fw-semibold text-gray-700">
-				Hiển thị {{ $blogs->firstItem() }} đến {{ $blogs->lastItem() }}
-				trong tổng số {{ $blogs->total() }} kết quả
-			</div>
-			<div class="d-flex align-items-center">
-				{{ $blogs->links() }}
-			</div>
-		</div>
-		@endif
-		<!--end::Pagination-->
 	</div>
 	<!--end::Content container-->
 </div>
@@ -185,52 +202,105 @@
 
 @push('scripts')
 <script>
+	//Thay đổi trạng thái blog
+	document.querySelectorAll('[data-kt-blog-table-filter="toggle_status"]').forEach(el => {
+		el.addEventListener('click', function(e) {
+			e.preventDefault();
+
+			const url = this.dataset.url;
+			const currentStatus = this.dataset.status;
+			const actionText = currentStatus === 'published' ? 'Ẩn bài viết' : 'Xuất bản';
+			const confirmText = currentStatus === 'published' ?
+				'Bạn có chắc muốn ẩn bài viết này không?' :
+				'Bạn có chắc muốn xuất bản bài viết này không?';
+
+			Swal.fire({
+				title: 'Xác nhận thay đổi trạng thái',
+				text: confirmText,
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Xác nhận',
+				cancelButtonText: 'Hủy',
+				reverseButtons: true
+			}).then(result => {
+				if (result.isConfirmed) {
+					// Tạo form để submit
+					const form = document.createElement('form');
+					form.method = 'POST';
+					form.action = url;
+					form.style.display = 'none';
+
+					// CSRF token
+					const csrfInput = document.createElement('input');
+					csrfInput.type = 'hidden';
+					csrfInput.name = '_token';
+					csrfInput.value = '{{ csrf_token() }}';
+					form.appendChild(csrfInput);
+
+					// Gắn form và submit
+					document.body.appendChild(form);
+					form.submit();
+				}
+			});
+		});
+	});
+	//Xoá blog
 	document.querySelectorAll('[data-kt-blog-table-filter="delete_row"]').forEach(el => {
 		el.addEventListener('click', function(e) {
 			e.preventDefault();
 
-			if (!confirm('Bạn có chắc chắn muốn xóa blog này?')) return;
-
 			const url = this.dataset.url;
 
-			// Tạo form để submit
-			const form = document.createElement('form');
-			form.method = 'POST';
-			form.action = url;
-			form.style.display = 'none';
+			Swal.fire({
+				title: 'Xác nhận xoá',
+				text: 'Bạn có chắc chắn muốn xoá blog này? Hành động này không thể hoàn tác!',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Xóa',
+				cancelButtonText: 'Hủy',
+				confirmButtonColor: '#d33',
+				reverseButtons: true
+			}).then(result => {
+				if (result.isConfirmed) {
+					const form = document.createElement('form');
+					form.method = 'POST';
+					form.action = url;
+					form.style.display = 'none';
 
-			// Thêm CSRF token (từ Blade)
-			const csrfInput = document.createElement('input');
-			csrfInput.type = 'hidden';
-			csrfInput.name = '_token';
-			csrfInput.value = '{{ csrf_token() }}';
-			form.appendChild(csrfInput);
+					// CSRF token
+					const csrfInput = document.createElement('input');
+					csrfInput.type = 'hidden';
+					csrfInput.name = '_token';
+					csrfInput.value = '{{ csrf_token() }}';
+					form.appendChild(csrfInput);
 
-			// Thêm method DELETE
-			const methodInput = document.createElement('input');
-			methodInput.type = 'hidden';
-			methodInput.name = '_method';
-			methodInput.value = 'DELETE';
-			form.appendChild(methodInput);
+					// Method spoofing DELETE
+					const methodInput = document.createElement('input');
+					methodInput.type = 'hidden';
+					methodInput.name = '_method';
+					methodInput.value = 'DELETE';
+					form.appendChild(methodInput);
 
-			// Submit form
-			document.body.appendChild(form);
-			form.submit();
+					document.body.appendChild(form);
+					form.submit();
+				}
+			});
 		});
 	});
+	//searchInput
 	let searchInput = document.getElementById('searchInput');
 	let timer;
 
-	document.addEventListener('DOMContentLoaded', function () {
+	document.addEventListener('DOMContentLoaded', function() {
 		console.log("Script đã chạy");
 
 		const searchInput = document.getElementById('searchInput');
 		let timer;
 
 		if (searchInput) {
-			searchInput.addEventListener('input', function () {
+			searchInput.addEventListener('input', function() {
 				clearTimeout(timer);
-				timer = setTimeout(function () {
+				timer = setTimeout(function() {
 					let search = searchInput.value.trim();
 					let params = new URLSearchParams(window.location.search);
 

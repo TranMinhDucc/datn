@@ -19,6 +19,7 @@ use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 
 
 // ========== ADMIN CONTROLLERS ==========
@@ -47,10 +48,10 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\EmailCampaignController;
-
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
+use App\Http\Controllers\Admin\BlogCommentController;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -90,6 +91,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
+    Route::post('/blogs/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog-comment.store');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
 
@@ -230,6 +232,8 @@ Route::prefix('admin')
         //Blog
         Route::resource('blogs', BlogController::class)->names('blogs');
         Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+        Route::post('blogs/{blog:slug}/toggle-status', [BlogController::class, 'toggleStatus'])->name('blogs.toggle-status');
+        Route::get('blogs/{blog}/comments', [BlogCommentController::class, 'loadByBlog'])->name('blogs.comments');
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
         //Shipping
         Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
@@ -239,11 +243,6 @@ Route::prefix('admin')
 
         Route::resource('brands', BrandController::class);
         Route::resource('tags', TagController::class);
-        //Blog
-        Route::resource('blogs', BlogController::class)->names('blogs');
-        Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
-        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
-
 
         // Variant Attributes
         Route::resource('variant_attributes', VariantAttributeController::class);

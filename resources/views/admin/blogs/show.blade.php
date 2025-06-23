@@ -38,11 +38,15 @@
                             <!--begin::Input group-->
                             <div class="d-flex align-items-center justify-content-end flex-equal order-3 fw-row" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Specify invoice due date" data-kt-initialized="1">
                                 <!--begin::Date-->
-                                <div class="fs-6 fw-bold text-gray-700 text-nowrap">Cập nhật:</div>
+                                <div class="fs-6 fw-bold text-gray-700 text-nowrap">Xuất bản:</div>
                                 <!--end::Date-->
                                 <!--begin::Input-->
                                 <div class="position-relative d-flex align-items-center w-150px">
-                                    <span class="fs-6 fw-semibold text-gray-800 ms-2">{{ $blog->updated_at->format('d/m/Y') }}</span>
+                                    @if($blog->published_at)
+                                    <span class="fs-6 fw-semibold text-gray-800 ms-2">{{ $blog->published_at->format('d/m/Y') }}</span>
+                                    @else
+                                    <span class="fs-6 fw-semibold text-gray-800 ms-2">Chưa xuất bản</span>
+                                    @endif
                                 </div>
                                 <!--end::Input-->
                             </div>
@@ -68,24 +72,24 @@
                             </div>
                             <!--end::Author-->
                             <!--begin::Category-->
-                            <!-- <div class="fs-6 text-muted mb-8">
-                                <span class="fw-semibold">Danh mục:</span> 
+                            <div class="fs-6 text-muted mb-8">
+                                <span class="fw-semibold">Danh mục:</span>
                                 @if($blog->category)
-                                    <span class="badge badge-light-primary">{{ $blog->category->name }}</span>
+                                <span class="badge badge-light-primary">{{ $blog->category->name }}</span>
                                 @else
-                                    N/A
+                                N/A
                                 @endif
-                            </div> -->
+                            </div>
                             <!--end::Category-->
                             <!--begin::Status-->
                             <div class="fs-6 text-muted mb-8">
                                 <span class="fw-semibold">Trạng thái:</span>
                                 @if($blog->status === 'published')
-                                    <span class="badge badge-light-success">Đã xuất bản</span>
+                                <span class="badge badge-light-success">Đã xuất bản</span>
                                 @elseif($blog->status === 'draft')
-                                    <span class="badge badge-light-warning">Bản nháp</span>
+                                <span class="badge badge-light-warning">Bản nháp</span>
                                 @else
-                                    <span class="badge badge-light-danger">Không hoạt động</span>
+                                <span class="badge badge-light-danger">Không hoạt động</span>
                                 @endif
                             </div>
                             <!--end::Status-->
@@ -117,18 +121,18 @@
                             </div>
                             @endif
                             <!--end::Meta Description-->
-                            <!--begin::Tags-->
+                            <!-- begin::Tags-->
                             @if($blog->tags && $blog->tags->count() > 0)
                             <div class="mb-8">
                                 <div class="fs-6 fw-bold text-gray-700 mb-3">Thẻ:</div>
                                 <div class="d-flex flex-wrap gap-2">
                                     @foreach($blog->tags as $tag)
-                                        <span class="badge badge-light-info">{{ $tag->name }}</span>
+                                    <span class="badge badge-light-info">{{ $tag->name }}</span>
                                     @endforeach
                                 </div>
                             </div>
                             @endif
-                            <!--end::Tags-->
+                            <!--end::Tags -->
                         </div>
                         <!--end::Order details-->
                     </div>
@@ -159,10 +163,10 @@
                                     Quay lại danh sách
                                 </a>
                                 @if($blog->status === 'published')
-                                    <a href="{{ route('blog.show', $blog->slug) }}" target="_blank" class="btn btn-light-success">
-                                        <i class="fas fa-eye fs-2"></i>
-                                        Xem trên website
-                                    </a>
+                                <a href="{{ route('client.blog.show', $blog->slug) }}" target="_blank" class="btn btn-light-success">
+                                    <i class="fas fa-eye fs-2"></i>
+                                    Xem trên website
+                                </a>
                                 @endif
                                 <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
                                     @csrf
@@ -187,10 +191,10 @@
                                     <span class="text-gray-600">Lượt xem:</span>
                                     <span class="fw-bold">{{ $blog->views ?? 0 }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between">
+                                <!-- <div class="d-flex justify-content-between">
                                     <span class="text-gray-600">Chia sẻ:</span>
                                     <span class="fw-bold">{{ $blog->shares ?? 0 }}</span>
-                                </div>
+                                </div> -->
                                 <div class="d-flex justify-content-between">
                                     <span class="text-gray-600">Bình luận:</span>
                                     <span class="fw-bold">{{ $blog->comments_count ?? 0 }}</span>
@@ -199,6 +203,15 @@
                             <!--end::Stats-->
                         </div>
                         <!--end::Statistics-->
+                        <!--begin::Comments-->
+                        <div class="mb-10">
+                            <label class="form-label fw-bold fs-6 text-gray-700">Bình luận</label>
+                            <div id="blog-comments" class="d-flex flex-column gap-4" style="max-height: 400px; overflow-y: auto;"></div>
+                            <div class="text-center mt-3" id="loading-spinner" style="display: none;">
+                                <span class="spinner-border spinner-border-sm text-primary"></span> Đang tải...
+                            </div>
+                        </div>
+                        <!--end::Comments-->
                     </div>
                     <!--end::Card body-->
                 </div>
@@ -212,3 +225,38 @@
 </div>
 <!--end::Content-->
 @endsection
+@push('scripts')
+<script>
+    const commentsContainer = document.getElementById('blog-comments');
+    const spinner = document.getElementById('loading-spinner');
+    let nextPage = '{{ route('admin.blogs.comments', $blog->slug) }}';
+
+    function loadComments() {
+        if (!nextPage) return;
+
+        spinner.style.display = 'block';
+
+        fetch(nextPage)
+            .then(res => res.json())
+            .then(data => {
+                data.comments.forEach(html => {
+                    const div = document.createElement('div');
+                    div.innerHTML = html;
+                    commentsContainer.appendChild(div);
+                });
+                nextPage = data.next_page_url;
+                spinner.style.display = 'none';
+            });
+    }
+
+    // Tải bình luận đầu tiên
+    loadComments();
+
+    // Tải thêm khi cuộn xuống cuối container
+    commentsContainer.addEventListener('scroll', function () {
+        if (commentsContainer.scrollTop + commentsContainer.clientHeight >= commentsContainer.scrollHeight - 50) {
+            loadComments();
+        }
+    });
+</script>
+@endpush
