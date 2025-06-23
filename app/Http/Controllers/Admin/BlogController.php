@@ -64,7 +64,7 @@ class BlogController extends Controller
             'category_id.required' => 'Chuyên mục không được để trống.',
             'category_id.exists' => 'Chuyên mục không hợp lệ.',
             'thumbnail.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
-            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',         
+            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',
         ]);
 
         // Nếu có ảnh đại diện được upload

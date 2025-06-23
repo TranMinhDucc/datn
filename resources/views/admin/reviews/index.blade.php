@@ -32,12 +32,17 @@
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-                                <input type="text" class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm đánh giá" />
-                            </div>
-                        </div>
+    <form method="GET" action="{{ route('admin.search') }}">
+        <input type="hidden" name="module" value="reviews">
+        <div class="d-flex align-items-center position-relative my-1">
+            <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+            <input type="text" name="keyword" value="{{ request('keyword') }}"
+                   class="form-control form-control-solid w-250px ps-12"
+                   placeholder="Tìm đánh giá" />
+        </div>
+    </form>
+</div>
+
                     </div>
 
                     <div class="card-body pt-0">
@@ -131,9 +136,11 @@
                         </table>
 
                         {{-- Pagination links --}}
-                        <div class="mt-4">
-                            {{ $reviews->links() }}
-                        </div>
+                       <div class="d-flex justify-content-end mt-4">
+  {{ $reviews->appends(request()->query())->links('pagination::bootstrap-5') }}
+
+</div>
+{{-- end pagination  --}}
                     </div>
                 </div>
 

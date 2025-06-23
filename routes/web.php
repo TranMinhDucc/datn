@@ -46,6 +46,9 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+
+use App\Http\Controllers\Admin\SearchController;
+
 use App\Http\Controllers\Admin\EmailCampaignController;
 
 use App\Http\Controllers\Admin\ShippingFeeController;
@@ -61,6 +64,8 @@ use App\Services\BankTransactionService;
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
@@ -196,6 +201,29 @@ Route::prefix('admin')
 
 
         Route::resource('coupons', CouponController::class);
+
+        // Marketing
+
+        Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
+        Route::resource('email_campaigns', EmailCampaignController::class);
+
+        // Route tìm kiếm đa module
+        Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+
+
+        // System Settings
+        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+        Route::get('/users/{id}/balance-log', [UserController::class, 'balanceLog'])->name('users.balance-log');
+        Route::get('/users/{username}/activity-log', [UserController::class, 'activityLog'])->name('users.activity-log');
+        Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
+
+
+
+
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
 

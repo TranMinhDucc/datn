@@ -92,8 +92,7 @@
 
                                         <!--begin::Options-->
                                         <label class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="2"
-                                                checked="checked" />
+                                            <input class="form-check-input" type="checkbox" value="2" checked="checked" />
                                             <span class="form-check-label">
                                                 Customer
                                             </span>
@@ -193,133 +192,149 @@
 
                         <!--begin::Table-->
                         <div class="table-responsive">
-            <style>
-    .child-row { display: none; }
-    .toggle-btn { cursor: pointer; font-weight: bold; color: #3a3a3a; }
-    .category-parent { background-color: #f5f9ff; } /* tô nền cấp 1 */
-    tbody tr:nth-child(odd) { background-color: #f9f9f9; }
-</style>
+                            <style>
+                                .child-row {
+                                    display: none;
+                                }
 
-<table class="table table-bordered align-middle">
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Ảnh</th>
-            <th>Tên danh mục</th>
-            <th>Danh mục cha</th>
-            <th>Mô tả</th>
-            <th class="text-end">Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @php
-            $stt = 1;
+                                .toggle-btn {
+                                    cursor: pointer;
+                                    font-weight: bold;
+                                    color: #3a3a3a;
+                                }
 
-            function renderRows($categories, $parentId = null, $level = 0, &$stt = 1, $categoryMap = [], $breadcrumb = []) {
-                foreach ($categories->where('parent_id', $parentId) as $category) {
-                    $hasChildren = $categories->where('parent_id', $category->id)->count() > 0;
-                    $isParent = $level === 0;
-                    $rowClass = $isParent ? 'category-parent' : 'child-row';
-                    $breadcrumbText = implode(' > ', [...$breadcrumb, $category->name]);
+                                .category-parent {
+                                    background-color: #f5f9ff;
+                                }
 
-                    echo '<tr data-id="'.$category->id.'" data-parent="'.$parentId.'" class="parent-'.($parentId ?? 'root').' '.$rowClass.'"'.($isParent ? '' : ' style="display:none"').'>';
+                                /* tô nền cấp 1 */
+                                tbody tr:nth-child(odd) {
+                                    background-color: #f9f9f9;
+                                }
+                            </style>
 
-                    // Cột STT – chỉ cấp 1
-                    echo '<td>';
-                    if ($isParent) echo $stt++;
-                    echo '</td>';
+                            <table class="table table-bordered align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Ảnh</th>
+                                        <th>Tên danh mục</th>
+                                        <th>Danh mục cha</th>
+                                        <th>Mô tả</th>
+                                        <th class="text-end">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $stt = 1;
 
-                    // Ảnh
-                    echo '<td>';
-                    if ($category->image) {
-                        echo '<img src="'.asset("storage/".$category->image).'" width="40" height="40" style="object-fit:cover;border-radius:6px;">';
-                    } else {
-                        echo '<span class="text-muted">Không có</span>';
-                    }
-                    echo '</td>';
+                                        function renderRows($categories, $parentId = null, $level = 0, &$stt = 1, $categoryMap = [], $breadcrumb = [])
+                                        {
+                                            foreach ($categories->where('parent_id', $parentId) as $category) {
+                                                $hasChildren = $categories->where('parent_id', $category->id)->count() > 0;
+                                                $isParent = $level === 0;
+                                                $rowClass = $isParent ? 'category-parent' : 'child-row';
+                                                $breadcrumbText = implode(' > ', [...$breadcrumb, $category->name]);
 
-                    // Tên danh mục
-                    echo '<td title="'.e($breadcrumbText).'">';
-                    if ($hasChildren) {
-                        echo '<span class="toggle-btn" onclick="toggleChildren('.$category->id.', this)">▸</span> ';
-                    } else {
-                        echo '<span style="display:inline-block; width: 14px;"></span> ';
-                    }
-                    echo str_repeat(' ', $level).' '.$category->name;
-                    echo '</td>';
+                                                echo '<tr data-id="' . $category->id . '" data-parent="' . $parentId . '" class="parent-' . ($parentId ?? 'root') . ' ' . $rowClass . '"' . ($isParent ? '' : ' style="display:none"') . '>';
 
-                    // Danh mục cha
-                    echo '<td>';
-                    if ($category->parent_id && isset($categoryMap[$category->parent_id])) {
-                        echo $categoryMap[$category->parent_id];
-                    } else {
-                        echo '<span class="text-muted">Không có</span>';
-                    }
-                    echo '</td>';
+                                                // Cột STT – chỉ cấp 1
+                                                echo '<td>';
+                                                if ($isParent)
+                                                    echo $stt++;
+                                                echo '</td>';
 
-                    // Mô tả
-                    echo '<td>'.($category->description ?? 'Không có mô tả').'</td>';
+                                                // Ảnh
+                                                echo '<td>';
+                                                if ($category->image) {
+                                                    echo '<img src="' . asset("storage/" . $category->image) . '" width="40" height="40" style="object-fit:cover;border-radius:6px;">';
+                                                } else {
+                                                    echo '<span class="text-muted">Không có</span>';
+                                                }
+                                                echo '</td>';
 
-                    // Hành động
-                    echo '<td class="text-end">
-                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
-                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                Hành động
-                                <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
-                            </a>
+                                                // Tên danh mục
+                                                echo '<td title="' . e($breadcrumbText) . '">';
+                                                if ($hasChildren) {
+                                                    echo '<span class="toggle-btn" onclick="toggleChildren(' . $category->id . ', this)">▸</span> ';
+                                                } else {
+                                                    echo '<span style="display:inline-block; width: 14px;"></span> ';
+                                                }
+                                                echo str_repeat(' ', $level) . ' ' . $category->name;
+                                                echo '</td>';
 
-                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                data-kt-menu="true">
-                                <div class="menu-item px-3">
-                                    <a href="'.route('admin.categories.edit', $category).'" class="menu-link px-3">Sửa</a>
-                                </div>
-                                <div class="menu-item px-3">
-                                    <a href="'.route('admin.categories.show', $category).'" class="menu-link px-3">Xem</a>
-                                </div>
-                                <div class="menu-item px-3">
-                                    <form action="'.route('admin.categories.destroy', $category).'" method="POST" onsubmit="return confirm(\'Bạn chắc chắn muốn xóa?\');">
-                                        '.csrf_field().method_field('DELETE').'
-                                        <button type="submit" class="menu-link px-3">Xóa</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </td>';
+                                                // Danh mục cha
+                                                echo '<td>';
+                                                if ($category->parent_id && isset($categoryMap[$category->parent_id])) {
+                                                    echo $categoryMap[$category->parent_id];
+                                                } else {
+                                                    echo '<span class="text-muted">Không có</span>';
+                                                }
+                                                echo '</td>';
 
-                    echo '</tr>';
+                                                // Mô tả
+                                                echo '<td>' . ($category->description ?? 'Không có mô tả') . '</td>';
 
-                    renderRows($categories, $category->id, $level + 1, $stt, $categoryMap, [...$breadcrumb, $category->name]);
-                }
-            }
+                                                // Hành động
+                                                echo '<td class="text-end">
+                                                                    <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
+                                                                        data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                                                        Hành động
+                                                                        <i class="fa-solid fa-arrow-down fs-9 ms-2"></i>
+                                                                    </a>
 
-            $categoryMap = $categories->pluck('name', 'id')->toArray();
-            renderRows($categories, null, 0, $stt, $categoryMap);
-        @endphp
-    </tbody>
-</table>
+                                                                    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
+                                                                        data-kt-menu="true">
+                                                                        <div class="menu-item px-3">
+                                                                            <a href="' . route('admin.categories.edit', $category) . '" class="menu-link px-3">Sửa</a>
+                                                                        </div>
+                                                                        <div class="menu-item px-3">
+                                                                            <a href="' . route('admin.categories.show', $category) . '" class="menu-link px-3">Xem</a>
+                                                                        </div>
+                                                                        <div class="menu-item px-3">
+                                                                            <form action="' . route('admin.categories.destroy', $category) . '" method="POST" onsubmit="return confirm(\'Bạn chắc chắn muốn xóa?\');">
+                                                                                ' . csrf_field() . method_field('DELETE') . '
+                                                                                <button type="submit" class="menu-link px-3">Xóa</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>';
 
-<script>
-    function toggleChildren(parentId, toggleIcon) {
-        const rows = document.querySelectorAll('tr[data-parent="' + parentId + '"]');
-        const isOpen = toggleIcon.textContent.trim() === '▾';
+                                                echo '</tr>';
 
-        toggleIcon.textContent = isOpen ? '▸' : '▾';
+                                                renderRows($categories, $category->id, $level + 1, $stt, $categoryMap, [...$breadcrumb, $category->name]);
+                                            }
+                                        }
 
-        rows.forEach(row => {
-            if (isOpen) {
-                row.style.display = 'none';
+                                        $categoryMap = $categories->pluck('name', 'id')->toArray();
+                                        renderRows($categories, null, 0, $stt, $categoryMap);
+                                    @endphp
+                                </tbody>
+                            </table>
 
-                // Nếu có con, đóng tiếp
-                const childToggle = row.querySelector('.toggle-btn');
-                if (childToggle && childToggle.textContent.trim() === '▾') {
-                    childToggle.textContent = '▸';
-                    toggleChildren(row.dataset.id, childToggle);
-                }
-            } else {
-                row.style.display = 'table-row';
-            }
-        });
-    }
-</script>
+                            <script>
+                                function toggleChildren(parentId, toggleIcon) {
+                                    const rows = document.querySelectorAll('tr[data-parent="' + parentId + '"]');
+                                    const isOpen = toggleIcon.textContent.trim() === '▾';
+
+                                    toggleIcon.textContent = isOpen ? '▸' : '▾';
+
+                                    rows.forEach(row => {
+                                        if (isOpen) {
+                                            row.style.display = 'none';
+
+                                            // Nếu có con, đóng tiếp
+                                            const childToggle = row.querySelector('.toggle-btn');
+                                            if (childToggle && childToggle.textContent.trim() === '▾') {
+                                                childToggle.textContent = '▸';
+                                                toggleChildren(row.dataset.id, childToggle);
+                                            }
+                                        } else {
+                                            row.style.display = 'table-row';
+                                        }
+                                    });
+                                }
+                            </script>
 
 
                         </div>

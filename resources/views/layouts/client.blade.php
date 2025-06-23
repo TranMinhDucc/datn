@@ -31,44 +31,44 @@
 
 <script>
     @auth
-    localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
+        localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
     @else
-    localStorage.setItem('currentUser', 'guest');
+        localStorage.setItem('currentUser', 'guest');
     @endauth
 </script>
 
 <script>
-    @auth
-    const userId = '{{ auth()->user()->id }}';
-    const guestKey = 'cartItems_guest';
-    const userKey = `cartItems_${userId}`;
+        @auth
+                    const userId = '{{ auth()->user()->id }}';
+            const guestKey = 'cartItems_guest';
+            const userKey = `cartItems_${userId}`;
 
-    const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
-    const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
+            const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
+            const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
 
-    // Hàm merge
-    function mergeCarts(userCart, guestCart) {
-        guestCart.forEach(gItem => {
-            const index = userCart.findIndex(
-                uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
-            );
+            // Hàm merge
+            function mergeCarts(userCart, guestCart) {
+                guestCart.forEach(gItem => {
+                    const index = userCart.findIndex(
+                        uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
+                    );
 
-            if (index !== -1) {
-                userCart[index].quantity += gItem.quantity;
-            } else {
-                userCart.push(gItem);
+                    if (index !== -1) {
+                        userCart[index].quantity += gItem.quantity;
+                    } else {
+                        userCart.push(gItem);
+                    }
+                });
+
+                return userCart;
             }
-        });
 
-        return userCart;
-    }
+            const mergedCart = mergeCarts(userCart, guestCart);
 
-    const mergedCart = mergeCarts(userCart, guestCart);
-
-    localStorage.setItem(userKey, JSON.stringify(mergedCart));
-    localStorage.removeItem(guestKey); // xoá cart guest
-    localStorage.setItem('currentUser', userId); // cập nhật currentUser
-    @endauth
+            localStorage.setItem(userKey, JSON.stringify(mergedCart));
+            localStorage.removeItem(guestKey); // xoá cart guest
+            localStorage.setItem('currentUser', userId); // cập nhật currentUser
+        @endauth
 </script>
 
 <body>
@@ -390,16 +390,16 @@
     </div>
     {{-- <div class="wrapper">
         <div class="title-box"> <img src="{{ asset('assets/client/images/other-img/cookie.png') }}" alt="">
-    <h3>Cookies Consent</h3>
-    </div>
-    <div class="info">
-        <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you
-            accept our cookie policy.</p>
-    </div>
-    <div class="buttons">
-        <button class="button btn btn_outline sm" id="acceptBtn">Accept</button>
-        <button class="button btn btn_black sm">Decline</button>
-    </div>
+            <h3>Cookies Consent</h3>
+        </div>
+        <div class="info">
+            <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you
+                accept our cookie policy.</p>
+        </div>
+        <div class="buttons">
+            <button class="button btn btn_outline sm" id="acceptBtn">Accept</button>
+            <button class="button btn btn_black sm">Decline</button>
+        </div>
     </div> --}}
     <div class="theme-btns">
         <button class="btntheme" id="dark-btn"><i class="fa-regular fa-moon"></i>
@@ -431,37 +431,37 @@
     <!-- SweetAlert2 JS (bắt buộc để Swal.fire hoạt động) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
-    <script>
-        let timerInterval;
-        let timeout = 3000;
-        let action = "{{ session('action') }}";
+        <script>
+            let timerInterval;
+            let timeout = 3000;
+            let action = "{{ session('action') }}";
 
-        if (action === "register") timeout = 5000;
-        else if (action === "logout") timeout = 600;
-        else if (action === "reset") timeout = 4000;
+            if (action === "register") timeout = 5000;
+            else if (action === "logout") timeout = 600;
+            else if (action === "reset") timeout = 4000;
 
-        Swal.fire({
-            title: "🎉 {{ session('success') }}",
-            html: "Sẽ tự đóng trong <b></b> ms.",
-            timer: timeout,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-                const timer = Swal.getPopup().querySelector("b");
-                timerInterval = setInterval(() => {
-                    timer.textContent = Swal.getTimerLeft();
-                }, 100);
-            },
-            willClose: () => {
-                clearInterval(timerInterval);
-            }
-        });
-    </script>
+            Swal.fire({
+                title: "🎉 {{ session('success') }}",
+                html: "Sẽ tự đóng trong <b></b> ms.",
+                timer: timeout,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    const timer = Swal.getPopup().querySelector("b");
+                    timerInterval = setInterval(() => {
+                        timer.textContent = Swal.getTimerLeft();
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                }
+            });
+        </script>
     @endif
 </body>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const cartList = document.querySelector('.offcanvas-cart');
 
         let currentUser = localStorage.getItem('currentUser') || 'guest';
@@ -472,7 +472,7 @@
 
         // Sự kiện Add to Cart
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const id = this.dataset.id;
                 const name = this.dataset.name;
                 const price = parseFloat(this.dataset.price);
@@ -583,8 +583,8 @@
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        sizeItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
                 this.parentNode.classList.add('selected');
@@ -593,14 +593,14 @@
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        colorItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
         });
     });
-    window.addEventListener('pageshow', function(event) {
+    window.addEventListener('pageshow', function (event) {
         if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
             window.location.reload();
         }
