@@ -32,6 +32,7 @@ class SettingController extends Controller
                     'keywords' => 'nullable|string',
                     'author' => 'nullable|string',
                     'address' => 'nullable|string',
+                    'vat' => 'nullable|string',
                 ];
                 break;
             case 'set_images':
@@ -70,7 +71,7 @@ class SettingController extends Controller
         Cache::forget('global_settings');
         return redirect()->route('admin.settings.index', ['tab' => $tab])->with('success', 'Cài đặt đã được cập nhật.');
     }
-  
+
     public function destroy($id)
     {
         $setting = Setting::findOrFail($id);

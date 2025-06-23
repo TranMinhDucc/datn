@@ -97,7 +97,7 @@
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true"
     data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true"
     data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
-    @stack('scripts')
+
 
     <!--begin::Theme mode setup on page load-->
     <script>
@@ -280,6 +280,8 @@ if (isset($_SESSION['success'])) {
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/new-target.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/users-search.js') }}"></script>
     <!--end::Custom Javascript-->
+
+    @stack('scripts')
 
     @yield('scripts')
 
