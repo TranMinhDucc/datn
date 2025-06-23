@@ -44,7 +44,7 @@
                                     data-icon="search-normal-2"></i></button>
                         </li>
                         <li>
-                            <a href="{{ route('client.wishlist.index') }}"><i class="iconsax" data-icon="heart"></i>
+                            <a href="{{ route('client.account.wishlist.index') }}"><i class="iconsax" data-icon="heart"></i>
                                 <span class="cart_qty_cls">2</span></a>
                         </li>
                         <li class="onhover-div">
