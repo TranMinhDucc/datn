@@ -18,18 +18,18 @@ class ProductController extends Controller
     }
 
 
-    public function show(string $slug)
+    public function show($id)
     {
         // test trước khi thêm slug vào hàm
 
         $product = Product::with([
-            'variants.options.attribute',
-            'variants.options.value',
-            'category',
-            'brand',
-            'tags',
-            'images',
-        ])->where('slug', $slug)->firstOrFail();
+        'variants.options.attribute',
+        'variants.options.value',
+        'category',
+        'brand',
+        'tags',
+        'images',
+    ])->findOrFail($id);
         $test_id = $product->id;
         // 👉 Lấy danh sách ảnh phụ (không phải thumbnail)
         $productImages = ProductImage::where('product_id', $product->id)

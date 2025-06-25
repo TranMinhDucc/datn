@@ -924,7 +924,7 @@
                 </div>
                 <div class="modal-body pt-0">
                     @auth
-                        <form action="{{ route('client.review') }}" method="POST" class="row g-3">
+                        <form id="rating-form" action="{{ route('client.review') }}" method="POST" class="row g-3">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $test_id }}">
                             <input type="hidden" name="rating" id="rating-value" value="0">
@@ -956,35 +956,54 @@
                                 <div class="form-group">
                                     <label class="form-label">Review Content :</label>
                                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
-                                        placeholder="Write your comments here..." required></textarea>
+                                        placeholder="Write your comments here..."></textarea>
                                 </div>
                             </div>
 
                             <div class="modal-button-group d-flex gap-2">
                                 <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
-                                <button class="btn btn-submit" type="submit">Submit</button>
+                                <button class="btn btn-submit submit-rating" type="button">Submit</button>
                             </div>
                         </form>
 
                         <script>
-                            const stars = document.querySelectorAll('.star');
-                            const ratingInput = document.getElementById('rating-value');
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const form = document.getElementById('rating-form');
+                                const stars = document.querySelectorAll('.star');
+                                const ratingInput = document.getElementById('rating-value');
+                                const commentInput = document.getElementById('comment');
 
-                            stars.forEach((star, index) => {
-                                star.addEventListener('click', () => {
-                                    const rating = star.getAttribute('data-value');
-                                    ratingInput.value = rating;
+                                stars.forEach((star, index) => {
+                                    star.addEventListener('click', () => {
+                                        const rating = star.getAttribute('data-value');
+                                        ratingInput.value = rating;
 
-                                    stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
 
-                                    for (let i = 0; i < rating; i++) {
-                                        stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
-                                    }
+                                        for (let i = 0; i < rating; i++) {
+                                            stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
+                                        }
+                                    });
                                 });
-                            });
+
+                                document.querySelectorAll('.submit-rating').forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        const rate = ratingInput.value;
+                                        const comment = commentInput.value;
+                                        if (isNaN(rate) || (rate <= 0 || rate > 5)) {
+                                            Swal.fire('Thông báo', 'Vui lòng lựa chọn đánh giá của bạn', 'warning');
+                                            return;
+                                        }
+                                        if (comment == '') {
+                                            Swal.fire('Thông báo', 'Vui lòng nhập nội dung đánh giá', 'warning');
+                                            return;
+                                        }
+                                        form.submit();
+                                    })
+                                });
+                            })
                         </script>
                     @endauth
-
                     @guest
                         <div class="alert alert-warning mt-3 d-flex justify-content-between align-items-center">
                             <div class="me-3">
@@ -1278,7 +1297,6 @@
             });
         });
     </script> -->
-
 
 
 @endsection

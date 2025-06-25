@@ -381,407 +381,72 @@
       </div>
       </div>
       </div>
-      <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
-      <div class="dashboard-right-box">
-      <div class="wishlist-box ratio1_3">
-      <div class="sidebar-title">
-      <div class="loader-line"></div>
-      <h4>Wishlist</h4>
-      </div>
-      <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
-      <div class="col">
+     <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
+        <div class="dashboard-right-box">
+          <div class="wishlist-box ratio1_3">
+          <div class="sidebar-title">
+            <div class="loader-line"></div>
+            <h4>Wishlist</h4>
+          </div>
+          <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
+  @forelse ($wishlists as $item)
+    @php
+      $product = $item->product;
+    @endphp
+    <div class="col">
       <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="#"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/1.jpg') }}" alt="product"></a><a
-      class="pro-sec" href="#">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
-      alt="product"></a>
+        <div class="img-wrapper">
+          <div class="label-block">
+            <a class="label-2 wishlist-icon delete-button delete-wishlist"
+              href="javascript:;"
+              data-id="{{ $product->id }}"
+              title="Remove from Wishlist">
+              <i class="iconsax" data-icon="trash" aria-hidden="true"></i>
+            </a>
+            <form id="remove-wishlist-{{ $product->id }}" action="{{ route('client.account.wishlist.remove', $product->id) }}" method="POST" style="display: none;">
+              @csrf
+              @method('DELETE')
+            </form>
+          </div>
+          <div class="product-image">
+            <a class="pro-first" href="#">
+              <img class="bg-img" src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}" alt="{{ $product->name }}">
+            </a>
+            <a class="pro-sec" href="#">
+              <img class="bg-img" src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}" alt="{{ $product->name }}">
+            </a>
+          </div>
+          <div class="cart-info-icon">
+            <a href="#" title="Add to cart"><i class="iconsax" data-icon="basket-2"></i></a>
+            <a href="#" title="Compare"><i class="iconsax" data-icon="arrow-up-down"></i></a>
+            <a href="#" title="Quick View"><i class="iconsax" data-icon="eye"></i></a>
+          </div>
+        </div>
+        <div class="product-detail">
+          <ul class="rating">
+            <li><i class="fa-solid fa-star"></i></li>
+            <li><i class="fa-solid fa-star"></i></li>
+            <li><i class="fa-solid fa-star"></i></li>
+            <li><i class="fa-solid fa-star-half-stroke"></i></li>
+            <li><i class="fa-regular fa-star"></i></li>
+            <li>4.3</li>
+          </ul>
+          <a href="#">
+            <h6>{{ $product->name }}</h6>
+          </a>
+          <p>${{ number_format($product->price, 2) }}</p>
+        </div>
       </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      <div class="countdown">
-      <ul class="clockdiv1">
-      <li>
-      <div class="timer">
-      <div class="days"></div>
-      </div><span class="title">Days</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="hours"></div>
-      </div><span class="title">Hours</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="minutes"></div>
-      </div><span class="title">Min</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="seconds"></div>
-      </div><span class="title">Sec</span>
-      </li>
-      </ul>
-      </div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star-half-stroke"></i></li>
-      <li><i class="fa-regular fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="#">
-      <h6>Greciilooks Women's Stylish Top</h6>
-      </a>
-      <p>$100.00
-      <del>$140.00</del><span>-20%</span>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/2.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/19.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-regular fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Wide Linen-Blend Trousers</h6>
-      </a>
-      <p>$100.00
-      <del>$18.00 </del>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/3.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/18.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Long Sleeve Rounded T-Shirt</h6>
-      </a>
-      <p>$120.30
-      <del>$140.00</del><span>-20%</span>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/4.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/17.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      <div class="countdown">
-      <ul class="clockdiv2">
-      <li>
-      <div class="timer">
-      <div class="days"></div>
-      </div><span class="title">Days</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="hours"></div>
-      </div><span class="title">Hours</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="minutes"></div>
-      </div><span class="title">Min</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="seconds"></div>
-      </div><span class="title">Sec</span>
-      </li>
-      </ul>
-      </div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star-half-stroke"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Blue lined White T-Shirt</h6>
-      </a>
-      <p>$190.00
-      <del>$210.00</del>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/16.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      <div class="countdown">
-      <ul class="clockdiv3">
-      <li>
-      <div class="timer">
-      <div class="days"></div>
-      </div><span class="title">Days</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="hours"></div>
-      </div><span class="title">Hours</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="minutes"></div>
-      </div><span class="title">Min</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="seconds"></div>
-      </div><span class="title">Sec</span>
-      </li>
-      </ul>
-      </div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star-half-stroke"></i></li>
-      <li><i class="fa-regular fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Greciilooks Women's Stylish Top</h6>
-      </a>
-      <p>$100.00
-      <del>$140.00</del><span>-20%</span>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/15.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-regular fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Wide Linen-Blend Trousers</h6>
-      </a>
-      <p>$100.00
-      <del>$18.00 </del>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/14.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Long Sleeve Rounded T-Shirt</h6>
-      </a>
-      <p>$120.30
-      <del>$140.00</del><span>-20% </span>
-      </p>
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      <div class="product-box-3 product-wishlist">
-      <div class="img-wrapper">
-      <div class="label-block"><a class="label-2 wishlist-icon delete-button"
-      href="javascript:void(0)" title="Add to Wishlist" tabindex="0"><i class="iconsax"
-      data-icon="trash" aria-hidden="true"></i></a></div>
-      <div class="product-image"><a class="pro-first" href="product.html">
-      <img class="bg-img" src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-      alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
-      src="{{ asset('assets/client/images/product/product-3/13.jpg') }}" alt="product"></a>
-      </div>
-      <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-      title="Add to cart" tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true">
-      </i></a><a href="compare.html" title="Compare" tabindex="0"><i class="iconsax"
-      data-icon="arrow-up-down" aria-hidden="true"></i></a><a href="#" data-bs-toggle="modal"
-      data-bs-target="#quick-view" title="Quick View" tabindex="0"><i class="iconsax"
-      data-icon="eye" aria-hidden="true"></i></a></div>
-      <div class="countdown">
-      <ul class="clockdiv4">
-      <li>
-      <div class="timer">
-      <div class="days"></div>
-      </div><span class="title">Days</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="hours"></div>
-      </div><span class="title">Hours</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="minutes"></div>
-      </div><span class="title">Min</span>
-      </li>
-      <li class="dot"> <span>:</span></li>
-      <li>
-      <div class="timer">
-      <div class="seconds"></div>
-      </div><span class="title">Sec</span>
-      </li>
-      </ul>
-      </div>
-      </div>
-      <div class="product-detail">
-      <ul class="rating">
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star"></i></li>
-      <li><i class="fa-solid fa-star-half-stroke"></i></li>
-      <li>4.3</li>
-      </ul><a href="product.html">
-      <h6>Blue lined White T-Shirt</h6>
-      </a>
-      <p>$190.00
-      <del>$210.00</del>
-      </p>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
+    </div>
+  @empty
+    <div class="col-12">
+      <p>Danh sách yêu thích của bạn đang trống.</p>
+    </div>
+  @endforelse
+</div>
+          </div>
+        </div>
+        </div>
       <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
       <div class="dashboard-right-box">
       <div class="order">
@@ -1949,11 +1614,16 @@
     });
     });
   </script>
-  <script>
+ {{-- SweetAlert2 CDN nếu chưa có --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
   document.addEventListener('DOMContentLoaded', function () {
+    // ✅ Thêm vào wishlist
     document.querySelectorAll('.add-to-wishlist').forEach(button => {
       button.addEventListener('click', function () {
         const productId = this.getAttribute('data-id');
+        const icon = this.querySelector('i');
 
         fetch(`/account/wishlist/add/${productId}`, {
           method: 'POST',
@@ -1965,7 +1635,6 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // Đổi icon nếu cần hoặc hiển thị alert
             Swal.fire({
               icon: 'success',
               title: 'Đã thêm vào yêu thích!',
@@ -1973,12 +1642,12 @@
               timer: 1000
             });
 
-            // Optional: đổi trái tim thành trái tim đầy
-            this.querySelector('i').setAttribute('data-icon', 'heart-fill');
+            // ✅ Đổi icon trái tim rỗng thành đầy
+            icon.setAttribute('data-icon', 'heart-fill');
           } else {
             Swal.fire({
               icon: 'info',
-              title: data.message,
+              title: data.message || 'Sản phẩm đã có trong danh sách!',
               showConfirmButton: false,
               timer: 1200
             });
@@ -1988,13 +1657,49 @@
           console.error('Lỗi:', error);
           Swal.fire({
             icon: 'error',
-            title: 'Có lỗi xảy ra!',
+            title: 'Lỗi máy chủ!',
             text: 'Vui lòng thử lại.'
           });
         });
       });
     });
+
+    // ✅ Xác nhận xoá khỏi wishlist
+    document.querySelectorAll('.delete-wishlist').forEach(button => {
+      button.addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+
+        Swal.fire({
+          title: 'Bạn có chắc muốn xoá?',
+          text: 'Sản phẩm sẽ bị xoá khỏi danh sách yêu thích!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Xoá',
+          cancelButtonText: 'Huỷ'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById(`remove-wishlist-${productId}`).submit();
+          }
+        });
+      });
+    });
   });
 </script>
+
+{{-- ✅ Hiển thị thông báo session sau khi redirect --}}
+@if (session('success'))
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: '{{ session('success') }}',
+      showConfirmButton: false,
+      timer: 1200
+    });
+  </script>
+@endif
+
+
 
 @endsection
