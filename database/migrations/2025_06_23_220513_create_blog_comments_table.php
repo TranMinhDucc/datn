@@ -13,12 +13,25 @@ return new class extends Migration
     {
         Schema::create('blog_comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('blog_id')->constrained('blogs')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('blog_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('blog_comments')->onDelete('cascade');
+            
+            // Guest user information
+            $table->string('guest_name')->nullable();
+            $table->string('guest_email')->nullable();
+            
             $table->text('content');
-            $table->boolean('is_approved')->default(true); // Bị từ khóa thì set false
+            $table->boolean('is_approved')->default(false);
+            $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+            $table->softDeletes(); // For soft delete functionality
             $table->timestamps();
+
+            // Indexes for better performance
+            $table->index(['blog_id', 'parent_id']);
+            $table->index(['blog_id', 'is_approved']);
+            $table->index('created_at');
         });
     }
 

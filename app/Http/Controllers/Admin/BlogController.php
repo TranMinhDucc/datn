@@ -52,7 +52,8 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'author_id' => 'nullable|exists:users,id',
-            'thumbnail' => 'nullable|image|max:2048'
+            'thumbnail' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
         ], [
             'title.required' => 'Tiêu đề không được để trống.',
             'title.max' => 'Tiêu đề không được quá 255 ký tự.',
@@ -82,6 +83,8 @@ class BlogController extends Controller
             'category_id' => $request->category_id,
             'author_id' => $request->author_id ?: auth()->id(),
             'thumbnail' => $data['thumbnail'] ?? null,
+            'status' => $request->published_at ? 'published' : 'draft',
+            'published_at' => $request->published_at ? now() : null,
         ]);
 
         return redirect()->route('admin.blogs.index')

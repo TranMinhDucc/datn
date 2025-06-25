@@ -52,6 +52,7 @@ use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\CKEditorController;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -91,7 +92,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
-    Route::post('/blogs/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog-comment.store');
+    Route::post('/blog/{blog}/comments', [\App\Http\Controllers\Client\BlogCommentController::class, 'store'])->name('blog.comment.store');
+    Route::delete('/blog/{blog}/comments/{comment}', [\App\Http\Controllers\Client\BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
 
@@ -235,6 +237,8 @@ Route::prefix('admin')
         Route::post('blogs/{blog:slug}/toggle-status', [BlogController::class, 'toggleStatus'])->name('blogs.toggle-status');
         Route::get('blogs/{blog}/comments', [BlogCommentController::class, 'loadByBlog'])->name('blogs.comments');
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
+        //Ckeditor
+        Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
         //Shipping
         Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');

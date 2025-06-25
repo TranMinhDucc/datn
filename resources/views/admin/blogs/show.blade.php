@@ -154,7 +154,7 @@
                             <!--end::Label-->
                             <!--begin::Actions-->
                             <div class="d-flex flex-column gap-5">
-                                <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="btn btn-light-primary">
+                                <a href="{{ route('admin.blogs.edit', $blog->slug) }}" class="btn btn-light-primary">
                                     <i class="fa-solid fa-pen fs-2"></i>
                                     Chỉnh sửa
                                 </a>
@@ -168,7 +168,7 @@
                                     Xem trên website
                                 </a>
                                 @endif
-                                <form action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                <form action="{{ route('admin.blogs.destroy', $blog->slug) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-light-danger w-100">
