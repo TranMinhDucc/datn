@@ -14,7 +14,7 @@ class ReviewController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
+            'comment' => 'required|string|max:1000',
             'parent_id' => 'nullable|integer',
         ]);
 

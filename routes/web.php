@@ -14,11 +14,11 @@ use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController as ClientContactController;
-use App\Http\Controllers\Client\WishlistController;
 use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 
 
 // ========== ADMIN CONTROLLERS ==========
@@ -54,8 +54,9 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
-use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\Admin\WishlistController;
+use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Models\Bank;
 use App\Models\Setting;
 use App\Services\BankTransactionService;
@@ -86,7 +87,8 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('{slug}/', 'show')->name('show');
+        Route::get('{id}/', [ClientProductController::class, 'show'])->name('show');
+
     });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -106,11 +108,6 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/show', 'show')->name('show');
     });
-
-    Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
-
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
@@ -144,6 +141,11 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
         Route::put('{id}', [ShippingAddressController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
         Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
+    });
+      Route::prefix('wishlist')->name('wishlist.')->group(function () {
+        Route::get('/', action: [ClientWishlistController::class, 'index'])->name('index');
+        Route::post('/add/{productId}', [ClientWishlistController::class, 'add'])->name('add');
+        Route::delete('/remove/{productId}', [ClientWishlistController::class, 'remove'])->name('remove');
     });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
@@ -235,11 +237,13 @@ Route::prefix('admin')
 
         Route::resource('shipping-addresses', \App\Http\Controllers\Admin\ShippingAddressController::class);
         // Route::resource('roles', RoleController::class)->names('admin.roles');
-
+    
+     
+        Route::resource('wishlists', \App\Http\Controllers\Admin\WishlistController::class);
 
         Route::resource('coupons', CouponController::class);
         // Marketing
-
+    
 
         Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
         Route::resource('email_campaigns', EmailCampaignController::class);
