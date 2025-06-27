@@ -17,8 +17,8 @@
                     </div>
 
                     <div class="card-body pt-0">
-                        <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5">
+                        <div class="table-scroll-wrapper" style="overflow-x: auto; width: 100%;">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;">
                                 <thead>
                                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                                         <th>#</th>
@@ -34,7 +34,12 @@
                                         <tr>
                                             <td>{{ ($activities->currentPage() - 1) * $activities->perPage() + $loop->iteration }}
                                             </td>
-                                            <td class="text-primary fw-bold text-hover-primary">{{ $log->username }}</td>
+                                            <td>
+                                                <a href="{{ route('admin.users.edit', $log->id) }}"
+                                                    class="text-primary fw-bold text-hover-primary">
+                                                    {{ $log->username }}
+                                                </a>
+                                            </td>
                                             <td>
                                                 @php
                                                     $icons = [
@@ -48,13 +53,18 @@
                                                 <i class="fas {{ $iconClass }} me-2"></i>
                                                 {{ $log->action }}
                                             </td>
-                                            <td>{{ $log->created_at->format('H:i d/m/Y') }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge badge-light fw-normal border text-gray-700 px-3 py-2 rounded-2">
+                                                    {{ $log->created_at->format('H:i d/m/Y') }}
+                                                </span>
+                                            </td>
                                             <td class="text-center">
                                                 <span class="badge badge-light-danger fw-semibold">{{ $log->ip_address }}</span>
                                             </td>
                                             <td>
                                                 <span class="d-inline-block text-truncate text-muted small"
-                                                    style="max-width: 250px;" title="{{ $log->user_agent }}">
+                                                    title="{{ $log->user_agent }}">
                                                     {{ $log->user_agent }}
                                                 </span>
                                             </td>
@@ -73,8 +83,10 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+
 @endsection

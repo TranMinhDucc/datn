@@ -18,8 +18,8 @@
 
 
                     <div class="card-body pt-0">
-                        <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5">
+                        <div style="overflow-x: auto; width: 100%;">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1200px;">
                                 <thead>
                                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                                         <th>#</th>
@@ -28,7 +28,7 @@
                                         <th>Số dư trước</th>
                                         <th>Số dư sau</th>
                                         <th>Thời gian</th>
-                                        <th>Lý do</th>
+                                        <th>Nội dung</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,26 +36,34 @@
                                         <tr>
                                             <td>{{ ($transactions->currentPage() - 1) * $transactions->perPage() + $loop->iteration }}
                                             </td>
-                                            <td class="text-primary fw-bold text-hover-primary">
-                                                {{ $log->user->username }}
-                                                <br><small class="text-muted">ID {{ $log->user_id }}</small>
+                                            <td>
+                                                <a href="{{ route('admin.users.edit', $log->user_id) }}"
+                                                    class="text-primary fw-bold text-hover-primary">
+                                                    {{ $log->user->username }}
+                                                </a>
+                                                <br>
+                                                <small class="text-muted">ID {{ $log->user_id }}</small>
                                             </td>
+
                                             <td>
                                                 @php
                                                     $icon = $log->type === 'add' ? 'bi-arrow-up-circle text-success' : 'bi-arrow-down-circle text-danger';
                                                 @endphp
                                                 <span
                                                     class="badge bg-light {{ $log->type === 'add' ? 'text-success' : 'text-danger' }} fw-semibold">
-                                                    <i class="bi {{ $icon }}"></i>
+                                                    {{-- <i class="bi {{ $icon }}"></i> --}}
                                                     {{ $log->type === 'add' ? '+' : '-' }}{{ number_format($log->amount) }}đ
                                                 </span>
                                             </td>
                                             <td>{{ number_format($log->balance_before) }}đ</td>
                                             <td>{{ number_format($log->balance_after) }}đ</td>
                                             <td>
-                                                <i class="bi bi-clock me-1"></i>
-                                                {{ $log->created_at->format('H:i d/m/Y') }}
+                                                <span
+                                                    class="badge badge-light fw-normal border text-gray-700 px-3 py-2 rounded-2">
+                                                    <i class="bi bi-clock me-1"></i> {{ $log->created_at->format('H:i d/m/Y') }}
+                                                </span>
                                             </td>
+
                                             <td class="text-muted text-start small text-wrap">
                                                 {{ $log->description }}
                                             </td>
@@ -73,6 +81,7 @@
                             {{ $transactions->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

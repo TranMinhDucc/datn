@@ -289,11 +289,12 @@ class UserController extends Controller
     {
         $user = User::where('username', $username)->firstOrFail();
 
-        $activities = UserActivityLog::where('username', $username)
+        $transactions = Transaction::with('user')
+            ->where('user_id', $user->id)
             ->orderByDesc('created_at')
-            ->paginate(10); // Số dòng mỗi trang, có thể thay đổi
+            ->paginate(10);
 
-        return view('admin.users.activity-log', compact('activities', 'user'));
+        return view('admin.users.balance-log', compact('transactions', 'user'));
     }
 
 
