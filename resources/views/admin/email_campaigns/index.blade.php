@@ -8,12 +8,17 @@
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="fa fa-search fs-4 position-absolute ms-4"></i>
-                                <input type="text" class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm kiếm chiến dịch" />
-                            </div>
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="email_campaigns">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa fa-search fs-4 position-absolute ms-4"></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12"
+                                        placeholder="Tìm kiếm chiến dịch" />
+                                </div>
+                            </form>
                         </div>
+
 
                         <div class="card-toolbar">
                             <a href="{{ route('admin.email_campaigns.create') }}" class="btn btn-primary">Tạo chiến dịch</a>
@@ -61,6 +66,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <div class="d-flex justify-content-end mt-4">
+                                {{ $campaigns->appends(request()->query())->links('pagination::bootstrap-5') }}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,15 @@
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
-
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="tags">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa fa-search fs-4 position-absolute ms-4"></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12"
+                                        placeholder="Tìm kiếm thẻ (tag)" />
+                                </div>
+                            </form>
                         </div>
 
                         <div class="card-toolbar">
@@ -41,16 +49,14 @@
                                                         data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                                         Actions <i class="fa fa-chevron-down ms-1"></i>
                                                     </button>
-                                                    <div class="menu menu-sub menu-sub-dropdown w-125px"
-                                                        data-kt-menu="true">
+                                                    <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
                                                         <div class="menu-item px-3">
                                                             <a href="{{ route('admin.tags.edit', $tag->id) }}"
                                                                 class="menu-link px-3">Edit</a>
                                                         </div>
                                                         <div class="menu-item px-3">
                                                             <form action="{{ route('admin.tags.destroy', $tag->id) }}"
-                                                                method="POST"
-                                                                onsubmit="return confirm('Delete this tag?')">
+                                                                method="POST" onsubmit="return confirm('Delete this tag?')">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"

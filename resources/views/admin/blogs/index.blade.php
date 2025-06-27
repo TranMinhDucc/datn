@@ -5,38 +5,43 @@
 @section('content')
 
 
-<!--begin::Content-->
-<div id="kt_app_content" class="app-content flex-column-fluid">
-	<!--begin::Content container-->
-	<div id="kt_app_content_container" class="app-container container-xxl">
-		<!--begin::Card-->
-		<div class="card">
-			<!--begin::Card header-->
-			<div class="card-header border-0 pt-6">
-				<!--begin::Card title-->
-				<div class="card-title">
-					<!--begin::Search-->
-					<div class="d-flex align-items-center position-relative my-1">
-						<i class="fas fa-search fs-3 position-absolute ms-5"></i>
-						<input type="text" name="search" id="searchInput"
-							class="form-control form-control-solid w-250px ps-13"
-							placeholder="Tìm kiếm blog..." value="{{ request('search') }}" />
+	<!--begin::Content-->
+	<div id="kt_app_content" class="app-content flex-column-fluid">
+		<!--begin::Content container-->
+		<div id="kt_app_content_container" class="app-container container-xxl">
+			<!--begin::Card-->
+			<div class="card">
+				<!--begin::Card header-->
+				<div class="card-header border-0 pt-6">
+					<!--begin::Card title-->
+					<div class="card-title">
+						<form method="GET" action="{{ route('admin.search') }}">
+							<input type="hidden" name="module" value="blogs">
+							<div class="d-flex align-items-center position-relative my-1">
+								<i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+								<input type="text" name="keyword" value="{{ request('keyword') }}"
+									class="form-control form-control-solid w-250px ps-12" placeholder="Tìm kiếm bài viết" />
+							</div>
+						</form>
 					</div>
-					<!--end::Search-->
-				</div>
-				<!--begin::Card title-->
-				<!--begin::Card toolbar-->
-				<div class="card-toolbar">
-					<!--begin::Toolbar-->
-					<div class="d-flex justify-content-end" data-kt-blog-table-toolbar="base">
-						<!--begin::Add blog-->
-						<a href="{{ route('admin.blogs.create') }}" class="btn btn-primary">
-							<i class="fas fa-plus fs-2"></i></i>Thêm Blog
-						</a>
-						<!--end::Add blog-->
+
+
+					<!--begin::Card title-->
+					<!--begin::Card toolbar-->
+					<div class="card-toolbar">
+						<!--begin::Toolbar-->
+						<div class="d-flex justify-content-end" data-kt-blog-table-toolbar="base">
+							<!--begin::Add blog-->
+							<a href="{{ route('admin.blogs.create') }}" class="btn btn-primary">
+								<i class="fas fa-plus fs-2"></i></i>Thêm Blog
+							</a>
+							<!--end::Add blog-->
+						</div>
+						<!--end::Toolbar-->
 					</div>
-					<!--end::Toolbar-->
+					<!--end::Card toolbar-->
 				</div>
+
 				<!--end::Card toolbar-->
 			</div>
 			<!--end::Card header-->
@@ -195,9 +200,7 @@
 		</div>
 		<!--end::Card-->
 	</div>
-	<!--end::Content container-->
-</div>
-<!--end::Content-->
+	<!--end::Content-->
 @endsection
 
 @push('scripts')

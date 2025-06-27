@@ -13,7 +13,8 @@ class EmailCampaignController extends Controller
 {
     public function index()
     {
-        $campaigns = EmailCampaign::latest()->get();
+        $campaigns = EmailCampaign::latest()->paginate(10);
+
         return view('admin.email_campaigns.index', compact('campaigns'));
     }
 

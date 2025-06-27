@@ -7,15 +7,16 @@
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
-                            <form method="GET" action="{{ route('admin.users.index') }}"
-                                class="d-flex align-items-center position-relative my-1">
-                                <i class="fa fa-search fs-4 position-absolute ms-4"></i>
-                                <input type="text" name="search" class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm kiếm người dùng" value="{{ request('search') }}">
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="users"> {{-- Module tìm kiếm: users --}}
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12"
+                                        placeholder="Tìm kiếm người dùng (tên, email, SDT)..." />
+                                </div>
                             </form>
                         </div>
-
-
                         <div class="card-toolbar">
                             <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Thêm người dùng</a>
                         </div>
@@ -42,16 +43,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    {{-- <div class="symbol symbol-50px me-5">
-                                                        <div class="symbol-label">
-                                                            @php
-                                                            $avatarPath = $user->avatar ? 'storage/' . $user->avatar :
-                                                            'assets/default-avatar.png';
-                                                            @endphp
-                                                            <img src="{{ $avatarPath }}" width="60" alt="Avatar"
-                                                                onerror="this.onerror=null;this.src='{{ asset('assets/default-avatar.png') }}';">
-                                                        </div>
-                                                    </div> --}}
+
                                                     <div>
                                                         <div class="fs-5 fw-bold text-gray-900">{{ $user->username }}</div>
                                                         <div class="text-muted">{{ $user->fullname ?? '—' }}</div>
@@ -79,8 +71,7 @@
                                                         data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                                         Actions <i class="fa fa-chevron-down ms-1"></i>
                                                     </button>
-                                                    <div class="menu menu-sub menu-sub-dropdown w-125px"
-                                                        data-kt-menu="true">
+                                                    <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
                                                         <div class="menu-item px-3">
                                                             <a href="{{ route('admin.users.edit', $user->id) }}"
                                                                 class="menu-link px-3">Edit</a>
@@ -96,6 +87,12 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-end mt-4">
+                            {{ $users->appends(request()->query())->links() }}
+                        </div>
+                        <!-- End Pagination -->
+
                     </div>
                 </div>
             </div>
@@ -106,20 +103,20 @@
 @push('scripts')
     <script>
         document.querySelectorAll('.toggle-status').forEach(switchEl => {
-            switchEl.addEventListener('change', function() {
+            switchEl.addEventListener('change', function () {
                 const id = this.getAttribute('data-id');
                 const status = this.checked ? 0 : 1; // 0: active, 1: banned
 
                 fetch(`/admin/users/${id}/toggle-status`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            banned: status
-                        })
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        banned: status
                     })
+                })
                     .then(res => res.json())
                     .then(data => {
                         if (!data.success) {

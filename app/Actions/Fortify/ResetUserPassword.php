@@ -13,60 +13,61 @@ class ResetUserPassword extends Controller
 {
     public function reset(Request $request)
     {
-        // ✅ VALIDATE theo phong cách giống RegisterController
         $validator = Validator::make($request->all(), [
             'token' => 'required',
+
             'email' => [
-                'required',
-                'string',
+
+                'email',
                 'max:255',
                 'exists:users,email',
                 function ($attribute, $value, $fail) {
-                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                        return $fail('Email không đúng định dạng, ví dụ: example@gmail.com');
-                    }
-
+                    // ❗Có thể bỏ nếu đã dùng 'email' rule ở trên
                     if (!str_contains($value, '@')) {
                         return $fail('Email phải chứa ký tự "@".');
                     }
 
                     if (!preg_match('/\.[a-z]{2,}$/', $value)) {
-                        return $fail('Email phải có đuôi tên miền như ".com", ".vn"...');
+                        return $fail('Email phải có đuôi tên miền hợp lệ như ".com", ".vn"...');
                     }
                 },
             ],
+
             'password' => [
                 'required',
                 'string',
-                'min:8',
                 'confirmed',
-                'regex:/[A-Z]/',    // Ít nhất 1 chữ cái in hoa
-                'regex:/[0-9]/',    // Ít nhất 1 số
-                'regex:/[\W]/',     // Ít nhất 1 ký tự đặc biệt
+                'min:8',
+                'regex:/[A-Z]/',   // ít nhất 1 chữ in hoa
+                'regex:/[a-z]/',   // ít nhất 1 chữ thường
+                'regex:/[0-9]/',   // ít nhất 1 số
+                'regex:/[\W_]/',   // ít nhất 1 ký tự đặc biệt
             ],
         ], [
-            'email.required' => 'Vui lòng nhập email.',
-            'email.exists' => 'Email không tồn tại.',
-            'password.required' => 'Vui lòng nhập mật khẩu mới.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
-            'password.regex' => 'Mật khẩu phải có ít nhất 1 chữ cái in hoa, 1 số và 1 ký tự đặc biệt.',
+            // EMAIL
+
+            'email.email'       => 'Email không đúng định dạng.',
+            'email.exists'      => 'Email không tồn tại trong hệ thống.',
+
+            // PASSWORD
+            'password.required'   => 'Vui lòng nhập mật khẩu mới.',
+            'password.confirmed'  => 'Xác nhận mật khẩu không khớp.',
+            'password.min'        => 'Mật khẩu phải có ít nhất 8 ký tự.',
+            'password.regex'      => 'Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt.',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // ✅ Kiểm tra token
+        // ✅ Xác minh token
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Password::tokenExists($user, $request->token)) {
-            return back()->withErrors(['email' => 'Token không hợp lệ hoặc đã hết hạn.']);
+            return back()->withErrors(['email' => 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.']);
         }
 
-        // ✅ Lưu mật khẩu mới
+        // ✅ Cập nhật mật khẩu
         $user->password = Hash::make($request->password);
         $user->save();
 

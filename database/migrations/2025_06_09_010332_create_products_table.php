@@ -25,6 +25,10 @@ return new class extends Migration {
             $table->float('rating_avg', 2)->default(0);
             $table->boolean('is_active')->default(true);
 
+            $table->dateTime('starts_at')->nullable();
+            $table->dateTime('ends_at')->nullable();
+            $table->integer('sale_times')->default(0);
+
             $table->timestamps();
 
             // Foreign keys
