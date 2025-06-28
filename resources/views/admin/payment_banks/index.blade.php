@@ -18,6 +18,7 @@
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                         Ngân hàng
                     </h1>
+
                     <!--end::Title-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
@@ -33,14 +34,18 @@
                         <!--end::Item-->
 
                         <!--begin::Item-->
+
                         <li class="breadcrumb-item text-muted">
-                            Ngân hàng </li>
-                        <!--end::Item-->
+                            <a href="#" class="text-muted text-hover-primary">
+                                Ngân hàng </a>
+                        </li>
+
 
                     </ul>
                     <!--begin::Breadcrumb-->
 
                 </div>
+
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
@@ -53,8 +58,8 @@
                 <!--end::Actions-->
             </div>
             <!--end::Toolbar container-->
+
         </div>
-        <!--end::Toolbar-->
 
         <!--begin::Content-->
         <div id="kt_app_content" class="app-content  flex-column-fluid ">
@@ -62,6 +67,29 @@
 
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container  container-xxl ">
+                <!--begin::Alert-->
+                <div
+                    class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 mb-10 ">
+                    <div class="d-flex flex-column pe-0 pe-sm-10">
+                        <span>
+                            <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên kết:
+                            <a class="text-primary" href="{{ $cronUrl }}" target="_blank">{{ $cronUrl }}</a>
+                            1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý nạp tiền tự động.
+                        </span>
+                    </div>
+
+                    <!--end::Wrapper-->
+
+                    <!--begin::Close-->
+                    <button type="button"
+                        class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto"
+                        data-bs-dismiss="alert">
+                        <i class="fa-solid fa-xmark fs-1 text-info"><span class="path1"></span><span
+                                class="path2"></span></i>
+                    </button>
+                    <!--end::Close-->
+                </div>
+                <!--end::Alert-->
                 <div class="d-flex flex-wrap gap-4 justify-content-between mb-10">
 
                     <!--begin::Col-->
@@ -280,25 +308,38 @@
                                 <thead>
                                     <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200 fw-bold ">
                                         <th class="min-w-100px ">Username</th>
-                                        <th class="min-w-200px">Thời gian</th>
+                                        <th class="min-w-150px">Email</th>
+                                        <th class="min-w-100px">Thời gian</th>
                                         <th class="min-w-150px text-center">Số tiền nạp</th>
-                                        <th class="min-w-150px text-center">Ngân hàng</th>
                                         <th class="min-w-150px text-center">Mã giao dịch</th>
                                         <th class="min-w-150px">Nội dung chuyển khoản</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><span class=" text-center">QuangAnh [ID 235]</span></td>
-                                        <td><span class="">2025-06-10 19:35:21</span></td>
-                                        <td class="fw-bold text-center"> 54.000đx</td>
-                                        <td class="fw-bold text-center"><span>MB</span></td>
-                                        <td class="fw-bold text-center"><span>FT25161206918855</span></td>
-                                        <td class="">CTCP DICH VU DI DONG TRUC TUYEN
-                                            90376005922-SIEUSTORE235-CHUYEN TIE
-                                            N-OQCH94864220-MOMO90376005922MOMO. TU: M SERVICE JSC
-                                        </td>
-                                    </tr>
+                                    @forelse ($transactions as $txn)
+                                        <tr>
+                                            <td>
+                                                @if ($txn->user)
+                                                    <a href="{{ route('admin.users.edit', $txn->user->id) }}"
+                                                        class="text-primary fw-bold">
+                                                        {{ $txn->user->username }} [ID {{ $txn->user->id }}]
+                                                    </a>
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>{{ $txn->user->email }}</td>
+                                            <td>{{ $txn->created_at }}</td>
+                                            <td class="fw-bold text-center">{{ number_format($txn->amount, 0, ',', '.') }}đ
+                                            </td>
+                                            <td class="fw-bold text-center">{{ $txn->transactionID }}</td>
+                                            <td>{{ $txn->description }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">Không có giao dịch nào.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

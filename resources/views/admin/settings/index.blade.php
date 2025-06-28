@@ -327,7 +327,8 @@
                                             <label class="fs-6 fw-semibold form-label mt-3">
                                                 <span>Thuế</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Thiết lập hotline của cửa hàng.">
+                                                    title="Nếu bạn muốn thu thuế VAT thì nhập vào đây, nếu không có thì để trống.
+Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào tổng số tiền thanh toán sau khi trừ khuyến mãi.">
                                                     <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
