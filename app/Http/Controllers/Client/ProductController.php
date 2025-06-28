@@ -115,7 +115,16 @@ class ProductController extends Controller
                 $star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1 * 1
             ) / $rating_summary['total_rating'];
         }
-        // dd($rating_summary);
+
+
+        $product->related_products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        // dd($product->related_products);
+
+
         return view('client.products.show', compact(
             'product',
             'attributeGroups',

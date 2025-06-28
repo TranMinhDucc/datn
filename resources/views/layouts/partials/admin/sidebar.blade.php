@@ -172,11 +172,58 @@
                                         class="menu-title">Thẻ cào</span></a><!--end:Menu link-->
                             </div>
 
-                        </div>
-                        <!--end:Menu sub-->
-                    </div>
-                    <!--end:Menu item--><!--begin:Menu item-->
 
+                     <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.faq.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
+                                         class="path1"></span><span class="path2"></span><span
+                                         class="path3"></span><span class="path4"></span></i></span><span
+                                 class="menu-title">FAQ</span></a><!--end:Menu link-->
+                     </div>
+                     <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.tags.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
+                                         class="path1"></span><span class="path2"></span><span
+                                         class="path3"></span><span class="path4"></span></i></span><span
+                                 class="menu-title">Tags</span></a><!--end:Menu link-->
+                     </div>
+                     <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-fees.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-truck-fast fs-4"></i><span
+                                         class="path1"></span><span class="path2"></span><span
+                                         class="path3"></span><span class="path4"></span></i></span><span
+                                 class="menu-title">Phí ship</span></a><!--end:Menu link-->
+                     </div>
+                     <!--end:Menu item-->
+                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
+                                     class="fa-brands fa-blogger-b fs-4"><span class="path1"></span><span
+                                         class="path2"></span><span class="path3"></span><span
+                                         class="path4"></span></i></span><span class="menu-title">Bài
+                                 viết</span><span
+                                 class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
+                         <div class="menu-sub menu-sub-accordion">
+                             <!--begin:Menu item-->
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blogs.create') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Viết bài
+                                         mới</span></a><!--end:Menu link-->
+                             </div>
+                             <!--end:Menu item--><!--begin:Menu item-->
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blogs.index') }}"><span class="menu-bullet"><span
+                                             class="bullet bullet-dot"></span></span><span class="menu-title">Tất cả
+                                         bài viết</span></a><!--end:Menu link-->
+                             </div>
+                             <div class="menu-item">
+                                 <!--begin:Menu link--><a class="menu-link"
+                                     href="{{ route('admin.blog-categories.index') }}"><span
+                                         class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
+                                         class="menu-title">Danh mục</span></a><!--end:Menu link-->
+                             </div>
+                        </div>
                     <!--end:Menu item--><!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.email_campaigns.index') }}"
