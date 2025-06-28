@@ -151,6 +151,7 @@
                           data-kt-menu-placement="bottom-end">
                           <img src="{{ asset('assets/admin/media/avatars/300-3.jpg') }}" class="rounded-3"
                               alt="user" />
+                              
                       </div>
 
                       <!--begin::User account menu-->
@@ -166,17 +167,21 @@
                                   <!--end::Avatar-->
 
                                   <!--begin::Username-->
-                                  <div class="d-flex flex-column">
-                                      <div class="fw-bold d-flex align-items-center fs-5">
-                                          Robert Fox
-                                          <span
-                                              class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Pro</span>
-                                      </div>
+                                 <div class="d-flex flex-column">
+    <div class="fw-bold d-flex align-items-center fs-5">
+        {{ auth()->user()->fullname }}
+        @if(auth()->user()->role === 'admin')
+            <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Admin</span>
+        @else
+            <span class="badge badge-light-primary fw-bold fs-8 px-2 py-1 ms-2">User</span>
+        @endif
+    </div>
 
-                                      <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">
-                                          robert@kt.com
-                                      </a>
-                                  </div>
+    <a href="mailto:{{ auth()->user()->email }}" class="fw-semibold text-muted text-hover-primary fs-7">
+        {{ auth()->user()->email }}
+    </a>
+</div>
+
                                   <!--end::Username-->
                               </div>
                           </div>

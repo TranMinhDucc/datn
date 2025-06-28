@@ -591,11 +591,12 @@
             <h3>Related Products</h3>
             <svg>
                 <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
-
+ 
             </svg>
         </div>
         <div class="swiper special-offer-slide-2">
             <div class="swiper-wrapper ratio1_3">
+                @foreach ($product->related_products as $value)
                 <div class="swiper-slide">
                     <div class="product-box-3">
                         <div class="img-wrapper">
@@ -603,19 +604,17 @@
                                     href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
                                         aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
-                                        alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                        class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                            <div class="product-image"><a class="pro-first" href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                        src="{{ asset('storage/'.$value->image) }}"
+                                        alt="Áo phông cucci LV collab"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('storage/'.$value->image) }}"
+                                        alt="Áo phông cucci LV collab"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
+                                    tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
                                         class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
@@ -651,325 +650,130 @@
                                 <li><i class="fa-solid fa-star"></i></li>
                                 <li><i class="fa-solid fa-star"></i></li>
                                 <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                <li><i class="fa-regular fa-star"></i></li>
-                                <li>4.3</li>
-                            </ul><a href="product.html">
-                                <h6>Greciilooks Women's Stylish Top</h6>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li>{{ $value->rating_avg ?? 0 }}</li>
+                            </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                <h6>{{ $value->name }}</h6>
                             </a>
-                            <p>$100.00
-                                <del>$140.00</del><span>-20%</span>
+                            <p>${{ number_format($value->sale_price, 2) }}
+                                <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="swiper-slide">
-                    <div class="product-box-3">
-                        <div class="img-wrapper">
-                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                        aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
-                                        alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                        class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Quick View"></i></a></div>
-                        </div>
-                        <div class="product-detail">
-                            <ul class="rating">
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-regular fa-star"></i></li>
-                                <li>4.3</li>
-                            </ul><a href="product.html">
-                                <h6>Wide Linen-Blend Trousers</h6>
-                            </a>
-                            <p>$100.00
-                                <del>$18.00 </del>
-                            </p>
-                        </div>
-                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Write A Review</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="swiper-slide">
-                    <div class="product-box-3">
-                        <div class="img-wrapper">
-                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                        aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                        alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                        class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Quick View"></i></a></div>
-                        </div>
-                        <div class="product-detail">
-                            <ul class="rating">
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li>4.3</li>
-                            </ul><a href="product.html">
-                                <h6>Long Sleeve Rounded T-Shirt</h6>
-                            </a>
-                            <p>$120.30
-                                <del>$140.00</del><span>-20%</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="product-box-3">
-                        <div class="img-wrapper">
-                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                        aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
-                                        alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                        class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Quick View"></i></a></div>
-                            <div class="countdown">
-                                <ul class="clockdiv11">
-                                    <li>
-                                        <div class="timer">
-                                            <div class="days"></div>
-                                        </div><span class="title">Days</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="hours"></div>
-                                        </div><span class="title">Hours</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="minutes"></div>
-                                        </div><span class="title">Min</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="seconds"></div>
-                                        </div><span class="title">Sec</span>
-                                    </li>
-                                </ul>
+                <div class="modal-body pt-0">
+                    @auth
+                        <form id="rating-form" action="{{ route('client.review') }}" method="POST" class="row g-3">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $test_id }}">
+                            <input type="hidden" name="rating" id="rating-value" value="0">
+
+                            <div class="col-12">
+                                <div class="reviews-product d-flex gap-3">
+                                    <img src="{{ asset('assets/images/modal/1.jpg') }}" alt="" width="80">
+                                    <div>
+                                        <h5>Denim Skirts Corset Blazer</h5>
+                                        <p>$20.00 <del>$35.00</del></p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="product-detail">
-                            <ul class="rating">
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                <li>4.3</li>
-                            </ul><a href="product.html">
-                                <h6>Blue lined White T-Shirt</h6>
-                            </a>
-                            <p>$190.00
-                                <del>$210.00</del>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="product-box-3">
-                        <div class="img-wrapper">
-                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                        aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                        alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                        class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                        alt="product"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Quick View"></i></a></div>
-                            <div class="countdown">
-                                <ul class="clockdiv10">
-                                    <li>
-                                        <div class="timer">
-                                            <div class="days"></div>
-                                        </div><span class="title">Days</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="hours"></div>
-                                        </div><span class="title">Hours</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="minutes"></div>
-                                        </div><span class="title">Min</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="seconds"></div>
-                                        </div><span class="title">Sec</span>
-                                    </li>
-                                </ul>
+
+                            <div class="col-12">
+                                <div class="customer-rating">
+                                    <label class="form-label">Rating</label>
+                                    <ul class="rating p-0 mb-0 d-flex" style="list-style: none; cursor: pointer;">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <li class="star" data-value="{{ $i }}">
+                                                <i class="fa-regular fa-star fs-4 me-1"></i>
+                                            </li>
+                                        @endfor
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <div class="product-detail">
-                            <ul class="rating">
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                <li><i class="fa-regular fa-star"></i></li>
-                                <li>4.3</li>
-                            </ul><a href="product.html">
-                                <h6>Greciilooks Women's Stylish Top</h6>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">Review Content :</label>
+                                    <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
+                                        placeholder="Write your comments here..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="modal-button-group d-flex gap-2">
+                                <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-submit submit-rating" type="button">Submit</button>
+                            </div>
+                        </form>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const form = document.getElementById('rating-form');
+                                const stars = document.querySelectorAll('.star');
+                                const ratingInput = document.getElementById('rating-value');
+                                const commentInput = document.getElementById('comment');
+
+                                stars.forEach((star, index) => {
+                                    star.addEventListener('click', () => {
+                                        const rating = star.getAttribute('data-value');
+                                        ratingInput.value = rating;
+
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
+
+                                        for (let i = 0; i < rating; i++) {
+                                            stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
+                                        }
+                                    });
+                                });
+
+                                document.querySelectorAll('.submit-rating').forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        const rate = ratingInput.value;
+                                        const comment = commentInput.value;
+                                        if (isNaN(rate) || (rate <= 0 || rate > 5)) {
+                                            Swal.fire('Thông báo', 'Vui lòng lựa chọn đánh giá của bạn', 'warning');
+                                            return;
+                                        }
+                                        if (comment == '') {
+                                            Swal.fire('Thông báo', 'Vui lòng nhập nội dung đánh giá', 'warning');
+                                            return;
+                                        }
+                                        form.submit();
+                                    })
+                                });
+                            })
+                        </script>
+                    @endauth
+                    @guest
+                        <div class="alert alert-warning mt-3 d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <strong>Bạn cần đăng nhập</strong> để đánh giá và bình luận sản phẩm.
+                            </div>
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-sign-in-alt"></i> Đăng nhập
                             </a>
-                            <p>$100.00
-                                <del>$140.00</del><span>-20%</span>
-                            </p>
                         </div>
-                    </div>
+
+                    @endguest
+
+
                 </div>
             </div>
         </div>
     </div>
-</section>
-<div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
-    aria-modal="true">
-    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Write A Review</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pt-0">
-                @auth
-                <form action="{{ route('client.review') }}" method="POST" class="row g-3">
-                    @csrf
-                    <input type="hidden" name="product_id" value="{{ $test_id }}">
-                    <input type="hidden" name="rating" id="rating-value" value="0">
 
-                    <div class="col-12">
-                        <div class="reviews-product d-flex gap-3">
-                            <img src="{{ asset('assets/images/modal/1.jpg') }}" alt="" width="80">
-                            <div>
-                                <h5>Denim Skirts Corset Blazer</h5>
-                                <p>$20.00 <del>$35.00</del></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="customer-rating">
-                            <label class="form-label">Rating</label>
-                            <ul class="rating p-0 mb-0 d-flex" style="list-style: none; cursor: pointer;">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <li class="star" data-value="{{ $i }}">
-                                    <i class="fa-regular fa-star fs-4 me-1"></i>
-                                    </li>
-                                    @endfor
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label class="form-label">Review Content :</label>
-                            <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
-                                placeholder="Write your comments here..." required></textarea>
-                        </div>
-                    </div>
-
-                    <div class="modal-button-group d-flex gap-2">
-                        <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
-                        <button class="btn btn-submit" type="submit">Submit</button>
-                    </div>
-                </form>
-
-                <script>
-                    const stars = document.querySelectorAll('.star');
-                    const ratingInput = document.getElementById('rating-value');
-
-                    stars.forEach((star, index) => {
-                        star.addEventListener('click', () => {
-                            const rating = star.getAttribute('data-value');
-                            ratingInput.value = rating;
-
-                            stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
-
-                            for (let i = 0; i < rating; i++) {
-                                stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
-                            }
-                        });
-                    });
-                </script>
-                @endauth
-
-                @guest
-                <div class="alert alert-warning mt-3 d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <strong>Bạn cần đăng nhập</strong> để đánh giá và bình luận sản phẩm.
-                    </div>
-                    <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-sign-in-alt"></i> Đăng nhập
-                    </a>
-                </div>
-
-                @endguest
-
-
-            </div>
-        </div>
-    </div>
-</div>Your browser
-@endsection
 @section('js')
 <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
 
@@ -1114,14 +918,10 @@
         });
 
 
+
     });
 </script>
 
 
-
-
-
-
-
-
 @endsection
+

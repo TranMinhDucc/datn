@@ -28,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'gender',
         'role',
-        'point', // ✅ có point
+        'point',
         'balance',
         'two_factor_enabled',
         'token_2fa',
@@ -40,8 +40,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'registered_at',
         'last_login_ip',
         'last_login_device',
+        'last_login_at', // ✅ thêm dòng này
         'banned'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -85,8 +87,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ShippingAddress::class);
     }
+
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupon_user');
     }
 }
+
+}
+

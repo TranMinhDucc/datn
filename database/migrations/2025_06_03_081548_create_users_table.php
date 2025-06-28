@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('fullname')->nullable();
             $table->string('email')->unique();
             $table->string('phone', 20)->nullable();
+            $table->string('address')->nullable();
             $table->string('password');
             $table->text('avatar')->nullable();
             $table->enum('gender', ['Nam', 'Nữ', 'Khác'])->nullable();
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->dateTime('registered_at')->nullable();
             $table->string('last_login_ip', 45)->nullable();
             $table->string('last_login_device')->nullable();
+            $table->dateTime('last_login_at')->nullable(); // ✅ gộp cột từ migration bổ sung
             $table->timestamp('email_verified_at')->nullable();
             $table->integer('banned')->default(0);
             $table->rememberToken();

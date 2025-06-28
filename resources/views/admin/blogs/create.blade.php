@@ -17,6 +17,7 @@
         <!--begin::Form-->
         <form id="kt_blog_form" class="form d-flex flex-column flex-lg-row" action="{{ route('admin.blogs.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="status" id="blogStatus">
             <!--begin::Main column-->
             <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                 <!--begin::General options-->
@@ -157,10 +158,8 @@
                     <a href="{{ route('admin.blogs.index') }}" id="kt_blog_cancel" class="btn btn-light me-5">Hủy</a>
                     <!--end::Button-->
                     <!--begin::Button-->
-                    <button type="submit" id="kt_blog_submit" class="btn btn-primary">
-                        <span class="indicator-label">Lưu</span>
-                        <span class="indicator-progress">Đang xử lý...
-                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#publishConfirmModal">
+                        <span class="indicator-label">Tạo bài viết</span>
                     </button>
                     <!--end::Button-->
                 </div>
@@ -168,6 +167,25 @@
             <!--end::Main column-->
         </form>
         <!--end::Form-->
+        <!--begin::Modal-->
+        <div class="modal fade" id="publishConfirmModal" tabindex="-1" aria-labelledby="publishConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận hành động</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn muốn lưu bài viết dưới dạng nào?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="submitWithStatus('draft')">Lưu nháp</button>
+                        <button type="button" class="btn btn-primary" onclick="submitWithStatus('published')">Đăng bài</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Modal-->
     </div>
     <!--end::Content container-->
 </div>
@@ -179,14 +197,33 @@
 
 
 @push('scripts')
-<script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/4.22.1/full-all/ckeditor.js"></script>
 <script>
+    function submitWithStatus(status) {
+        document.getElementById('blogStatus').value = status;
+
+        if (status === 'published') {
+            const now = new Date().toISOString();
+            // Nếu cần thì thêm cả input hidden cho published_at
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'published_at';
+            input.value = now;
+            document.getElementById('kt_blog_form').appendChild(input);
+        }
+
+        document.getElementById('kt_blog_form').submit();
+    }
     document.addEventListener('DOMContentLoaded', function() {
         CKEDITOR.replace('kt_blog_content_editor', {
             language: 'vi',
             height: 400,
             removeButtons: '', // Để giữ nguyên tất cả các nút
-            extraPlugins: 'colorbutton,font,justify,print,preview',
+            extraPlugins: 'uploadimage,colorbutton,font,justify,print,preview',
+            filebrowserUploadUrl: "{{ route('admin.ckeditor.upload') }}?_token={{ csrf_token() }}",
+            filebrowserUploadMethod: 'form',
+            removeDialogTabs: 'image:advanced;image:Link',
+            removePlugins: 'exportpdf', 
         });
 
         // Tự tạo slug như cũ

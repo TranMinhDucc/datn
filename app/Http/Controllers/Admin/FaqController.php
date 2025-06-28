@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Faq;
@@ -9,7 +10,7 @@ class FaqController extends Controller
 {
     public function index()
     {
-        $faqs = Faq::latest()->get();
+        $faqs = Faq::latest()->paginate(10);
         return view('admin.faq.index', compact('faqs'));
     }
 
