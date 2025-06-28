@@ -87,4 +87,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ShippingAddress::class);
     }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_user');
+    }
 }
+
+}
+

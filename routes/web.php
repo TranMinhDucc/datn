@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 
@@ -55,8 +56,11 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
@@ -88,6 +92,7 @@ Route::prefix('/')->name('client.')->group(function () {
 
     });
 
+
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('{id}/', [ClientProductController::class, 'show'])->name('show');
@@ -115,8 +120,12 @@ Route::prefix('/')->name('client.')->group(function () {
     });
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
+    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
+        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    });
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -159,6 +168,14 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
+    Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
+
+    // Tuỳ chọn: Gọi sau khi thanh toán thành công
+    // Route::post('/finalize-coupon', [ClientCouponController::class, 'finalizeCouponUsage'])->name('client.coupon.finalize');
 });
 
 // ========== LOGOUT ==========
