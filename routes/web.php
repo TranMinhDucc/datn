@@ -51,6 +51,7 @@ use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Bank;
@@ -78,6 +79,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
 
     });
+
 
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -107,8 +109,12 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
+    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
+        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    });
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -150,6 +156,10 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
 Route::middleware('auth')->group(function () {
     Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
+    Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
+
+    // Tuỳ chọn: Gọi sau khi thanh toán thành công
+    // Route::post('/finalize-coupon', [ClientCouponController::class, 'finalizeCouponUsage'])->name('client.coupon.finalize');
 });
 
 // ========== LOGOUT ==========

@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
 
     <!-- Google Fonts -->
@@ -26,7 +27,52 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
+<style>
+    .toast-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #dc3545;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+    min-width: 260px;
+    max-width: 300px;
+    animation: fade-in 0.3s ease;
+    
+}
 
+.toast-box .icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.toast-box .close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.toast-box .icon span:first-child {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.toast-box .icon span:last-child {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+</style>
 </head>
 
 <script>
@@ -458,6 +504,16 @@
         });
     </script>
     @endif
+
+    <div id="toast-container" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+"></div>
 </body>
 
 <script>

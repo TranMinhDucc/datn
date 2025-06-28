@@ -5,50 +5,105 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Coupon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class CouponController extends Controller
 {
-public function apply(Request $request)
+    // ✅ Áp dụng mã giảm giá (tạm thời - chỉ lưu session)
+public function applyCoupon(Request $request)
 {
     $code = $request->input('code');
-    $coupon = Coupon::where('code', $code)->first();
+    $subtotal = $request->input('subtotal');
+    $user = auth()->user();
+
+    $coupon = Coupon::where('code', $code)
+        ->where('active', 1)
+        ->first();
 
     if (!$coupon) {
-        return redirect()->back()->withErrors(['coupon' => '❌ Mã giảm giá không tồn tại.']);
+        return response()->json(['error' => 'Mã không tồn tại hoặc bị khóa'], 400);
     }
 
-    if (!$coupon->isValid()) {
-        return redirect()->back()->withErrors(['coupon' => '❌ Mã đã hết hạn hoặc đã sử dụng hết.']);
+    $now = now();
+
+    // ✅ Check thời gian hợp lệ
+    if ($coupon->start_date && $now->lt($coupon->start_date)) {
+        return response()->json(['error' => 'Mã chưa bắt đầu'], 400);
+    }
+    if ($coupon->end_date && $now->gt($coupon->end_date)) {
+        return response()->json(['error' => 'Mã đã hết hạn'], 400);
     }
 
-    if (auth()->check()) {
-        $used = DB::table('coupon_user')
-            ->where('user_id', auth()->id())
+    // ✅ Check số lượt sử dụng (nếu có giới hạn)
+    if ($coupon->usage_limit && $coupon->used_count >= $coupon->usage_limit) {
+        return response()->json(['error' => 'Mã đã hết lượt sử dụng'], 400);
+    }
+
+    // ✅ Check per user limit (nếu có)
+    if ($coupon->per_user_limit) {
+        $userCount = DB::table('coupon_user')
             ->where('coupon_id', $coupon->id)
-            ->exists();
-
-        if ($used) {
-            return redirect()->back()->withErrors(['coupon' => '❌ Bạn đã sử dụng mã này rồi.']);
+            ->where('user_id', $user->id)
+            ->count();
+        if ($userCount >= $coupon->per_user_limit) {
+            return response()->json(['error' => 'Bạn đã dùng mã này rồi'], 400);
         }
     }
 
-    // ✅ Chỉ lưu session, không insert DB ở đây
-    Session::put('coupon', [
-        'id'    => $coupon->id,
-        'code'  => $coupon->code,
-        'type'  => $coupon->discount_type,
-        'value' => $coupon->discount_value,
-    ]);
+    // ✅ Check đơn hàng tối thiểu
+    if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount) {
+        return response()->json(['error' => 'Chưa đạt giá trị đơn hàng tối thiểu'], 400);
+    }
 
-    return redirect()->route('client.cart.index')->with('success', '🎉 Áp mã giảm giá thành công!');
+    // ✅ Check chỉ dành cho người dùng mới
+    if ($coupon->only_for_new_users) {
+        $accountAgeDays = $user->created_at->diffInDays($now);
+        if ($accountAgeDays > 7) {
+            return response()->json(['error' => 'Chỉ áp dụng cho người dùng mới'], 400);
+        }
+    }
+
+    // ✅ Check vai trò người dùng (nếu có)
+    if ($coupon->eligible_user_roles && is_array(json_decode($coupon->eligible_user_roles))) {
+        $roles = json_decode($coupon->eligible_user_roles);
+        if (!in_array($user->role, $roles)) {
+            return response()->json(['error' => 'Mã không áp dụng cho vai trò của bạn'], 400);
+        }
+    }
+    
+
+    // ✅ Thành công
+    return response()->json(['success' => true, 'coupon' => $coupon]);
 }
 
 
-    // ✅ Xoá session mã giảm giá sau khi thanh toán
+    // ✅ Huỷ mã (xoá khỏi session)
+    public function remove()
+    {
+        Session::forget('coupon');
+        return redirect()->back()->with('success', '🚫 Đã huỷ mã giảm giá.');
+    }
 
+    // ✅ Gọi ở bước thanh toán (ghi nhận sử dụng mã)
+    public function finalizeCouponUsage()
+    {
+        if (!auth()->check()) return;
 
-    
+        if (Session::has('coupon')) {
+            $couponData = Session::get('coupon');
+            $coupon = Coupon::find($couponData['id']);
+
+            if ($coupon) {
+                DB::table('coupon_user')->insert([
+                    'user_id' => auth()->id(),
+                    'coupon_id' => $coupon->id,
+                    'used_at' => now(),
+                ]);
+
+                $coupon->increment('used_count');
+                Session::forget('coupon');
+            }
+        }
+    }
 }

@@ -203,7 +203,7 @@
                                                                 alt="lable">
                                                             <span>on <br>Sale!</span>
                                                         </div>
-                                                        <a href="{{ route('client.products.show', $product->id) }}"
+                                                        <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
                                                             <div class="product-image bg-size"
                                                                 style="background-image: url('{{ asset('storage/' . $product->image) }}');
