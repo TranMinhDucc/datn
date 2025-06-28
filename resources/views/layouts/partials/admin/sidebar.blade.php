@@ -130,11 +130,11 @@
                         </a>
                         <!--end:Menu link-->
                     </div>
-                    <div class="menu-item">
+                   <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.wishlists.index') }}" target="_blank">
                             <span class="menu-icon">
-                                <i class="fa-solid fa-location-dot fs-4"><span class="path1"></span><span
+                                 <i class="fa-solid fa-location-dot fs-4"><span class="path1"></span><span
                                         class="path2"></span></i>
                             </span>
                             <span class="menu-title">Quản lý Yêu Thích

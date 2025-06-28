@@ -121,11 +121,13 @@
           </div>
           <div class="dashboard-user-name">
             <h6>Xin chào, <b>{{ $user['fullname'] }}</b></h6>
-            <p>Bảng điều khiển của tôi cung cấp cái nhìn tổng quan toàn diện về các chỉ số và dữ liệu quan trọng
-            liên quan đến hoạt động của bạn. Nó mang đến những thông tin chi tiết theo thời gian thực về hiệu
-            suất, bao gồm số liệu bán hàng, lưu lượng truy cập website, mức độ tương tác của khách hàng và nhiều
-            hơn nữa. Với các tiện ích có thể tùy chỉnh và hình ảnh trực quan dễ hiểu, bảng điều khiển giúp bạn
-            đưa ra quyết định nhanh chóng và theo dõi hiệu quả tiến độ đạt được các mục tiêu đã đề ra.
+            <p>My dashboard provides a comprehensive overview of key metrics and data relevant
+            to your operations.
+            It offers real-time insights into performance, including sales figures, website
+            traffic, customer
+            engagement, and more. With customizable widgets and intuitive visualizations, it
+            facilitates quick
+            decision-making and allows you to track progress towards your goals effectively.
             </p>
           </div>
           <div class="total-box">
@@ -140,6 +142,7 @@
                 <h6>Số dư hiện tại</h6>
                 <h4>{{ number_format($user->balance) }}đ</h4>
               </div>
+
               </div>
             </div>
             <div class="col-xl-4">
@@ -149,7 +152,6 @@
                 class="img-1" src="https://themes.pixelstrap.net/katie/assets/images/svg-icon/coin.svg"
                 alt=""></div>
               <div class="totle-detail">
-
                 <h6>Điểm tích lũy</h6>
           <h4>{{ number_format($user->point) }}</h4>
     </div>
@@ -381,7 +383,7 @@
       </div>
       </div>
       </div>
-     <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
+      <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
         <div class="dashboard-right-box">
           <div class="wishlist-box ratio1_3">
           <div class="sidebar-title">
@@ -1022,8 +1024,6 @@
       </div>
       </div>
       </div>
-      </div>
-    </div>
     </div>
     </div>
 
@@ -1281,60 +1281,6 @@
       </form>
       </div>
     </div>
-    </div>
-  </div>
-  {{-- END Edit Email Doashboar --}}
-
-  <div class="reviews-modal modal theme-modal fade" id="edit-box" tabindex="-1" role="dialog" aria-modal="true">
-    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-      <h4>Edit Profile</h4>
-      <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <form id="update-profile-form">
-      @csrf
-      <div class="modal-body pt-0">
-        <div class="row g-3">
-        <div class="col-6">
-          <div class="from-group">
-          <label class="form-label">Họ tên</label>
-          <input class="form-control" type="text" name="fullname" value="{{ $user->fullname ?? '' }}">
-          <div class="text-danger error-fullname"></div>
-          </div>
-        </div>
-
-        <div class="col-6">
-          <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-control" type="text" name="email" value="{{ $user->email ?? '' }}">
-          <div class="text-danger error-email"></div>
-          </div>
-        </div>
-        </div>
-
-        <div class="col-6">
-        <div class="from-group">
-          <label class="form-label">Số điện thoại</label>
-          <input class="form-control" type="text" name="phone" value="{{ $user->phone ?? '' }}">
-          <div class="text-danger error-phone"></div>
-        </div>
-        </div>
-
-        <div class="col-12">
-        <div class="from-group">
-          <label class="form-label">Địa chỉ</label>
-          <textarea class="form-control" name="address" cols="30" rows="3">{{ $user->address ?? '' }}</textarea>
-          <div class="text-danger error-address"></div>
-        </div>
-        </div>
-
-        <div class="col-12 text-end">
-        <button class="btn btn-submit" type="submit">Cập nhật</button>
-        </div>
-      </div>
-      </form>
     </div>
     </div>
     {{-- END Edit Email Doashboar --}}
@@ -1613,9 +1559,10 @@
     console.error(err);
     });
     });
-  </script>
- {{-- SweetAlert2 CDN nếu chưa có --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -1699,7 +1646,4 @@
     });
   </script>
 @endif
-
-
-
 @endsection
