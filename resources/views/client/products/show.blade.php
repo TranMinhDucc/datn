@@ -103,7 +103,6 @@
                                 </li>
                                 @endforeach
                             </ul>
-                            <div class="variant-error text-danger small mt-1" style="display: none;"></div> <!-- thêm dòng này -->
                         </div>
                         @endforeach
 
@@ -998,120 +997,13 @@
             });
         });
 
-        function showToast(message, type = 'error') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-
-            toast.className = 'toast-box';
-            toast.style.background =
-                type === 'error' ? '#dc3545' :
-                type === 'warning' ? '#ffc107' :
-                type === 'info' ? '#17a2b8' :
-                '#28a745';
-
-            toast.innerHTML = `
-        <div class="icon">
-            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    `;
-
-            container.appendChild(toast);
-
-            // ✅ Đóng khi click nút ×
-            toast.querySelector('.close-btn').addEventListener('click', () => {
-                toast.remove();
-            });
-
-            // ✅ Tự ẩn sau 3s (lần lượt từng toast)
-            setTimeout(() => {
-                toast.style.transition = 'opacity 0.5s ease';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000 + container.children.length * 500); // lần lượt cách nhau 0.5s
-        }
+        
 
 
 
         // ✅ Thêm vào giỏ hàng
         // ✅ Sự kiện Add to Cart
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = parseFloat(this.dataset.price);
-                const originalPrice = parseFloat(this.dataset.originalPrice);
-                const image = this.dataset.image;
-                const quantity = parseInt(document.querySelector('.quantity input')?.value || 1);
-                const brand = this.dataset.brand || 'Unknown';
 
-                const currentUser = localStorage.getItem('currentUser') || 'guest';
-                const cartKey = `cartItems_${currentUser}`;
-                const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-                const selectedAttributes = {};
-                let valid = true;
-                const missingAttrs = [];
-
-                document.querySelectorAll('.variant-group').forEach(group => {
-                    const attrName = group.dataset.attribute;
-                    const selected = group.querySelector('.variant-item.active');
-
-                    if (!selected) {
-                        valid = false;
-                        missingAttrs.push(attrName);
-
-                    } else {
-                        selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
-                    }
-                });
-
-                if (!valid) {
-                    missingAttrs.forEach(attr => {
-                        showToast(`Vui lòng chọn ${attr}`, 'error');
-                    });
-
-                    // ❌ Không mở giỏ hàng khi có lỗi
-                    return;
-                }
-
-                // ✅ Thêm vào giỏ
-                const index = cartItems.findIndex(item =>
-                    item.id === id &&
-                    JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)
-                );
-
-                if (index !== -1) {
-                    cartItems[index].quantity += quantity;
-                } else {
-                    cartItems.push({
-                        id,
-                        name,
-                        price,
-                        originalPrice,
-                        image,
-                        quantity,
-                        brand,
-                        attributes: selectedAttributes
-                    });
-                }
-
-                localStorage.setItem(cartKey, JSON.stringify(cartItems));
-
-                // ✅ Cập nhật giỏ hàng UI
-                if (typeof renderCartItems === 'function') {
-                    renderCartItems();
-                }
-
-                // ✅ Mở giỏ hàng
-                const offcanvasEl = document.getElementById('offcanvasRight');
-                if (offcanvasEl) {
-                    const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
-                    bsOffcanvas.show();
-                }
-            });
-        });
 
 
     });
