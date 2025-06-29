@@ -329,3 +329,8 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
 
     return '✅ Đã chạy xong cron nạp tiền!';
 });
+
+/**
+ * Route Api 
+ */
+Route::post('/api/get-variant-info', [ClientProductController::class, 'getVariantInfo'])->name('api.get-variant-info');

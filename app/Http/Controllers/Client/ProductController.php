@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -18,18 +20,18 @@ class ProductController extends Controller
     }
 
 
-    public function show($id)
+    public function show(string $slug)
     {
         // test trước khi thêm slug vào hàm
 
         $product = Product::with([
-        'variants.options.attribute',
-        'variants.options.value',
-        'category',
-        'brand',
-        'tags',
-        'images',
-    ])->findOrFail($id);
+            'variants.options.attribute',
+            'variants.options.value',
+            'category',
+            'brand',
+            'tags',
+            'images',
+        ])->where('slug', $slug)->firstOrFail();
         $test_id = $product->id;
         // 👉 Lấy danh sách ảnh phụ (không phải thumbnail)
         $productImages = ProductImage::where('product_id', $product->id)
@@ -115,14 +117,77 @@ class ProductController extends Controller
                 $star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1 * 1
             ) / $rating_summary['total_rating'];
         }
-        // dd($rating_summary);
+
+
+        $variants = ProductVariant::where('product_id', $product->id)
+            ->with(['variantOptions.attribute', 'variantOptions.value'])
+            ->get();
+
+
+        $attributes = [];
+
+        foreach ($variants as $variant) {
+            foreach ($variant->variantOptions as $option) {
+                $attrId = $option->attribute->id;
+                $attrName = $option->attribute->name;
+                $value = [
+                    'id' => $option->value->id,
+                    'value' => $option->value->value
+                ];
+
+                if (!isset($attributes[$attrId])) {
+                    $attributes[$attrId] = [
+                        'name' => $attrName,
+                        'values' => []
+                    ];
+                }
+
+                $attributes[$attrId]['values'][$value['id']] = $value['value'];
+            }
+        }
+        // dd($variants,$attributes);
         return view('client.products.show', compact(
             'product',
             'attributeGroups',
             'productImages',
             'reviews',
             'rating_summary',
-            'test_id'
+            'test_id',
+            'variants',
+            'attributes'
         ));
     }
+    public function getVariantInfo(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $attributes = $request->input('attributes', []);
+
+        Log::info("productId", [$productId]);
+        Log::info("attributes", [$attributes]);
+
+        $variantQuery = ProductVariant::where('product_id', $productId);
+
+        foreach ($attributes as $attributeId => $valueId) {
+            $variantQuery->whereHas('variantOptions', function ($q) use ($attributeId, $valueId) {
+                $q->where('attribute_id', $attributeId)
+                    ->where('value_id', $valueId);
+            });
+        }
+
+        $variant = $variantQuery->first();
+
+        Log::info("variant", [$variant]);
+
+        if ($variant) {
+            return response()->json([
+                'status' => 'ok',
+                'price' => $variant->price,
+                'quantity' => $variant->quantity,
+            ]);
+        }
+
+        return response()->json(['status' => 'not_found']);
+    }
+
+
 }
