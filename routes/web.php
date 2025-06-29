@@ -53,6 +53,7 @@ use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
+use App\Http\Controllers\Admin\InventoryController;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -266,4 +267,9 @@ Route::prefix('admin')
         Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+
+        //Inventory
+        Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
     });

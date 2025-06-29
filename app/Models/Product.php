@@ -49,6 +49,10 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
 
     // Quan hệ với tags
     public function tags()
