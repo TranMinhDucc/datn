@@ -1,4 +1,4 @@
-  <footer class="footer-layout-img">
+<footer class="footer-layout-img">
       <section class="section-b-space footer-1">
           <div class="custom-container container">
               <div class="row">
@@ -51,7 +51,7 @@
                                       <li> <a class="nav" href="product-bundle.html">Latest Shoes</a></li>
                                       <li> <a class="nav" href="variant-radio.html">Branded Jeans</a></li>
                                       <li> <a class="nav" href="product.html">New Jackets</a></li>
-                                      <li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
+<li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
                                       <li> <a class="nav" href="variant-dropdown.html">Best Perfume</a></li>
                                   </ul>
                               </div>
@@ -105,7 +105,7 @@
                       <div class="payment-card-bottom">
                           <ul>
                               <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt="">
-                              </li>
+</li>
                               <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt="">
                               </li>
                               <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>

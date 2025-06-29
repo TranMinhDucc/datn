@@ -13,17 +13,21 @@ class CategoryController extends Controller
     public function show($id)
     {
         // Lấy danh mục cha
-        $category = Category::findOrFail($id);
+        $category = Category::with('products')->findOrFail($id);
 
         // Lấy ID các danh mục con
-        $childCategoryIds = Category::where('parent_id', $category->id)->pluck('id');
+        // $childCategoryIds = Category::where('parent_id', $category->id)->pluck('id');
 
-        // Bao gồm cả danh mục cha và con để lọc sản phẩm
-        $categoryIds = $childCategoryIds->push($category->id);
+        // // Bao gồm cả danh mục cha và con để lọc sản phẩm
+        // $categoryIds = $childCategoryIds->push($category->id);
 
-        // Lấy sản phẩm thuộc các danh mục này
-        $products = Product::whereIn('category_id', $categoryIds)->paginate(12);
+        // // Lấy sản phẩm thuộc các danh mục này
+        // $products = Product::whereIn('category_id', $categoryIds)->paginate(12);
+        return view('client.categories.show', compact('category'));
+    }
 
-        return view('client.categories.show', compact('category', 'products'));
+    public function index()
+    {
+        return view('client.categories.index');
     }
 }

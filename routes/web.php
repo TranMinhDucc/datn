@@ -14,12 +14,14 @@ use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\ContactController as ClientContactController;
-use App\Http\Controllers\Client\WishlistController;
 use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
+use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
+
 
 
 // ========== ADMIN CONTROLLERS ==========
@@ -47,20 +49,31 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+
+use App\Http\Controllers\Admin\SearchController;
+
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\InventoryController;
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\Admin\WishlistController;
+use App\Http\Controllers\Webhook\BankWebhookController;
+use App\Models\Bank;
+use App\Models\Setting;
+use App\Services\BankTransactionService;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
@@ -79,9 +92,10 @@ Route::prefix('/')->name('client.')->group(function () {
 
     });
 
+
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/{slug}', 'show')->name('show');
+        Route::get('{slug}/', 'show')->name('show');
     });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -97,20 +111,20 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::delete('/blog/{blog}/comments/{comment}', [\App\Http\Controllers\Client\BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
+    Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
 
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/show', 'show')->name('show');
     });
-
-    Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
-
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
+    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
+        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    });
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -141,6 +155,11 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
         Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
     });
+    Route::prefix('wishlist')->name('wishlist.')->group(function () {
+        Route::get('/', action: [ClientWishlistController::class, 'index'])->name('index');
+        Route::post('/add/{productId}', [ClientWishlistController::class, 'add'])->name('add');
+        Route::delete('/remove/{productId}', [ClientWishlistController::class, 'remove'])->name('remove');
+    });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 
@@ -148,6 +167,14 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
+    Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
+
+    // Tuỳ chọn: Gọi sau khi thanh toán thành công
+    // Route::post('/finalize-coupon', [ClientCouponController::class, 'finalizeCouponUsage'])->name('client.coupon.finalize');
 });
 
 // ========== LOGOUT ==========
@@ -197,6 +224,29 @@ Route::prefix('admin')
 
 
         Route::resource('coupons', CouponController::class);
+
+        // Marketing
+
+        Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
+        Route::resource('email_campaigns', EmailCampaignController::class);
+
+        // Route tìm kiếm đa module
+        Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+
+
+        // System Settings
+        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
+        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
+        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+        Route::get('/users/{id}/balance-log', [UserController::class, 'balanceLog'])->name('users.balance-log');
+        Route::get('/users/{username}/activity-log', [UserController::class, 'activityLog'])->name('users.activity-log');
+        Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
+
+
+
+
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
 
@@ -209,6 +259,8 @@ Route::prefix('admin')
         Route::resource('shipping-addresses', \App\Http\Controllers\Admin\ShippingAddressController::class);
         // Route::resource('roles', RoleController::class)->names('admin.roles');
 
+
+        Route::resource('wishlists', \App\Http\Controllers\Admin\WishlistController::class);
 
         Route::resource('coupons', CouponController::class);
         // Marketing
@@ -259,7 +311,9 @@ Route::prefix('admin')
         // Banking 
         Route::get('/recharge-bank', [BankController::class, 'view_payment'])->name('bank.view_payment');
         Route::get('/recharge-bank-config', [BankController::class, 'config'])->name('bank.config');
+        Route::put('/recharge-bank-config', [BankController::class, 'config_update_two'])->name('bank.config_update_two');
         Route::post('/recharge-bank-config', [BankController::class, 'config_add'])->name('bank.config_add');
+        Route::delete('/recharge-bank-config/{id}', [BankController::class, 'destroy'])->name('bank.destroy');
         Route::get('/recharge-bank-config/{id}/edit', [BankController::class, 'config_edit'])->name('bank.config_edit');
         Route::put('/recharge-bank-config/{id}/edit', [BankController::class, 'config_update'])->name('bank.config_update');
         Route::get('/create', [BankController::class, 'create'])->name('create');
@@ -273,3 +327,30 @@ Route::prefix('admin')
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
     });
+
+Route::get('/cron/sync-bank-transactions', function (Request $request) {
+    $keyFromDb = Setting::where('name', 'cron_bank_security')->value('value');
+    $keyFromRequest = $request->query('key');
+
+    if ($keyFromRequest !== $keyFromDb) {
+        abort(403, 'Không được phép.');
+    }
+
+    // Kiểm tra trạng thái Auto Bank
+    $isAutoBankEnabled = Setting::where('name', 'bank_status')->value('value') === '1';
+    if (!$isAutoBankEnabled) {
+        return response('⛔ Auto Bank đang tắt, không xử lý giao dịch.', 200);
+    }
+
+    $banks = Bank::all();
+    $service = new BankTransactionService();
+
+    foreach ($banks as $bank) {
+        $transactions = $service->fetchTransactionsFromWeb2M($bank);
+        if ($transactions) {
+            $service->processTransactions($transactions, $bank);
+        }
+    }
+
+    return '✅ Đã chạy xong cron nạp tiền!';
+});

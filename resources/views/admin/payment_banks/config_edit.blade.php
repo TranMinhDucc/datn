@@ -21,8 +21,8 @@
                     <!--end::Title-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            <a href="/metronic8/demo1/index.html" class="text-muted text-hover-primary">
+                        <li class="breadcrumb-item text-primary">
+                            <a href="#" class="text-primary">
                                 Nạp tiền </a>
                         </li>
                         <!--end::Item-->
@@ -30,17 +30,17 @@
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
-                        <!--end::Item-->
-
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            Ngân hàng </li>
-                        <!--end::Item-->
+                        <li class="breadcrumb-item text-primary">
+                            <a href="{{ route('admin.bank.view_payment') }}" class="text-primary">
+                                Ngân hàng </a>
+                        </li>
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
-                        <li class="breadcrumb-item text-muted">
-                            Cấu hình</li>
+                        <li class="breadcrumb-item text-primary">
+                            <a href="{{ route('admin.bank.config') }}" class="text-primary">
+                                Cấu hình </a>
+                        </li>
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
@@ -226,8 +226,7 @@
 
 
                                 <a type="button" class="btn btn-hero btn-danger"
-                                    href="{{ route('admin.bank.config') }}"><i
-                                        class="fa fa-fw fa-undo me-1"></i>
+                                    href="{{ route('admin.bank.config') }}"><i class="fa fa-fw fa-undo me-1"></i>
                                     Back</a>
                                 <button type="submit" class="btn btn-hero btn-success"><i
                                         class="fa fa-fw fa-save me-1"></i> Save</button>

@@ -23,6 +23,9 @@ class Product extends Model
         'stock_quantity',
         'rating_avg',
         'is_active',
+        'starts_at',
+        'ends_at',
+        'sale_times',
     ];
 
     // Quan hệ với danh mục
