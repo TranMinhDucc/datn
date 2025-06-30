@@ -322,9 +322,9 @@
                     <div>
                         <h6>${item.name}</h6>
                         <span>${Object.entries(item.attributes || {}).map(([k, v]) => `
-                        $ {
+                        ${
                             k
-                        }: $ {
+                        }: ${
                             v
                         }
                         `).join(' / ')}</span>

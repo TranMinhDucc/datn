@@ -824,190 +824,232 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-            <div class="dashboard-right-box">
-              <div class="address-tab">
-                <div class="sidebar-title">
-                  <div class="loader-line"></div>
-                  <h4>My Address Details</h4>
-                </div>
-                <div class="d-flex justify-content-end mb-3">
-                  <button class="btn add-address" data-bs-toggle="modal" data-bs-target="#add-address"
-                    title="Thêm địa chỉ" tabindex="0">+ Thêm Địa Chỉ</button>
-                </div>
+<div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                            <div class="dashboard-right-box">
+                                <div class="address-tab">
+                                    <div class="sidebar-title">
+                                        <div class="loader-line"></div>
+                                        <h4>My Address Details</h4>
+                                    </div>
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <button class="btn add-address" data-bs-toggle="modal"
+                                            data-bs-target="#add-address" title="Thêm địa chỉ" tabindex="0">+ Thêm Địa
+                                            Chỉ</button>
+                                    </div>
 
-                <div class="row gy-3">
-                  @foreach ($addresses as $address)
-                  <div class="col-xxl-4 col-md-6">
-                    <div class="address-option">
-                      <label for="address-{{ $address->id }}">
-                        <span class="delivery-address-box">
-                          <span class="form-check">
-                            <input class="custom-radio" id="address-{{ $address->id }}" type="radio" {{ $address->is_default ? 'checked' : '' }} name="default_address"
-                              onchange="document.getElementById('set-default-{{ $address->id }}').submit();" />
-                          </span>
-                          <span class="address-detail">
-                            <span class="address">
-                              <span class="address-title">{{ $address->title }}</span>
-                            </span>
-                            <span class="address">
-                              <span class="address-home">
-                                <span class="address-tag"> Địa chỉ:</span>
-                                {{ $address->address }}, {{ $address->city }}, {{ $address->state }},
-                                {{ $address->country }}
-                              </span>
-                            </span>
-                            <span class="address">
-                              <span class="address-home">
-                                <span class="address-tag">Mã bưu chính:</span>
-                                {{ $address->pincode }}
-                              </span>
-                            </span>
-                            <span class="address">
-                              <span class="address-home">
-                                <span class="address-tag">Điện thoại :</span>{{ $address->phone }}</span>
-                            </span></span></span><span class="buttons"> <a class="btn btn_black sm" href="#"
-                            data-bs-toggle="modal" data-bs-target="#editAddressModal-{{ $address->id }}"
-                            title="Quick View" tabindex="0">Sửa
-                          </a><a class="btn btn_outline sm" href="#" data-bs-toggle="modal"
-                            data-bs-target="#deleteAddressModal-{{ $address->id }}" title="Quick View" tabindex="0">Xóa
-                          </a></span></label>
-                    </div>
-                  </div>
-                  {{-- Edit modal --}}
-                  <div class="reviews-modal modal theme-modal" id="editAddressModal-{{ $address->id }}" tabindex="-1"
-                    role="dialog" aria-modal="true">
-                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4>Sửa địa chỉ</h4>
-                          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <div class="row gy-3">
+                                        @foreach ($addresses as $address)
+                                            <div class="col-xxl-4 col-md-6">
+                                                <div class="address-option">
+                                                    <label for="address-{{ $address->id }}">
+                                                        <span class="delivery-address-box">
+                                                            <span class="form-check">
+                                                                <input class="custom-radio"
+                                                                    id="address-{{ $address->id }}" type="radio"
+                                                                    {{ $address->is_default ? 'checked' : '' }}
+                                                                    name="default_address"
+                                                                    onchange="document.getElementById('set-default-{{ $address->id }}').submit();" />
+                                                            </span>
+                                                            <span class="address-detail">
+                                                                <span class="address">
+                                                                    <span
+                                                                        class="address-title">{{ $address->title }}</span>
+                                                                </span>
+                                                                <span class="address">
+                                                                    <span class="address-home">
+                                                                        <span class="address-tag"> Địa chỉ:</span>
+                                                                        {{ $address->address }}, {{ $address->city }},
+                                                                        {{ $address->state }},
+                                                                        {{ $address->country }}
+                                                                    </span>
+                                                                </span>
+                                                                <span class="address">
+                                                                    <span class="address-home">
+                                                                        <span class="address-tag">Mã bưu chính:</span>
+                                                                        {{ $address->pincode }}
+                                                                    </span>
+                                                                </span>
+                                                                <span class="address">
+                                                                    <span class="address-home">
+                                                                        <span class="address-tag">Điện thoại
+                                                                            :</span>{{ $address->phone }}</span>
+                                                                </span></span></span><span class="buttons"> <a
+                                                                class="btn btn_black sm" href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editAddressModal-{{ $address->id }}"
+                                                                title="Quick View" tabindex="0">Sửa
+                                                            </a><a class="btn btn_outline sm" href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#deleteAddressModal-{{ $address->id }}"
+                                                                title="Quick View" tabindex="0">Xóa
+                                                            </a></span></label>
+                                                </div>
+                                            </div>
+                                            {{-- Edit modal --}}
+                                            <div class="reviews-modal modal theme-modal"
+                                                id="editAddressModal-{{ $address->id }}" tabindex="-1" role="dialog"
+                                                aria-modal="true">
+                                                <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4>Sửa địa chỉ</h4>
+                                                            <button class="btn-close" type="button"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body pt-0">
+                                                            <form
+                                                                action="{{ route('client.account.address.update', $address->id) }}"
+                                                                method="POST" class="row g-3">
+                                                                @csrf
+                                                                @method('PUT')
+
+                                                                <div class="col-12">
+                                                                    <label style="font-weight: 600; color: #000;">Loại địa
+                                                                        chỉ</label>
+                                                                    <select class="form-control form-select"
+                                                                        name="title">
+                                                                        <option value="Nhà riêng"
+                                                                            {{ old('title', $address->title) == 'Nhà riêng' ? 'selected' : '' }}>
+                                                                            Nhà riêng</option>
+                                                                        <option value="Công ty"
+                                                                            {{ old('title', $address->title) == 'Công ty' ? 'selected' : '' }}>
+                                                                            Công ty</option>
+                                                                        <option value="Khác"
+                                                                            {{ old('title', $address->title) == 'Khác' ? 'selected' : '' }}>
+                                                                            Khác
+                                                                        </option>
+                                                                    </select>
+                                                                    @error('title')
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Điện Thoại</label>
+                                                                        <input class="form-control" type="text"
+                                                                            name="phone"
+                                                                            value="{{ old('phone', $address->phone) }}"
+                                                                            placeholder="Nhập số điện thoại">
+                                                                        @error('phone')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Mã Bưu chính</label>
+                                                                        <input class="form-control" name="pincode"
+                                                                            type="text"
+                                                                            value="{{ old('pincode', $address->pincode) }}">
+                                                                        @error('pincode')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Quốc gia</label>
+                                                                        <input class="form-control" type="text"
+                                                                            name="country"
+                                                                            value="{{ old('country', $address->country) }}">
+                                                                        @error('country')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Tỉnh/Thành Phố</label>
+                                                                        <input class="form-control" name="state"
+                                                                            type="text"
+                                                                            value="{{ old('state', $address->state) }}">
+                                                                        @error('state')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-6">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Quận/Huyện</label>
+                                                                        <input class="form-control" name="city"
+                                                                            type="text"
+                                                                            value="{{ old('city', $address->city) }}">
+                                                                        @error('city')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12">
+                                                                    <div class="from-group">
+                                                                        <label class="form-label">Địa chỉ</label>
+                                                                        <textarea class="form-control" name="address" cols="30" rows="4" placeholder="Nhập địa chỉ">{{ old('address', $address->address) }}</textarea>
+                                                                        @error('address')
+                                                                            <small
+                                                                                class="text-danger">{{ $message }}</small>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                                <button class="btn btn-submit" type="submit">Cập
+                                                                    nhật</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{-- Delete Modal --}}
+                                            <div class="modal theme-modal confirmation-modal"
+                                                id="deleteAddressModal-{{ $address->id }}" tabindex="-1"
+                                                role="dialog" aria-modal="true">
+                                                <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+                                                            <img class="img-fluid" src="../assets/images/gif/question.gif"
+                                                                alt="">
+                                                            <h4>Xác nhận xóa địa chỉ?</h4>
+                                                            <p>Địa chỉ sẽ bị xóa vĩnh viễn khỏi danh sách. Bạn có muốn tiếp
+                                                                tục?</p>
+                                                            <form
+                                                                action="{{ route('client.account.address.destroy', $address->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <div class="submit-button">
+                                                                    <button class="btn" type="button"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close">Hủy</button>
+                                                                    <button class="btn" type="submit"
+                                                                        data-bs-dismiss="modal" aria-label="Close">Đồng
+                                                                        ý</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{-- Form update default address --}}
+                                            <form id="set-default-{{ $address->id }}"
+                                                action="{{ route('client.account.address.setDefault', $address->id) }}"
+                                                method="POST" style="display: none;">
+                                                @csrf
+                                            </form>
+                                        @endforeach
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-body pt-0">
-                          <form action="{{ route('client.account.address.update', $address->id) }}" method="POST"
-                            class="row g-3">
-                            @csrf
-                            @method("PUT")
-
-                            <div class="col-12">
-                              <label style="font-weight: 600; color: #000;">Loại địa chỉ</label>
-                              <select class="form-control form-select" name="title">
-                                <option value="Nhà riêng" {{ old('title', $address->title) == 'Nhà riêng' ? 'selected' : '' }}>Nhà riêng</option>
-                                <option value="Công ty" {{ old('title', $address->title) == 'Công ty' ? 'selected' : '' }}>Công ty</option>
-                                <option value="Khác" {{ old('title', $address->title) == 'Khác' ? 'selected' : '' }}>Khác
-                                </option>
-                              </select>
-                              @error('title')
-                              <small class="text-danger">{{ $message }}</small>
-                              @enderror
-                            </div>
-
-                            <div class="col-6">
-                              <div class="from-group">
-                                <label class="form-label">Điện Thoại</label>
-                                <input class="form-control" type="text" name="phone"
-                                  value="{{ old('phone', $address->phone) }}" placeholder="Nhập số điện thoại">
-                                @error('phone')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <div class="col-6">
-                              <div class="from-group">
-                                <label class="form-label">Mã Bưu chính</label>
-                                <input class="form-control" name="pincode" type="text"
-                                  value="{{ old('pincode', $address->pincode) }}">
-                                @error('pincode')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <div class="col-6">
-                              <div class="from-group">
-                                <label class="form-label">Quốc gia</label>
-                                <input class="form-control" type="text" name="country"
-                                  value="{{ old('country', $address->country) }}">
-                                @error('country')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <div class="col-6">
-                              <div class="from-group">
-                                <label class="form-label">Tỉnh/Thành Phố</label>
-                                <input class="form-control" name="state" type="text"
-                                  value="{{ old('state', $address->state) }}">
-                                @error('state')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <div class="col-6">
-                              <div class="from-group">
-                                <label class="form-label">Quận/Huyện</label>
-                                <input class="form-control" name="city" type="text"
-                                  value="{{ old('city', $address->city) }}">
-                                @error('city')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <div class="col-12">
-                              <div class="from-group">
-                                <label class="form-label">Địa chỉ</label>
-                                <textarea class="form-control" name="address" cols="30" rows="4"
-                                  placeholder="Nhập địa chỉ">{{ old('address', $address->address) }}</textarea>
-                                @error('address')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                              </div>
-                            </div>
-
-                            <button class="btn btn-submit" type="submit">Cập nhật</button>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {{-- Delete Modal --}}
-                  <div class="modal theme-modal confirmation-modal" id="deleteAddressModal-{{ $address->id }}"
-                    tabindex="-1" role="dialog" aria-modal="true">
-                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-                      <div class="modal-content">
-                        <div class="modal-body">
-                          <img class="img-fluid" src="../assets/images/gif/question.gif" alt="">
-                          <h4>Xác nhận xóa địa chỉ?</h4>
-                          <p>Địa chỉ sẽ bị xóa vĩnh viễn khỏi danh sách. Bạn có muốn tiếp tục?</p>
-                          <form action="{{ route('client.account.address.destroy', $address->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <div class="submit-button">
-                              <button class="btn" type="button" data-bs-dismiss="modal" aria-label="Close">Hủy</button>
-                              <button class="btn" type="submit" data-bs-dismiss="modal" aria-label="Close">Đồng
-                                ý</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {{-- Form update default address --}}
-                  <form id="set-default-{{ $address->id }}"
-                    action="{{ route('client.account.address.setDefault', $address->id) }}" method="POST"
-                    style="display: none;">
-                    @csrf
-                  </form>
-                  @endforeach
-                </div>
-
-              </div>
-            </div>
-          </div>
           <div class="tab-pane fade" id="privacy" role="tabpanel" aria-labelledby="privacy-tab">
             <div class="dashboard-right-box">
               <div class="privacy-tab">
@@ -1212,156 +1254,112 @@
 {{-- Edit ADDRESS START --}}
 
 <div class="reviews-modal modal theme-modal fade" id="add-address" tabindex="-1" role="dialog" aria-modal="true">
-  <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>Thêm địa chỉ</h4>
-        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pt-0">
-        <form action="{{ route('client.account.address.store') }}" method="POST" class="row g-3">
-          @csrf
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Thêm địa chỉ</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('client.account.address.store') }}" method="POST" class="row g-3"
+                        id="address-form">
+                        @csrf
 
-          <div class="col-12">
-            <div class="from-group position-relative">
-              <label class="form-label">Loại địa chỉ</label>
-              <select class="form-control form-select @error('title') is-invalid @enderror" name="title">
-                <option value="">-- Chọn loại --</option>
-                <option value="Nhà riêng" {{ old('title') == 'Nhà riêng' ? 'selected' : '' }}>Nhà riêng</option>
-                <option value="Công ty" {{ old('title') == 'Công ty' ? 'selected' : '' }}>Công ty</option>
-                <option value="Khác" {{ old('title') == 'Khác' ? 'selected' : '' }}>Khác</option>
-              </select>
-              @error('title') <div class="text-danger small">{{ $message }}</div> @enderror
+                        <div class="col-12">
+                            <label class="form-label">Loại địa chỉ</label>
+                            <select class="form-select @error('title') is-invalid @enderror" name="title">
+                                <option value="">-- Chọn loại --</option>
+                                <option value="Nhà riêng" {{ old('title') == 'Nhà riêng' ? 'selected' : '' }}>Nhà riêng
+                                </option>
+                                <option value="Công ty" {{ old('title') == 'Công ty' ? 'selected' : '' }}>Công ty</option>
+                                <option value="Khác" {{ old('title') == 'Khác' ? 'selected' : '' }}>Khác</option>
+                            </select>
+                            @error('title')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">Điện thoại</label>
+                            <input class="form-control @error('phone') is-invalid @enderror" type="text"
+                                name="phone" value="{{ old('phone') }}">
+                            @error('phone')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">Mã bưu chính</label>
+                            <input class="form-control @error('pincode') is-invalid @enderror" name="pincode"
+                                value="{{ old('pincode') }}">
+                            @error('pincode')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <input type="hidden" class="form-control" name="country" value="Vietnam">
+                        <div class="col-4">
+                            <label class="form-label">Tỉnh/Thành phố</label>
+                            <select class="form-select" name="province_id" id="province-select" required>
+                                <option value="">-- Chọn tỉnh --</option>
+                                @foreach ($provinces as $province)
+                                    <option value="{{ $province->id }}"
+                                        {{ old('province_id') == $province->id ? 'selected' : '' }}>
+                                        {{ $province->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('province_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-label">Quận/Huyện</label>
+                            <select class="form-select" name="district_id" id="district-select" required>
+                                <option value="">-- Chọn huyện --</option>
+                            </select>
+                            @error('district_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-label">Phường/Xã</label>
+                            <select class="form-select" name="ward_id" id="ward-select" required>
+                                <option value="">-- Chọn xã --</option>
+                            </select>
+                            @error('ward_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Địa chỉ chi tiết</label>
+                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address') }}</textarea>
+                            @error('address')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-dark btn-lg px-5 py-2 fw-semibold">
+                            Submit
+                        </button>
+                    </form>
+
+                </div>
             </div>
-          </div>
-
-          <div class="col-6">
-            <div class="from-group">
-              <label class="form-label">Điện Thoại</label>
-              <input class="form-control @error('phone') is-invalid @enderror" type="number" name="phone"
-                value="{{ old('phone') }}" placeholder="Enter your Number.">
-              @error('phone') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div class="from-group">
-              <label class="form-label">Mã Bưu chính</label>
-              <input class="form-control @error('pincode') is-invalid @enderror" name="pincode" type="text"
-                value="{{ old('pincode') }}">
-              @error('pincode') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div class="from-group">
-              <label class="form-label">Quốc gia</label>
-              <input class="form-control @error('country') is-invalid @enderror" type="text" name="country"
-                value="{{ old('country') }}">
-              @error('country') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div class="from-group">
-              <label class="form-label">Tỉnh/Thành Phố</label>
-              <input class="form-control @error('state') is-invalid @enderror" name="state" type="text"
-                list="provinceList" value="{{ old('state') }}">
-              <datalist id="provinceList">
-                <option value="An Giang">
-                <option value="Bà Rịa - Vũng Tàu">
-                <option value="Bạc Liêu">
-                <option value="Bắc Giang">
-                <option value="Bắc Kạn">
-                <option value="Bắc Ninh">
-                <option value="Bến Tre">
-                <option value="Bình Dương">
-                <option value="Bình Định">
-                <option value="Bình Phước">
-                <option value="Bình Thuận">
-                <option value="Cà Mau">
-                <option value="Cao Bằng">
-                <option value="Cần Thơ">
-                <option value="Đà Nẵng">
-                <option value="Đắk Lắk">
-                <option value="Đắk Nông">
-                <option value="Điện Biên">
-                <option value="Đồng Nai">
-                <option value="Đồng Tháp">
-                <option value="Gia Lai">
-                <option value="Hà Giang">
-                <option value="Hà Nam">
-                <option value="Hà Nội">
-                <option value="Hà Tĩnh">
-                <option value="Hải Dương">
-                <option value="Hải Phòng">
-                <option value="Hậu Giang">
-                <option value="Hòa Bình">
-                <option value="Hưng Yên">
-                <option value="Khánh Hòa">
-                <option value="Kiên Giang">
-                <option value="Kon Tum">
-                <option value="Lai Châu">
-                <option value="Lạng Sơn">
-                <option value="Lào Cai">
-                <option value="Lâm Đồng">
-                <option value="Long An">
-                <option value="Nam Định">
-                <option value="Nghệ An">
-                <option value="Ninh Bình">
-                <option value="Ninh Thuận">
-                <option value="Phú Thọ">
-                <option value="Phú Yên">
-                <option value="Quảng Bình">
-                <option value="Quảng Nam">
-                <option value="Quảng Ngãi">
-                <option value="Quảng Ninh">
-                <option value="Quảng Trị">
-                <option value="Sóc Trăng">
-                <option value="Sơn La">
-                <option value="Tây Ninh">
-                <option value="Thái Bình">
-                <option value="Thái Nguyên">
-                <option value="Thanh Hóa">
-                <option value="Thừa Thiên Huế">
-                <option value="Tiền Giang">
-                <option value="TP. Hồ Chí Minh">
-                <option value="Trà Vinh">
-                <option value="Tuyên Quang">
-                <option value="Vĩnh Long">
-                <option value="Vĩnh Phúc">
-                <option value="Yên Bái">
-              </datalist>
-              @error('state') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div class="from-group">
-              <label class="form-label">Quận/Huyện</label>
-              <input class="form-control @error('city') is-invalid @enderror" name="city" type="text"
-                value="{{ old('city') }}">
-              @error('city') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-12">
-            <div class="from-group">
-              <label class="form-label">Địa chỉ</label>
-              <textarea class="form-control @error('address') is-invalid @enderror" name="address" cols="30" rows="5"
-                placeholder="Write your Address...">{{ old('address') }}</textarea>
-              @error('address') <div class="text-danger small">{{ $message }}</div> @enderror
-            </div>
-          </div>
-
-          <div class="col-12">
-            <button class="btn btn-submit" type="submit">Submit</button>
-          </div>
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
-</div>
 {{-- END Edit Email Doashboar --}}
 
 <div class="reviews-modal modal theme-modal fade" id="edit-box" tabindex="-1" role="dialog" aria-modal="true">
@@ -1642,6 +1640,62 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

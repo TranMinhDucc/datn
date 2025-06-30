@@ -967,7 +967,11 @@
             </div>
         </div>
     </div>
-</div>Your browser
+</div>
+
+    <script>
+        const productVariants = @json($product -> variants);
+    </script>
 @endsection
 @section('js')
 <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>

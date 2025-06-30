@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
 use App\Models\Order;
-=======
 use App\Models\Province;
->>>>>>> 49435318c4eb76710c96d383702cd73067b24f75
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -31,36 +28,21 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-    public function dashboard()
-    {
-        $user = Auth::user();
-
-        $addresses = ShippingAddress::with('user')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->get();
-
         $wishlists = Wishlist::with('product')
             ->where('user_id', $user->id)
             ->where('is_active', 1)
             ->latest()
             ->get();
-<<<<<<< HEAD
 
         $orders = Order::with(['orderItems.product']) // Load luôn product của từng item
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
+$provinces = Province::all(); // chỉ cần load tỉnh ban đầu
 
-
-        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'orders'));
+        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
 
-=======
-        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
-        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'provinces'));
-    }
->>>>>>> 49435318c4eb76710c96d383702cd73067b24f75
 
 
     public function wallet()
