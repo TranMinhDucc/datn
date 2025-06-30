@@ -122,9 +122,11 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
-    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
-        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+        Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');;
     });
+
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -138,6 +140,13 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
 });
+
+// // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
+// Route::middleware(['auth'])->prefix('account/orders')->name('client.orders.')->group(function () {
+//     Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+//     Route::patch('/{id}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+// });
+
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
@@ -322,6 +331,13 @@ Route::prefix('admin')
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
 
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
+    Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
         //Inventory
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
