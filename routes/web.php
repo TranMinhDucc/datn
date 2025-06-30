@@ -149,7 +149,7 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::middleware(['auth'])->prefix('address')->name('address.')->group(function () {
         Route::get('/', [ShippingAddressController::class, 'index'])->name('index');
-        Route::post('/store', action: [ShippingAddressController::class, 'store'])->name('store');
+        Route::post('/store', [ShippingAddressController::class, 'store'])->name('store');
         Route::get('{id}/edit', [ShippingAddressController::class, 'edit'])->name('edit');
         Route::put('{id}', [ShippingAddressController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
@@ -293,7 +293,7 @@ Route::prefix('admin')
         //Ckeditor
         Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
         //Shipping
-        Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
+        Route::resource('shipping-fees', ShippingFeeController::class)->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
         Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
 
@@ -354,3 +354,12 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
 
     return '✅ Đã chạy xong cron nạp tiền!';
 });
+
+/**
+ * Route Api 
+ */
+Route::post('/api/get-variant-info', [ClientProductController::class, 'getVariantInfo'])->name('api.get-variant-info');
+// API lấy danh sách quận/huyện theo tỉnh
+Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationController::class, 'districts']);
+// API lấy danh sách xã/phường theo quận/huyện
+Route::get('/api/wards', [\App\Http\Controllers\Admin\LocationController::class, 'wards']);
