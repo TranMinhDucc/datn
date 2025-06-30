@@ -13,7 +13,7 @@ class ProductLabelController extends Controller
     public function index()
     {
         // Sắp xếp label mới nhất trước
-        $labels = ProductLabel::with('product')->orderByDesc('id')->get();
+        $labels = ProductLabel::with('product')->orderByDesc('id')->paginate(10);
         return view('admin.product_labels.index', compact('labels'));
     }
 

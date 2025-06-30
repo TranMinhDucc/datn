@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use App\Models\Setting;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -40,6 +41,8 @@ class BankController extends Controller
     public function config()
     {
         $banks = Bank::orderByDesc('id')->paginate(10);
+        $user = User::all();
+        $username = $user->first()->username;
         $settings = Setting::whereIn('name', [
             'bank_status',
             'bank_min',
@@ -48,7 +51,7 @@ class BankController extends Controller
             'prefix_autobank'
         ])->pluck('value', 'name');
 
-        return view('admin.payment_banks.config', compact('banks', 'settings'));
+        return view('admin.payment_banks.config', compact('banks', 'settings', 'username'));
     }
     public function config_update_two(Request $request)
     {

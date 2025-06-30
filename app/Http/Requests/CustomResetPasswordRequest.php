@@ -3,41 +3,50 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class CustomResetPasswordRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
-        abort(500, 'Đã vào CustomResetPasswordRequest');
+        return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
-            'token' => 'required',
-            'email' => 'required|email|exists:users,email',
+            'token' => 'required', // vẫn cần để reset password hoạt động
+            'email' => [
+                'email',
+                'exists:users,email',
+            ],
             'password' => [
-                'required',
                 'string',
-                'min:8',
                 'confirmed',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[\W_]/',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
             ],
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'email.required' => 'Vui lòng nhập email.',
+            'token.required' => 'Liên kết không hợp lệ hoặc đã hết hạn.',
+
             'email.email' => 'Email không đúng định dạng.',
-            'email.exists' => 'Email không tồn tại trong hệ thống.',
-            'password.required' => 'Vui lòng nhập mật khẩu mới.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
+            'email.exists' => 'Không tìm thấy email trong hệ thống.',
+
+            'password.string' => 'Mật khẩu không hợp lệ.',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
-            'password.regex' => 'Mật khẩu phải chứa 1 chữ in hoa, 1 số và 1 ký tự đặc biệt.',
+            'password.min' => 'Mật khẩu phải có ít nhất :min ký tự.',
+            'password.mixed' => 'Mật khẩu phải có chữ hoa và chữ thường.',
+            'password.numbers' => 'Mật khẩu phải chứa ít nhất 1 chữ số.',
+            'password.symbols' => 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt.',
+            'password.uncompromised' => 'Mật khẩu đã bị rò rỉ. Vui lòng chọn mật khẩu khác.',
         ];
     }
 }

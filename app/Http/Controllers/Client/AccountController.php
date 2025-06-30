@@ -8,20 +8,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Models\ShippingAddress;
+use App\Models\Wishlist;
+
 
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-    public function dashboard()
-    {
-        $user = Auth::user();
-$addresses = ShippingAddress::with('user')->where('user_id',$user->id)->latest()->get();
+   public function dashboard()
+{
+    $user = Auth::user();
 
-        // dd($user->id);
-        return view('client.account.dashboard', compact('addresses','user'));
-    }
+    $addresses = ShippingAddress::with('user')
+    ->where('user_id', $user->id)
+        ->latest()
+        ->get();
+
+    $wishlists = Wishlist::with('product')
+        ->where('user_id', $user->id)
+        ->where('is_active', 1)
+        ->latest()
+        ->get();
+
+    return view('client.account.dashboard', compact('addresses', 'user', 'wishlists'));
+}
+
 
     public function wallet()
     {

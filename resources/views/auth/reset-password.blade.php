@@ -3,75 +3,74 @@
 @section('title', 'Đặt lại mật khẩu')
 
 @section('content')
-    <section class="user-form-part py-5" style="background: #f9f9f9;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5 col-md-7 col-sm-10">
-                    <div class="user-form-logo text-center mb-4">
-                        {{-- <a href="{{ url('/') }}">
-                            <img src="{{ asset('assets/client/images/logo.png') }}" alt="logo" height="50">
-                        </a> --}}
+    <section class="section-b-space pt-0 login-bg-img">
+        <div class="custom-container container login-page">
+            <div class="row align-items-center">
+                <div class="col-xxl-7 col-6 d-none d-lg-block">
+                    <div class="login-img">
+                        <img class="img-fluid" src="https://themes.pixelstrap.net/katie/assets/images/login/1.svg" alt="">
                     </div>
+                </div>
+                <div class="col-xxl-4 col-lg-6 mx-auto">
+                    <div class="log-in-box">
+                        <div class="log-in-title text-center mb-4">
+                            <h4><i class="fa-solid fa-unlock-keyhole me-2 text-black"></i> Đặt lại mật khẩu</h4>
 
-                    <div class="card shadow-sm border-0 p-4">
-                        <div class="text-center mb-3">
-                            <h3 class="fw-bold">🔐 Thay đổi mật khẩu</h3>
-                            <p class="text-muted mb-0">Đặt mật khẩu an toàn mới của bạn bên dưới</p>
+                            <p>Hãy nhập mật khẩu mới của bạn bên dưới</p>
                         </div>
 
-                        <form method="POST" action="{{ route('password.update') }}">
-                            @csrf
-                            <input type="hidden" name="token" value="{{ request()->route('token') }}">
+                        <div class="login-box">
+                            <form method="POST" action="{{ route('password.update') }}" class="row g-3">
+                                @csrf
+                                <input type="hidden" name="token" value="{{ request()->route('token') }}">
 
-                            {{-- Email --}}
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="text" name="email" class="form-control" placeholder="Nhập email của bạn"
-                                    value="{{ old('email') }}" autofocus>
-                                @error('email')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-
-                            {{-- Password --}}
-                            <div class="mb-3">
-                                <label class="form-label">Nhập mật khẩu mới</label>
-                                <div class="position-relative">
-                                    <input type="password" id="password" name="password" class="form-control pe-5"
-                                        placeholder="Nhập mật khẩu mới">
-                                    <i class="fa-solid fa-eye toggle-password" toggle="#password"></i>
+                                {{-- Email --}}
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" name="email" type="text" placeholder="Email"
+                                            value="{{ old('email') }}">
+                                        <label>Email</label>
+                                        @error('email')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-                                @error('password')
-                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
-                                @enderror
-                            </div>
 
-                            {{-- Confirm Password --}}
-                            <div class="mb-3">
-                                <label class="form-label">Nhập lại mật khẩu</label>
-                                <div class="position-relative">
-                                    <input type="password" id="password_confirmation" name="password_confirmation"
-                                        class="form-control pe-5" placeholder="Nhập lại mật khẩu mới">
-                                    <i class="fa-solid fa-eye toggle-password" toggle="#password_confirmation"></i>
+                                {{-- Mật khẩu mới --}}
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="password" name="password" type="password"
+                                            placeholder="Mật khẩu mới">
+                                        <label>Mật khẩu mới</label>
+                                        @error('password')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-                                @error('password_confirmation')
-                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
-                                @enderror
-                            </div>
 
+                                {{-- Nhập lại mật khẩu --}}
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="password_confirmation" name="password_confirmation"
+                                            type="password" placeholder="Nhập lại mật khẩu">
+                                        <label>Nhập lại mật khẩu</label>
+                                        @error('password_confirmation')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                            </div>
-                        </form>
+                                <div class="col-12">
+                                    <button class="btn login btn_black sm w-100" type="submit">
+                                        <i class="fa-solid fa-key me-1"></i> Đổi mật khẩu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
                         <div class="text-center mt-3">
-                            <a href="{{ route('login') }}" class="text-decoration-none small">← Quay lại trang đăng nhập</a>
+                            <a href="{{ route('login') }}" class="text-decoration-none small">← Quay lại đăng nhập</a>
                         </div>
-                    </div>
-
-                    <div class="text-center mt-4 text-muted small">
-                        © {{ now()->year }} Greeny by <a href="#" class="text-decoration-none">Mironcoder</a>
                     </div>
                 </div>
             </div>
@@ -79,45 +78,13 @@
     </section>
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .position-relative {
-            position: relative;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6c757d;
-            font-size: 1rem;
-            z-index: 10;
-        }
-
-        .form-control.pe-5 {
-            padding-right: 2.5rem !important;
-        }
-    </style>
-@endsection
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.toggle-password').forEach(function (eye) {
-                eye.addEventListener('click', function () {
-                    const input = document.querySelector(this.getAttribute('toggle'));
-                    const isPassword = input.getAttribute('type') === 'password';
-
-                    input.setAttribute('type', isPassword ? 'text' : 'password');
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
+            document.querySelectorAll('.form-control').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    this.classList.remove('is-invalid');
                 });
-
-                if (!eye.classList.contains('fa-eye') && !eye.classList.contains('fa-eye-slash')) {
-                    eye.classList.add('fa-eye');
-                }
             });
         });
     </script>

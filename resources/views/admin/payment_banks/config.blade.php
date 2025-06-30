@@ -227,7 +227,7 @@
                                                     value="{{ $settings['prefix_autobank'] }}" name="prefix_autobank"
                                                     placeholder="VD: NAPTIEN">
                                                 <span class="input-group-text">
-                                                    1 </span>
+                                                    {{ $username }} </span>
                                             </div>
                                             <small>Không được để trống Prefix, Prefix là nội dung nạp tiền vào hệ
                                                 thống.</small>

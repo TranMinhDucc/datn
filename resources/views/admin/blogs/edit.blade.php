@@ -225,7 +225,11 @@
             language: 'vi',
             height: 400,
             removeButtons: '', // Để giữ nguyên tất cả các nút
-            extraPlugins: 'colorbutton,font,justify,print,preview',
+            extraPlugins: 'uploadimage,colorbutton,font,justify,print,preview',
+            filebrowserUploadUrl: "{{ route('admin.ckeditor.upload') }}?_token={{ csrf_token() }}",
+            filebrowserUploadMethod: 'form',
+            removeDialogTabs: 'image:advanced;image:Link',
+            removePlugins: 'exportpdf',
         });
 
         // Tự tạo slug như cũ
