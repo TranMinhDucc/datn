@@ -146,6 +146,14 @@ class ProductController extends Controller
             }
         }
         // dd($variants,$attributes);
+        $product->related_products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        // dd($product->related_products);
+
+
         return view('client.products.show', compact(
             'product',
             'attributeGroups',

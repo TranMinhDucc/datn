@@ -4,36 +4,22 @@
 
     <div class="d-flex flex-column flex-column-fluid">
         @if (session('success'))
-                {{-- <div class="notice d-flex bg-light-success rounded border-success border border-dashed p-6 mb-5">
-                    <!--begin::Icon-->
-                    <span class="svg-icon svg-icon-2tx svg-icon-success me-4">
-                        <i class="ki-duotone ki-check-circle fs-2x text-success"></i>
-                    </span>
-                    <!--end::Icon-->
+            <div class="alert alert-success d-flex align-items-center p-5">
+                <!--begin::Icon-->
+                <i class="fa-solid fa-circle-check fs-2hx text-success me-4"><span class="path1"></span><span
+                        class="path2"></span></i>
+                <!--end::Icon-->
 
-                    <!--begin::Content-->
-                    <div class="d-flex flex-column pe-0 pe-sm-10">
-                        <span class="text-gray-700">{{ session('success') }}</span>
-                    </div>
-                    <!--end::Content-->
-                </div> --}}
-                <!--begin::Alert-->
-                <div class="alert alert-success d-flex align-items-center p-5">
-                    <!--begin::Icon-->
-                    <i class="fa-solid fa-circle-check fs-2hx text-success me-4"><span class="path1"></span><span
-                            class="path2"></span></i>
-                    <!--end::Icon-->
-
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column">
-                        <span>{{ session('success') }}</span>
-                    </div>
-                    <!--end::Wrapper-->
+                <!--begin::Wrapper-->
+                <div class="d-flex flex-column">
+                    <span>{{ session('success') }}</span>
                 </div>
-                <!--end::Alert-->
+                <!--end::Wrapper-->
             </div>
             <!--end::Alert-->
-        @endif
+    </div>
+    <!--end::Alert-->
+    @endif
     <!--begin::Toolbar-->
     <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
@@ -175,7 +161,8 @@
 
                                 <!--begin::Switch-->
                                 <div class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="" name="notifications" checked />
+                                    <input class="form-check-input" type="checkbox" value="" name="notifications"
+                                        checked />
                                     <label class="form-check-label">
                                         Enabled
                                     </label>
@@ -305,7 +292,8 @@
                                         {{-- Checkbox --}}
                                         <td class="text-center">
                                             <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                <input class="form-check-input" type="checkbox" value="{{ $product->id }}" />
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $product->id }}" />
                                             </div>
                                         </td>
 
@@ -316,8 +304,8 @@
                                         <td class="text-center" style="min-width: 150px;">
                                             <a href="{{ route('admin.products.edit', $product->id) }}">
                                                 <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
-                                                    width="80" height="80" class="rounded shadow-sm" style="object-fit: cover;"
-                                                    alt="{{ $product->name }}">
+                                                    width="80" height="80" class="rounded shadow-sm"
+                                                    style="object-fit: cover;" alt="{{ $product->name }}">
                                             </a>
                                         </td>
 

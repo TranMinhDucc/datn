@@ -203,13 +203,25 @@
                                                                 alt="lable">
                                                             <span>on <br>Sale!</span>
                                                         </div>
-
+                                                        <a href="{{ route('client.products.show', $product->slug) }}"
+                                                            style="display: block;">
+                                                            
+                                                        </a>
+                                                        <div class="cart-info-icon">
+                                                            <a class="wishlist-icon add-to-wishlist"
+                                                                href="javascript:void(0)" data-id="{{ $product->id }}">
+                                                                <i class="iconsax" data-icon="heart" aria-hidden="true"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-title="Add to Wishlist"></i>
+                                                            </a>
+                                                        </div>
                                                         <div class="product-image"><a class="pro-first"
                                                                 href="{{ route('client.products.show', $product->slug) }}">
-                                                                <img class="bg-img" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"></a></div>
+                                                                <img class="bg-img"
+                                                                    src="{{ asset('storage/' . $product->image) }}"
+                                                                    alt="{{ $product->name }}"></a></div>
 
-                                                        <div class="countdown"
-                                                        style="bottom: 5px;"
+                                                        <div class="countdown" style="bottom: 5px;"
                                                             data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
                                                             data-endtime="{{ optional($product->ends_at ? \Carbon\Carbon::parse($product->ends_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}">
                                                             <ul>

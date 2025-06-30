@@ -18,7 +18,10 @@ use App\Http\Controllers\Client\FaqController as ClientFaqController;
 use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\CouponController as ClientCouponController;
+use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
+
 
 
 // ========== ADMIN CONTROLLERS ==========
@@ -50,10 +53,14 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\SearchController;
 
 use App\Http\Controllers\Admin\EmailCampaignController;
-
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Admin\BlogCommentController;
+use App\Http\Controllers\Admin\CKEditorController;
+use App\Http\Controllers\Admin\InventoryController;
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
@@ -85,10 +92,10 @@ Route::prefix('/')->name('client.')->group(function () {
 
     });
 
+
     Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('{id}/', [ClientProductController::class, 'show'])->name('show');
-
+        Route::get('{slug}/', 'show')->name('show');
     });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -100,6 +107,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
+    Route::post('/blog/{blog}/comments', [\App\Http\Controllers\Client\BlogCommentController::class, 'store'])->name('blog.comment.store');
+    Route::delete('/blog/{blog}/comments/{comment}', [\App\Http\Controllers\Client\BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
@@ -110,8 +119,12 @@ Route::prefix('/')->name('client.')->group(function () {
     });
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
+    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
+        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    });
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -136,13 +149,13 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::middleware(['auth'])->prefix('address')->name('address.')->group(function () {
         Route::get('/', [ShippingAddressController::class, 'index'])->name('index');
-        Route::post('/store', action: [ShippingAddressController::class, 'store'])->name('store');
+        Route::post('/store', [ShippingAddressController::class, 'store'])->name('store');
         Route::get('{id}/edit', [ShippingAddressController::class, 'edit'])->name('edit');
         Route::put('{id}', [ShippingAddressController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
         Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
     });
-      Route::prefix('wishlist')->name('wishlist.')->group(function () {
+    Route::prefix('wishlist')->name('wishlist.')->group(function () {
         Route::get('/', action: [ClientWishlistController::class, 'index'])->name('index');
         Route::post('/add/{productId}', [ClientWishlistController::class, 'add'])->name('add');
         Route::delete('/remove/{productId}', [ClientWishlistController::class, 'remove'])->name('remove');
@@ -154,6 +167,14 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
+    Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
+
+    // Tuỳ chọn: Gọi sau khi thanh toán thành công
+    // Route::post('/finalize-coupon', [ClientCouponController::class, 'finalizeCouponUsage'])->name('client.coupon.finalize');
 });
 
 // ========== LOGOUT ==========
@@ -237,13 +258,13 @@ Route::prefix('admin')
 
         Route::resource('shipping-addresses', \App\Http\Controllers\Admin\ShippingAddressController::class);
         // Route::resource('roles', RoleController::class)->names('admin.roles');
-    
-     
+
+
         Route::resource('wishlists', \App\Http\Controllers\Admin\WishlistController::class);
 
         Route::resource('coupons', CouponController::class);
         // Marketing
-    
+
 
         Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
         Route::resource('email_campaigns', EmailCampaignController::class);
@@ -266,20 +287,19 @@ Route::prefix('admin')
         //Blog
         Route::resource('blogs', BlogController::class)->names('blogs');
         Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+        Route::post('blogs/{blog:slug}/toggle-status', [BlogController::class, 'toggleStatus'])->name('blogs.toggle-status');
+        Route::get('blogs/{blog}/comments', [BlogCommentController::class, 'loadByBlog'])->name('blogs.comments');
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
+        //Ckeditor
+        Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
         //Shipping
-        Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
+        Route::resource('shipping-fees', ShippingFeeController::class)->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
         Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
 
 
         Route::resource('brands', BrandController::class);
         Route::resource('tags', TagController::class);
-        //Blog
-        Route::resource('blogs', BlogController::class)->names('blogs');
-        Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
-        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
-
 
         // Variant Attributes
         Route::resource('variant_attributes', VariantAttributeController::class);
@@ -301,6 +321,11 @@ Route::prefix('admin')
         Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
+
+        //Inventory
+        Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -334,3 +359,7 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
  * Route Api 
  */
 Route::post('/api/get-variant-info', [ClientProductController::class, 'getVariantInfo'])->name('api.get-variant-info');
+// API lấy danh sách quận/huyện theo tỉnh
+Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationController::class, 'districts']);
+// API lấy danh sách xã/phường theo quận/huyện
+Route::get('/api/wards', [\App\Http\Controllers\Admin\LocationController::class, 'wards']);

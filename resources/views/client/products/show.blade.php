@@ -85,30 +85,19 @@
                             <p></p>
                             <div class="rating">
                                 <ul class="rating">
-                                    @php
-                                        $fullStars = floor($product->rating_avg); // sao đầy
-                                        $halfStar = $product->rating_avg - $fullStars >= 0.5; // sao nửa
-                                        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0); // sao rỗng
-                                    @endphp
-
-                                    {{-- sao đầy --}}
-                                    @for ($i = 0; $i < $fullStars; $i++)
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                    @endfor
-
-                                    {{-- sao nửa --}}
-                                    @if ($halfStar)
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    @endif
-
-                                    {{-- sao rỗng --}}
-                                    @for ($i = 0; $i < $emptyStars; $i++)
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                    @endfor
-
-                                    <li>{{ number_format($product->rating_avg, 1) }}</li>
+                                    <li>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($rating_summary['avg_rating'] >= $i)
+                                                <i class="fa-solid fa-star"></i>
+                                            @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
+                                                <i class="fa-solid fa-star-half-stroke"></i>
+                                            @else
+                                                <i class="fa-regular fa-star"></i>
+                                            @endif
+                                        @endfor
+                                    </li>
+                                    <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-
                                 <p>{{ $product->description }}</p>
                             </div>
                             <div class="buy-box border-buttom">
@@ -134,6 +123,21 @@
                                             <option value="{{ $valueId }}">{{ $value }}</option>
                                         @endforeach
                                     </select>
+                                </div> <!-- Đóng thẻ div.mb-2 -->
+                            @endforeach
+                            @foreach ($attributeGroups as $groupName => $values)
+                                <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+                                    <h6>{{ ucfirst($groupName) }}</h6>
+                                    <ul class="variant-list d-flex gap-2">
+                                        @foreach ($values as $val)
+                                            <li class="variant-item px-3 py-1 border rounded"
+                                                data-value="{{ $val }}" style="cursor: pointer;">
+                                                {{ $val }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="variant-error text-danger small mt-1" style="display: none;"></div>
+                                    <!-- thêm dòng này -->
                                 </div>
                             @endforeach
 
@@ -141,8 +145,6 @@
                                 {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
                                 <p><strong>Số lượng còn lại:</strong> <span id="variant-quantity"></span></p>
                             </div>
-
-
 
 
                             <div class="quantity-box d-flex align-items-center gap-3">
@@ -156,12 +158,11 @@
                                         data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->sale_price }}"
                                         data-original-price="{{ $product->base_price }}"
-                                        data-image="{{ asset('storage/' . $product->image) }}" data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                                        data-image="{{ asset('storage/' . $product->image) }}"
+                                        data-brand="{{ $product->brand->name ?? 'Unknown' }}"
+                                        aria-controls="offcanvasRight">
                                         Add To Cart
                                     </a>
-
-
 
                                     <a class="btn btn_outline sm" href="#">Buy Now</a>
                                 </div>
@@ -586,7 +587,8 @@
                                                                 <div class="user-info">
                                                                     <div class="d-flex justify-content-between gap-3">
                                                                         <h6><i class="iconsax" data-icon="user-1"></i>
-                                                                            {{ $review->user->fullname ?? 'Ẩn danh' }}</h6>
+                                                                            {{ $review->user->fullname ?? 'Ẩn danh' }}
+                                                                        </h6>
 
 
                                                                         <span> <i class="iconsax"
@@ -634,262 +636,262 @@
             </div>
             <div class="swiper special-offer-slide-2">
                 <div class="swiper-wrapper ratio1_3">
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                                <div class="countdown">
-                                    <ul class="clockdiv2">
-                                        <li>
-                                            <div class="timer">
-                                                <div class="days"></div>
-                                            </div><span class="title">Days</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="hours"></div>
-                                            </div><span class="title">Hours</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="minutes"></div>
-                                            </div><span class="title">Min</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="seconds"></div>
-                                            </div><span class="title">Sec</span>
-                                        </li>
-                                    </ul>
+                    @foreach ($product->related_products as $value)
+                        <div class="swiper-slide">
+                            <div class="product-box-3">
+                                <div class="img-wrapper">
+                                    <div class="label-block"><span class="lable-1">NEW</span><a
+                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
+                                    <div class="product-image"><a class="pro-first"
+                                            href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                            href="product.html"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a></div>
+                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
+                                                data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Add to cart"> </i></a><a href="compare.html"
+                                            tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                                aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                                data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Quick View"></i></a></div>
+                                    <div class="countdown">
+                                        <ul class="clockdiv2">
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="days"></div>
+                                                </div><span class="title">Days</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="hours"></div>
+                                                </div><span class="title">Hours</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="minutes"></div>
+                                                </div><span class="title">Min</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="seconds"></div>
+                                                </div><span class="title">Sec</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-detail">
+                                    <ul class="rating">
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li>{{ $value->rating_avg ?? 0 }}</li>
+                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                        <h6>{{ $value->name }}</h6>
+                                    </a>
+                                    <p>${{ number_format($value->sale_price, 2) }}
+                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Greciilooks Women's Stylish Top</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
+                        </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Wide Linen-Blend Trousers</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$18.00 </del>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Long Sleeve Rounded T-Shirt</h6>
-                                </a>
-                                <p>$120.30
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                                <div class="countdown">
-                                    <ul class="clockdiv11">
-                                        <li>
-                                            <div class="timer">
-                                                <div class="days"></div>
-                                            </div><span class="title">Days</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="hours"></div>
-                                            </div><span class="title">Hours</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="minutes"></div>
-                                            </div><span class="title">Min</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="seconds"></div>
-                                            </div><span class="title">Sec</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Blue lined White T-Shirt</h6>
-                                </a>
-                                <p>$190.00
-                                    <del>$210.00</del>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Greciilooks Women's Stylish Top</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
-                            </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-regular fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Wide Linen-Blend Trousers</h6>
+                            </a>
+                            <p>$100.00
+                                <del>$18.00 </del>
+                            </p>
                         </div>
                     </div>
                 </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Long Sleeve Rounded T-Shirt</h6>
+                            </a>
+                            <p>$120.30
+                                <del>$140.00</del><span>-20%</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+                            <div class="countdown">
+                                <ul class="clockdiv11">
+                                    <li>
+                                        <div class="timer">
+                                            <div class="days"></div>
+                                        </div><span class="title">Days</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="hours"></div>
+                                        </div><span class="title">Hours</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="minutes"></div>
+                                        </div><span class="title">Min</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="seconds"></div>
+                                        </div><span class="title">Sec</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Blue lined White T-Shirt</h6>
+                            </a>
+                            <p>$190.00
+                                <del>$210.00</del>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                <li><i class="fa-regular fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Greciilooks Women's Stylish Top</h6>
+                            </a>
+                            <p>$100.00
+                                <del>$140.00</del><span>-20%</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -948,19 +950,44 @@
                         <script>
                             const stars = document.querySelectorAll('.star');
                             const ratingInput = document.getElementById('rating-value');
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const form = document.getElementById('rating-form');
+                                const stars = document.querySelectorAll('.star');
+                                const ratingInput = document.getElementById('rating-value');
+                                const commentInput = document.getElementById('comment');
 
-                            stars.forEach((star, index) => {
-                                star.addEventListener('click', () => {
-                                    const rating = star.getAttribute('data-value');
-                                    ratingInput.value = rating;
+                                stars.forEach((star, index) => {
+                                    star.addEventListener('click', () => {
+                                        const rating = star.getAttribute('data-value');
+                                        ratingInput.value = rating;
 
-                                    stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
+                                            'fa-regular'));
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
+                                            'fa-regular'));
 
-                                    for (let i = 0; i < rating; i++) {
-                                        stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
-                                    }
+                                        for (let i = 0; i < rating; i++) {
+                                            stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
+                                        }
+                                    });
                                 });
-                            });
+
+                                document.querySelectorAll('.submit-rating').forEach(button => {
+                                    button.addEventListener('click', function() {
+                                        const rate = ratingInput.value;
+                                        const comment = commentInput.value;
+                                        if (isNaN(rate) || (rate <= 0 || rate > 5)) {
+                                            Swal.fire('Thông báo', 'Vui lòng lựa chọn đánh giá của bạn', 'warning');
+                                            return;
+                                        }
+                                        if (comment == '') {
+                                            Swal.fire('Thông báo', 'Vui lòng nhập nội dung đánh giá', 'warning');
+                                            return;
+                                        }
+                                        form.submit();
+                                    })
+                                });
+                            })
                         </script>
                     @endauth
                     @guest
@@ -980,10 +1007,6 @@
             </div>
         </div>
     </div>
-
-
-
-
 @endsection
 @section('js')
     <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
@@ -1117,6 +1140,150 @@
                     return;
                 }
                 initializeClock($clock, start, end);
+            });
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ✅ Xử lý chọn thuộc tính
+            document.querySelectorAll('.variant-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const group = this.closest('.variant-list');
+                    if (!group) return;
+
+                    group.querySelectorAll('.variant-item').forEach(i => {
+                        i.classList.remove('active');
+                        i.style.setProperty('border', '1px solid #ddd', 'important');
+                        i.style.fontWeight = 'normal';
+                        i.style.color = '';
+                    });
+
+                    this.classList.add('active');
+                    this.style.setProperty('border', '2px solid #222', 'important');
+                    this.style.fontWeight = 'bold';
+                    this.style.color = '#222';
+                });
+            });
+
+            function showToast(message, type = 'error') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+
+                toast.className = 'toast-box';
+                toast.style.background =
+                    type === 'error' ? '#dc3545' :
+                    type === 'warning' ? '#ffc107' :
+                    type === 'info' ? '#17a2b8' :
+                    '#28a745';
+
+                toast.innerHTML = `
+        <div class="icon">
+            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+            <span>${message}</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    `;
+
+                container.appendChild(toast);
+
+                // ✅ Đóng khi click nút ×
+                toast.querySelector('.close-btn').addEventListener('click', () => {
+                    toast.remove();
+                });
+
+                // ✅ Tự ẩn sau 3s (lần lượt từng toast)
+                setTimeout(() => {
+                    toast.style.transition = 'opacity 0.5s ease';
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000 + container.children.length * 500); // lần lượt cách nhau 0.5s
+            }
+
+
+
+            // ✅ Thêm vào giỏ hàng
+            // ✅ Sự kiện Add to Cart
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    const price = parseFloat(this.dataset.price);
+                    const originalPrice = parseFloat(this.dataset.originalPrice);
+                    const image = this.dataset.image;
+                    const quantity = parseInt(document.querySelector('.quantity input')?.value ||
+                        1);
+                    const brand = this.dataset.brand || 'Unknown';
+
+                    const currentUser = localStorage.getItem('currentUser') || 'guest';
+                    const cartKey = `cartItems_${currentUser}`;
+                    const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+                    const selectedAttributes = {};
+                    let valid = true;
+                    const missingAttrs = [];
+
+                    document.querySelectorAll('.variant-group').forEach(group => {
+                        const attrName = group.dataset.attribute;
+                        const selected = group.querySelector('.variant-item.active');
+
+                        if (!selected) {
+                            valid = false;
+                            missingAttrs.push(attrName);
+
+                        } else {
+                            selectedAttributes[attrName] = selected.dataset.value ||
+                                selected.textContent.trim();
+                        }
+                    });
+
+                    if (!valid) {
+                        missingAttrs.forEach(attr => {
+                            showToast(`Vui lòng chọn ${attr}`, 'error');
+                        });
+
+                        // ❌ Không mở giỏ hàng khi có lỗi
+                        return;
+                    }
+
+                    // ✅ Thêm vào giỏ
+                    const index = cartItems.findIndex(item =>
+                        item.id === id &&
+                        JSON.stringify(item.attributes || {}) === JSON.stringify(
+                            selectedAttributes)
+                    );
+
+                    if (index !== -1) {
+                        cartItems[index].quantity += quantity;
+                    } else {
+                        cartItems.push({
+                            id,
+                            name,
+                            price,
+                            originalPrice,
+                            image,
+                            quantity,
+                            brand,
+                            attributes: selectedAttributes
+                        });
+                    }
+
+                    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+
+                    // ✅ Cập nhật giỏ hàng UI
+                    if (typeof renderCartItems === 'function') {
+                        renderCartItems();
+                    }
+
+                    // ✅ Mở giỏ hàng
+                    const offcanvasEl = document.getElementById('offcanvasRight');
+                    if (offcanvasEl) {
+                        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
+                        bsOffcanvas.show();
+                    }
+                });
             });
         });
     </script>

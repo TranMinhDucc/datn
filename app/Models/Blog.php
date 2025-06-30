@@ -22,6 +22,9 @@ class Blog extends Model
         'category_id',
         'thumbnail',
         'author_id',
+        'status',
+        'views',
+        'published_at',
     ];
 
     /**
@@ -33,8 +36,11 @@ class Blog extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'published_at' => 'datetime',
     ];
-
+    /**
+     * Get the category that owns the blog.
+     */
     public function category()
     {
         return $this->belongsTo(BlogCategory::class, 'category_id');
@@ -47,6 +53,13 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+    /**
+     * Comments
+     */
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class)->whereNull('parent_id')->latest();
+    }
 
     /**
      * Get the route key for the model.
@@ -55,13 +68,14 @@ class Blog extends Model
     {
         return 'slug';
     }
-
     /**
      * Scope a query to only include published blogs.
      */
     public function scopePublished($query)
     {
-        return $query->whereNotNull('published_at');
+        return $query->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
     }
 
     /**

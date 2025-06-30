@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,23 +17,23 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-   public function dashboard()
-{
-    $user = Auth::user();
+    public function dashboard()
+    {
+        $user = Auth::user();
 
-    $addresses = ShippingAddress::with('user')
-    ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+        $addresses = ShippingAddress::with('user')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
-    $wishlists = Wishlist::with('product')
-        ->where('user_id', $user->id)
-        ->where('is_active', 1)
-        ->latest()
-        ->get();
-
-    return view('client.account.dashboard', compact('addresses', 'user', 'wishlists'));
-}
+        $wishlists = Wishlist::with('product')
+            ->where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->latest()
+            ->get();
+        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
+        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'provinces'));
+    }
 
 
     public function wallet()

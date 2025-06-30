@@ -25,7 +25,7 @@
         <div class="row gy-4">
             <div class="col-xl-9 col-lg-8 ratio50_2">
                 <div class="row gy-4 sticky">
-                    @foreach($blogs as $blog)
+                    @forelse($blogs as $blog)
                     <div class="col-xl-4 col-sm-6">
                         <div class="blog-main-box">
                             <div>
@@ -54,193 +54,17 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/2.jpg') }}" alt="">
-                                </div>
-                            </div>
-                            <div class="blog-content"><span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/2.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
+                    @empty
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="iconsax" data-icon="document-text" style="font-size: 48px; color: #b5b5c3;"></i>
+                            <h4 class="mt-3 text-muted">Không có bài viết nào được tìm thấy</h4>
+                            <p class="text-gray-600">Vui lòng thử lại sau hoặc thay đổi bộ lọc.</p>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/3.jpg') }}" alt="">
-                                </div>
-                            </div>
-                            <div class="blog-content"> <span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/3.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/4.jpg') }}" alt="">
-                                </div>
-                            </div>
-                            <div class="blog-content"> <span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/8.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/5.jpg') }}" alt="">
-                                </div>
-                            </div>
-                            <div class="blog-content"><span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/9.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/6.jpg') }}" alt="">
-                                </div>
-                            </div>
-                            <div class="blog-content"> <span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/10.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/7.jpg') }}"
-                                        alt=""></div>
-                            </div>
-                            <div class="blog-content"> <span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/8.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/8.jpg') }}"
-                                        alt=""></div>
-                            </div>
-                            <div class="blog-content"><span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/9.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6">
-                        <div class="blog-main-box">
-                            <div>
-                                <div class="blog-img"> <img class="img-fluid bg-img"
-                                        src="{{ asset('assets/client/images/blog/blog-page/9.jpg') }}"
-                                        alt=""></div>
-                            </div>
-                            <div class="blog-content"> <span class="blog-date">May 9, 2018 Stylish</span><a
-                                    href="blog-details.html">
-                                    <h4>How Black Trans Women Are Redefining Beauty Standards</h4>
-                                </a>
-                                <p>Sed non mauris vitae erat consequat. Proin gravida nibh vel velit auctor aliquet.
-                                    Aenean sollicitudin, lom quis bibenm auctor</p>
-                                <div class="share-box">
-                                    <div class="d-flex align-items-center gap-2"><img class="img-fluid"
-                                            src="{{ asset('assets/client/images/user/10.jpg') }}" alt="">
-                                        <h6>by John wiki on</h6>
-                                    </div><a href="blog-details.html"> Read More..</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforelse
                     <div class="pagination-wrap mt-0">
-                        <ul class="pagination">
-                            <li> <a class="prev" href="#"><i class="iconsax"
-                                        data-icon="chevron-left"></i></a></li>
-                            <li> <a href="#">1</a></li>
-                            <li> <a class="active" href="#">2</a></li>
-                            <li> <a href="#">3 </a></li>
-                            <li> <a class="next" href="#"> <i class="iconsax"
-                                        data-icon="chevron-right"></i></a></li>
-                        </ul>
+                        {{ $blogs->links('vendor.pagination.custom') }}
                     </div>
                 </div>
             </div>
@@ -260,21 +84,11 @@
                                     <h5> Categories</h5>
                                 </div>
                                 <ul class="categories">
+                                    @foreach ($categories as $category)
                                     <li>
-                                        <p>Fashion<span>30</span></p>
+                                        <p>{{$category->name}}<span>{{$category->blogs_count}}</span></p>
                                     </li>
-                                    <li>
-                                        <p>Trends<span>20</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Designer<span>3</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Swimwear<span>15</span></p>
-                                    </li>
-                                    <li>
-                                        <p>Handbags<span>11</span></p>
-                                    </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
@@ -285,42 +99,17 @@
                                     <h5> Top Post</h5>
                                 </div>
                                 <ul class="top-post">
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-1.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Study 2020: Fake Engagement is Only Half the Problem</h6>
+                                    @foreach($topViewedBlogs as $top)
+                                    <li>
+                                        <img class="img-fluid" src="{{ asset('storage/' . $top->thumbnail) }}" alt="{{ $top->title }}">
+                                        <div>
+                                            <a href="{{ route('client.blog.show', $top->slug) }}">
+                                                <h6>{{ \Illuminate\Support\Str::limit($top->title, 60) }}</h6>
                                             </a>
-                                            <p>September 28, 2021</p>
+                                            <p>{{ $top->published_at->format('F d, Y') }}</p>
                                         </div>
                                     </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-2.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Top 10 Interior Design in 2020 New York Business</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-3.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>Ecommerce Brands Tend to Create Strong Communities</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
-                                    <li> <img class="img-fluid"
-                                            src="{{ asset('assets/client/images/other-img/blog-4.jpg') }}"
-                                            alt="">
-                                        <div> <a href="blog-details.html">
-                                                <h6>What Do I Need to Make It in the World of Business?</h6>
-                                            </a>
-                                            <p>September 28, 2021</p>
-                                        </div>
-                                    </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
