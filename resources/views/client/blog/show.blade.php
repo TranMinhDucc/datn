@@ -512,11 +512,11 @@
                                         @endguest
                                         <div class="col-12">
                                             <label class="form-label">Message</label>
-                                            <textarea class="form-control" id="message" rows="6" placeholder="Write your comment here..." required></textarea>
+                                            <textarea class="form-control" name="content" id="message" rows="6" placeholder="Write your comment here..." required></textarea>
                                         </div>
                                         <div class="col-12"><button type="submit" class="btn btn_black rounded sm">Post Comment</button></div>
                                     </div>
-                                    
+
 
                                 </form>
                             </div>
