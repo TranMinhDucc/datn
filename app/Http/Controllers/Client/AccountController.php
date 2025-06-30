@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,23 +17,31 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-   public function dashboard()
-{
-    $user = Auth::user();
 
-    $addresses = ShippingAddress::with('user')
-    ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+    public function dashboard()
+    {
+        $user = Auth::user();
 
-    $wishlists = Wishlist::with('product')
-        ->where('user_id', $user->id)
-        ->where('is_active', 1)
-        ->latest()
-        ->get();
+        $addresses = ShippingAddress::with('user')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
-    return view('client.account.dashboard', compact('addresses', 'user', 'wishlists'));
-}
+        $wishlists = Wishlist::with('product')
+            ->where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->latest()
+            ->get();
+
+        $orders = Order::with(['orderItems.product']) // Load luôn product của từng item
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+
+        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'orders'));
+    }
+
 
 
     public function wallet()
