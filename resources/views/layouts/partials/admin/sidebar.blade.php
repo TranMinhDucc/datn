@@ -90,6 +90,12 @@
                                             class="bullet bullet-dot"></span></span><span class="menu-title">Nhãn dán
                                     </span></a><!--end:Menu link-->
                             </div>
+                            <div class="menu-item">
+                                <!--begin:Menu link--><a class="menu-link"
+                                    href="{{ route('admin.inventory.index') }}"><span class="menu-bullet"><span
+                                            class="bullet bullet-dot"></span></span><span class="menu-title">Kho hàng
+                                    </span></a><!--end:Menu link-->
+                            </div>
                         </div>
                         <!--end:Menu sub-->
                     </div>

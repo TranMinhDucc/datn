@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -22,8 +23,12 @@ class HomeController extends Controller
             ->take(8)
             ->get();
         $categories = Category::whereNull('parent_id')->get(); // ← thêm dòng này
-
-        return view('client.home', compact('banners', 'categories', 'products'));
+        $latestBlogs = Blog::with(['author']) // eager load author
+            ->published()
+            ->latest('published_at')
+            ->take(3) // hoặc số lượng bạn muốn
+            ->get();
+        return view('client.home', compact('banners', 'categories', 'products', 'latestBlogs'));
     }
     public function policy()
     {

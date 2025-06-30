@@ -37,7 +37,7 @@
             </td>
             <td>{{ $tran->quantity }}</td>
             <td>{{ $tran->note ?? '-' }}</td>
-            <td>{{ $tran->user->name ?? 'System' }}</td>
+            <td>{{ $tran->user->username ?? 'System' }}</td>
             <td>{{ $tran->created_at->format('d/m/Y H:i') }}</td>
         </tr>
         @empty
