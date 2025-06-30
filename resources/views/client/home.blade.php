@@ -113,8 +113,9 @@
                         </div>
                     </div>
                     <div class="shape-images"> <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img class="img-2 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt=""></div>
+                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
+                            class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
+                            alt=""></div>
                 </div>
             </div>
         </div>
@@ -190,7 +191,8 @@
                     <div class="row">
                         <div class="col-12 ratio_square">
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="features-products" role="tabpanel" tabindex="0">
+                                <div class="tab-pane fade show active" id="features-products" role="tabpanel"
+                                    tabindex="0">
                                     <div class="row g-4">
                                         @foreach ($products as $product)
                                             <div class="col-xxl-3 col-md-4 col-6">
@@ -203,38 +205,54 @@
                                                         </div>
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
-                                                            <div class="product-image bg-size" style="background-image: url('{{ asset('storage/' . $product->image) }}');
-                                                                       background-size: cover;
-                                                                       background-position: center;">
-                                                            </div>
+                                                            
                                                         </a>
                                                         <div class="cart-info-icon">
-                                                            <a class="wishlist-icon add-to-wishlist" href="javascript:void(0)"
-                                                                data-id="{{ $product->id }}">
+                                                            <a class="wishlist-icon add-to-wishlist"
+                                                                href="javascript:void(0)" data-id="{{ $product->id }}">
                                                                 <i class="iconsax" data-icon="heart" aria-hidden="true"
                                                                     data-bs-toggle="tooltip"
                                                                     data-bs-title="Add to Wishlist"></i>
                                                             </a>
+                                                        </div>
+                                                        <div class="product-image"><a class="pro-first"
+                                                                href="{{ route('client.products.show', $product->slug) }}">
+                                                                <img class="bg-img"
+                                                                    src="{{ asset('storage/' . $product->image) }}"
+                                                                    alt="{{ $product->name }}"></a></div>
 
-
-                                                            <a href="compare.html" tabindex="0">
-                                                                <i class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                                                    data-bs-toggle="tooltip" data-bs-title="Compare"></i>
-                                                            </a>
-                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                tabindex="0">
-                                                                <i class="iconsax" data-icon="eye" aria-hidden="true"
-                                                                    data-bs-toggle="tooltip" data-bs-title="Quick View"></i>
-                                                            </a>
+                                                        <div class="countdown" style="bottom: 5px;"
+                                                            data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
+                                                            data-endtime="{{ optional($product->ends_at ? \Carbon\Carbon::parse($product->ends_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}">
+                                                            <ul>
+                                                                <li>
+                                                                    <div class="timer">
+                                                                        <div class="days"></div>
+                                                                    </div><span class="title">Days</span>
+                                                                </li>
+                                                                <li class="dot"><span>:</span></li>
+                                                                <li>
+                                                                    <div class="timer">
+                                                                        <div class="hours"></div>
+                                                                    </div><span class="title">Hours</span>
+                                                                </li>
+                                                                <li class="dot"><span>:</span></li>
+                                                                <li>
+                                                                    <div class="timer">
+                                                                        <div class="minutes"></div>
+                                                                    </div><span class="title">Min</span>
+                                                                </li>
+                                                                <li class="dot"><span>:</span></li>
+                                                                <li>
+                                                                    <div class="timer">
+                                                                        <div class="seconds"></div>
+                                                                    </div><span class="title">Sec</span>
+                                                                </li>
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                     <div class="product-detail">
-                                                        <div class="add-button">
-                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="add product" tabindex="0">
-                                                                <i class="fa-solid fa-plus"></i> Add To Cart
-                                                            </a>
-                                                        </div>
+
                                                         <div class="color-box">
                                                             <ul class="color-variant">
                                                                 <li class="bg-color-purple"></li>
@@ -245,21 +263,37 @@
                                                             <span>{{ $product->rating_avg ?? '0' }} <i
                                                                     class="fa-solid fa-star"></i></span>
                                                         </div>
-                                                        <a href="{{ route('client.products.show', $product->id) }}">
+                                                        <a href="{{ route('client.products.show', $product->slug) }}">
                                                             <h6>{{ $product->name }}</h6>
                                                         </a>
-                                                        <p>
-                                                            ${{ number_format($product->sale_price ?? $product->base_price) }}
-                                                            @if ($product->sale_price)
-                                                                <del>${{ number_format($product->base_price) }}</del>
-                                                            @endif
-                                                        </p>
+                                                        @php
+                                                            $now = \Carbon\Carbon::now();
+                                                            $start = $product->starts_at
+                                                                ? \Carbon\Carbon::parse($product->starts_at)
+                                                                : null;
+                                                            $end = $product->ends_at
+                                                                ? \Carbon\Carbon::parse($product->ends_at)
+                                                                : null;
+
+                                                            $isInDiscountTime =
+                                                                $start && $end ? $now->between($start, $end) : false;
+                                                            $finalPrice = $isInDiscountTime
+                                                                ? $product->base_price *
+                                                                    (1 - $product->sale_times / 100)
+                                                                : $product->sale_price ?? $product->base_price;
+                                                        @endphp
+                                                        <p>{{ number_format($finalPrice) }} đ</p>
+                                                        @if ($product->sale_price || $isInDiscountTime)
+                                                            <del>{{ number_format($product->base_price) }} đ</del>
+                                                        @endif
+                                                        @if ($isInDiscountTime)
+                                                            <span>-{{ $product->sale_times }}%</span>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -279,7 +313,8 @@
                         <div class="col-md-5">
                             <div class="best-seller-img ratio_square-3"><a href="collection-left-sidebar.html"> <img
                                         class="bg-img"
-                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}" alt=""></a>
+                                        src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}"
+                                        alt=""></a>
                             </div>
                         </div>
                         <div class="col-md-7 ratio_landscape">
@@ -302,7 +337,8 @@
                                             </use>
                                         </svg></a></div>
                             </div><a href="collection-left-sidebar.html"> <img class="bg-img"
-                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}" alt=""></a>
+                                    src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}"
+                                    alt=""></a>
                         </div>
                     </div>
                 </div>
@@ -350,15 +386,16 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/2.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/7.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
@@ -383,15 +420,16 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/8.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv4">
@@ -445,15 +483,16 @@
                             <div class="label-block"><img src="{{ asset('assets/client/images/product/3.png') }}"
                                     alt="lable"><span>on <br>Sale!</span></div>
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/9.jpg') }}"
+                                        alt="product"></a>
                             </div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                         </div>
                         <div class="product-detail">
@@ -480,13 +519,13 @@
                             <div class="product-image"><a href="#"> <img class="bg-img"
                                         src="{{ asset('assets/client/images/product/product-4/10.jpg') }}"
                                         alt="product"></a></div>
-                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to Wishlist"></i></a><a href="compare.html" tabindex="0"><i
-                                        class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                    data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                            <div class="cart-info-icon"> <a class="wishlist-icon" href="javascript:void(0)"
+                                    tabindex="0"><i class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a><a
+                                    href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
+                                    href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
+                                        class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                         data-bs-title="Quick View"></i></a></div>
                             <div class="countdown">
                                 <ul class="clockdiv5">
@@ -538,7 +577,8 @@
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                             <div class="product-image"><a href="#"> <img class="bg-img"
-                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}" alt="product"></a>
+                                        src="{{ asset('assets/client/images/product/product-4/3.jpg') }}"
+                                        alt="product"></a>
                             </div>
                             <div class="cart-info-icon">
                                 <a class="wishlist-icon add-to-wishlist" href="javascript:void(0)"
@@ -547,8 +587,8 @@
                                         data-bs-title="Add to Wishlist"></i>
                                 </a>
                                 <a href="compare.html" tabindex="0">
-                                    <i class="iconsax" data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Compare"></i>
+                                    <i class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Compare"></i>
                                 </a>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0">
                                     <i class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
@@ -557,8 +597,9 @@
                             </div>
 
                             <div class="product-detail">
-                                <div class="add-button"><a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                        title="add product" tabindex="0"><i class="fa-solid fa-plus"></i> Add To Cart</a>
+                                <div class="add-button"><a href="#" data-bs-toggle="modal"
+                                        data-bs-target="#addtocart" title="add product" tabindex="0"><i
+                                            class="fa-solid fa-plus"></i> Add To Cart</a>
                                 </div>
                                 <div class="color-box">
                                     <ul class="color-variant">
@@ -593,8 +634,9 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="blog-main">
-                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img class="bg-img"
-                                        src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}" alt=""></a></div>
+                            <div class="blog-box ratio3_2"><a class="blog-img" href="blog-details.html"><img
+                                        class="bg-img" src="{{ asset('assets/client/images/blog/layout-4/1.jpg') }}"
+                                        alt=""></a></div>
                             <div class="blog-txt">
                                 <p>By: Admin / 26th aug 2020</p><a href="blog-details.html">
                                     <h5>Many desktop publishing pack-ages abd page editor...</h5>
@@ -606,7 +648,8 @@
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                             </use>
-                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                        </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                        href="#">Read
                                         More
                                         <svg>
                                             <use
@@ -630,7 +673,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -652,7 +696,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -674,7 +719,8 @@
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
                                         </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered" href="#">Read
+                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
+                                    href="#">Read
                                     More
                                     <svg>
                                         <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -871,44 +917,119 @@
 
     <script src="{{ asset('assets/client/js/newsletter.js') }}"></script>
     <script src="{{ asset('assets/client/js/skeleton-loader.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.add-to-wishlist').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const productId = this.dataset.id;
+        function getTimeRemaining(endtime) {
+            const t = Date.parse(endtime) - Date.now();
+            const seconds = Math.floor((t / 1000) % 60);
+            const minutes = Math.floor((t / 1000 / 60) % 60);
+            const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                total: t,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
 
-      fetch(`/account/wishlist/add/${productId}`, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-          'Accept': 'application/json'
+        function initializeClock($clock, starttimeStr, endtimeStr) {
+            const $days = $clock.find('.days');
+            const $hours = $clock.find('.hours');
+            const $minutes = $clock.find('.minutes');
+            const $seconds = $clock.find('.seconds');
+
+            function updateClock() {
+                const now = Date.now();
+                const start = Date.parse(starttimeStr);
+                const end = Date.parse(endtimeStr);
+
+                if (isNaN(start) || isNaN(end)) {
+                    $clock.hide();
+                    return;
+                }
+                if (now < start) {
+                    // Chưa đến thời gian bắt đầu
+                    $clock.hide();
+                    return;
+                }
+                if (now > end) {
+                    // Đã hết hạn
+                    $clock.hide();
+                    return;
+                }
+                const t = getTimeRemaining(endtimeStr);
+                $clock.show();
+                $days.text(String(t.days).padStart(2, '0'));
+                $hours.text(String(t.hours).padStart(2, '0'));
+                $minutes.text(String(t.minutes).padStart(2, '0'));
+                $seconds.text(String(t.seconds).padStart(2, '0'));
+            }
+            updateClock();
+            const interval = setInterval(function() {
+                const now = Date.now();
+                const end = Date.parse(endtimeStr);
+                if (now > end) {
+                    $clock.hide();
+                    clearInterval(interval);
+                    return;
+                }
+                updateClock();
+            }, 1000);
         }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          Swal.fire({
-            icon: 'success',
-            title: data.message,
-            timer: 1000,
-            showConfirmButton: false
-          });
-        } else {
-          Swal.fire({
-            icon: 'info',
-            title: data.message
-          });
-        }
-      })
-      .catch(err => {
-        console.error('Lỗi:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Đã có lỗi xảy ra'
+
+        $(document).ready(function() {
+            $('.countdown[data-starttime][data-endtime]').each(function() {
+                const $clock = $(this);
+                const start = $clock.attr('data-starttime');
+                const end = $clock.attr('data-endtime');
+                if (!start || !end) {
+                    $clock.hide();
+                    return;
+                }
+                initializeClock($clock, start, end);
+            });
         });
-      });
-    });
-  });
-});
-</script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.dataset.id;
+
+                    fetch(`/account/wishlist/add/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: data.message,
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: data.message
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Lỗi:', err);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Đã có lỗi xảy ra'
+                            });
+                        });
+                });
+            });
+        });
+    </script>
 @endsection

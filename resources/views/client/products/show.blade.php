@@ -61,15 +61,28 @@
                                     src="{{ asset('assets/client/images/gif/fire.gif') }}" alt="">
                                 <p>Move fast!</p>
                             </div>
+                            @php
+                                $now = \Carbon\Carbon::now();
+                                $start = \Carbon\Carbon::parse($product->starts_at);
+                                $end = \Carbon\Carbon::parse($product->ends_at);
+
+                                $isInDiscountTime = $now->between($start, $end);
+                                $finalPrice = $isInDiscountTime
+                                    ? $product->base_price * (1 - $product->sale_times / 100)
+                                    : $product->sale_price;
+                            @endphp
+                            <script>
+                                const isInDiscountTime = @json($isInDiscountTime);
+                                const saleTimes = @json($product->sale_times);
+                            </script>
                             <h3>{{ $product->name }}</h3>
-                            <p>${{ number_format($product->sale_price ?? $product->base_price) }}
-                                @if ($product->sale_price)
-                                    <del>${{ number_format($product->base_price) }}</del>
-                                    <span
-                                        class="offer-btn">{{ round((1 - $product->sale_price / $product->base_price) * 100) }}%
-                                        off</span>
+                            <p id="main-price">{{ number_format($finalPrice) }} đ
+                                <del>{{ number_format($product->base_price) }} đ</del>
+                                @if ($isInDiscountTime)
+                                    <span>-{{ $product->sale_times }}%</span>
                                 @endif
                             </p>
+                            <p></p>
                             <div class="rating">
                                 <ul class="rating">
                                     <li>
@@ -101,6 +114,17 @@
                                 </ul>
                             </div>
                             {{-- Size --}}
+                            @foreach ($attributes as $attrId => $attr)
+                                <div class="mb-2">
+                                    <label><strong>{{ $attr['name'] }}:</strong></label>
+                                    <select class="form-select variant-select" data-attr="{{ $attrId }}">
+                                        <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
+                                        @foreach ($attr['values'] as $valueId => $value)
+                                            <option value="{{ $valueId }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> <!-- Đóng thẻ div.mb-2 -->
+                            @endforeach
                             @foreach ($attributeGroups as $groupName => $values)
                                 <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
                                     <h6>{{ ucfirst($groupName) }}</h6>
@@ -116,6 +140,11 @@
                                     <!-- thêm dòng này -->
                                 </div>
                             @endforeach
+
+                            <div id="variant-info" class="mt-3" style="display: none;">
+                                {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
+                                <p><strong>Số lượng còn lại:</strong> <span id="variant-quantity"></span></p>
+                            </div>
 
 
                             <div class="quantity-box d-flex align-items-center gap-3">
@@ -150,30 +179,34 @@
                                 </ul>
                             </div>
                             <div class="sale-box">
-                                <div class="d-flex align-items-center gap-2"><img
-                                        src="{{ asset('assets/client/images/gif/timer.gif') }}" alt="">
-                                    <p>Limited Time Left! Hurry, Sale Ending!</p>
-                                </div>
-                                <div class="countdown">
-                                    <ul class="clockdiv1">
+
+                                <div class="countdown"
+                                    data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
+                                    data-endtime="{{ optional($product->ends_at ? \Carbon\Carbon::parse($product->ends_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}">
+
+                                    <div class="d-flex align-items-center gap-2"><img
+                                            src="{{ asset('assets/client/images/gif/timer.gif') }}" alt="">
+                                        <p>Limited Time Left! Hurry, Sale Ending!</p>
+                                    </div>
+                                    <ul>
                                         <li>
                                             <div class="timer">
                                                 <div class="days"></div>
                                             </div><span class="title">Days</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="hours"></div>
                                             </div><span class="title">Hours</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="minutes"></div>
                                             </div><span class="title">Min</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="seconds"></div>
@@ -673,9 +706,194 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
                 </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-regular fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Wide Linen-Blend Trousers</h6>
+                            </a>
+                            <p>$100.00
+                                <del>$18.00 </del>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Long Sleeve Rounded T-Shirt</h6>
+                            </a>
+                            <p>$120.30
+                                <del>$140.00</del><span>-20%</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+                            <div class="countdown">
+                                <ul class="clockdiv11">
+                                    <li>
+                                        <div class="timer">
+                                            <div class="days"></div>
+                                        </div><span class="title">Days</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="hours"></div>
+                                        </div><span class="title">Hours</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="minutes"></div>
+                                        </div><span class="title">Min</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="seconds"></div>
+                                        </div><span class="title">Sec</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Blue lined White T-Shirt</h6>
+                            </a>
+                            <p>$190.00
+                                <del>$210.00</del>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
+                                    href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
+                                        alt="product"></a><a class="pro-sec" href="product.html"> <img class="bg-img"
+                                        src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
+                                        alt="product"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax" data-icon="basket-2"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Add to cart">
+                                    </i></a><a href="compare.html" tabindex="0"><i class="iconsax"
+                                        data-icon="arrow-up-down" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax" data-icon="eye"
+                                        aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Quick View"></i></a>
+                            </div>
+
+                        </div>
+                        <div class="product-detail">
+                            <ul class="rating">
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star"></i></li>
+                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                <li><i class="fa-regular fa-star"></i></li>
+                                <li>4.3</li>
+                            </ul><a href="product.html">
+                                <h6>Greciilooks Women's Stylish Top</h6>
+                            </a>
+                            <p>$100.00
+                                <del>$140.00</del><span>-20%</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
             </div>
+        </div>
     </section>
     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
         aria-modal="true">
@@ -687,7 +905,7 @@
                 </div>
                 <div class="modal-body pt-0">
                     @auth
-                        <form id="rating-form" action="{{ route('client.review') }}" method="POST" class="row g-3">
+                        <form action="{{ route('client.review') }}" method="POST" class="row g-3">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $test_id }}">
                             <input type="hidden" name="rating" id="rating-value" value="0">
@@ -719,17 +937,19 @@
                                 <div class="form-group">
                                     <label class="form-label">Review Content :</label>
                                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
-                                        placeholder="Write your comments here..."></textarea>
+                                        placeholder="Write your comments here..." required></textarea>
                                 </div>
                             </div>
 
                             <div class="modal-button-group d-flex gap-2">
                                 <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
-                                <button class="btn btn-submit submit-rating" type="button">Submit</button>
+                                <button class="btn btn-submit" type="submit">Submit</button>
                             </div>
                         </form>
 
                         <script>
+                            const stars = document.querySelectorAll('.star');
+                            const ratingInput = document.getElementById('rating-value');
                             document.addEventListener('DOMContentLoaded', function() {
                                 const form = document.getElementById('rating-form');
                                 const stars = document.querySelectorAll('.star');
@@ -741,6 +961,8 @@
                                         const rating = star.getAttribute('data-value');
                                         ratingInput.value = rating;
 
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
+                                            'fa-regular'));
                                         stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
                                             'fa-regular'));
 
@@ -788,7 +1010,139 @@
 @endsection
 @section('js')
     <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script>
+        const allVariants = @json($variants);
+        const product = @json($product);
+
+        $('.variant-select').on('change', function() {
+            let selected = {};
+            $('.variant-select').each(function() {
+                let attr = $(this).data('attr');
+                let val = $(this).val();
+                if (val) selected[attr] = val;
+            });
+
+            if (Object.keys(selected).length === {{ count($attributes) }}) {
+                $.ajax({
+                    url: "{{ route('api.get-variant-info') }}",
+                    type: "POST",
+                    data: {
+                        product_id: product.id,
+                        attributes: selected,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(res) {
+                        if (res.status === 'ok') {
+                            let price = res.price;
+                            if (isInDiscountTime) {
+                                price = price * (1 - saleTimes / 100);
+                            }
+                            $('#variant-info').show();
+                            $('#variant-price').text(Math.round(price));
+                            $('#variant-quantity').text(res.quantity);
+                            $('#main-price').html(
+                                new Intl.NumberFormat().format(Math.round(price)) + ' đ' +
+                                ' <del>' + new Intl.NumberFormat().format(res.price) + ' đ</del>' +
+                                (isInDiscountTime ? ' <span>-' + saleTimes + '%</span>' : '')
+                            );
+                        } else {
+                            $('#variant-info').hide();
+                            $('#main-price').html(
+                                new Intl.NumberFormat().format({{ round($finalPrice) }}) + ' đ' +
+                                ' <del>' + new Intl.NumberFormat().format(
+                                    {{ round($product->base_price) }}) + ' đ</del>' +
+                                (@json($isInDiscountTime) ?
+                                    ' <span>-{{ $product->sale_times }}%</span>' : '')
+                            );
+                        }
+                    }
+                });
+            } else {
+                $('#variant-info').hide();
+                $('#main-price').html(
+                    new Intl.NumberFormat().format({{ round($finalPrice) }}) + ' đ' +
+                    ' <del>' + new Intl.NumberFormat().format({{ round($product->base_price) }}) + ' đ</del>' +
+                    (@json($isInDiscountTime) ? ' <span>-{{ $product->sale_times }}%</span>' : '')
+                );
+            }
+        });
+    </script>
+    <script>
+        function getTimeRemaining(endtime) {
+            const t = Date.parse(endtime) - Date.now();
+            const seconds = Math.floor((t / 1000) % 60);
+            const minutes = Math.floor((t / 1000 / 60) % 60);
+            const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                total: t,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+        function initializeClock($clock, starttimeStr, endtimeStr) {
+            const $days = $clock.find('.days');
+            const $hours = $clock.find('.hours');
+            const $minutes = $clock.find('.minutes');
+            const $seconds = $clock.find('.seconds');
+
+            function updateClock() {
+                const now = Date.now();
+                const start = Date.parse(starttimeStr);
+                const end = Date.parse(endtimeStr);
+
+                if (isNaN(start) || isNaN(end)) {
+                    $clock.hide();
+                    return;
+                }
+                if (now < start) {
+                    // Chưa đến thời gian bắt đầu
+                    $clock.hide();
+                    return;
+                }
+                if (now > end) {
+                    // Đã hết hạn
+                    $clock.hide();
+                    return;
+                }
+                const t = getTimeRemaining(endtimeStr);
+                $clock.show();
+                $days.text(String(t.days).padStart(2, '0'));
+                $hours.text(String(t.hours).padStart(2, '0'));
+                $minutes.text(String(t.minutes).padStart(2, '0'));
+                $seconds.text(String(t.seconds).padStart(2, '0'));
+            }
+            updateClock();
+            const interval = setInterval(function() {
+                const now = Date.now();
+                const end = Date.parse(endtimeStr);
+                if (now > end) {
+                    $clock.hide();
+                    clearInterval(interval);
+                    return;
+                }
+                updateClock();
+            }, 1000);
+        }
+
+        $(document).ready(function() {
+            $('.countdown[data-starttime][data-endtime]').each(function() {
+                const $clock = $(this);
+                const start = $clock.attr('data-starttime');
+                const end = $clock.attr('data-endtime');
+                if (!start || !end) {
+                    $clock.hide();
+                    return;
+                }
+                initializeClock($clock, start, end);
+            });
+        });
+    </script>
 
 
 
@@ -860,7 +1214,7 @@
                     const originalPrice = parseFloat(this.dataset.originalPrice);
                     const image = this.dataset.image;
                     const quantity = parseInt(document.querySelector('.quantity input')?.value ||
-                    1);
+                        1);
                     const brand = this.dataset.brand || 'Unknown';
 
                     const currentUser = localStorage.getItem('currentUser') || 'guest';
@@ -931,11 +1285,6 @@
                     }
                 });
             });
-
-
-
         });
     </script>
-
-
 @endsection

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -117,6 +119,33 @@ class ProductController extends Controller
         }
 
 
+        $variants = ProductVariant::where('product_id', $product->id)
+            ->with(['variantOptions.attribute', 'variantOptions.value'])
+            ->get();
+
+
+        $attributes = [];
+
+        foreach ($variants as $variant) {
+            foreach ($variant->variantOptions as $option) {
+                $attrId = $option->attribute->id;
+                $attrName = $option->attribute->name;
+                $value = [
+                    'id' => $option->value->id,
+                    'value' => $option->value->value
+                ];
+
+                if (!isset($attributes[$attrId])) {
+                    $attributes[$attrId] = [
+                        'name' => $attrName,
+                        'values' => []
+                    ];
+                }
+
+                $attributes[$attrId]['values'][$value['id']] = $value['value'];
+            }
+        }
+        // dd($variants,$attributes);
         $product->related_products = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
@@ -131,7 +160,42 @@ class ProductController extends Controller
             'productImages',
             'reviews',
             'rating_summary',
-            'test_id'
+            'test_id',
+            'variants',
+            'attributes'
         ));
     }
+    public function getVariantInfo(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $attributes = $request->input('attributes', []);
+
+        Log::info("productId", [$productId]);
+        Log::info("attributes", [$attributes]);
+
+        $variantQuery = ProductVariant::where('product_id', $productId);
+
+        foreach ($attributes as $attributeId => $valueId) {
+            $variantQuery->whereHas('variantOptions', function ($q) use ($attributeId, $valueId) {
+                $q->where('attribute_id', $attributeId)
+                    ->where('value_id', $valueId);
+            });
+        }
+
+        $variant = $variantQuery->first();
+
+        Log::info("variant", [$variant]);
+
+        if ($variant) {
+            return response()->json([
+                'status' => 'ok',
+                'price' => $variant->price,
+                'quantity' => $variant->quantity,
+            ]);
+        }
+
+        return response()->json(['status' => 'not_found']);
+    }
+
+
 }
