@@ -59,6 +59,7 @@ use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
+use App\Http\Controllers\Admin\InventoryController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
@@ -157,7 +158,7 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::middleware(['auth'])->prefix('address')->name('address.')->group(function () {
         Route::get('/', [ShippingAddressController::class, 'index'])->name('index');
-        Route::post('/store', action: [ShippingAddressController::class, 'store'])->name('store');
+        Route::post('/store', [ShippingAddressController::class, 'store'])->name('store');
         Route::get('{id}/edit', [ShippingAddressController::class, 'edit'])->name('edit');
         Route::put('{id}', [ShippingAddressController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
@@ -301,7 +302,7 @@ Route::prefix('admin')
         //Ckeditor
         Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
         //Shipping
-        Route::resource('shipping-fees', ShippingFeeController::class)->except(['show'])->names('shipping-fees');
+        Route::resource('shipping-fees', ShippingFeeController::class)->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
         Route::post('/shipping-methods/quick-add', [ShippingMethodController::class, 'quickAdd'])->name('shipping-methods.quick-add');
 
@@ -337,6 +338,10 @@ Route::prefix('admin')
         Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
          Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
     Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
+        //Inventory
+        Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -365,3 +370,8 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
 
     return '✅ Đã chạy xong cron nạp tiền!';
 });
+
+// API lấy danh sách quận/huyện theo tỉnh
+Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationController::class, 'districts']);
+// API lấy danh sách xã/phường theo quận/huyện
+Route::get('/api/wards', [\App\Http\Controllers\Admin\LocationController::class, 'wards']);
