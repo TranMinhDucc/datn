@@ -375,6 +375,10 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
     return '✅ Đã chạy xong cron nạp tiền!';
 });
 
+/**
+ * Route Api 
+ */
+Route::post('/api/get-variant-info', [ClientProductController::class, 'getVariantInfo'])->name('api.get-variant-info');
 // API lấy danh sách quận/huyện theo tỉnh
 Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationController::class, 'districts']);
 // API lấy danh sách xã/phường theo quận/huyện
