@@ -409,36 +409,37 @@
                                             </tr>
                                             <!-- Giảm giá sản phẩm -->
                                             @if ($order->coupon)
-    <tr>
-        <td colspan="4" class="text-end text-danger">
-            Mã giảm giá sản phẩm ({{ $order->coupon->code }})
-        </td>
-        <td class="text-end text-danger">
-            @if ($order->coupon->value_type === 'fixed')
-                -{{ number_format($order->coupon->discount_value) }}đ
-            @else
-                -{{ $order->coupon->discount_value }}%
-            @endif
-        </td>
-    </tr>
-@endif
+                                            <tr>
+                                                <td colspan="4" class="text-end text-danger">
+                                                    Mã giảm giá sản phẩm ({{ $order->coupon->code }})
+                                                </td>
+                                                <td class="text-end text-danger">
+                                                    @if ($order->coupon->value_type === 'fixed')
+                                                    -{{ number_format($order->coupon->discount_value) }}đ
+                                                    @else
+                                                    -{{ $order->coupon->discount_value }}%
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @endif
 
 
                                             <!-- Giảm giá phí vận chuyển -->
                                             @if ($order->shippingCoupon)
-    <tr>
-        <td colspan="4" class="text-end text-danger">
-            Mã giảm giá vận chuyển ({{ $order->shippingCoupon->code }})
-        </td>
-        <td class="text-end text-danger">
-            @if ($order->shippingCoupon->value_type === 'fixed')
-                -{{ number_format($order->shippingCoupon->discount_value) }}đ
-            @else
-                -{{ $order->shippingCoupon->discount_value }}%
-            @endif
-        </td>
-    </tr>
-@endif
+                                            <tr>
+                                                <td colspan="4" class="text-end text-danger">
+                                                    Mã giảm giá vận chuyển ({{ $order->shippingCoupon->code }})
+                                                </td>
+                                                <td class="text-end text-danger">
+                                                    @if ($order->shippingCoupon->value_type === 'fixed')
+                                                    -{{ number_format($order->shippingCoupon->discount_value) }}đ
+                                                    @else
+                                                    -{{ $order->shippingCoupon->discount_value }}%
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            @endif
+                                            <!-- Phí xử lý -->
 
 
                                             <!-- Tổng cuối -->
