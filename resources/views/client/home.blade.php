@@ -193,11 +193,16 @@
                                     <div class="col-xxl-3 col-md-4 col-6">
                                         <div class="product-box">
                                             <div class="img-wrapper">
-                                                <div class="label-block">
-                                                    <img src="{{ asset('assets/client/images/product/3.png') }}"
-                                                        alt="lable">
-                                                    <span>on <br>Sale!</span>
-                                                </div>
+                                                @if($product->label)
+                                                    <div class="label-block">
+                                                        @foreach ($product->label as $product_label)
+                                                            <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+                                                                <img style="width:100%" class="{{ $product_label->position }}" src="{{ $product_label->image }}" alt="lable">
+                                                            </div>
+                                                        @endforeach
+                                                        {{-- <span>on <br>Sale!</span> --}}
+                                                    </div>
+                                                @endif
                                                 <a href="{{ route('client.products.show', $product->slug) }}"
                                                     style="display: block;">
 
