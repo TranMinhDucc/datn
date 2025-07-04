@@ -65,6 +65,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Models\Bank;
+use App\Models\Order;
 use App\Models\Setting;
 use App\Services\BankTransactionService;
 
@@ -121,6 +122,9 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
+Route::get('/order-success', [CheckoutController::class, 'success'])->name('client.order.success');
+
+
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');

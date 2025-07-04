@@ -78,9 +78,11 @@ class CheckoutController extends Controller
             $shippingCouponId  = $request->shipping_coupon_id;
             $discountAmount    = floatval($request->discount_amount);
             $shippingFee       = floatval($request->shipping_fee);
+            $taxAmount         = floatval($request->tax_amount);
 
             $subtotal = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $totalAmount = max(0, $subtotal + $shippingFee - $discountAmount);
+            $totalAmount = max(0, $subtotal + $shippingFee - $discountAmount + $taxAmount);
+
 
             $paymentMethod = \App\Models\PaymentMethod::find($paymentMethodId);
             if (!$paymentMethod) {
@@ -127,6 +129,7 @@ class CheckoutController extends Controller
                 'coupon_id'          => $couponId,
                 'shipping_coupon_id' => $shippingCouponId,
                 'discount_amount'    => $discountAmount,
+                'tax_amount'         => $taxAmount,
                 'shipping_fee'       => $shippingFee,
                 'subtotal'           => $subtotal,
                 'total_amount'       => $totalAmount,
@@ -185,7 +188,7 @@ class CheckoutController extends Controller
 
                 DB::table('coupons')->where('id', $shippingCouponId)->increment('used_count');
             }
-
+            session()->put('order_id', $order->id);
             return response()->json([
                 'success'  => true,
                 'message'  => 'Đặt hàng thành công!',
@@ -205,7 +208,26 @@ class CheckoutController extends Controller
     }
 
 
+    public function success()
+    {
+        $orderId = session()->pull('order_id'); // Kéo ra 1 lần rồi xoá luôn
 
+        if (!$orderId) {
+            return redirect()->route('client.home')->with('error', 'Không tìm thấy đơn hàng.');
+        }
+
+        $order = \App\Models\Order::with(['orderItems', 'address'])->find($orderId);
+
+        if (!$order) {
+            return redirect()->route('client.home')->with('error', 'Đơn hàng không tồn tại.');
+        }
+
+         return view('client.checkout.success', compact('order'))
+        ->with('success', '🎉 Đặt hàng thành công!');
+    }
+
+
+    
     private function calculateDiscount($couponId, $userId, $cartSubtotal)
     {
         if (!$couponId) return 0;

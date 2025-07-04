@@ -139,7 +139,7 @@ class ProductController extends Controller
                 'sku' => $variant->sku,
                 'price' => $variant->price,
                 'stock' => $variant->quantity,
-                'attributes' => $attributeValues
+               'attributes' => $attributeValues
             ];
         }
 

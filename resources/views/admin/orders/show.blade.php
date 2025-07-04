@@ -234,23 +234,23 @@
                 </div>
                 <!--end::Documents-->
             </div>
-<div class="mb-4">
-    <h2>📝 Trạng thái đơn hàng:</h2>
-    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}" id="status-form-{{ $order->id }}">
-        @csrf
-        @method('PUT')
+            <div class="mb-4">
+                <h2>📝 Trạng thái đơn hàng:</h2>
+                <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}" id="status-form-{{ $order->id }}">
+                    @csrf
+                    @method('PUT')
 
-        <select name="status"
-                class="form-select fw-semibold"
-                onchange="document.getElementById('status-form-{{ $order->id }}').submit();">
-            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>🕐 Chờ xác nhận</option>
-            <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>✅ Đã xác nhận</option>
-            <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>🚚 Đang giao hàng</option>
-            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>🎉 Đã hoàn tất</option>
-            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>❌ Đã huỷ</option>
-        </select>
-    </form>
-</div>
+                    <select name="status"
+                        class="form-select fw-semibold"
+                        onchange="document.getElementById('status-form-{{ $order->id }}').submit();">
+                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>🕐 Chờ xác nhận</option>
+                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>✅ Đã xác nhận</option>
+                        <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>🚚 Đang giao hàng</option>
+                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>🎉 Đã hoàn tất</option>
+                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>❌ Đã huỷ</option>
+                    </select>
+                </form>
+            </div>
 
 
 
@@ -340,11 +340,11 @@
                                     <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
                                         <thead>
                                             <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                                <th class="min-w-175px">Product</th>
+                                                <th class="min-w-175px">Sản phẩm</th>
                                                 <th class="min-w-100px text-end">SKU</th>
-                                                <th class="min-w-70px text-end">Qty</th>
-                                                <th class="min-w-100px text-end">Unit Price</th>
-                                                <th class="min-w-100px text-end">Total</th>
+                                                <th class="min-w-70px text-end">Số lượng</th>
+                                                <th class="min-w-100px text-end">Đơn giá</th>
+                                                <th class="min-w-100px text-end">Tổng cộng</th>
                                             </tr>
                                         </thead>
                                         <tbody class="fw-semibold text-gray-600">
@@ -370,7 +370,7 @@
 
                                                 <!-- Mã sản phẩm -->
                                                 <td class="text-end">
-                                                    {{ $item->product_variants->sku ?? 'N/A' }}
+                                                    {{ $item->productVariant->sku ?? 'N/A' }}
                                                 </td>
 
                                                 <!-- Số lượng -->
@@ -380,12 +380,12 @@
 
                                                 <!-- Đơn giá -->
                                                 <td class="text-end">
-                                                    {{ number_format($item->Price) }}đ
+                                                    {{ number_format($item->price) }}đ
                                                 </td>
 
                                                 <!-- Tổng cộng -->
                                                 <td class="text-end">
-                                                    {{ number_format($item->quantity * $item->Price) }}đ
+                                                    {{ number_format($item->total_price) }}đ
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -398,15 +398,48 @@
 
                                             <!-- Thuế -->
                                             <tr>
-                                                <td colspan="4" class="text-end">Thuế GTGT (0%)</td>
-                                                <td class="text-end">{{ number_format($order->vat) }} đô la</td>
+                                                <td colspan="4" class="text-end">Thuế VAT</td>
+                                                <td class="text-end">{{ number_format($order->tax_amount) }}đ</td>
                                             </tr>
 
                                             <!-- Phí vận chuyển -->
                                             <tr>
-                                                <td colspan="4" class="text-end">Tỷ lệ vận chuyển</td>
+                                                <td colspan="4" class="text-end">Phí vận chuyển</td>
                                                 <td class="text-end">{{ number_format($order->shipping_fee) }}đ</td>
                                             </tr>
+                                            <!-- Giảm giá sản phẩm -->
+                                            @if ($order->coupon)
+    <tr>
+        <td colspan="4" class="text-end text-danger">
+            Mã giảm giá sản phẩm ({{ $order->coupon->code }})
+        </td>
+        <td class="text-end text-danger">
+            @if ($order->coupon->value_type === 'fixed')
+                -{{ number_format($order->coupon->discount_value) }}đ
+            @else
+                -{{ $order->coupon->discount_value }}%
+            @endif
+        </td>
+    </tr>
+@endif
+
+
+                                            <!-- Giảm giá phí vận chuyển -->
+                                            @if ($order->shippingCoupon)
+    <tr>
+        <td colspan="4" class="text-end text-danger">
+            Mã giảm giá vận chuyển ({{ $order->shippingCoupon->code }})
+        </td>
+        <td class="text-end text-danger">
+            @if ($order->shippingCoupon->value_type === 'fixed')
+                -{{ number_format($order->shippingCoupon->discount_value) }}đ
+            @else
+                -{{ $order->shippingCoupon->discount_value }}%
+            @endif
+        </td>
+    </tr>
+@endif
+
 
                                             <!-- Tổng cuối -->
                                             <tr>

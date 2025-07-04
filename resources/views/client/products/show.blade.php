@@ -122,7 +122,7 @@
                                     data-original-price="{{ $product->base_price }}"
                                     data-image="{{ asset('storage/' . $product->image) }}"
                                     data-brand="{{ $product->brand->name ?? 'Unknown' }}"
-
+data-variant-id="{{ $variant->id ?? '' }}"
                                     aria-controls="offcanvasRight">
                                     Add To Cart
                                 </a>
@@ -969,9 +969,9 @@
     </div>
 </div>
 
-    <script>
-        const productVariants = @json($product -> variants);
-    </script>
+<script>
+    window.variantMap = @json($variantMap);
+</script>
 @endsection
 @section('js')
 <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>

@@ -1,6 +1,6 @@
 @extends('layouts.client')
 
-@section('title', 'sản phẩm')
+@section('title', 'Thanh toán')
 
 @section('content')
 
@@ -369,6 +369,18 @@
             const shippingCoupon = JSON.parse(sessionStorage.getItem('shippingCoupon') || '{}');
             const shippingCouponId = shippingCoupon.id || null;
 
+
+ const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const discount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
+    const shippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
+    const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
+    const actualShipping = Math.max(0, shippingFee - shippingDiscount);
+    const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+    const taxEl = document.getElementById('tax-value');
+    const vatRate = parseFloat(taxEl?.dataset.vat || 0);
+    const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
+
             const dataToSend = {
                 cartItems,
                 shipping_address_id: selectedShippingAddress,
@@ -377,6 +389,7 @@
                 shipping_coupon_id: shippingCouponId,
                 discount_amount: parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0,
                 shipping_fee: parseFloat(sessionStorage.getItem('originalShippingFee')) || 0,
+                tax_amount: taxAmount
             };
 
             console.log("📦 Dữ liệu gửi đi:", dataToSend);
@@ -393,20 +406,19 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert('🛒 Đặt hàng thành công!');
                         localStorage.removeItem(`cartItems_${currentUser}`);
 
                         // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
                         sessionStorage.removeItem('shippingCoupon');
                         sessionStorage.removeItem('productCoupon');
-                        window.location.href = '/orders';
+                        window.location.href = '/order-success';
                     } else {
-                        alert('❌ ' + data.message);
+                         showToast(data.message || 'Có lỗi xảy ra khi đặt hàng.', 'error'); // Đây là đoạn xử lý lỗi như "không đủ tiền"
                     }
                 })
                 .catch(err => {
                     console.error('❌ Lỗi fetch:', err);
-                    alert('Lỗi khi gửi đơn hàng');
+                     showToast('Lỗi khi gửi yêu cầu. Vui lòng thử lại sau.', 'error');
                 });
 
             sessionStorage.removeItem('shippingCoupon');
