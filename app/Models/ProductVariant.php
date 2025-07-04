@@ -20,6 +20,11 @@ class ProductVariant extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
+    
     // Quan hệ với các thuộc tính biến thể
     public function variantOptions()
     {

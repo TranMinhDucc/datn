@@ -480,11 +480,11 @@
     <div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-0" > $ {
+    return `<p class = "mb-0"> ${
                         key.charAt(0).toUpperCase() + key.slice(1)
-                    }: < span > $ {
+                    }: <span> ${
                         value
-                    } < /span></p > `;
+                    }</span></p>`;
     }).join('')}</div></div></td>
     <td class="align-middle">$${item.price.toFixed(2)}</td>
     <td class="align-middle">
