@@ -27,9 +27,11 @@
         <div class="col-12">
             <div class="main-menu">
                 <a class="brand-logo" href="{{ url('/') }}">
-                    {{-- <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}" alt="logo">
+                    {{-- <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}"
+                        alt="logo">
 
-                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo"> --}}
+                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo">
+                    --}}
                 </a>
                 @include('layouts.partials.client.navbar')
 
@@ -44,7 +46,8 @@
                                     data-icon="search-normal-2"></i></button>
                         </li>
                         <li>
-                            <a href="{{ route('client.account.wishlist.index') }}"><i class="iconsax" data-icon="heart"></i>
+                            <a href="{{ route('client.account.wishlist.index') }}"><i class="iconsax"
+                                    data-icon="heart"></i>
                                 <span class="cart_qty_cls">2</span></a>
                         </li>
                         <li class="onhover-div">
