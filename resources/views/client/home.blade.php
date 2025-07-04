@@ -290,12 +290,27 @@
                                     @endforeach
                                 </div>
                             </div>
+                            {{-- Latest Products Tab --}}
+                            <div class="tab-pane fade" id="latest-products" role="tabpanel" tabindex="0">
+                                <div class="row g-4">
+                                    @foreach ($latestProducts as $product)
+                                    @include('client.components.product-box', ['product' => $product])
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Best Seller Products Tab --}}
+                            <div class="tab-pane fade" id="seller-products" role="tabpanel" tabindex="0">
+                                <div class="row g-4">
+                                    @foreach ($bestSellerProducts as $product)
+                                    @include('client.components.product-box', ['product' => $product])
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
-                <!-- end Fashikart specials -->
+                <!-- End Fashikart specials-->
             </div>
         </div>
     </div>
