@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('address')->nullable()->after('phone');     // sau 'phone'
-            $table->integer('point')->default(0)->after('balance');    // sau 'balance'
+        Schema::table('products', function (Blueprint $table) {
+            $table->unsignedInteger('sold_quantity')->default(0)->after('stock_quantity');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['address', 'point']);
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('sold_quantity');
         });
     }
 };

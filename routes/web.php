@@ -93,10 +93,15 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
 
-    Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('{slug}/', 'show')->name('show');
-    });
+    Route::controller(ClientProductController::class)
+        ->prefix('products')
+        ->name('products.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+            Route::get('/search', 'search')->name('search');
+            Route::get('{slug}', 'show')->name('show');
+        });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
@@ -107,8 +112,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
-    Route::post('/blog/{blog}/comments', [\App\Http\Controllers\Client\BlogCommentController::class, 'store'])->name('blog.comment.store');
-    Route::delete('/blog/{blog}/comments/{comment}', [\App\Http\Controllers\Client\BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+    Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
+    Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');

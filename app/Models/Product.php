@@ -13,6 +13,7 @@ class Product extends Model
         'user_id',
         'category_id',
         'brand_id',
+        'label_id',
         'name',
         'slug',
         'description',
@@ -33,7 +34,10 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
+    public function label()
+    {
+        return $this->hasMany(ProductLabel::class, 'product_id');
+    }
     // Quan hệ với thương hiệu
     public function brand()
     {
@@ -50,6 +54,12 @@ class Product extends Model
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function inventoryTransactions()

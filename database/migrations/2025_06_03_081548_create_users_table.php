@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('gender', ['Nam', 'Nữ', 'Khác'])->nullable();
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->decimal('balance', 15, 2)->default(0);
+            $table->integer('point')->default(0);
             $table->boolean('two_factor_enabled')->default(false);
             $table->string('token_2fa')->nullable();
             $table->string('SecretKey_2fa')->nullable();
