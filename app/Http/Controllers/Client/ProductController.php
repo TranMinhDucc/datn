@@ -181,7 +181,7 @@ class ProductController extends Controller
             'reviews',
             'rating_summary',
             'test_id',
-            'variantMap'
+            'variantMap',
             'variants',
             'attributes'
         ));
@@ -217,6 +217,4 @@ class ProductController extends Controller
 
         return response()->json(['status' => 'not_found']);
     }
-
-
 }
