@@ -140,20 +140,20 @@
             <!--begin::Info--> 
             <div class="d-flex align-items-center">
                 <!--begin::Amount-->
-                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">1,836</span>
+                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_order) ? number_format($total_order) : 0 }}</span>
                 <!--end::Amount-->
                  
                 <!--begin::Badge-->
-                <span class="badge badge-light-danger fs-base">                                
+                {{-- <span class="badge badge-light-danger fs-base">                                
                     <i class="ki-duotone ki-arrow-down fs-5 text-danger ms-n1"><span class="path1"></span><span class="path2"></span></i> 
                     2.2%
-                </span>            
+                </span>             --}}
                 <!--end::Badge-->                
             </div>
             <!--end::Info--> 
 
             <!--begin::Subtitle-->
-            <span class="text-gray-500 pt-1 fw-semibold fs-6">Total Sales</span>             
+            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Đơn Hàng</span>             
             <!--end::Subtitle--> 
         </div>
         <!--end::Title-->         
@@ -161,7 +161,7 @@
     <!--end::Header-->
 
     <!--begin::Card body-->
-    <div class="card-body d-flex align-items-end pt-0">
+    {{-- <div class="card-body d-flex align-items-end pt-0">
         <!--begin::Progress-->
         <div class="d-flex align-items-center flex-column mt-3 w-100">
             <div class="d-flex justify-content-between w-100 mt-auto mb-2">
@@ -174,7 +174,7 @@
             </div>
         </div>
         <!--end::Progress-->
-    </div>
+    </div> --}}
     <!--end::Card body-->
 </div>
 <!--end::Card widget 5-->            </div>
@@ -228,11 +228,11 @@
         <!--begin::Title-->
         <div class="card-title d-flex flex-column">                
             <!--begin::Amount-->
-            <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">6.3k</span>
+            <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_user) ? number_format($total_user) : 0 }}</span>
             <!--end::Amount-->           
 
             <!--begin::Subtitle-->
-            <span class="text-gray-500 pt-1 fw-semibold fs-6">Total New Customers</span>
+            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Người Dùng</span>
             <!--end::Subtitle--> 
         </div>
         <!--end::Title-->           
@@ -240,7 +240,7 @@
     <!--end::Header-->
 
     <!--begin::Card body-->
-    <div class="card-body d-flex flex-column justify-content-end pe-0">
+    {{-- <div class="card-body d-flex flex-column justify-content-end pe-0">
         <!--begin::Title-->
         <span class="fs-6 fw-bolder text-gray-800 d-block mb-2">Today’s Heroes</span>
         <!--end::Title-->
@@ -271,7 +271,7 @@
         </div>
         <!--end::Users group-->
     </div>
-    <!--end::Card body-->
+    <!--end::Card body--> --}}
 </div>
 <!--end::Card widget 7-->            </div>
             <!--end::Col-->
@@ -494,9 +494,9 @@
         <!--begin::Toolbar-->
         <div class="card-toolbar">            
             <!--begin::Menu-->
-            <button class="btn btn-icon btn-color-gray-500 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">                
+            {{-- <button class="btn btn-icon btn-color-gray-500 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">                
                 <i class="ki-duotone ki-dots-square fs-1 text-gray-500 me-n1"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>                             
-            </button>
+            </button> --}}
 
             
 <!--begin::Menu 2-->
@@ -598,7 +598,7 @@
 
     <!--begin::Body-->
     <div class="card-body pt-5 ps-6">                 
-        <div id="kt_charts_widget_5" class="min-h-auto"></div>       
+        <div id="kt_charts_best_sell_categories" class="min-h-auto"></div>       
     </div>
     <!--end::Body-->
 </div>
@@ -647,56 +647,73 @@
                 <!--end::Table head-->
 
                 <!--begin::Table body-->
+                {{-- @dd($bestSellingProducts) --}}
                 <tbody>
-                                            <tr>
-                            <td>                                    
-                                <img src="../assets/media/stock/ecommerce/210.png" class="w-50px" alt=""/>                             
-                            </td>
-                            <td class="ps-0">
-                                <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Elephant 1802</a>
-                                <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
-                            </td>
-                            <td>                                            
-                                <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$72.00</span>
-                            </td>                                        
-                        </tr>                                     
-                                            <tr>
-                            <td>                                    
-                                <img src="../assets/media/stock/ecommerce/215.png" class="w-50px" alt=""/>                             
-                            </td>
-                            <td class="ps-0">
-                                <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Red Laga</a>
-                                <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
-                            </td>
-                            <td>                                            
-                                <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$45.00</span>
-                            </td>                                        
-                        </tr>                                     
-                                            <tr>
-                            <td>                                    
-                                <img src="../assets/media/stock/ecommerce/209.png" class="w-50px" alt=""/>                             
-                            </td>
-                            <td class="ps-0">
-                                <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">RiseUP</a>
-                                <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
-                            </td>
-                            <td>                                            
-                                <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$168.00</span>
-                            </td>                                        
-                        </tr>                                     
-                                            <tr>
-                            <td>                                    
-                                <img src="../assets/media/stock/ecommerce/214.png" class="w-50px" alt=""/>                             
-                            </td>
-                            <td class="ps-0">
-                                <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Yellow Stone</a>
-                                <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
-                            </td>
-                            <td>                                            
-                                <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$72.00</span>
-                            </td>                                        
-                        </tr>                                     
-                                    </tbody>
+                    @if (isset($bestSellingProducts) && is_array($bestSellingProducts) && count($bestSellingProducts) > 0)
+                        @foreach ($bestSellingProducts as $product)
+                            <tr>
+                                <td>                                    
+                                    <img src="{{ $product->products->image }}" class="w-50px" alt=""/>                             
+                                </td>
+                                <td class="ps-0">
+                                    <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Elephant 1802</a>
+                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">{{ $product->products->name }}</span>
+                                </td>
+                                <td>                                            
+                                    <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ $product->products->sale_price }}</span>
+                                </td>                                        
+                            </tr>  
+                        @endforeach    
+                    @endif
+                    {{-- <tr>
+                        <td>                                    
+                            <img src="../assets/media/stock/ecommerce/210.png" class="w-50px" alt=""/>                             
+                        </td>
+                        <td class="ps-0">
+                            <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Elephant 1802</a>
+                            <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
+                        </td>
+                        <td>                                            
+                            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$72.00</span>
+                        </td>                                        
+                    </tr>                                     
+                    <tr>
+                        <td>                                    
+                            <img src="../assets/media/stock/ecommerce/215.png" class="w-50px" alt=""/>                             
+                        </td>
+                        <td class="ps-0">
+                            <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Red Laga</a>
+                            <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
+                        </td>
+                        <td>                                            
+                            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$45.00</span>
+                        </td>                                        
+                    </tr>                                     
+                    <tr>
+                        <td>                                    
+                            <img src="../assets/media/stock/ecommerce/209.png" class="w-50px" alt=""/>                             
+                        </td>
+                        <td class="ps-0">
+                            <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">RiseUP</a>
+                            <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
+                        </td>
+                        <td>                                            
+                            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$168.00</span>
+                        </td>                                        
+                    </tr>                                     
+                    <tr>
+                        <td>                                    
+                            <img src="../assets/media/stock/ecommerce/214.png" class="w-50px" alt=""/>                             
+                        </td>
+                        <td class="ps-0">
+                            <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Yellow Stone</a>
+                            <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">Item: #XDG-2347</span>
+                        </td>
+                        <td>                                            
+                            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">$72.00</span>
+                        </td>                                        
+                    </tr> --}}
+                </tbody>
                 <!--end::Table body-->
             </table>
         </div>
@@ -2488,3 +2505,89 @@
                 <!--end::Content wrapper-->
 
 @endsection
+@section('js')
+    <script>
+        var bestSellingCategoryNames = @json($bestSellingCategories->pluck('name'));
+        var bestSellingCategoryValues = @json($bestSellingCategories->pluck('total_sold'));
+
+        var t = document.getElementById("kt_charts_best_sell_categories");
+        if (t) {
+            var a = KTUtil.getCssVariableValue("--bs-border-dashed-color");
+            var l = {
+                series: [{
+                    data: bestSellingCategoryValues
+                }],
+                chart: {
+                    type: "bar",
+                    height: 350,
+                    toolbar: {
+                        show: !1
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: !0,
+                        distributed: !0,
+                        barHeight: 23
+                    }
+                },
+                dataLabels: {
+                    enabled: !1
+                },
+                legend: {
+                    show: !1
+                },
+                colors: ["#3E97FF", "#F1416C", "#50CD89", "#FFC700", "#7239EA", "#50CDCD", "#3F4254"],
+                xaxis: {
+                    categories: bestSellingCategoryNames,
+                    labels: {
+                        formatter: function(e) {
+                            return e + "K";
+                        },
+                        style: {
+                            colors: KTUtil.getCssVariableValue("--bs-gray-400"),
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            align: "left"
+                        }
+                    },
+                    axisBorder: {
+                        show: !1
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: KTUtil.getCssVariableValue("--bs-gray-800"),
+                            fontSize: "14px",
+                            fontWeight: "600"
+                        },
+                        offsetY: 2,
+                        align: "left"
+                    }
+                },
+                grid: {
+                    borderColor: a,
+                    xaxis: {
+                        lines: {
+                            show: !0
+                        }
+                    },
+                    yaxis: {
+                        lines: {
+                            show: !1
+                        }
+                    },
+                    strokeDashArray: 4
+                }
+            };
+
+            var chart = new ApexCharts(t, l);
+            setTimeout(function () {
+                chart.render();
+            }, 200);
+        }
+    </script>
+@endsection
+

@@ -181,7 +181,7 @@ class ProductController extends Controller
             'reviews',
             'rating_summary',
             'test_id',
-            'variantMap'
+            'variantMap',
             'variants',
             'attributes'
         ));
