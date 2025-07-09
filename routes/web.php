@@ -59,8 +59,10 @@ use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
@@ -229,7 +231,7 @@ Route::prefix('admin')
 
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
-        Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class);
+        Route::resource('contacts', ContactController::class);
 
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
@@ -247,8 +249,8 @@ Route::prefix('admin')
         // Route tìm kiếm đa module
         Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-
-
+        Route::get('shopSettings', [ShopSettingController::class, 'edit'])->name('shopSettings.edit');
+        Route::post('shopSettings', [ShopSettingController::class, 'update'])->name('shopSettings.update');
         // System Settings
         // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
         // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');

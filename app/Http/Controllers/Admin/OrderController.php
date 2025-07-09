@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\PartnerLocationCode;
+use App\Models\ShopSetting;
 use App\Services\GhnService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -228,12 +229,28 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
         }
 
-        // Tính trọng lượng (có thể điều chỉnh theo cấu trúc DB của bạn)
-        $weight = $order->items->sum(function ($item) {
-            return $item->productVariant->weight * $item->quantity;
-        });
+        $totalWeight = 0;
+        $maxLength = 0;
+        $maxWidth = 0;
+        $totalHeight = 0;
 
-        // Lấy partner_id từ bảng partner_location_codes (nếu bạn làm theo cách tối ưu)
+        // Tính toán lại chính xác kích thước và cân nặng
+        foreach ($order->items as $item) {
+            $variant = $item->productVariant;
+
+            $totalWeight += $variant->weight * $item->quantity;
+
+            if ($variant->length > $maxLength) {
+                $maxLength = $variant->length;
+            }
+
+            if ($variant->width > $maxWidth) {
+                $maxWidth = $variant->width;
+            }
+
+            $totalHeight += $variant->height * $item->quantity;
+        }
+
         $toDistrictId = PartnerLocationCode::where([
             'type' => 'district',
             'location_id' => $order->address->district_id,
@@ -245,41 +262,46 @@ class OrderController extends Controller
             'location_id' => $order->address->ward_id,
             'partner_code' => 'ghn'
         ])->value('partner_id');
+
         Log::info('ĐỊA CHỈ GHN', [
             'district_id nội bộ' => $order->address->district_id,
             'ward_id nội bộ' => $order->address->ward_id,
             'mapped to_district_id' => $toDistrictId,
             'mapped to_ward_code' => $toWardCode,
         ]);
+        $shop = ShopSetting::with(['province', 'district', 'ward'])->first();
 
-        // Dữ liệu gửi GHN
         $data = [
-            // ✅ Bổ sung từ đây:
-            'from_name'           => 'Cửa hàng ABC',
-            'from_phone'          => '0909999999',
-            'from_address'        => 'Số 123 Nguyễn Văn Cừ',
-            'from_ward_name'      => 'Phường Gia Thụy',
-            'from_district_name'  => 'Quận Long Biên',
-            'from_province_name'  => 'Hà Nội',
-            'payment_type_id' => 1,
-            'note' => 'Giao hàng cho khách',
-            'required_note' => 'KHONGCHOXEMHANG',
-            'to_name' => $order->address->full_name,
-            'to_phone' => $order->address->phone,
-            'to_address' => $order->address->address,
-            'to_district_id' => $toDistrictId,
-            'to_ward_code' => (string) $toWardCode,
-            'weight' => $weight ?: 100,
-            'length' => 30,
-            'width' => 20,
-            'height' => 10,
-            'service_id' => 53320,
+            'from_name'           => $shop->shop_name,
+            'from_phone'          => $shop->shop_phone,
+            'from_address'        => $shop->address,
+            'from_ward_name'      => optional($shop->ward)->name,
+            'from_district_name'  => optional($shop->district)->name,
+            'from_province_name'  => optional($shop->province)->name,
+            'payment_type_id'     => 1,
+            'note'                => 'Giao hàng cho khách',
+            'required_note'       => 'KHONGCHOXEMHANG',
+            'to_name'             => $order->address->full_name,
+            'to_phone'            => $order->address->phone,
+            'to_address'          => $order->address->address,
+            'to_district_id'      => $toDistrictId,
+            'to_ward_code'        => (string)$toWardCode,
+            'weight'              => $totalWeight ?: 100,
+            'length'              => $maxLength ?: 10,
+            'width'               => $maxWidth ?: 10,
+            'height'              => $totalHeight ?: 10,
+            'service_id'          => 53320,
             'items' => $order->items->map(function ($item) {
                 return [
                     'name' => $item->productVariant->product->name,
                     'quantity' => $item->quantity,
+                    'code' => $item->productVariant->sku,
+                    'image' => asset('storage/' . $item->productVariant->product->image),
+                    'weight' => $item->productVariant->weight,
                 ];
             })->toArray(),
+
+
         ];
 
         Log::info('GHN Request', $data);
