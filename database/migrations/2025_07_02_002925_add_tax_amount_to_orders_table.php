@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('wards', function (Blueprint $table) {
-            $table->string('ward_code')->after('name');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->unsignedInteger('tax_amount')->default(0)->after('shipping_fee');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
-        Schema::table('wards', function (Blueprint $table) {
-            //
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('tax_amount');
         });
     }
 };
