@@ -17,7 +17,8 @@ class ShippingAddress extends Model
         'pincode',
         'phone',
         'is_default',
-        'status'
+        'status',
+        'full_name'
     ];
 
     const STATUS_ACTIVE = 1;

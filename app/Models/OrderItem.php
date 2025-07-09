@@ -10,7 +10,6 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_id',
         'product_id',
         'product_variant_id',
         'product_name',
@@ -20,6 +19,10 @@ class OrderItem extends Model
         'price',
         'quantity',
         'total_price',
+        'weight',
+        'length',
+        'width',
+        'height',
         'refunded_quantity',
         'note',
     ];
@@ -28,11 +31,13 @@ class OrderItem extends Model
         'variant_values' => 'array',
     ];
 
-    public function order() {
+    public function order()
+    {
         return $this->belongsTo(Order::class);
     }
 
-    public function product() {
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
 
@@ -41,4 +46,8 @@ class OrderItem extends Model
 {
     return $this->belongsTo(ProductVariant::class, 'product_variant_id');
 }
+    // public function productVariant()
+    // {
+    //     return $this->belongsTo(ProductVariant::class);
+    // }
 }
