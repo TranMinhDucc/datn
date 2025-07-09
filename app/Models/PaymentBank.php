@@ -14,5 +14,4 @@ class PaymentBank extends Model
         'url_api',
         'status',
     ];
-    
 }

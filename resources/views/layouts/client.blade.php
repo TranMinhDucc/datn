@@ -29,10 +29,6 @@
     @stack('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
-</style>
-</head>
-
     <style>
         .toast-box {
             display: flex;
@@ -246,7 +242,7 @@
             </div>
             <div class="price-box">
                 <h6>Total :</h6>
-                <p> 49.59 USD</p>
+                <p>$ 49.59 USD</p>
             </div>
             <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> View
                     Cart</a><a class="btn btn_black" href="check-out.html"> Checkout</a></div>
@@ -411,62 +407,6 @@
 
         renderCartItems();
 
-        window.showToast = function(message, type = 'error') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-
-    toast.className = `toast-box ${type}`; // Thêm class để đổi màu border
-
-    toast.innerHTML = `
-        <div class="icon">
-            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
-            <span>${message}</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    `;
-
-    container.appendChild(toast);
-
-    toast.querySelector('.close-btn').addEventListener('click', () => {
-        toast.remove();
-    });
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000 + container.children.length * 500);
-}
-
-
-
-        // Sự kiện Add to Cart
-       document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        const name = this.dataset.name;
-        const price = parseFloat(this.dataset.price);
-        const originalPrice = parseFloat(this.dataset.originalPrice);
-        const image = this.dataset.image;
-        const quantity = parseInt(document.querySelector('.quantity input')?.value || 1);
-        const brand = this.dataset.brand || 'Unknown';
-
-        const currentUser = localStorage.getItem('currentUser') || 'guest';
-        const cartKey = `cartItems_${currentUser}`;
-        const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-        const selectedAttributes = {};
-        let valid = true;
-
-        document.querySelectorAll('.variant-group').forEach(group => {
-            const attrName = group.dataset.attribute?.trim();
-            const selected = group.querySelector('.variant-item.active');
-
-            if (!selected) {
-                showToast(`Vui lòng chọn ${attrName}`, 'error');
-                valid = false;
-            } else {
-                selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
-            }
         // Sự kiện Add to Cart
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', function() {
@@ -527,97 +467,6 @@
             });
         });
 
-        if (!valid) return;
-
-        // 🔎 Tìm biến thể phù hợp
-        let matchedVariant = null;
-
-for (const variant of window.variantMap || []) {
-    let attrs = variant.attributes;
-
-    if (typeof attrs === 'string') {
-        try {
-            attrs = JSON.parse(attrs); // ✅ parse chuỗi JSON
-        } catch (e) {
-            console.error("Lỗi parse attributes:", e);
-            continue;
-        }
-    }
-
-    const isMatch = Object.entries(selectedAttributes).every(([key, val]) => {
-        const normalizedKey = key.trim().toLowerCase();
-
-        const variantKey = Object.keys(attrs).find(k =>
-            k.trim().toLowerCase() === normalizedKey
-        );
-
-        if (!variantKey) return false;
-
-        const variantVal = (attrs[variantKey] || '').trim().toLowerCase();
-        return variantVal === val.trim().toLowerCase();
-    });
-
-    if (isMatch) {
-        matchedVariant = variant;
-        break;
-    }
-}
-
-if (!matchedVariant) {
-    showToast('Không tìm thấy biến thể phù hợp.', 'error');
-    return;
-}
-
-
-
-
-        if (!matchedVariant) {
-            showToast('Không tìm thấy biến thể phù hợp.', 'error');
-            return;
-        }
-
-        const variant_id = matchedVariant.id;
-
-        // ✅ Kiểm tra sản phẩm đã có trong giỏ chưa
-        const index = cartItems.findIndex(item =>
-            item.id === id &&
-            JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)
-        );
-
-        if (index !== -1) {
-            cartItems[index].quantity += quantity;
-        } else {
-           cartItems.push({
-    id,
-    name,
-    price,
-    originalPrice,
-    image,
-    quantity,
-    brand,
-    variant_id: matchedVariant?.id || null, // ✅ Thêm id biến thể
-    attributes: selectedAttributes
-});
-
-        }
-
-        localStorage.setItem(cartKey, JSON.stringify(cartItems));
-
-        if (typeof renderCartItems === 'function') {
-            renderCartItems();
-        }
-
-        const offcanvasEl = document.getElementById('offcanvasRight');
-        if (offcanvasEl) {
-            const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
-            bsOffcanvas.show();
-        }
-
-        showToast('Đã thêm vào giỏ hàng!', 'success');
-    });
-});
-
-
 
         function renderCartItems() {
             cartItems = JSON.parse(localStorage.getItem(cartKey)) || []; // Cập nhật từ localStorage mới nhất
@@ -637,9 +486,9 @@ if (!matchedVariant) {
         <a href="#"><img src="${item.image}" alt=""></a>
         <div>
             <h6 class="mb-0">${item.name}</h6>
-            <p>${item.price.toLocaleString()}đ
-                <del>${item.originalPrice.toLocaleString()}đ</del>
-                <span class="btn-cart"><span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}đ</span></span>
+            <p>$${item.price.toLocaleString()}
+                <del>$${item.originalPrice.toLocaleString()}</del>
+                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
             </p>
             <p class="attributes">${attributesHTML}</p>
 
@@ -690,7 +539,7 @@ if (!matchedVariant) {
             });
             const totalElement = document.querySelector('.price-box p');
             if (totalElement) {
-                totalElement.textContent = `${total.toFixed(2)}đ`;
+                totalElement.textContent = `$ ${total.toFixed(2)} USD`;
 
             }
         }

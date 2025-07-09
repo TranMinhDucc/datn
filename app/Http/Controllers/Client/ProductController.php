@@ -150,37 +150,13 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        // dd($product->related_products);
-
-
-        $variantMap = [];
-
-        foreach ($product->variants as $variant) {
-            $attributeValues = [];
-
-            foreach ($variant->options as $option) {
-                $attributeValues[$option->attribute->name] = $option->value->value;
-            }
-
-            $variantMap[] = [
-                'id' => $variant->id,
-                'sku' => $variant->sku,
-                'price' => $variant->price,
-                'stock' => $variant->quantity,
-               'attributes' => $attributeValues
-            ];
-        }
-
-
-
         return view('client.products.show', compact(
             'product',
             'attributeGroups',
             'productImages',
             'reviews',
             'rating_summary',
-            'attributes',
-            'variantMap'
+            'attributes'
         ))->with('variants', $formattedVariants);
     }
 

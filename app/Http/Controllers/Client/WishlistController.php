@@ -19,7 +19,7 @@ class WishlistController extends Controller
             ->latest()
             ->get();
 
-        return view('client.wishlist.index', compact('wishlists'));
+        return view('client.account.wishlist', compact('wishlists'));
     }
 
     // Thêm sản phẩm vào wishlist
@@ -55,7 +55,7 @@ class WishlistController extends Controller
             ->delete();
 
         // return response()->json(['success' => true, 'message' => 'Đã xoá khỏi danh sách yêu thích.']);
-      
-    return back()->with('success', 'Đã xoá khỏi danh sách yêu thích!');
+
+        return back()->with('success', 'Đã xoá khỏi danh sách yêu thích!');
     }
 }
