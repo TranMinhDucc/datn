@@ -433,12 +433,39 @@
                                             <th>Giá bán</th>
                                             <th>Số lượng</th>
                                             <th>SKU</th>
+                                            <th>Cân nặng (g)</th>
+                                            <th>Dài (cm)</th>
+                                            <th>Rộng (cm)</th>
+                                            <th>Cao (cm)</th>
                                             <th>Xóa</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody id="pf_variant_list"></tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div id="product-dimensions-wrapper" class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Cân nặng (g) <span class="text-danger">*</span></label>
+                                <input type="number" name="weight" class="form-control"
+                                    value="{{ old('weight', $product->weight ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Dài (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="length" class="form-control"
+                                    value="{{ old('length', $product->length ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Rộng (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="width" class="form-control"
+                                    value="{{ old('width', $product->width ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cao (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="height" class="form-control"
+                                    value="{{ old('height', $product->height ?? '') }}">
                             </div>
                         </div>
 
@@ -491,6 +518,7 @@
                 slugInput.value = slug;
             });
             calculateTotalStock();
+            toggleProductDimensions();
         });
 
 
@@ -545,7 +573,8 @@
 
         const PF_ATTRIBUTE_SUGGESTIONS = {
             "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng", "Xanh quân đội",
-                "Xanh dương nhạt"],
+                "Xanh dương nhạt"
+            ],
             "Size": ["XS", "S", "M", "L", "XL", "XXL"],
             "Giới tính": ["Nam", "Nữ", "Unisex"]
         };
@@ -725,6 +754,10 @@
     <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào"></td>
     <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0"></td>
     <td><input type="text" class="form-control form-control-sm" id="pf_apply_sku" placeholder="Nhập vào"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_weight" placeholder="gram"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_length" placeholder="cm"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_width" placeholder="cm"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_height" placeholder="cm"></td>
     <td><button type="button" class="btn btn-danger btn-sm" onclick="pfApplyToAllVariants()">Áp dụng</button></td>
 `;
             tbody.appendChild(headerRow);
@@ -740,6 +773,10 @@
     <td><input type="number" name="variants[${i}][price]" class="form-control"></td>
     <td><input type="number" name="variants[${i}][quantity]" class="form-control"></td>
     <td><input type="text" name="variants[${i}][sku]" class="form-control"></td>
+    <td><input type="number" name="variants[${i}][weight]" class="form-control" placeholder="gram"></td>
+    <td><input type="number" name="variants[${i}][length]" class="form-control" placeholder="cm"></td>
+    <td><input type="number" name="variants[${i}][width]" class="form-control" placeholder="cm"></td>
+    <td><input type="number" name="variants[${i}][height]" class="form-control" placeholder="cm"></td>
     <td class="text-center">
         <button type="button" class="btn btn-sm btn-light-danger" onclick="removeVariantRow(this)">
             <i class="bi bi-trash"></i>
@@ -754,21 +791,28 @@
 
             });
             calculateTotalStock();
-
+            toggleProductDimensions(); // GỌI LẠI HÀM NÀY
         }
 
         function pfApplyToAllVariants() {
             const price = document.getElementById('pf_apply_price').value;
             const quantity = document.getElementById('pf_apply_quantity').value;
             const sku = document.getElementById('pf_apply_sku').value;
+            const weight = document.getElementById('pf_apply_weight').value;
+            const length = document.getElementById('pf_apply_length').value;
+            const width = document.getElementById('pf_apply_width').value;
+            const height = document.getElementById('pf_apply_height').value;
 
             const rows = document.querySelectorAll('#pf_variant_list tr');
             rows.forEach((row) => {
                 if (row.querySelector('td')?.textContent.includes('Áp dụng cho tất cả')) return;
-
                 if (price) row.querySelector(`input[name$="[price]"]`).value = price;
                 if (quantity) row.querySelector(`input[name$="[quantity]"]`).value = quantity;
                 if (sku) row.querySelector(`input[name$="[sku]"]`).value = sku;
+                if (weight) row.querySelector(`input[name$="[weight]"]`).value = weight;
+                if (length) row.querySelector(`input[name$="[length]"]`).value = length;
+                if (width) row.querySelector(`input[name$="[width]"]`).value = width;
+                if (height) row.querySelector(`input[name$="[height]"]`).value = height;
             });
             calculateTotalStock();
         }
@@ -813,6 +857,7 @@
             if (row) {
                 row.remove();
                 calculateTotalStock(); // cập nhật lại tổng
+                toggleProductDimensions(); // GỌI LẠI HÀM NÀY
             }
         }
 
@@ -833,6 +878,36 @@
                 if (stockNote) stockNote.style.display = 'none';
             }
         }
+
+        function toggleProductDimensions() {
+            const dimWrapper = document.getElementById('product-dimensions-wrapper');
+            const variantList = document.getElementById('pf_variant_list');
+            let variantCount = 0;
+            if (variantList) {
+                variantCount = Array.from(variantList.children).filter(tr => {
+                    return !tr.textContent.includes('Áp dụng cho tất cả');
+                }).length;
+            }
+            if (dimWrapper) {
+                if (variantCount > 0) {
+                    dimWrapper.style.display = 'none';
+                } else {
+                    dimWrapper.style.display = 'flex'; // hoặc 'block' nếu bạn muốn
+                }
+            }
+        }
+
+        // Gọi khi load trang và mỗi lần render lại biến thể
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleProductDimensions();
+            // Gọi lại mỗi khi render biến thể (sau mỗi lần thêm/xóa biến thể)
+            window.pfGenerateVariants = (function(oldFn) {
+                return function() {
+                    oldFn.apply(this, arguments);
+                    toggleProductDimensions();
+                }
+            })(window.pfGenerateVariants);
+        });
     </script>
 
 

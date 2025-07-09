@@ -27,6 +27,10 @@ class Product extends Model
         'starts_at',
         'ends_at',
         'sale_times',
+        'weight',
+        'length',
+        'width',
+        'height',
     ];
 
     // Quan hệ với danh mục

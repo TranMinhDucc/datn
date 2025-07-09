@@ -228,6 +228,7 @@
             const currentUser = localStorage.getItem('currentUser') || 'guest';
             const cartKey = `cartItems_${currentUser}`;
             const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+            console.log("📦 Cart Items hiện tại:", cartItems);
 
             // ✅ Giá gốc sản phẩm
             let originalSubtotal = 0;
@@ -322,9 +323,9 @@
                     <div>
                         <h6>${item.name}</h6>
                         <span>${Object.entries(item.attributes || {}).map(([k, v]) => `
-                        ${
+                        $ {
                             k
-                        }: ${
+                        }: $ {
                             v
                         }
                         `).join(' / ')}</span>

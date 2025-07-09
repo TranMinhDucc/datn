@@ -9,7 +9,8 @@ class Province extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code'];
+    protected $fillable = ['name', 'province_code', 'code', 'ghn_id'];
+
 
     public function districts()
     {
