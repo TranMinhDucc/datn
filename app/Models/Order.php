@@ -19,7 +19,6 @@ class Order extends Model
         'shipping_coupon_id',
         'discount_amount',
         'subtotal',
-        'tax_amount',
         'shipping_fee',
         'total_amount',
         'status',
@@ -59,13 +58,5 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
-    }
-    public function coupon()
-    {
-        return $this->belongsTo(Coupon::class, 'coupon_id');
-    }
-    public function shippingCoupon()
-    {
-        return $this->belongsTo(Coupon::class, 'shipping_coupon_id');
     }
 }
