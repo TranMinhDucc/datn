@@ -66,9 +66,11 @@ use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
+use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Models\Bank;
 use App\Models\Setting;
 use App\Services\BankTransactionService;
+use Illuminate\Support\Facades\Artisan;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -128,10 +130,12 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
+    Route::get('/order-success', [CheckoutController::class, 'success'])->name('client.order.success');
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
-        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');;
+        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+        Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
     });
 
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
@@ -178,13 +182,16 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    
 
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
 });
-
+Route::middleware(['auth'])->prefix('checkout/address')->name('client.checkout.address.')->group(function () {
+    Route::post('/store', [ShippingAddressController::class, 'store'])->name('store');
+});
 Route::middleware('auth')->group(function () {
     Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
     Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
@@ -393,3 +400,13 @@ Route::post('/api/get-variant-info', [ClientProductController::class, 'getVarian
 Route::get('/api/districts', [LocationController::class, 'districts']);
 // API lấy danh sách xã/phường theo quận/huyện
 Route::get('/api/wards', [LocationController::class, 'wards']);
+
+Route::post('/webhook/ghn', [GhnWebhookController::class, 'handle']);
+Route::get('/cron/sync-ghn-orders', function () {
+    Artisan::call('ghn:sync-order-status');
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'GHN sync triggered via HTTP.',
+    ]);
+});

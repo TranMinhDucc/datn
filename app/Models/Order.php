@@ -19,6 +19,7 @@ class Order extends Model
         'shipping_coupon_id',
         'discount_amount',
         'subtotal',
+        'tax_amount',
         'shipping_fee',
         'total_amount',
         'status',
@@ -58,5 +59,13 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+    public function shippingLogs()
+    {
+        return $this->hasMany(ShippingLog::class);
+    }
+    public function shippingOrder()
+    {
+        return $this->hasOne(ShippingOrder::class);
     }
 }
