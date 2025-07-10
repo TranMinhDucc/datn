@@ -740,7 +740,8 @@
                                                                     <ul>
                                                                         <li>
                                                                             <p>Price :</p>
-                                                                            <span>${{ $item->price }}</span>
+                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+
                                                                         </li>
                                                                         @php
                                                                             $variantValues = json_decode(
