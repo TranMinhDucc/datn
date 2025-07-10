@@ -28,7 +28,7 @@ class PartnerLocationCodeSeeder extends Seeder
             'Content-Type' => 'application/json',
             'Token' => $this->ghnToken,
             'ShopId' => $this->shopId,
-        ])->get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province');
+        ])->get('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province');
 
         if ($response->ok()) {
             $data = $response->json('data');
@@ -73,7 +73,7 @@ class PartnerLocationCodeSeeder extends Seeder
                 'Content-Type' => 'application/json',
                 'Token' => $this->ghnToken,
                 'ShopId' => $this->shopId,
-            ])->post('https://online-gateway.ghn.vn/shiip/public-api/master-data/district', [
+            ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district', [
                 'province_id' => $province_id
             ]);
 
@@ -141,7 +141,7 @@ class PartnerLocationCodeSeeder extends Seeder
                 'Content-Type' => 'application/json',
                 'Token' => $this->ghnToken,
                 'ShopId' => $this->shopId,
-            ])->post('https://online-gateway.ghn.vn/shiip/public-api/master-data/ward', [
+            ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward', [
                 'district_id' => (int) $district_ghn_id
             ]);
 

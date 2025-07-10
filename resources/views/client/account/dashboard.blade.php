@@ -727,7 +727,7 @@
                                                     @foreach ($order->orderItems as $item)
                                                         <div class="product-order-detail">
                                                             <div class="product-box">
-                                                                <a href="#">
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}">
                                                                     <img src="{{ asset('storage/' . $item->product->image) }}"
                                                                         alt="{{ $item->product_name }}">
 
@@ -740,7 +740,8 @@
                                                                     <ul>
                                                                         <li>
                                                                             <p>Price :</p>
-                                                                            <span>${{ $item->price }}</span>
+                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+
                                                                         </li>
                                                                         @php
                                                                             $variantValues = json_decode(

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\PartnerLocationCode;
+use App\Models\ShippingOrder;
 use App\Models\ShopSetting;
 use App\Services\GhnService;
 use Illuminate\Support\Facades\Http;
@@ -18,9 +19,10 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('user')->orderBy('id', 'desc')->paginate(10);
+        $orders = Order::with(['user', 'shippingOrder'])->orderBy('id', 'desc')->paginate(10);
         return view('admin.orders.index', compact('orders'));
     }
+
 
 
     /**
@@ -120,65 +122,7 @@ class OrderController extends Controller
     {
         //
     }
-    // public function confirm(Request $request, Order $order, GhnService $ghnService)
-    // {
-    //     if ($order->status !== 'pending') {
-    //         return back()->with('error', 'Đơn hàng đã được xử lý.');
-    //     }
 
-    //     $address = $order->shippingAddress;
-
-    //     // ✅ Tính trọng lượng & kích thước
-    //     $totalWeight = $order->orderItems->sum(fn($item) => $item->weight * $item->quantity);
-    //     $length = $order->orderItems->max('length');
-    //     $width  = $order->orderItems->max('width');
-    //     $height = $order->orderItems->sum(fn($item) => $item->height * $item->quantity);
-
-    //     // ✅ Tạo dữ liệu gửi đến GHN
-    //     $ghnData = [
-    //         "payment_type_id"    => 2, // Người nhận trả phí ship
-    //         "note"               => "Kiểm tra hàng",
-    //         "required_note"      => "KHONGCHOXEMHANG",
-    //         "from_district_id"   => (int) env('GHN_FROM_DISTRICT_ID'),
-    //         "service_type_id"    => 2,
-    //         "to_name"            => $address->name,
-    //         "to_phone"           => $address->phone,
-    //         "to_address"         => $address->detail,
-    //         "to_ward_code"       => $address->ward->ghn_ward_code,
-    //         "to_district_id"     => $address->district->ghn_district_id,
-    //         "cod_amount"         => $order->total_price,
-    //         "content"            => "Giao đơn hàng thời trang",
-    //         "weight"             => $totalWeight,
-    //         "length"             => $length,
-    //         "width"              => $width,
-    //         "height"             => $height,
-    //         "insurance_value"    => $order->total_price,
-    //         "items" => $order->orderItems->map(function ($item) {
-    //             return [
-    //                 "name"    => $item->product_name,
-    //                 "quantity" => $item->quantity,
-    //                 "price"   => $item->price,
-    //                 "weight"  => $item->weight,
-    //             ];
-    //         })->toArray(),
-    //     ];
-
-    //     // ✅ Gửi đơn hàng đến GHN
-    //     $orderCode = $ghnService->createShippingOrder($ghnData);
-
-    //     if (!$orderCode) {
-    //         return back()->with('error', 'Không thể gửi đơn hàng sang GHN.');
-    //     }
-
-    //     // ✅ Cập nhật đơn hàng
-    //     $order->update([
-    //         'status'          => 'confirmed',
-    //         'shipping_fee'    => $order->shipping_fee,
-    //         'ghn_order_code'  => $orderCode,
-    //     ]);
-
-    //     return back()->with('success', 'Đơn hàng đã được xác nhận và gửi GHN.');
-    // }
     public function createShippingOrder(array $data)
     {
         // Ghi log debug Token và ShopId
@@ -290,7 +234,7 @@ class OrderController extends Controller
             'length'              => $maxLength ?: 10,
             'width'               => $maxWidth ?: 10,
             'height'              => $totalHeight ?: 10,
-            'service_id'          => 53320,
+            'service_id'          => 53321,
             'items' => $order->items->map(function ($item) {
                 return [
                     'name' => $item->productVariant->product->name,
@@ -312,6 +256,15 @@ class OrderController extends Controller
             $order->update([
                 'status' => 'confirmed',
                 'ghn_order_code' => $ghnOrderCode
+            ]);
+            ShippingOrder::create([
+                'order_id' => $order->id,
+                'shipping_partner' => 'ghn',
+                'shipping_code' => $ghnOrderCode,
+                'status' => 'ready_to_pick',
+                'note' => 'Đơn hàng gửi GHN thành công',
+                'request_payload' => json_encode($data),
+                'response_payload' => json_encode(['order_code' => $ghnOrderCode]),
             ]);
 
             return redirect()->back()->with('success', '✅ Đã gửi đơn hàng sang GHN!');
