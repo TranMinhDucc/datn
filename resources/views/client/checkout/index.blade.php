@@ -9,12 +9,12 @@
             <div class="custom-container container">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
-                        <h4>Check Out</h4>
+                        <h4>Thanh toán</h4>
                     </div>
                     <div class="col-sm-6">
                         <ul class="breadcrumb float-end">
-                            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
-                            <li class="breadcrumb-item active"> <a href="#">Check Out</a></li>
+                            <li class="breadcrumb-item"> <a href="index.html">Trang chủ </a></li>
+                            <li class="breadcrumb-item active"> <a href="#">Thanh toán</a></li>
                         </ul>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="left-sidebar-checkout sticky">
                         <div class="address-option">
                             <div class="address-title">
-                                <h4>Shipping Address</h4>
+                                <h4>Địa chỉ giao hàng</h4>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#address-modal" title="add product"
                                     tabindex="0">+ Add New Address</a>
                             </div>
@@ -49,20 +49,20 @@
                                                     </span>
                                                     <span class="address">
                                                         <span class="address-home">
-                                                            <span class="address-tag">Address:</span>
+                                                            <span class="address-tag">Địa chỉ:</span>
                                                             {{ $address->address }}, {{ $address->city }},
                                                             {{ $address->state }}, {{ $address->country }}
                                                         </span>
                                                     </span>
                                                     <span class="address">
                                                         <span class="address-home">
-                                                            <span class="address-tag">Pin Code:</span>
-                                                            {{ $address->pincode }}
+                                                            <span class="address-tag">Người nhận:</span>
+                                                            {{ $address->full_name }}
                                                         </span>
                                                     </span>
                                                     <span class="address">
                                                         <span class="address-home">
-                                                            <span class="address-tag">Phone :</span>
+                                                            <span class="address-tag">Điện thoại :</span>
                                                             {{ $address->phone }}
                                                         </span>
                                                     </span>
@@ -96,14 +96,14 @@
                 </div>
                 <div class="col-xxl-3 col-lg-4">
                     <div class="right-sidebar-checkout">
-                        <h4>Checkout</h4>
+                        <h4>Thanh toán</h4>
                         <div class="cart-listing">
                             <ul id="checkout-cart-items">
                             </ul>
                             <div class="summary-total">
                                 <ul>
                                     <li>
-                                        <p>Subtotal</p> <span class="subtotal-amount">$0.00</span>
+                                        <p>Tạm tính</p> <span class="subtotal-amount">$0.00</span>
                                     </li>
                                     <li>
                                         <p>Phí vận chuyển</p>
@@ -129,7 +129,7 @@
                                 </div>
                             </div>
                             <div class="total">
-                                <h6>Total : </h6>
+                                <h6>Tổng : </h6>
                                 <h6>$ 37.73</h6>
                             </div>
                             <div class="order-button"><button type="button" class="btn btn_black sm w-100 rounded">Place
@@ -140,77 +140,120 @@
             </div>
         </div>
     </section>
+
     <div class="modal theme-modal fade address-modal" id="address-modal" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4>Add Address</h4>
+                    <h4>Thêm địa chỉ</h4>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-0">
-                    <div class="address-box">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="title1">Title</label>
-                                    <input class="form-control" id="title1" type="text" placeholder="Enter Title">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Address </label>
-                                    <input class="form-control" id="address" type="text"
-                                        placeholder="Enter Address">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Country</label>
-                                    <select class="form-select" id="cars" name="cars">
-                                        <option value="volvo">Surat</option>
-                                        <option value="saab">Ahmadabad</option>
-                                        <option value="mercedes">Vadodara</option>
-                                        <option value="audi">Vapi</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">State</label>
-                                    <select class="form-select" id="cars" name="cars">
-                                        <option value="volvo">Gujarat</option>
-                                        <option value="saab">Karnataka</option>
-                                        <option value="mercedes">Madhya Pradesh</option>
-                                        <option value="audi">Maharashtra</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="title1">City</label>
-                                    <input class="form-control" id="title1" type="text" placeholder="Enter City">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Pincode</label>
-                                    <input class="form-control" id="address" type="text"
-                                        placeholder="Enter Pincode">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="address">Phone Number</label>
-                                    <input class="form-control" id="address" type="number"
-                                        placeholder="Enter Phone Number">
-                                </div>
-                            </div>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn cancel" type="cancel" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                    <button class="btn submit" type="submit" data-bs-dismiss="modal" aria-label="Close">Submit</button>
+                    @endif
+                    <form action="{{ route('client.checkout.address.store') }}"  method="POST" class="row g-3"
+                        id="address-form">
+                        @csrf
+
+                        <div class="col-6">
+                            <label class="form-label">Loại địa chỉ</label>
+                            <select class="form-select @error('title') is-invalid @enderror" name="title">
+                                <option value="">-- Chọn loại --</option>
+                                <option value="Nhà riêng" {{ old('title') == 'Nhà riêng' ? 'selected' : '' }}>Nhà
+                                    riêng
+                                </option>
+                                <option value="Công ty" {{ old('title') == 'Công ty' ? 'selected' : '' }}>Công ty
+                                </option>
+                                <option value="Khác" {{ old('title') == 'Khác' ? 'selected' : '' }}>Khác</option>
+                            </select>
+                            @error('title')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Tên người nhận</label>
+                            <input class="form-control @error('full_name') is-invalid @enderror" name="full_name"
+                                value="{{ old('full_name') }}">
+                            @error('full_name')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">Điện thoại</label>
+                            <input class="form-control @error('phone') is-invalid @enderror" type="text"
+                                name="phone" value="{{ old('phone') }}">
+                            @error('phone')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label">Mã bưu chính</label>
+                            <input class="form-control @error('pincode') is-invalid @enderror" name="pincode"
+                                value="{{ old('pincode') }}">
+                            @error('pincode')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <input type="hidden" class="form-control" name="country" value="Vietnam">
+                        <div class="col-4">
+                            <label class="form-label">Tỉnh/Thành phố</label>
+                            <select class="form-select" name="province_id" id="province-select" required>
+                                <option value="">-- Chọn tỉnh --</option>
+                                @foreach ($provinces as $province)
+                                    <option value="{{ $province->id }}"
+                                        {{ old('province_id') == $province->id ? 'selected' : '' }}>
+                                        {{ $province->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('province_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-label">Quận/Huyện</label>
+                            <select class="form-select" name="district_id" id="district-select" required>
+                                <option value="">-- Chọn huyện --</option>
+                            </select>
+                            @error('district_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-label">Phường/Xã</label>
+                            <select class="form-select" name="ward_id" id="ward-select" required>
+                                <option value="">-- Chọn xã --</option>
+                            </select>
+                            @error('ward_id')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Địa chỉ chi tiết</label>
+                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address') }}</textarea>
+                            @error('address')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-dark btn-lg px-5 py-2 fw-semibold">
+                            Submit
+                        </button>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -323,16 +366,14 @@
                     <div>
                         <h6>${item.name}</h6>
                         <span>${Object.entries(item.attributes || {}).map(([k, v]) => `
-                        $ {
+                        ${
                             k
-                        }: $ {
+                        }: ${
                             v
                         }
                         `).join(' / ')}</span>
                     </div>
-                    <p>${(item.price * item.quantity).toLocaleString('vi-VN', {
-                        style: 'currency', currency: 'VND'
-                    })}</p>
+                    
                 `;
                         cartList.appendChild(li);
                     });
@@ -370,6 +411,17 @@
             const shippingCoupon = JSON.parse(sessionStorage.getItem('shippingCoupon') || '{}');
             const shippingCouponId = shippingCoupon.id || null;
 
+ const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const discount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
+    const shippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
+    const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
+    const actualShipping = Math.max(0, shippingFee - shippingDiscount);
+    const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+    const taxEl = document.getElementById('tax-value');
+    const vatRate = parseFloat(taxEl?.dataset.vat || 0);
+    const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
+
             const dataToSend = {
                 cartItems,
                 shipping_address_id: selectedShippingAddress,
@@ -378,6 +430,7 @@
                 shipping_coupon_id: shippingCouponId,
                 discount_amount: parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0,
                 shipping_fee: parseFloat(sessionStorage.getItem('originalShippingFee')) || 0,
+                tax_amount: taxAmount
             };
 
             console.log("📦 Dữ liệu gửi đi:", dataToSend);
@@ -394,13 +447,14 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert('🛒 Đặt hàng thành công!');
                         localStorage.removeItem(`cartItems_${currentUser}`);
 
                         // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
                         sessionStorage.removeItem('shippingCoupon');
                         sessionStorage.removeItem('productCoupon');
-                        window.location.href = '/orders';
+                        
+                        // 
+                        window.location.href = '/order-success';
                     } else {
                         alert('❌ ' + data.message);
                     }
@@ -416,4 +470,63 @@
     </script>
 
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
 @endsection
