@@ -234,7 +234,12 @@ Route::prefix('admin')
         Route::resource('contacts', ContactController::class);
 
         Route::resource('categories', CategoryController::class);
-        Route::resource('products', ProductController::class);
+        //Products
+        Route::get('products/trash', [ProductController::class, 'trash'])->name('products.trash');
+        Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+        Route::resource('products', ProductController::class); 
+
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);
 
