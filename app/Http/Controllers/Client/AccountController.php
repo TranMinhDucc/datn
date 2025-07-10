@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
+
     public function dashboard()
     {
         $user = Auth::user();
@@ -31,9 +33,16 @@ class AccountController extends Controller
             ->where('is_active', 1)
             ->latest()
             ->get();
-        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
-        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'provinces'));
+
+        $orders = Order::with(['orderItems.product']) // Load luôn product của từng item
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+$provinces = Province::all(); // chỉ cần load tỉnh ban đầu
+
+        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
+
 
 
     public function wallet()

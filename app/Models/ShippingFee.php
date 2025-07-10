@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class ShippingFee extends Model
 {
     protected $fillable = [
-        'province_id',
-        'district_id',
-        'ward_id',
+        'province_name',
+        'district_name',
+        'ward_name',
+        'shipping_zone_id',
+        'shipping_method_id',
         'price',
         'free_shipping_minimum',
-        // các trường khác nếu có
     ];
     public function zone()
     {

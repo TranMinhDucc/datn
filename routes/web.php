@@ -59,8 +59,10 @@ use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
-
+use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
@@ -93,10 +95,15 @@ Route::prefix('/')->name('client.')->group(function () {
     });
 
 
-    Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('{slug}/', 'show')->name('show');
-    });
+    Route::controller(ClientProductController::class)
+        ->prefix('products')
+        ->name('products.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+            Route::get('/search', 'search')->name('search');
+            Route::get('{slug}', 'show')->name('show');
+        });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
@@ -107,8 +114,8 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{blog}', 'show')->name('show');
     });
-    Route::post('/blog/{blog}/comments', [\App\Http\Controllers\Client\BlogCommentController::class, 'store'])->name('blog.comment.store');
-    Route::delete('/blog/{blog}/comments/{comment}', [\App\Http\Controllers\Client\BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+    Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
+    Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
     Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
     Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
@@ -122,9 +129,11 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
 
-    Route::middleware(['auth'])->prefix('account')->name('client.')->group(function () {
-        Route::get('/orders', [ClientOrderController::class, 'index'])->name('orders.index');
+    Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+        Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');;
     });
+
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     //     Route::get('/', 'index')->name('index');
     // });
@@ -138,6 +147,13 @@ Route::prefix('/')->name('client.')->group(function () {
 
     Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
 });
+
+// // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
+// Route::middleware(['auth'])->prefix('account/orders')->name('client.orders.')->group(function () {
+//     Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+//     Route::patch('/{id}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+// });
+
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
@@ -215,7 +231,7 @@ Route::prefix('admin')
 
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
-        Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class);
+        Route::resource('contacts', ContactController::class);
 
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
@@ -233,8 +249,8 @@ Route::prefix('admin')
         // Route tìm kiếm đa module
         Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-
-
+        Route::get('shopSettings', [ShopSettingController::class, 'edit'])->name('shopSettings.edit');
+        Route::post('shopSettings', [ShopSettingController::class, 'update'])->name('shopSettings.update');
         // System Settings
         // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
         // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
@@ -280,6 +296,8 @@ Route::prefix('admin')
 
 
         Route::resource('product-labels', ProductLabelController::class);
+        // GHN
+        Route::post('/orders/{order}/confirm-ghn', [OrderController::class, 'confirmGHN'])->name('orders.confirm-ghn');
 
 
         Route::resource('brands', BrandController::class);
@@ -322,6 +340,13 @@ Route::prefix('admin')
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
 
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
+        Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
         //Inventory
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
@@ -360,6 +385,6 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
  */
 Route::post('/api/get-variant-info', [ClientProductController::class, 'getVariantInfo'])->name('api.get-variant-info');
 // API lấy danh sách quận/huyện theo tỉnh
-Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationController::class, 'districts']);
+Route::get('/api/districts', [LocationController::class, 'districts']);
 // API lấy danh sách xã/phường theo quận/huyện
-Route::get('/api/wards', [\App\Http\Controllers\Admin\LocationController::class, 'wards']);
+Route::get('/api/wards', [LocationController::class, 'wards']);

@@ -75,6 +75,7 @@ class ShippingAddressController extends Controller
 
         ShippingAddress::create([
             'user_id'     => auth()->id(),
+            'full_name'   => $request->full_name,
             'title'       => $request->title,
             'phone'       => $request->phone,
             'pincode'     => $request->pincode,

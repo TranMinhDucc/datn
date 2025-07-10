@@ -114,7 +114,7 @@
                                 </ul>
                             </div>
                             {{-- Size --}}
-                            @foreach ($attributes as $attrId => $attr)
+                            {{-- @foreach ($attributes as $attrId => $attr)
                                 <div class="mb-2">
                                     <label><strong>{{ $attr['name'] }}:</strong></label>
                                     <select class="form-select variant-select" data-attr="{{ $attrId }}">
@@ -124,7 +124,7 @@
                                         @endforeach
                                     </select>
                                 </div> <!-- Đóng thẻ div.mb-2 -->
-                            @endforeach
+                            @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
                                 <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
                                     <h6>{{ ucfirst($groupName) }}</h6>
@@ -723,7 +723,7 @@
                     @auth
                         <form action="{{ route('client.review') }}" method="POST" class="row g-3">
                             @csrf
-                            <input type="hidden" name="product_id" value="{{ $test_id }}">
+                            {{-- <input type="hidden" name="product_id" value="{{ $test_id }}"> --}}
                             <input type="hidden" name="rating" id="rating-value" value="0">
 
                             <div class="col-12">
@@ -831,6 +831,12 @@
     <script>
         const allVariants = @json($variants);
         const product = @json($product);
+
+        function getSelectedVariantId(selectedAttributes) {
+            return allVariants.find(v =>
+                JSON.stringify(v.attributes) === JSON.stringify(selectedAttributes)
+            )?.id || null;
+        }
 
         $('.variant-select').on('change', function() {
             let selected = {};
@@ -963,6 +969,9 @@
 
 
     <script>
+        window.variantData = @json($variants);
+        console.log(window.variantData);
+
         document.addEventListener('DOMContentLoaded', function() {
             // ✅ Xử lý chọn thuộc tính
             document.querySelectorAll('.variant-item').forEach(item => {
@@ -996,31 +1005,41 @@
                     '#28a745';
 
                 toast.innerHTML = `
-        <div class="icon">
-            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-        <button class="close-btn">&times;</button>
+    <div class="icon">
+        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+        <span>${message}</span>
+    </div>
+    <button class="close-btn">&times;</button>
     `;
 
                 container.appendChild(toast);
 
-                // ✅ Đóng khi click nút ×
-                toast.querySelector('.close-btn').addEventListener('click', () => {
-                    toast.remove();
-                });
+                toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
 
-                // ✅ Tự ẩn sau 3s (lần lượt từng toast)
                 setTimeout(() => {
                     toast.style.transition = 'opacity 0.5s ease';
                     toast.style.opacity = '0';
                     setTimeout(() => toast.remove(), 500);
-                }, 3000 + container.children.length * 500); // lần lượt cách nhau 0.5s
+                }, 3000 + container.children.length * 500);
+            }
+
+            // ✅ Lấy ID biến thể từ selected attributes
+            function getSelectedVariantId(attributes) {
+                const variantData = window.variantData || [];
+                return variantData.find(v => {
+                    return Object.entries(attributes).every(([key, val]) => {
+                        // So sánh key và value đều không phân biệt hoa thường
+                        return (
+                            Object.keys(v.attributes).some(attrKey =>
+                                attrKey.toLowerCase() === key.toLowerCase() &&
+                                v.attributes[attrKey].toLowerCase() === val.toLowerCase()
+                            )
+                        );
+                    });
+                })?.id || null;
             }
 
 
-
-            // ✅ Thêm vào giỏ hàng
             // ✅ Sự kiện Add to Cart
             document.querySelectorAll('.add-to-cart-btn').forEach(button => {
                 button.addEventListener('click', function() {
@@ -1048,7 +1067,6 @@
                         if (!selected) {
                             valid = false;
                             missingAttrs.push(attrName);
-
                         } else {
                             selectedAttributes[attrName] = selected.dataset.value ||
                                 selected.textContent.trim();
@@ -1059,16 +1077,19 @@
                         missingAttrs.forEach(attr => {
                             showToast(`Vui lòng chọn ${attr}`, 'error');
                         });
-
-                        // ❌ Không mở giỏ hàng khi có lỗi
                         return;
                     }
 
-                    // ✅ Thêm vào giỏ
+                    const variantId = getSelectedVariantId(selectedAttributes);
+                    console.log("🟡 Các thuộc tính đã chọn:", selectedAttributes);
+                    console.log("🟢 Dữ liệu variantData:", window.variantData);
+                    console.log("🔵 variant_id tìm được:", variantId);
+
                     const index = cartItems.findIndex(item =>
                         item.id === id &&
-                        JSON.stringify(item.attributes || {}) === JSON.stringify(
-                            selectedAttributes)
+                        ((variantId && item.variant_id === variantId) ||
+                            (!variantId && JSON.stringify(item.attributes || {}) === JSON
+                                .stringify(selectedAttributes)))
                     );
 
                     if (index !== -1) {
@@ -1076,6 +1097,7 @@
                     } else {
                         cartItems.push({
                             id,
+                            variant_id: variantId,
                             name,
                             price,
                             originalPrice,
@@ -1087,13 +1109,8 @@
                     }
 
                     localStorage.setItem(cartKey, JSON.stringify(cartItems));
+                    document.dispatchEvent(new Event('cartUpdated'));
 
-                    // ✅ Cập nhật giỏ hàng UI
-                    if (typeof renderCartItems === 'function') {
-                        renderCartItems();
-                    }
-
-                    // ✅ Mở giỏ hàng
                     const offcanvasEl = document.getElementById('offcanvasRight');
                     if (offcanvasEl) {
                         const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
@@ -1103,4 +1120,5 @@
             });
         });
     </script>
+
 @endsection

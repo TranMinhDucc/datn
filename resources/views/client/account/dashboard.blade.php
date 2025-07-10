@@ -273,8 +273,8 @@
                                             <div class="user-contant">
                                                 <h6>Mint - is your budget ready for spring spending?<span>2:14PM</span></h6>
                                                 <p>A quick weekend trip, a staycation in your own town, or a weeklong vacay
-                                                    with the family—it's
-                                                    your choice if it's in the budget. No matter what you plan on doing
+                                                    with the family—it’s
+                                                    your choice if it’s in the budget. No matter what you plan on doing
                                                     during spring break, budget
                                                     ahead for it.</p>
                                             </div>
@@ -505,54 +505,294 @@
                                     </div>
                                     <div class="row gy-4">
                                         <div class="col-12">
-                                            <div class="order-box">
-                                                <div class="order-container">
-                                                    <div class="order-icon"><i class="iconsax" data-icon="box"></i>
-                                                        <div class="couplet"><i class="fa-solid fa-check"></i></div>
+                                            @foreach ($orders as $order)
+
+                                                <div class="order-box">
+                                                    <div
+                                                        class="order-container d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="order-icon me-3">
+                                                                <i class="iconsax"
+                                                                    data-icon="{{ $order->status === 'refunded' ? 'undo' : ($order->status === 'cancelled' ? 'box-add' : 'box') }}"></i>
+                                                                <div class="couplet">
+                                                                    <i
+                                                                        class="fa-solid fa-{{ $order->status === 'cancelled' ? 'xmark' : 'check' }}"></i>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="order-detail">
+                                                                <h5 class="mb-0">{{ ucfirst($order->status) }}</h5>
+                                                                <p class="mb-0 text-muted" style="font-size: 0.875rem;">on
+                                                                    {{ optional($order->ordered_at)->format('D, j M') }}
+                                                                </p>
+
+                                                                @if ($order->status === 'cancelled')
+                                                                    <h6><b>Refund initiated :</b>
+                                                                        ${{ $order->refund_amount }} on
+                                                                        {{ optional($order->refunded_at)->format('D, d M Y') }}.
+                                                                    </h6>
+                                                                @elseif($order->status === 'refunded')
+                                                                    <p>Your Refund Of <b>${{ $order->refund_amount }}</b>
+                                                                        has been processed successfully on
+                                                                        {{ optional($order->refunded_at)->format('j M') }}.
+                                                                    </p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div
+                                                            class="order-actions d-flex justify-content-end flex-wrap gap-2 mt-3">
+
+
+
+                                                            <!-- Nút mở modal -->
+
+
+
+                                                            <!-- Modal -->
+
+                                                            @if (in_array($order->status, ['pending', 'confirmed']))
+                                                                @if ($order->status === 'pending')
+                                                                    {{-- Hủy trực tiếp --}}
+                                                                    <button class="btn btn-outline-danger btn-sm"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#cancelModal-{{ $order->id }}">
+                                                                        Hủy đơn hàng
+                                                                    </button>
+                                                                @elseif ($order->status === 'confirmed')
+                                                                    @if (!$order->cancel_request)
+                                                                        {{-- Gửi yêu cầu hủy --}}
+                                                                        <button class="btn btn-outline-warning btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#cancelModal-{{ $order->id }}">
+                                                                            Gửi yêu cầu hủy
+                                                                        </button>
+                                                                    @else
+                                                                        {{-- Đã gửi yêu cầu hủy --}}
+                                                                        <button class="btn btn-outline-secondary btn-sm"
+                                                                            disabled>
+                                                                            Đang chờ duyệt
+                                                                        </button>
+                                                                    @endif
+                                                                @endif
+
+
+                                                                <!-- Modal -->
+                                                                <div class="modal fade"
+                                                                    id="cancelModal-{{ $order->id }}" tabindex="-1">
+                                                                    <div class="modal-dialog modal-dialog-centered"
+                                                                        style="max-width: 500px;">
+                                                                        <div class="modal-content rounded-4 shadow">
+                                                                            <div class="modal-header border-bottom-0 pb-0">
+                                                                                <h5 class="modal-title">
+                                                                                    <i
+                                                                                        class="bi bi-x-octagon-fill text-danger me-2"></i>
+                                                                                    Lý do hủy đơn hàng
+                                                                                </h5>
+                                                                                <button type="button" class="btn-close"
+                                                                                    data-bs-dismiss="modal"></button>
+                                                                            </div>
+                                                                            <form method="POST"
+                                                                                action="{{ route('client.orders.cancel', $order->id) }}">
+                                                                                @csrf
+                                                                                @method('PATCH')
+                                                                                <div class="modal-body pt-0">
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Tôi không còn nhu cầu"
+                                                                                            id="r1-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="r1-{{ $order->id }}">❌
+                                                                                            Tôi không còn nhu cầu</label>
+                                                                                    </div>
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Đặt nhầm sản phẩm"
+                                                                                            id="r2-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="r2-{{ $order->id }}">📦
+                                                                                            Đặt nhầm sản phẩm</label>
+                                                                                    </div>
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Đặt nhầm địa chỉ"
+                                                                                            id="r4-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="r4-{{ $order->id }}">📍
+                                                                                            Đặt nhầm địa chỉ</label>
+                                                                                    </div>
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Thay đổi phương thức thanh toán"
+                                                                                            id="r5-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="r5-{{ $order->id }}">💳
+                                                                                            Thay đổi phương thức thanh
+                                                                                            toán</label>
+                                                                                    </div>
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Tìm được giá tốt hơn"
+                                                                                            id="r6-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="r6-{{ $order->id }}">💰
+                                                                                            Tìm được giá tốt hơn</label>
+                                                                                    </div>
+                                                                                    <div class="form-check my-2">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="cancel_reason"
+                                                                                            value="Khác"
+                                                                                            id="reasonOther-{{ $order->id }}">
+                                                                                        <label class="form-check-label"
+                                                                                            for="reasonOther-{{ $order->id }}">✏️
+                                                                                            Khác</label>
+                                                                                    </div>
+
+                                                                                    <div id="customReasonWrapper-{{ $order->id }}"
+                                                                                        class="d-none">
+                                                                                        <textarea name="cancel_reason_other" id="customReason-{{ $order->id }}" class="form-control mt-2" rows="3"
+                                                                                            placeholder="Nhập lý do khác (nếu có)..."></textarea>
+                                                                                        <div id="errorText-{{ $order->id }}"
+                                                                                            class="text-danger mt-1 d-none">
+                                                                                            Vui lòng nhập lý do khi chọn
+                                                                                            "Khác".
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <div class="modal-footer border-top-0">
+                                                                                    <button type="button"
+                                                                                        class="btn btn-secondary"
+                                                                                        data-bs-dismiss="modal">Đóng</button>
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-danger">Xác nhận
+                                                                                        hủy</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+
+
+
+                                                            {{-- Theo dõi đơn hàng --}}
+                                                            @if ($order->status === 'shipping')
+                                                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                                                    🚚 Theo dõi đơn hàng
+                                                                </a>
+                                                            @endif
+
+
+                                                            {{-- Liên hệ người bán --}}
+
+
+                                                            {{-- Mua lại (nếu đã hoàn thành) --}}
+                                                            @if (in_array($order->status, ['completed', 'cancelled']))
+                                                                <form action="" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    <button type="submit"
+                                                                        class="btn-sm btn btn-danger fw-bold">Mua
+                                                                        Lại</button>
+                                                                </form>
+                                                            @endif
+
+                                                            @if (($order->status === 'cancelled' || $order->cancel_request) && $order->cancel_reason)
+                                                                <a href="{{ route('admin.orders.show', $order->id) }}"
+                                                                    class="btn btn-outline-danger btn-sm">
+                                                                    Chi tiết hủy đơn
+                                                                </a>
+                                                            @endif
+
+
+
+                                                        </div>
+
+
                                                     </div>
-                                                    <div class="order-detail">
-                                                        <h5>Delivered</h5>
-                                                        <p>on Fri, 1 Mar</p>
-                                                    </div>
-                                                </div>
-                                                <div class="product-order-detail">
-                                                    <div class="product-box"> <a href="product.html"> <img
-                                                                src="{{ asset('assets/client/images/notification/1.jpg') }}"
-                                                                alt=""></a>
-                                                        <div class="order-wrap">
-                                                            <h5>Rustic Minidress with Halterneck</h5>
-                                                            <p>Versatile sporty slogans short sleeve quirky laid back orange
-                                                                lux hoodies vests pins
-                                                                badges.</p>
-                                                            <ul>
+
+
+                                                    @foreach ($order->orderItems as $item)
+                                                        <div class="product-order-detail">
+                                                            <div class="product-box">
+                                                                <a href="#">
+                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                        alt="{{ $item->product_name }}">
+
+                                                                </a>
+
+                                                                <div class="order-wrap">
+                                                                    <h5>{{ $item->product_name }}</h5>
+                                                                    <p>{{ $item->product->description ?? 'No description' }}
+                                                                    </p>
+                                                                    <ul>
+                                                                        <li>
+                                                                            <p>Price :</p>
+                                                                            <span>${{ $item->price }}</span>
+                                                                        </li>
+                                                                        @php
+                                                                            $variantValues = json_decode(
+                                                                                $item->variant_values ?? '{}',
+                                                                                true,
+                                                                            );
+                                                                        @endphp
+
+                                                                        @if (!empty($variantValues))
+                                                                            @foreach ($variantValues as $key => $value)
+                                                                                <li>
+                                                                                    <p>{{ ucfirst($key) }} :</p>
+                                                                                    <span>{{ $value }}</span>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        @else
+                                                                            <li>
+                                                                                <p>Size :</p> <span>N/A</span>
+                                                                            </li>
+                                                                        @endif
+
+                                                                        <li>
+                                                                            <p>Order Id :</p>
+                                                                            <span>{{ $item->order->order_code ?? '---' }}</span>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+
+                                                    <div class="return-box">
+                                                        <div class="review-box">
+                                                            <ul class="rating">
                                                                 <li>
-                                                                    <p>Prize : </p><span>$20.00</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Size : </p><span>M</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Order Id :</p><span>ghat56han50</span>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                                                    <i class="fa-regular fa-star"></i>
                                                                 </li>
                                                             </ul>
+                                                            <span>Write Review</span>
                                                         </div>
+                                                        <h6>* Exchange/Return window closed on 20 Mar</h6>
                                                     </div>
                                                 </div>
-                                                <div class="return-box">
-                                                    <div class="review-box">
-                                                        <ul class="rating">
-                                                            <li> <i class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star-half-stroke"></i><i
-                                                                    class="fa-regular fa-star"></i></li>
-                                                        </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal"
-                                                            title="Quick View" tabindex="0">Write Review</span>
-                                                    </div>
-                                                    <h6> <span> </span>* Exchange/Return window closed on 20 mar</h6>
-                                                </div>
-                                            </div>
+
+
+                                            @endforeach
                                         </div>
+
                                         <div class="col-12">
                                             <div class="order-box">
                                                 <div class="order-container">
@@ -605,108 +845,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12">
-                                            <div class="order-box">
-                                                <div class="order-container">
-                                                    <div class="order-icon"><i class="iconsax" data-icon="box"></i>
-                                                        <div class="couplet"><i class="fa-solid fa-check"></i></div>
-                                                    </div>
-                                                    <div class="order-detail">
-                                                        <h5>Delivered</h5>
-                                                        <p>on Fri, 1 Mar</p>
-                                                    </div>
-                                                </div>
-                                                <div class="product-order-detail">
-                                                    <div class="product-box"> <a href="product.html"> <img
-                                                                src="{{ asset('assets/client/images/notification/2.jpg') }}"
-                                                                alt=""></a>
-                                                        <div class="order-wrap">
-                                                            <h5>Rustic Minidress with Halterneck</h5>
-                                                            <p>Versatile sporty slogans short sleeve quirky laid back orange
-                                                                lux hoodies vests pins
-                                                                badges.</p>
-                                                            <ul>
-                                                                <li>
-                                                                    <p>Prize : </p><span>$20.00</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Size : </p><span>M</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Order Id :</p><span>ghat56han50</span>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="return-box">
-                                                    <div class="review-box">
-                                                        <ul class="rating">
-                                                            <li> <i class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star"> </i><i
-                                                                    class="fa-solid fa-star-half-stroke"></i><i
-                                                                    class="fa-regular fa-star"></i></li>
-                                                        </ul><span data-bs-toggle="modal" data-bs-target="#Reviews-modal"
-                                                            title="Quick View" tabindex="0">Write Review</span>
-                                                    </div>
-                                                    <h6>
-                                                        * Exchange/Return window closed on 20 mar</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="order-box">
-                                                <div class="order-container">
-                                                    <div class="order-icon"><i class="iconsax" data-icon="box-add"></i>
-                                                        <div class="couplet"><i class="fa-solid fa-xmark"></i></div>
-                                                    </div>
-                                                    <div class="order-detail">
-                                                        <h5>Cancelled</h5>
-                                                        <p>on Fri, 1 Mar</p>
-                                                        <h6> <b>Refund lanitiated : </b>$774.00 on Thu, 24 Feb 2024. <a
-                                                                href="#"> View
-                                                                Refunddetails</a></h6>
-                                                    </div>
-                                                </div>
-                                                <div class="product-order-detail">
-                                                    <div class="product-box"> <a href="product.html"> <img
-                                                                src="{{ asset('assets/client/images/notification/6.jpg') }}"
-                                                                alt=""></a>
-                                                        <div class="order-wrap">
-                                                            <h5>Rustic Minidress with Halterneck</h5>
-                                                            <p>Versatile sporty slogans short sleeve quirky laid back orange
-                                                                lux hoodies vests pins
-                                                                badges.</p>
-                                                            <ul>
-                                                                <li>
-                                                                    <p>Prize : </p><span>$20.00</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Size : </p><span>M</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Order Id :</p><span>ghat56han50</span>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="return-box">
-                                                    <div class="review-box">
-                                                        <ul class="rating">
-                                                            <li> <i class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                    <h6>
-                                                        * Exchange/Return window closed on 20 mar</h6>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1286,16 +1425,26 @@
                         id="address-form">
                         @csrf
 
-                        <div class="col-12">
+                        <div class="col-6">
                             <label class="form-label">Loại địa chỉ</label>
                             <select class="form-select @error('title') is-invalid @enderror" name="title">
                                 <option value="">-- Chọn loại --</option>
-                                <option value="Nhà riêng" {{ old('title') == 'Nhà riêng' ? 'selected' : '' }}>Nhà riêng
+                                <option value="Nhà riêng" {{ old('title') == 'Nhà riêng' ? 'selected' : '' }}>Nhà
+                                    riêng
                                 </option>
-                                <option value="Công ty" {{ old('title') == 'Công ty' ? 'selected' : '' }}>Công ty</option>
+                                <option value="Công ty" {{ old('title') == 'Công ty' ? 'selected' : '' }}>Công ty
+                                </option>
                                 <option value="Khác" {{ old('title') == 'Khác' ? 'selected' : '' }}>Khác</option>
                             </select>
                             @error('title')
+                                <div class="text-danger small">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Tên người nhận</label>
+                            <input class="form-control @error('full_name') is-invalid @enderror" name="full_name"
+                                value="{{ old('full_name') }}">
+                            @error('full_name')
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
                         </div>
@@ -1441,34 +1590,6 @@
             });
         </script>
     @endif
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $('#province-select').on('change', function() {
-            const provinceId = $(this).val();
-            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
-            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
-            if (provinceId) {
-                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
-                    let html = '<option value="">-- Chọn huyện --</option>';
-                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
-                    $('#district-select').html(html);
-                });
-            }
-        });
-
-        $('#district-select').on('change', function() {
-            const districtId = $(this).val();
-            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
-            if (districtId) {
-                $.get(`/api/wards?district_id=${districtId}`, function(data) {
-                    let html = '<option value="">-- Chọn xã --</option>';
-                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
-                    $('#ward-select').html(html);
-                });
-            }
-        });
-    </script>
 @endsection
 
 @section('css')
@@ -1519,9 +1640,54 @@
         }
     </style>
 @endsection
-@section('js')
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const provinceSelect = document.getElementById('province-select');
+            const districtSelect = document.getElementById('district-select');
+            const wardSelect = document.getElementById('ward-select');
 
+            provinceSelect.addEventListener('change', function() {
+                const provinceId = this.value;
+                districtSelect.innerHTML = '<option value="">-- Đang tải huyện --</option>';
+                wardSelect.innerHTML = '<option value="">-- Chọn xã --</option>';
+
+                fetch(`/api/districts?province_id=${provinceId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        districtSelect.innerHTML = '<option value="">-- Chọn huyện --</option>';
+                        data.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.id;
+                            opt.textContent = d.name;
+                            districtSelect.appendChild(opt);
+                        });
+                    });
+            });
+
+            districtSelect.addEventListener('change', function() {
+                const districtId = this.value;
+                wardSelect.innerHTML = '<option value="">-- Đang tải xã --</option>';
+
+                fetch(`/api/wards?district_id=${districtId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        wardSelect.innerHTML = '<option value="">-- Chọn xã --</option>';
+                        data.forEach(w => {
+                            const opt = document.createElement('option');
+                            opt.value = w.id;
+                            opt.textContent = w.name;
+                            wardSelect.appendChild(opt);
+                        });
+                    });
+            });
+        });
+    </script>
+@endpush
+
+@section('js')
     <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('update-profile-form');
@@ -1683,6 +1849,62 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $('#province-select').on('change', function() {
+            const provinceId = $(this).val();
+            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
+            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
+            if (provinceId) {
+                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                    let html = '<option value="">-- Chọn huyện --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#district-select').html(html);
+                });
+            }
+        });
+
+        $('#district-select').on('change', function() {
+            const districtId = $(this).val();
+            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
+            if (districtId) {
+                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                    let html = '<option value="">-- Chọn xã --</option>';
+                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
+                    $('#ward-select').html(html);
+                });
+            }
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1757,14 +1979,46 @@
             });
         });
     </script>
+
+    {{-- ✅ Hiển thị thông báo session sau khi redirect --}}
     @if (session('success'))
         <script>
             Swal.fire({
                 icon: 'success',
-                title: '{{ session('success') }}',
+                title: '{{ session('
+                                                                                    success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id^="reasonOther-"]').forEach(otherRadio => {
+                const orderId = otherRadio.id.split('-')[1];
+                const wrapper = document.getElementById(`customReasonWrapper-${orderId}`);
+                const textarea = document.getElementById(`customReason-${orderId}`);
+                const errorText = document.getElementById(`errorText-${orderId}`);
+
+                const allRadios = document.querySelectorAll(`input[name="cancel_reason"]`);
+
+                allRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        if (otherRadio.checked) {
+                            wrapper.classList.remove('d-none');
+                            textarea.disabled = false;
+                        } else {
+                            wrapper.classList.add('d-none');
+                            textarea.disabled = true;
+                            textarea.classList.remove('is-invalid');
+                            errorText?.classList.add('d-none');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+
 @endsection

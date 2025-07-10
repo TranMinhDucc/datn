@@ -115,6 +115,12 @@
                                 class="menu-title">Thành viên</span></a><!--end:Menu link-->
                     </div>
                     <div class="menu-item">
+                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.orders.index') }}"
+                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-box fs-4"><span
+                                        class="path1"></span><span class="path2"></span></i></span><span
+                                class="menu-title">Đơn hàng</span></a><!--end:Menu link-->
+                    </div>
+                    <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.reviews.index') }}" target="_blank">
                             <span class="menu-icon">
@@ -124,6 +130,31 @@
                             <span class="menu-title">Đánh giá</span>
                         </a>
                         <!--end:Menu link-->
+                    </div>
+                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                        <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
+                                    class="fa-solid fa-location-arrow fs-4"></i><span class="path1"></span><span
+                                    class="path2"></span><span class="path3"></span></i></span><span
+                                class="menu-title">Quản lý địa chỉ</span><span
+                                class="menu-arrow"></span></span><!--end:Menu link--><!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link--><a class="menu-link"
+                                    href="{{ route('admin.shipping-addresses.index') }}"><span
+                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
+                                        class="menu-title">Địa chỉ
+                                        khách hàng</span></a><!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item--><!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link--><a class="menu-link"
+                                    href="{{ route('admin.shopSettings.edit') }}"><span class="menu-bullet"><span
+                                            class="bullet bullet-dot"></span></span><span class="menu-title">Địa chỉ
+                                        lấy hàng</span></a><!--end:Menu link-->
+                            </div>
+                        </div>
+                        <!--end:Menu sub-->
                     </div>
                     <div class="menu-item">
                         <!--begin:Menu link-->
@@ -136,11 +167,11 @@
                         </a>
                         <!--end:Menu link-->
                     </div>
-                   <div class="menu-item">
+                    <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.wishlists.index') }}" target="_blank">
                             <span class="menu-icon">
-                                 <i class="fa-solid fa-location-dot fs-4"><span class="path1"></span><span
+                                <i class="fa-solid fa-location-dot fs-4"><span class="path1"></span><span
                                         class="path2"></span></i>
                             </span>
                             <span class="menu-title">Quản lý Yêu Thích

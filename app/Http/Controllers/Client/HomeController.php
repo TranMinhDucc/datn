@@ -19,6 +19,7 @@ class HomeController extends Controller
             ->orderBy('thu_tu', 'asc')
             ->get();
         $products = Product::where('is_active', 1)
+            ->with(['label'])
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();
