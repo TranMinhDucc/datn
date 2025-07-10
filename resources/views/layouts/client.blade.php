@@ -241,7 +241,7 @@
                 </div>
             </div>
             <div class="price-box">
-                <h6>Total :</h6>
+                <h6>Tổng :</h6>
                 <p>$ 49.59 USD</p>
             </div>
             <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> View
@@ -398,183 +398,136 @@
 </body>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const cartList = document.querySelector('.offcanvas-cart');
+    // ================================
+    // 1. BIẾN TOÀN CỤC
+    // ================================
+    const cartList = document.querySelector('.offcanvas-cart');
+    let currentUser = localStorage.getItem('currentUser') || 'guest';
+    let cartKey = `cartItems_${currentUser}`;
+    let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-        let currentUser = localStorage.getItem('currentUser') || 'guest';
-        let cartKey = `cartItems_${currentUser}`;
-        let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+    // ================================
+    // 2. HÀM CHÍNH
+    // ================================
+    function renderCartItems() {
+        cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+        cartList.innerHTML = '';
+        cartItems.forEach(item => renderCartItem(item));
+        updateTotal();
+    }
 
-        renderCartItems();
+    function renderCartItem(item) {
+        const li = document.createElement('li');
+        const attributesHTML = Object.entries(item.attributes || {}).map(([key, value]) =>
+            `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`
+        ).join('<br>');
 
-        // Sự kiện Add to Cart
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = parseFloat(this.dataset.price);
-                const originalPrice = parseFloat(this.dataset.originalPrice);
-                const image = this.dataset.image;
-                const quantityInput = document.querySelector('.quantity input');
-                const quantity = parseInt(quantityInput?.value || 1);
-
-                // ✅ Lấy attributes được chọn
-                const selectedAttributes = {};
-                let valid = true;
-
-                document.querySelectorAll('.variant-group').forEach(group => {
-                    const attrName = group.dataset.attribute;
-                    const selected = group.querySelector('.variant-item.active');
-                    const errorDiv = group.querySelector('.variant-error');
-
-                    if (!selected) {
-                        errorDiv.textContent = `Vui lòng chọn ${attrName}`;
-                        errorDiv.style.display = 'block';
-                        valid = false;
-                    } else {
-                        selectedAttributes[attrName] = selected.dataset.value ||
-                            selected.textContent.trim();
-                        errorDiv.style.display = 'none'; // Ẩn lỗi nếu đã chọn
-                    }
-                });
-
-                if (!valid) return;
-
-
-                // ✅ Kiểm tra xem đã có sản phẩm cùng attributes chưa
-                const index = cartItems.findIndex(p =>
-                    p.id === id &&
-                    JSON.stringify(p.attributes || {}) === JSON.stringify(
-                        selectedAttributes)
-                );
-
-                if (index !== -1) {
-                    cartItems[index].quantity += quantity;
-                } else {
-                    cartItems.push({
-                        id,
-                        variant_id: selectedVariantId || null, // <-- thêm dòng này
-                        name,
-                        price,
-                        originalPrice,
-                        image,
-                        quantity,
-                        attributes: selectedAttributes
-                    });
-                }
-
-                saveAndRender();
-            });
-        });
-
-
-        function renderCartItems() {
-            cartItems = JSON.parse(localStorage.getItem(cartKey)) || []; // Cập nhật từ localStorage mới nhất
-            cartList.innerHTML = '';
-            cartItems.forEach(item => renderCartItem(item));
-            updateTotal();
-        }
-
-        function renderCartItem(item) {
-            const li = document.createElement('li');
-
-            const attributesHTML = Object.entries(item.attributes || {}).map(([key, value]) => {
-                return `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`;
-            }).join('<br>');
-
-            li.innerHTML = `
-        <a href="#"><img src="${item.image}" alt=""></a>
-        <div>
-            <h6 class="mb-0">${item.name}</h6>
-            <p>$${item.price.toLocaleString()}
-                <del>$${item.originalPrice.toLocaleString()}</del>
-                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
-            </p>
-            <p class="attributes">${attributesHTML}</p>
-
-            <div class="btn-containter">
-                <div class="btn-control">
-                    <button class="btn-control__remove">&minus;</button>
-                    <div class="btn-control__quantity">
-                        <div id="quantity-previous">${item.quantity - 1}</div>
-                        <div id="quantity-current">${item.quantity}</div>
-                        <div id="quantity-next">${item.quantity + 1}</div>
+        li.innerHTML = `
+            <a href="#"><img src="${item.image}" alt=""></a>
+            <div>
+                <h6 class="mb-0">${item.name}</h6>
+                <p>$${item.price.toLocaleString()}
+                    <del>$${item.originalPrice.toLocaleString()}</del>
+                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
+                </p>
+                <p class="attributes">${attributesHTML}</p>
+                <div class="btn-containter">
+                    <div class="btn-control">
+                        <button class="btn-control__remove">&minus;</button>
+                        <div class="btn-control__quantity">
+                            <div id="quantity-previous">${item.quantity - 1}</div>
+                            <div id="quantity-current">${item.quantity}</div>
+                            <div id="quantity-next">${item.quantity + 1}</div>
+                        </div>
+                        <button class="btn-control__add">+</button>
                     </div>
-                    <button class="btn-control__add">+</button>
                 </div>
             </div>
-        </div>
-        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-    `;
+            <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+        `;
 
-            li.querySelector('.btn-control__add').addEventListener('click', () => {
-                item.quantity += 1;
+        li.querySelector('.btn-control__add').addEventListener('click', () => {
+            item.quantity += 1;
+            saveAndRender();
+        });
+
+        li.querySelector('.btn-control__remove').addEventListener('click', () => {
+            if (item.quantity > 1) {
+                item.quantity -= 1;
                 saveAndRender();
-            });
-
-            li.querySelector('.btn-control__remove').addEventListener('click', () => {
-                if (item.quantity > 1) {
-                    item.quantity -= 1;
-                    saveAndRender();
-                }
-            });
-
-            li.querySelector('.delete-icon').addEventListener('click', () => {
-                cartItems = cartItems.filter(p =>
-                    !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item
-                        .attributes || {}))
-                );
-                saveAndRender();
-            });
-
-            cartList.appendChild(li);
-        }
-
-
-
-        function updateTotal() {
-            let total = 0;
-            cartItems.forEach(item => {
-                total += item.price * item.quantity;
-            });
-            const totalElement = document.querySelector('.price-box p');
-            if (totalElement) {
-                totalElement.textContent = `$ ${total.toFixed(2)} USD`;
-
             }
-        }
+        });
 
-        function saveAndRender() {
-            localStorage.setItem(cartKey, JSON.stringify(cartItems));
-            renderCartItems();
-        }
+        li.querySelector('.delete-icon').addEventListener('click', () => {
+            cartItems = cartItems.filter(p =>
+                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
+            );
+            saveAndRender();
+        });
+
+        cartList.appendChild(li);
+    }
+
+    function updateTotal() {
+        let total = 0;
+        cartItems.forEach(item => {
+            total += item.price * item.quantity;
+        });
+        const totalElement = document.querySelector('.price-box p');
+if (totalElement) {
+    totalElement.textContent = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(total);
+}
+    }
+
+    function saveAndRender() {
+        localStorage.setItem(cartKey, JSON.stringify(cartItems));
+        renderCartItems();
+    }
+
+    // ================================
+    // 3. DOMContentLoaded: GÁN SỰ KIỆN
+    // ================================
+    document.addEventListener('DOMContentLoaded', function () {
+        renderCartItems();
+
+        // Bấm nút thêm vào giỏ hàng
+
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        sizeItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                this.parentNode.classList.add('selected');
             });
         });
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        colorItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
         });
     });
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type ===
-                "back_forward")) {
+
+    // Reload lại nếu quay lại bằng Back/Forward
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
             window.location.reload();
         }
     });
+
+    // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
+    document.addEventListener('cartUpdated', function () {
+        renderCartItems();
+    });
 </script>
+
 
 <script>
     document.addEventListener('cartUpdated', function() {

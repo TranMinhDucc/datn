@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -48,5 +49,18 @@ class OrderController extends Controller
         }
 
         return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
+    }
+
+    public function show(Order $order)
+    {
+        // Đảm bảo người dùng chỉ xem đơn của chính họ
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Bạn không có quyền truy cập đơn hàng này');
+        }
+
+        // Load thêm các liên kết nếu cần
+        $order->load(['orderItems.product', 'address', 'address.province', 'address.district', 'address.ward']);
+
+        return view('client.account.tracking', compact('order'));
     }
 }

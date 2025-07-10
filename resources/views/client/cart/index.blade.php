@@ -511,21 +511,21 @@
     <div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-0" > $ {
+    return `<p class = "mb-0" >${
                             key.charAt(0).toUpperCase() + key.slice(1)
-                        }: < span > $ {
+                        }: <span>${
                             value
-                        } < /span></p >
+                        } </span></p>
                         `;
     }).join('')}</div></div></td>
-    <td class="align-middle">$${item.price.toFixed(2)}</td>
+    <td>${item.price.toLocaleString('vi-VN')}<span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span></td>
     <td class="align-middle">
     <div class="quantity d-flex align-items-center gap-2">
     <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-minus"></i></button>
     <input type="number" value="${item.quantity}" min="1" max="99" data-index="${index}" class="form-control form-control-sm text-center quantity-input" style="width: 60px;">
     <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-plus"></i></button>
     </div></td>
-    <td class="align-middle">$${itemTotal.toFixed(2)}</td>
+        <td class="align-middle">${itemTotal.toLocaleString('vi-VN')}<span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span></td>
     <td class="align-middle"><a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}"><i class="fa fa-trash"></i></a></td>`;
                     cartBody.appendChild(tr);
                 });
@@ -733,11 +733,11 @@
     ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
     <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-1" > $ {
+    return `<p class = "mb-1" > ${
                         key
-                    }: < span > $ {
+                    }: <span >${
                         value
-                    } < /span></p > `;
+                    } </span></p>`;
     }).join('')}
     <div class="btn-containter">
     <div class="btn-control">
