@@ -727,7 +727,7 @@
                                                     @foreach ($order->orderItems as $item)
                                                         <div class="product-order-detail">
                                                             <div class="product-box">
-                                                                <a href="#">
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}">
                                                                     <img src="{{ asset('storage/' . $item->product->image) }}"
                                                                         alt="{{ $item->product_name }}">
 

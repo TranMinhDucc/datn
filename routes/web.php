@@ -128,10 +128,12 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
+    Route::get('/order-success', [CheckoutController::class, 'success'])->name('client.order.success');
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
-        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');;
+        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+        Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
     });
 
     // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
@@ -178,13 +180,16 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    
 
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
     Route::post('/avatar', [AccountController::class, 'updateAvatar'])->name('avatar.update');
 });
-
+Route::middleware(['auth'])->prefix('checkout/address')->name('client.checkout.address.')->group(function () {
+    Route::post('/store', [ShippingAddressController::class, 'store'])->name('store');
+});
 Route::middleware('auth')->group(function () {
     Route::post('/apply-coupon', [ClientCouponController::class, 'apply'])->name('client.coupon.apply');
     Route::post('/remove-coupon', [ClientCouponController::class, 'remove'])->name('client.coupon.remove');
