@@ -30,7 +30,7 @@ class GhnService
             'Token' => $token,
             'Content-Type' => 'application/json',
             'ShopId' => $shopId,
-        ])->post('https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', $data);
+        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', $data);
 
 
         if ($response->successful()) {

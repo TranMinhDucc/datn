@@ -145,13 +145,15 @@
                                                     value="1" />
                                             </div>
                                         </th>
-                                        <th class="min-w-100px">Order ID</th>
-                                        <th class="min-w-175px">Customer</th>
-                                        <th class="text-end min-w-70px">Status</th>
-                                        <th class="text-end min-w-100px">Total</th>
-                                        <th class="text-end min-w-100px">Date Added</th>
-                                        <th class="text-end min-w-100px">Date Modified</th>
-                                        <th class="text-end min-w-100px">Actions</th>
+                                        <th class="text-start">Mã đơn </th>
+                                        <th class="text-start">Khách hàng</th>
+                                        <th class="text-center min-w-100px">Tổng tiền</th>
+                                        <th class="text-center min-w-100px">Ngày tạo</th>
+                                        <th class="text-center ">Trạng thái</th>
+                                        {{-- <th class="text-center min-w-100px">Ngày cập nhật </th> --}}
+                                        <th class="text-center ">Vận chuyển</th>
+                                        <th class="text-center ">Mã vận đơn</th>
+                                        <th class="text-center min-w-100px">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="fw-semibold text-gray-600">
@@ -170,37 +172,167 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                        <div class="symbol-label bg-light">
-                                                            <img src="{{ asset('path/to/default-avatar.jpg') }}"
-                                                                alt="{{ $order->user->name ?? 'Unknown' }}"
-                                                                class="w-100" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="ms-5">
-                                                        <a href="#"
-                                                            class="text-gray-800 text-hover-primary fs-5 fw-bold">
-                                                            {{ $order->user->fullname ?? 'Khách lẻ' }}
-                                                        </a>
-                                                    </div>
+                                                <div class="text-center d-flex align-items-center">
+                                                    <a href="#" class="text-gray-800 text-hover-primary fs-5 fw-bold">
+                                                        {{ $order->user->fullname ?? 'Khách lẻ' }}
+                                                    </a>
                                                 </div>
                                             </td>
-                                            <td class="text-end">
+
+                                            <td class="text-center">
+                                                <span class="fw-bold">${{ number_format($order->total_amount) }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="fw-bold">{{ $order->created_at->format('d/m/Y') }}</span>
+                                            </td>
+                                            <td class="text-center">
                                                 <div
                                                     class="badge badge-light-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'primary') }}">
                                                     {{ ucfirst($order->status) }}
                                                 </div>
                                             </td>
-                                            <td class="text-end">
-                                                <span class="fw-bold">${{ number_format($order->total_amount) }}</span>
-                                            </td>
-                                            <td class="text-end">
-                                                <span class="fw-bold">{{ $order->created_at->format('d/m/Y') }}</span>
-                                            </td>
-                                            <td class="text-end">
+                                            {{-- <td class="text-center">
                                                 <span class="fw-bold">{{ $order->updated_at->format('d/m/Y') }}</span>
+                                            </td> --}}
+                                            <td class="text-center">
+                                                @php
+                                                    $shippingStatuses = [
+                                                        'pending' => [
+                                                            'label' => 'Chưa tạo đơn',
+                                                            'color' => 'secondary',
+                                                            'icon' => 'ki-clock',
+                                                        ],
+                                                        'created' => [
+                                                            'label' => 'Đã tạo vận đơn',
+                                                            'color' => 'primary',
+                                                            'icon' => 'ki-document',
+                                                        ],
+                                                        'storing' => [
+                                                            'label' => 'Chờ giao hàng',
+                                                            'color' => 'info',
+                                                            'icon' => 'ki-box',
+                                                        ],
+                                                        'picking' => [
+                                                            'label' => 'Đang lấy hàng',
+                                                            'color' => 'info',
+                                                            'icon' => 'ki-truck',
+                                                        ],
+                                                        'delivering' => [
+                                                            'label' => 'Đơn hàng đang được giao đến tay người nhận',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-send',
+                                                        ],
+                                                        'delivered' => [
+                                                            'label' => 'Giao thành công cho người nhận',
+                                                            'color' => 'success',
+                                                            'icon' => 'ki-check-circle',
+                                                        ],
+                                                        'failed' => [
+                                                            'label' => 'Thất bại',
+                                                            'color' => 'danger',
+                                                            'icon' => 'ki-cross-circle',
+                                                        ],
+                                                        'returning' => [
+                                                            'label' => 'Đơn hàng đang trong tiến trình đang hoàn hàng',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'return_fail' => [
+                                                            'label' =>
+                                                                'Trả hàng thất bại (shop không nhận, không liên hệ được,...)',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'return' => [
+                                                            'label' => 'Đơn hàng bắt đầu quá trình trả lại',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'return_sorting' => [
+                                                            'label' => 'Hàng hoàn đang trong kho phân loại',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'return_transporting' => [
+                                                            'label' => 'Hàng đang được vận chuyển về shop',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'returned' => [
+                                                            'label' => 'Đơn hàng đã hoàn trả về shop thành công',
+                                                            'color' => 'danger',
+                                                            'icon' => 'ki-undo',
+                                                        ],
+                                                        'cancel' => [
+                                                            'label' => 'Đã hủy đơn',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'ready_to_pick' => [
+                                                            'label' => 'Đơn đã sẵn sàng, Chờ GHN đến lấy',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'money_collect_picking' => [
+                                                            'label' => 'Đang thu tiền khi lấy hàng',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'delivery_fail' => [
+                                                            'label' => 'Giao hàng thất bại',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'waiting_to_return' => [
+                                                            'label' => 'Đang chờ xử lý hoàn trả đơn hàng về shop',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'picked' => [
+                                                            'label' => 'Đơn hàng đã được bên vận chuyển lấy thành công',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'transporting' => [
+                                                            'label' => 'Đơn hàng đang trên đường vận chuyển',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'sorting' => [
+                                                            'label' =>
+                                                                'Hàng đang trong quá trình phân loại tại kho trung chuyển',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                        'money_collect_delivering' => [
+                                                            'label' =>
+                                                                'Đơn hàng đang được giao và GHN sẽ thu tiền từ người nhận (COD)',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-ban',
+                                                        ],
+                                                    ];
+
+                                                    $status = $order->shippingOrder->status ?? 'pending';
+
+                                                    $shipping = $shippingStatuses[$status] ?? [
+                                                        'label' => ucfirst($status),
+                                                        'color' => 'light',
+                                                        'icon' => 'ki-question-circle',
+                                                    ];
+                                                @endphp
+
+                                                <span class="badge badge-light-{{ $shipping['color'] }}">
+                                                    <i class="ki-duotone {{ $shipping['icon'] }} fs-6 me-1"></i>
+                                                    {{ $shipping['label'] }}
+                                                </span>
                                             </td>
+
+
+                                            <td class="text-center">
+                                                {{ $order->shippingOrder->shipping_code ?? '—' }}
+                                            </td>
+
+
                                             <td class="text-end">
                                                 <a href="#"
                                                     class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary"

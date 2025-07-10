@@ -10,7 +10,7 @@ class ProvinceSeeder extends Seeder
 {
     public function run()
     {
-        $response = Http::withToken(env('GHN_TOKEN'))->get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province');
+        $response = Http::withToken(env('GHN_TOKEN'))->get('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province');
         $provinces = $response->json('data');
 
         foreach ($provinces as $item) {

@@ -66,9 +66,11 @@ use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
+use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Models\Bank;
 use App\Models\Setting;
 use App\Services\BankTransactionService;
+use Illuminate\Support\Facades\Artisan;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -388,3 +390,13 @@ Route::post('/api/get-variant-info', [ClientProductController::class, 'getVarian
 Route::get('/api/districts', [LocationController::class, 'districts']);
 // API lấy danh sách xã/phường theo quận/huyện
 Route::get('/api/wards', [LocationController::class, 'wards']);
+
+Route::post('/webhook/ghn', [GhnWebhookController::class, 'handle']);
+Route::get('/cron/sync-ghn-orders', function () {
+    Artisan::call('ghn:sync-order-status');
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'GHN sync triggered via HTTP.',
+    ]);
+});

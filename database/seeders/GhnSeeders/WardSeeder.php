@@ -14,7 +14,7 @@ class WardSeeder extends Seeder
         $districts = District::all();
 
         foreach ($districts as $district) {
-            $response = Http::withToken(env('GHN_TOKEN'))->post('https://online-gateway.ghn.vn/shiip/public-api/master-data/ward', [
+            $response = Http::withToken(env('GHN_TOKEN'))->post('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward', [
                 'district_id' => $district->ghn_id
             ]);
             $wards = $response->json('data');

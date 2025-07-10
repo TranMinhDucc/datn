@@ -14,7 +14,7 @@ class DistrictSeeder extends Seeder
         $provinces = Province::all();
 
         foreach ($provinces as $province) {
-            $response = Http::withToken(env('GHN_TOKEN'))->post('https://online-gateway.ghn.vn/shiip/public-api/master-data/district', [
+            $response = Http::withToken(env('GHN_TOKEN'))->post('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district', [
                 'province_id' => $province->ghn_id
             ]);
             $districts = $response->json('data');
