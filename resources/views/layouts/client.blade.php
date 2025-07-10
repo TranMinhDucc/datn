@@ -426,10 +426,16 @@
             <a href="#"><img src="${item.image}" alt=""></a>
             <div>
                 <h6 class="mb-0">${item.name}</h6>
-                <p>$${item.price.toLocaleString()}
-                    <del>$${item.originalPrice.toLocaleString()}</del>
-                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
-                </p>
+                <p>
+    ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+    <del>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.originalPrice)}</del>
+    <span class="btn-cart">
+        <span class="btn-cart__total">
+            ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}
+        </span>
+    </span>
+</p>
+
                 <p class="attributes">${attributesHTML}</p>
                 <div class="btn-containter">
                     <div class="btn-control">
