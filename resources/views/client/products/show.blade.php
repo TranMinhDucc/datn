@@ -143,7 +143,9 @@
 
                             <div id="variant-info" class="mt-3" style="display: none;">
                                 {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
-                                <p>Số lượng còn lại: <span id="variant-quantity"></span></p>
+                                <p id="variant-stock-status">
+    <span id="variant-quantity"></span>
+</p>
                             </div>
 
 
@@ -868,25 +870,38 @@
 
     // Cập nhật thông tin biến thể
     function updateVariantInfo() {
-        const selected = getSelectedAttributes();
-        if (Object.keys(selected).length !== variantGroups.length) {
-            document.getElementById('variant-info').style.display = 'none';
-            document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
-            return;
-        }
+    const selected = getSelectedAttributes();
+    const stockStatusEl = document.getElementById('variant-stock-status');
+    const qtyEl = document.getElementById('variant-quantity');
+    const addBtn = document.getElementById('add-to-cart-btn');
 
-        const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
-        if (matched) {
-            document.getElementById('variant-quantity').textContent = matched.quantity;
-            document.getElementById('variant-info').style.display = 'block';
-
-            const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-            document.getElementById('main-price').textContent = formattedPrice;
-        } else {
-            document.getElementById('variant-info').style.display = 'none';
-            document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
-        }
+    if (Object.keys(selected).length !== variantGroups.length) {
+        document.getElementById('variant-info').style.display = 'none';
+        document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+        return;
     }
+
+    const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
+    if (matched) {
+        const quantity = matched.quantity;
+
+        document.getElementById('variant-info').style.display = 'block';
+
+        const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+        document.getElementById('main-price').textContent = formattedPrice;
+
+        // ✅ Hiển thị “Hết hàng” nếu số lượng <= 0
+        if (quantity <= 0) {
+            stockStatusEl.innerHTML = `<span class="text-danger fw-bold">Hết hàng</span>`;
+        } else {
+            stockStatusEl.innerHTML = `Số lượng còn lại: <span id="variant-quantity">${quantity}</span>`;
+        }
+    } else {
+        document.getElementById('variant-info').style.display = 'none';
+        document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+    }
+}
+
 
     // Bắt sự kiện click vào mỗi lựa chọn
     document.querySelectorAll('.variant-item').forEach(item => {
@@ -1091,18 +1106,30 @@
         let originalPrice = parseFloat(this.dataset.originalPrice);
 
         if (variantId) {
-            const matchedVariant = window.variantData.find(v => v.id === variantId);
-            if (matchedVariant) {
-                price = matchedVariant.price;
-                originalPrice = matchedVariant.original_price || originalPrice;
-            }
+    const matchedVariant = window.variantData.find(v => v.id === variantId);
+
+    if (matchedVariant) {
+        price = matchedVariant.price;
+        originalPrice = matchedVariant.original_price || originalPrice;
+
+        // ✅ CHẶN THÊM VÀO GIỎ KHI HẾT HÀNG
+        if (matchedVariant.quantity <= 0) {
+            showToast('Sản phẩm đã hết hàng', 'warning');
+            return;
         }
+    }if (matchedVariant.quantity < quantity) {
+    showToast(`Chỉ còn lại ${matchedVariant.quantity} sản phẩm trong kho.`, 'warning');
+    return;
+}
+}
+
 
         const index = cartItems.findIndex(item =>
             item.id === id &&
             ((variantId && item.variant_id === variantId) ||
                 (!variantId && JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)))
         );
+        
 
         if (index !== -1) {
             cartItems[index].quantity += quantity;

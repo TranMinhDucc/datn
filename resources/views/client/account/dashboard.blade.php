@@ -690,7 +690,7 @@
 
                                                             {{-- Theo dõi đơn hàng --}}
                                                             @if ($order->status === 'shipping')
-                                                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
                                                                     🚚 Theo dõi đơn hàng
                                                                 </a>
                                                             @endif
