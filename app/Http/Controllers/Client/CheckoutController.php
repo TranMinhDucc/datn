@@ -341,7 +341,8 @@ public function placeOrder(Request $request)
             }
 
             // ✅ KIỂM TRA VÀ TRỪ TỒN KHO
-            $stock = $variant?->stock_quantity ?? $product->stock_quantity;
+            $stock = $variant ? $variant->quantity : $product->stock_quantity;
+
             if ($stock < $item['quantity']) {
                 DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Sản phẩm "' . $product->name . '" không đủ tồn kho.'], 400);
