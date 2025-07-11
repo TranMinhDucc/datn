@@ -1,10 +1,10 @@
-@extends('layouts.admin') {{-- Layout Metronic --}}
+@extends('layouts.admin')
 @section('title', 'Banner')
+
 @section('content')
     <div class="d-flex flex-column flex-column-fluid">
-
-        <div id="kt_app_content" class="app-content  flex-column-fluid ">
-            <div id="kt_app_content_container" class="app-container  container-xxl ">
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-xxl">
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
@@ -23,14 +23,14 @@
                     <div class="card-body pt-0">
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5">
+                                
                                 <thead>
                                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                        <th>Banner</th>
-                                        <th>Nội dung</th>
-                                        <th>Thứ tự</th>
-                                        <th>Ngôn ngữ</th>
-                                        <th>Status</th>
-
+                                        <th>Ảnh chính</th>
+                                        <th>Tiêu đề</th>
+                                        <th>Phụ 1</th>
+                                        <th>Phụ 2</th>
+                                        <th>Trạng thái</th>
                                         <th class="text-end">Thao tác</th>
                                     </tr>
                                 </thead>
@@ -38,29 +38,48 @@
                                     @foreach ($banners as $banner)
                                         <tr>
                                             <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="symbol symbol-50px me-5">
-                                                        <span class="symbol-label"
-                                                            style="background-image:url('{{ $banner->hinh_anh }}'); background-size: cover;"></span>
-                                                    </div>
-                                                    <div>
-                                                        <div class="fs-5 fw-bold text-gray-900">{{ $banner->ten }}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>{!! Str::limit(strip_tags($banner->mo_ta), 80) !!}</td>
-                                            <td>{{ $banner->thu_tu }}</td>
-                                            <td>
-                                                <div class="badge badge-light">{{ strtoupper($banner->ngon_ngu) }}</div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox"
-                                                        data-id="{{ $banner->id }}" @checked($banner->status) />
+                                                <div class="symbol symbol-75px">
+                                                    <img src="{{ asset('storage/' . $banner->main_image) }}"
+                                                        alt="main image" style="object-fit: cover;" />
                                                 </div>
                                             </td>
 
+                                            <td>
+                                                <strong>{{ $banner->subtitle }}</strong><br>
+                                                {{ $banner->title }}<br>
+<small>{{ Str::limit(strip_tags($banner->description), 60) }}</small>
+                                            </td>
 
+                                            <td>
+                                                <div class="mb-2">
+                                                    <img src="{{ asset('storage/' . $banner->sub_image_1) }}" width="60" />
+                                                </div>
+                                                {{ $banner->sub_image_1_name }}<br>
+                                                <strong>{{ number_format($banner->sub_image_1_price, 0, ',', '.') }}₫</strong>
+                                            </td>
+
+                                            <td>
+                                                <div class="mb-2">
+                                                    <img src="{{ asset('storage/' . $banner->sub_image_2) }}" width="60" />
+                                                </div>
+                                                {{ $banner->sub_image_2_name }}<br>
+                                                <strong>{{ number_format($banner->sub_image_2_price, 0, ',', '.') }}₫</strong>
+                                            </td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <div class="badge badge-light-success fw-bold">
+
+                                                      
+    @if ($banner->status)
+        <span class="badge bg-success">Hiển thị</span>
+    @else
+        <span class="badge bg-secondary">Ẩn</span>
+    @endif
+
+                                                    </div>
+
+                                                </div>
+                                            </td>
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-light btn-active-light-primary"
@@ -79,9 +98,18 @@
                                                                 onsubmit="return confirm('Delete this banner?')">
                                                                 @csrf
                                                                 @method('DELETE')
+                                                                                                                        <div class="menu-item px-3">
+
                                                                 <button type="submit"
                                                                     class="menu-link px-3 btn btn-link p-0 text-start">Delete</button>
                                                             </form>
+                                                        </div>  
+                                                        </div>
+                                                        <div class="menu-item px-3">
+                                                            <div class="menu-item px-3">
+                                                                <a href="{{ route('admin.banners.show', $banner->id) }}"
+                                                                    class="menu-link px-3">Show</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -90,43 +118,16 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            {{ $banners->links('pagination::bootstrap-5') }}
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
+        
     </div>
+    
+
 @endsection
-
-@push('scripts')
-    <script>
-        document.querySelectorAll('.toggle-status').forEach(switchEl => {
-            switchEl.addEventListener('change', function() {
-                const id = this.getAttribute('data-id');
-                const status = this.checked ? 1 : 0;
-
-                fetch(`/admin/banners/${id}/toggle-status`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            status: status
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.success) {
-                            alert('Đã có lỗi xảy ra!');
-                            this.checked = !this.checked;
-                        }
-                    })
-                    .catch(() => {
-                        alert('Không thể kết nối đến server!');
-                        this.checked = !this.checked;
-                    });
-            });
-        });
-    </script>
-@endpush

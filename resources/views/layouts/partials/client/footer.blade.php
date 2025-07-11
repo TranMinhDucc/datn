@@ -1,5 +1,5 @@
-  <footer class="footer-layout-img">
-      <section class="section-b-space footer-1">
+<footer class="footer-layout-img">
+         <section class="section-b-space footer-1">
           <div class="custom-container container">
               <div class="row">
                   <div class="col-xl-3 col-lg-4 col-md-6">
@@ -12,16 +12,14 @@
                           </div>
 
                           <ul>
-                              <li> <i class="iconsax" data-icon="location"></i>
-
-                                  <h6>{{ $settings['address'] ?? ''}}</h6>
-
-                              </li>
+                              {{-- <li> <i class="iconsax" data-icon="location"></i>
+                                  <h6>{{ $settings['address']}}</h6>
+                              </li> --}}
                               <li> <i class="iconsax" data-icon="phone-calling"></i>
-                                  <h6>{{ $settings['hotline'] ?? ''}}</h6>
+                                  <h6>{{ $settings['hotline']}}</h6>
                               </li>
                               <li> <i class="iconsax" data-icon="mail"></i>
-                                  <h6>{{ $settings['email'] ?? ''}}</h6>
+                                  <h6>{{ $settings['email']}}</h6>
                               </li>
                           </ul>
                       </div>
@@ -93,27 +91,27 @@
               </div>
           </div>
       </section>
-      <div class="sub-footer">
-          <div class="custom-container container">
-              <div class="row">
-                  <div class="col-xl-6 col-md-6 col-sm-12">
-                      <div class="footer-end">
-                          <h6>2024 Copyright By Themeforest Powered By Pixelstrap </h6>
-                      </div>
-                  </div>
-                  <div class="col-xl-6 col-md-6 col-sm-12">
-                      <div class="payment-card-bottom">
-                          <ul>
-                              <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt="">
-                              </li>
-                              <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt="">
-                              </li>
-                              <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>
-                              <li><img src="{{ asset('assets/client/images/footer/giro.png') }}" alt=""></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </footer>
+
+    {{-- Sub Footer --}}
+    <div class="sub-footer">
+        <div class="custom-container container">
+            <div class="row">
+                <div class="col-xl-6 col-md-6 col-sm-12">
+                    <div class="footer-end">
+                        <h6>© 2024 Bản quyền thuộc về bạn. Thiết kế bởi Pixelstrap.</h6>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6 col-sm-12">
+                    <div class="payment-card-bottom">
+                        <ul>
+                            <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt=""></li>
+                            <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt=""></li>
+                            <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>
+                            <li><img src="{{ asset('assets/client/images/footer/giro.png') }}" alt=""></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

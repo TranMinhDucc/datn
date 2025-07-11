@@ -96,6 +96,13 @@
                          <!--end:Menu content-->
                      </div>
                      <!--end:Menu item--><!--begin:Menu item-->
+
+                        <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.banners.index') }}"
+                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
+                                         class="path1"></span><span class="path2"></span></i></span><span
+                                 class="menu-title">Banners</span></a><!--end:Menu link-->
+                     </div>
                      <div class="menu-item">
                          <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.users.index') }}"
                              target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
@@ -237,10 +244,15 @@
                              <span class="menu-heading fw-bold text-uppercase fs-7">Cài đặt hệ thống
                              </span>
                          </div>
+                          <div class="menu-item">
+                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.menus.index') }}"><span
+                                 class="menu-icon"><i class="fa-solid fa-gear fs-4"><span class="path1"></span><span
+                                         class="path2"></span></i></span><span class="menu-title">Menu</span></a><!--end:Menu link-->
+                     </div>
                          <!--end:Menu content-->
                      </div>
                      <!--end:Menu item--><!--begin:Menu item-->
-
+ 
                      <div class="menu-item">
                          <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.settings.index') }}"><span
                                  class="menu-icon"><i class="fa-solid fa-gear fs-4"><span class="path1"></span><span
