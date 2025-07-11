@@ -78,14 +78,23 @@ class CheckoutController extends Controller
     // CheckoutController.php
     public function calculateShippingFee(Request $request)
     {
+        Log::info('Bắt đầu tính phí vận chuyển', ['request' => $request->all()]);
+
         $addressId = $request->get('address_id');
         $cartItems = $request->get('cartItems', []);
 
+        Log::debug('Danh sách sản phẩm trong giỏ:', $cartItems);
+
+        // Kiểm tra địa chỉ
         $address = auth()->user()->shippingAddresses()->find($addressId);
         if (!$address) {
+            Log::error('Không tìm thấy địa chỉ', ['address_id' => $addressId]);
             return response()->json(['success' => false, 'message' => 'Địa chỉ không tồn tại.']);
         }
 
+        Log::debug('Thông tin địa chỉ:', $address->toArray());
+
+        // Lấy mã GHN
         $districtCode = PartnerLocationCode::where([
             ['location_id', $address->district_id],
             ['type', 'district'],
@@ -99,57 +108,117 @@ class CheckoutController extends Controller
         ])->value('partner_id');
 
         if (!$districtCode || !$wardCode) {
+            Log::error('Không lấy được mã GHN', [
+                'district_id' => $address->district_id,
+                'ward_id' => $address->ward_id
+            ]);
             return response()->json(['success' => false, 'message' => 'Không lấy được mã đối tác.']);
         }
 
-        // Tính toán kích thước và trọng lượng đơn hàng
+        Log::debug('Mã GHN:', ['district' => $districtCode, 'ward' => $wardCode]);
+
+        // Tính toán kích thước và trọng lượng
         $totalWeight = 0;
         $maxLength = 0;
         $maxWidth = 0;
         $totalHeight = 0;
 
-        foreach ($cartItems as $item) {
-            // Lấy thông tin sản phẩm từ database
+        foreach ($cartItems as $index => $item) {
+            Log::debug("Xử lý sản phẩm #$index", $item);
+
             $product = Product::find($item['id']);
-            if (!$product) continue;
-
-            $variant = isset($item['variant_id']) ? ProductVariant::find($item['variant_id']) : null;
-
-            $weight = $variant ? $variant->weight : $product->weight;
-            $length = $variant ? $variant->length : $product->length;
-            $width = $variant ? $variant->width : $product->width;
-            $height = $variant ? $variant->height : $product->height;
+            if (!$product) {
+                Log::warning('Sản phẩm không tồn tại', ['product_id' => $item['id']]);
+                continue;
+            }
 
             $quantity = $item['quantity'] ?? 1;
+            Log::debug("Số lượng: $quantity");
 
+            // Xử lý biến thể
+            if (!empty($item['variant_id'])) {
+                Log::debug('Sản phẩm có biến thể', ['variant_id' => $item['variant_id']]);
+                $variant = ProductVariant::find($item['variant_id']);
+
+                if (!$variant) {
+                    Log::warning('Không tìm thấy biến thể', ['variant_id' => $item['variant_id']]);
+                }
+
+                $weight = $variant->weight ?? $product->weight ?? 200;
+                $length = $variant->length ?? $product->length ?? 10;
+                $width = $variant->width ?? $product->width ?? 10;
+                $height = $variant->height ?? $product->height ?? 5;
+            } else {
+                Log::debug('Sản phẩm không có biến thể');
+                $weight = $product->weight ?? 200;
+                $length = $product->length ?? 10;
+                $width = $product->width ?? 10;
+                $height = $product->height ?? 5;
+            }
+
+            Log::debug("Thông số sản phẩm #$index", [
+                'weight' => $weight,
+                'length' => $length,
+                'width' => $width,
+                'height' => $height
+            ]);
+
+            // Tính toán tổng
             $totalWeight += $weight * $quantity;
             $maxLength = max($maxLength, $length);
             $maxWidth = max($maxWidth, $width);
             $totalHeight += $height * $quantity;
         }
 
-        // Gọi API GHN để tính phí vận chuyển
+        Log::debug('Tổng thông số đơn hàng', [
+            'totalWeight' => $totalWeight,
+            'maxLength' => $maxLength,
+            'maxWidth' => $maxWidth,
+            'totalHeight' => $totalHeight
+        ]);
+
+        // Đảm bảo giá trị tối thiểu
         $payload = [
             'service_type_id' => 2,
             'from_district_id' => config('services.ghn.from_district_id'),
             'to_district_id' => (int) $districtCode,
             'to_ward_code' => (string) $wardCode,
-            'weight' => $totalWeight ?: 1000, // fallback nếu không có weight
-            'length' => $maxLength ?: 10,
-            'width' => $maxWidth ?: 15,
-            'height' => $totalHeight ?: 10
+            'weight' => max($totalWeight, 200),
+            'length' => max($maxLength, 10),
+            'width' => max($maxWidth, 10),
+            'height' => max($totalHeight, 5)
         ];
 
-        $shippingFee = $this->ghnService->calculateShippingFee($payload);
+        Log::debug('Payload gửi đến GHN:', $payload);
 
-        return response()->json([
-            'success' => true,
-            'data' => $shippingFee['data'] ?? [],
-            'total' => $shippingFee['data']['total'] ?? 0,
-        ]);
+        try {
+            $shippingFee = $this->ghnService->calculateShippingFee($payload);
+            Log::debug('Kết quả từ GHN:', $shippingFee);
+
+            return response()->json([
+                'success' => true,
+                'data' => $shippingFee['data'] ?? [],
+                'total' => $shippingFee['data']['total'] ?? 0,
+                'debug' => [ // Thêm thông tin debug
+                    'payload' => $payload,
+                    'cart_items' => $cartItems
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi tính phí vận chuyển', [
+                'error' => $e->getMessage(),
+                'payload' => $payload
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi tính phí vận chuyển: ' . $e->getMessage(),
+                'debug' => [
+                    'payload' => $payload,
+                    'trace' => $e->getTraceAsString()
+                ]
+            ]);
+        }
     }
-
-
     public function placeOrder(Request $request)
     {
         try {

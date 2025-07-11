@@ -46,7 +46,16 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with(['user', 'shippingLogs', 'orderItems.product', 'paymentMethod', 'address'])->findOrFail($id);
+        $order = Order::with([
+            'user',
+            'shippingLogs',
+            'orderItems.product',
+            'paymentMethod',
+            'shippingAddress.province',
+            'shippingAddress.district',
+            'shippingAddress.ward',
+        ])->findOrFail($id);
+
 
         return view('admin.orders.show', compact('order'));
     }

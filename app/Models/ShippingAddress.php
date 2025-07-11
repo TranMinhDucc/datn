@@ -31,7 +31,10 @@ class ShippingAddress extends Model
             self::STATUS_INACTIVE => 'Vô hiệu hóa',
         ];
     }
-
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'address_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

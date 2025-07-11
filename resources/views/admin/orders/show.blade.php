@@ -62,17 +62,17 @@
                             </button>
                         </form>
 
-                        @if ($order->status === 'pending' || ($latestLog && $latestLog->status === 'cancel'))
-                            <form id="confirm-ghn-form" action="{{ route('admin.orders.confirm-ghn', $order->id) }}"
-                                method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                            <a href="#"
-                                onclick="event.preventDefault(); document.getElementById('confirm-ghn-form').submit();"
-                                class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-paper-plane"></i> Xác nhận & Gửi đơn Shipping
-                            </a>
-                        @endif
+                        {{-- @if ($order->status === 'pending' || ($latestLog && $latestLog->status === 'cancel')) --}}
+                        <form id="confirm-ghn-form" action="{{ route('admin.orders.confirm-ghn', $order->id) }}"
+                            method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a href="#"
+                            onclick="event.preventDefault(); document.getElementById('confirm-ghn-form').submit();"
+                            class="btn btn-success btn-sm">
+                            <i class="fa-solid fa-paper-plane"></i> Xác nhận & Gửi đơn Shipping
+                        </a>
+                        {{-- @endif --}}
                     </div>
 
                 </div>
@@ -348,17 +348,25 @@
                                     <!--begin::Card header-->
                                     <div class="card-header">
                                         <div class="card-title">
-                                            <h2>Shipping Address</h2>
+                                            <h2>Địa chỉ nhận hàng</h2>
                                         </div>
                                     </div>
                                     <!--end::Card header-->
 
                                     <!--begin::Card body-->
                                     <div class="card-body pt-0">
-                                        Unit 1/23 Hastings Road,<br />
-                                        Melbourne 3000,<br />
-                                        Victoria,<br />
-                                        Australia.
+                                        @if ($order->shippingAddress)
+                                            <p><strong>Họ tên:</strong> {{ $order->shippingAddress->full_name }}</p>
+                                            <p><strong>Địa chỉ:</strong> {{ $order->shippingAddress->address }}</p>
+                                            <p><strong>Phường/Xã:</strong>
+                                                {{ $order->shippingAddress->ward->name ?? '---' }}</p>
+                                            <p><strong>Quận/Huyện:</strong>
+                                                {{ $order->shippingAddress->district->name ?? '---' }}</p>
+                                            <p><strong>Tỉnh/Thành phố:</strong>
+                                                {{ $order->shippingAddress->province->name ?? '---' }}</p>
+                                        @else
+                                            <p class="text-danger">Không có thông tin địa chỉ giao hàng</p>
+                                        @endif
                                     </div>
                                     <!--end::Card body-->
                                 </div>

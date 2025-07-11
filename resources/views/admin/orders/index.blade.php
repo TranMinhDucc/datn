@@ -180,7 +180,7 @@
                                             </td>
 
                                             <td class="text-center">
-                                                <span class="fw-bold">${{ number_format($order->total_amount) }}</span>
+                                                <span class="fw-bold">{{ number_format($order->total_amount) }}đ</span>
                                             </td>
                                             <td class="text-center">
                                                 <span class="fw-bold">{{ $order->created_at->format('d/m/Y') }}</span>
