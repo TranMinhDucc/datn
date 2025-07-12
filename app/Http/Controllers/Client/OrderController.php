@@ -21,7 +21,7 @@ class OrderController extends Controller
 
         return view('client.account.dashboard', compact('orders'));
     }
-public function cancel(Request $request, Order $order)
+    public function cancel(Request $request, Order $order)
     {
         if ($order->user_id !== auth()->id()) {
             abort(403);
@@ -67,16 +67,15 @@ public function cancel(Request $request, Order $order)
 
         return view('client.account.tracking', compact('order'));
     }
-protected function restoreStock(Order $order)
-{
-    $order->load('orderItems');
+    protected function restoreStock(Order $order)
+    {
+        $order->load('orderItems');
 
-    foreach ($order->orderItems as $item) {
-        if ($item->product_variant_id && $item->quantity) {
-            ProductVariant::where('id', $item->product_variant_id)
-                ->increment('quantity', $item->quantity);
+        foreach ($order->orderItems as $item) {
+            if ($item->product_variant_id && $item->quantity) {
+                ProductVariant::where('id', $item->product_variant_id)
+                    ->increment('quantity', $item->quantity);
+            }
         }
     }
-}
-
 }

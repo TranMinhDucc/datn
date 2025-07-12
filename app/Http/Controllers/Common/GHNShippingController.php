@@ -8,18 +8,20 @@ use App\Services\Shipping\GhnService;
 use App\Models\Order;
 use App\Models\ShippingAddress;
 use App\Models\PartnerLocationCode;
-use App\Services\GhnService as ServicesGhnService;
 use Illuminate\Support\Facades\Log;
 
 class GHNShippingController extends Controller
 {
     protected $ghn;
 
-    public function __construct(ServicesGhnService $ghn)
+    public function __construct(GhnService $ghn)
     {
         $this->ghn = $ghn;
     }
 
+    /**
+     * Tạo đơn GHN
+     */
     public function createOrder(Request $request, $orderId)
     {
         $order = Order::with('items')->findOrFail($orderId);
@@ -29,7 +31,7 @@ class GHNShippingController extends Controller
             ['location_id', $address->district_id],
             ['type', 'district'],
             ['partner_code', 'ghn']
-        ])->value('partner_code'); // hoặc 'partner_location_code' nếu bạn dùng cột đó
+        ])->value('partner_code');
 
         $wardCode = PartnerLocationCode::where([
             ['location_id', $address->ward_id],
@@ -56,7 +58,7 @@ class GHNShippingController extends Controller
             'length' => 30,
             'width' => 20,
             'height' => 10,
-            'service_id' => 53320, // bạn có thể cho động sau này
+            'service_id' => 53320,
             'items' => $order->items->map(fn($item) => [
                 'name' => $item->product_name ?? 'Sản phẩm',
                 'quantity' => $item->quantity,
@@ -87,5 +89,42 @@ class GHNShippingController extends Controller
             'message' => 'Tạo đơn GHN thất bại',
             'error' => $response['message'] ?? 'Đã có lỗi xảy ra.'
         ], 400);
+    }
+
+    /**
+     * Tính phí vận chuyển GHN
+     */
+    public function calculateShippingFee(Request $request)
+    {
+        $validated = $request->validate([
+            'from_district_id' => 'required|integer',
+            'from_ward_code' => 'required|string',
+            'to_district_id' => 'required|integer',
+            'to_ward_code' => 'required|string',
+            'weight' => 'required|numeric',
+            'length' => 'required|numeric',
+            'width' => 'required|numeric',
+            'height' => 'required|numeric',
+            'service_type_id' => 'required|integer',
+        ]);
+
+        try {
+            $response = $this->ghn->getShippingFee($validated);
+
+            return response()->json([
+                'message' => 'Tính phí thành công',
+                'data' => $response['data'] ?? $response
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('GHN Fee Error', [
+                'error' => $e->getMessage(),
+                'payload' => $validated
+            ]);
+
+            return response()->json([
+                'message' => 'Không thể tính phí vận chuyển',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

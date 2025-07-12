@@ -82,7 +82,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 // ========== PUBLIC CLIENT ROUTES ==========
-
+Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])
+    ->name('client.checkout.calculate-shipping-fee');
 Route::prefix('/')->name('client.')->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
@@ -96,6 +97,7 @@ Route::prefix('/')->name('client.')->group(function () {
 
     });
 
+    Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
 
     Route::controller(ClientProductController::class)
         ->prefix('products')
@@ -157,6 +159,7 @@ Route::prefix('/')->name('client.')->group(function () {
 //     Route::get('/', [ClientOrderController::class, 'index'])->name('index');
 //     Route::patch('/{id}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
 // });
+Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
 
 
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
@@ -182,7 +185,8 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     });
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-    
+    // routes/web.php
+
 
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
@@ -310,6 +314,8 @@ Route::prefix('admin')
         Route::resource('product-labels', ProductLabelController::class);
         // GHN
         Route::post('/orders/{order}/confirm-ghn', [OrderController::class, 'confirmGHN'])->name('orders.confirm-ghn');
+        Route::post('/orders/{orderId}/retry-shipping', [OrderController::class, 'retryShipping'])->name('orders.retryShipping'); // 👈 giữ camelCase như Blade
+        Route::post('/admin/ghn/cancel/{order}', [OrderController::class, 'cancelShippingOrder'])->name('orders.ghn.cancel');
 
 
         Route::resource('brands', BrandController::class);
