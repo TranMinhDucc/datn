@@ -14,10 +14,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $banners = Banner::with('buttons')
-            ->where('status', 1)
-            ->orderBy('thu_tu', 'asc')
-            ->get();
+            $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
+
         $products = Product::where('is_active', 1)
             ->with(['label'])
             ->orderBy('created_at', 'desc')
