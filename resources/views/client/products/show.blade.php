@@ -829,74 +829,75 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-    const allVariants = @json($variants);
-    const variantGroups = document.querySelectorAll('.variant-group');
+        const allVariants = @json($variants);
+        const variantGroups = document.querySelectorAll('.variant-group');
 
-    // Normalize key để so sánh key như "Màu sắc" và "mau_sac"
-    function normalize(str) {
-        return str
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .replace(/\s+/g, '_');
-    }
+        // Normalize key để so sánh key như "Màu sắc" và "mau_sac"
+        function normalize(str) {
+            return str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/\s+/g, '_');
+        }
 
-    // Lấy các lựa chọn hiện tại
-    function getSelectedAttributes() {
-        const selected = {};
-        variantGroups.forEach(group => {
-            const groupName = group.getAttribute('data-attribute');
-            const active = group.querySelector('.variant-item.active');
-            if (active) {
-                selected[groupName] = active.getAttribute('data-value');
+        // Lấy các lựa chọn hiện tại
+        function getSelectedAttributes() {
+            const selected = {};
+            variantGroups.forEach(group => {
+                const groupName = group.getAttribute('data-attribute');
+                const active = group.querySelector('.variant-item.active');
+                if (active) {
+                    selected[groupName] = active.getAttribute('data-value');
+                }
+            });
+            return selected;
+        }
+
+        // So khớp biến thể đã chọn với biến thể thực tế trong allVariants
+        function attributesMatch(a, b) {
+            const keysA = Object.keys(a);
+            const keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) return false;
+
+            return keysA.every(keyA => {
+                const keyB = keysB.find(k => normalize(k) === normalize(keyA));
+                return keyB && a[keyA] === b[keyB];
+            });
+        }
+
+        // Cập nhật thông tin biến thể
+        function updateVariantInfo() {
+            const selected = getSelectedAttributes();
+            if (Object.keys(selected).length !== variantGroups.length) {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+                return;
             }
-        });
-        return selected;
-    }
 
-    // So khớp biến thể đã chọn với biến thể thực tế trong allVariants
-    function attributesMatch(a, b) {
-        const keysA = Object.keys(a);
-        const keysB = Object.keys(b);
-        if (keysA.length !== keysB.length) return false;
+            const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
+            if (matched) {
+                document.getElementById('variant-quantity').textContent = matched.quantity;
+                document.getElementById('variant-info').style.display = 'block';
 
-        return keysA.every(keyA => {
-            const keyB = keysB.find(k => normalize(k) === normalize(keyA));
-            return keyB && a[keyA] === b[keyB];
-        });
-    }
-
-    // Cập nhật thông tin biến thể
-    function updateVariantInfo() {
-        const selected = getSelectedAttributes();
-        if (Object.keys(selected).length !== variantGroups.length) {
-            document.getElementById('variant-info').style.display = 'none';
-            document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
-            return;
+                const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+                document.getElementById('main-price').textContent = formattedPrice;
+            } else {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+            }
         }
 
-        const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
-        if (matched) {
-            document.getElementById('variant-quantity').textContent = matched.quantity;
-            document.getElementById('variant-info').style.display = 'block';
-
-            const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-            document.getElementById('main-price').textContent = formattedPrice;
-        } else {
-            document.getElementById('variant-info').style.display = 'none';
-            document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
-        }
-    }
-
-    // Bắt sự kiện click vào mỗi lựa chọn
-    document.querySelectorAll('.variant-item').forEach(item => {
-        item.addEventListener('click', function () {
-            this.parentElement.querySelectorAll('.variant-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            updateVariantInfo();
+        // Bắt sự kiện click vào mỗi lựa chọn
+        document.querySelectorAll('.variant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.variant-item').forEach(i => i.classList.remove(
+                    'active'));
+                this.classList.add('active');
+                updateVariantInfo();
+            });
         });
-    });
-</script>
+    </script>
 
 
     <script>
@@ -1050,86 +1051,89 @@
 
             // ✅ Sự kiện Add to Cart
             document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        const name = this.dataset.name;
-        const image = this.dataset.image;
-        const quantity = parseInt(document.querySelector('.quantity input')?.value || 1);
-        const brand = this.dataset.brand || 'Unknown';
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    const image = this.dataset.image;
+                    const quantity = parseInt(document.querySelector('.quantity input')?.value ||
+                        1);
+                    const brand = this.dataset.brand || 'Unknown';
 
-        const currentUser = localStorage.getItem('currentUser') || 'guest';
-        const cartKey = `cartItems_${currentUser}`;
-        const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+                    const currentUser = localStorage.getItem('currentUser') || 'guest';
+                    const cartKey = `cartItems_${currentUser}`;
+                    const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-        const selectedAttributes = {};
-        let valid = true;
-        const missingAttrs = [];
+                    const selectedAttributes = {};
+                    let valid = true;
+                    const missingAttrs = [];
 
-        document.querySelectorAll('.variant-group').forEach(group => {
-            const attrName = group.dataset.attribute;
-            const selected = group.querySelector('.variant-item.active');
+                    document.querySelectorAll('.variant-group').forEach(group => {
+                        const attrName = group.dataset.attribute;
+                        const selected = group.querySelector('.variant-item.active');
 
-            if (!selected) {
-                valid = false;
-                missingAttrs.push(attrName);
-            } else {
-                selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
-            }
-        });
+                        if (!selected) {
+                            valid = false;
+                            missingAttrs.push(attrName);
+                        } else {
+                            selectedAttributes[attrName] = selected.dataset.value ||
+                                selected.textContent.trim();
+                        }
+                    });
 
-        if (!valid) {
-            missingAttrs.forEach(attr => {
-                showToast(`Vui lòng chọn ${attr}`, 'error');
+                    if (!valid) {
+                        missingAttrs.forEach(attr => {
+                            showToast(`Vui lòng chọn ${attr}`, 'error');
+                        });
+                        return;
+                    }
+
+                    // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
+                    const variantId = getSelectedVariantId(selectedAttributes);
+
+                    let price = parseFloat(this.dataset.price);
+                    let originalPrice = parseFloat(this.dataset.originalPrice);
+
+                    if (variantId) {
+                        const matchedVariant = window.variantData.find(v => v.id === variantId);
+                        if (matchedVariant) {
+                            price = matchedVariant.price;
+                            originalPrice = matchedVariant.original_price || originalPrice;
+                        }
+                    }
+
+                    const index = cartItems.findIndex(item =>
+                        item.id === id &&
+                        ((variantId && item.variant_id === variantId) ||
+                            (!variantId && JSON.stringify(item.attributes || {}) === JSON
+                                .stringify(selectedAttributes)))
+                    );
+
+                    if (index !== -1) {
+                        cartItems[index].quantity += quantity;
+                    } else {
+                        cartItems.push({
+                            id,
+                            variant_id: variantId,
+                            name,
+                            price,
+                            originalPrice,
+                            image,
+                            quantity,
+                            brand,
+                            attributes: selectedAttributes
+                        });
+                    }
+
+                    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+                    document.dispatchEvent(new Event('cartUpdated'));
+
+                    const offcanvasEl = document.getElementById('offcanvasRight');
+                    if (offcanvasEl) {
+                        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
+                        bsOffcanvas.show();
+                    }
+                });
             });
-            return;
-        }
-
-        // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
-        const variantId = getSelectedVariantId(selectedAttributes);
-
-        let price = parseFloat(this.dataset.price);
-        let originalPrice = parseFloat(this.dataset.originalPrice);
-
-        if (variantId) {
-            const matchedVariant = window.variantData.find(v => v.id === variantId);
-            if (matchedVariant) {
-                price = matchedVariant.price;
-                originalPrice = matchedVariant.original_price || originalPrice;
-            }
-        }
-
-        const index = cartItems.findIndex(item =>
-            item.id === id &&
-            ((variantId && item.variant_id === variantId) ||
-                (!variantId && JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)))
-        );
-
-        if (index !== -1) {
-            cartItems[index].quantity += quantity;
-        } else {
-            cartItems.push({
-                id,
-                variant_id: variantId,
-                name,
-                price,
-                originalPrice,
-                image,
-                quantity,
-                brand,
-                attributes: selectedAttributes
-            });
-        }
-
-        localStorage.setItem(cartKey, JSON.stringify(cartItems));
-        document.dispatchEvent(new Event('cartUpdated'));
-
-        const offcanvasEl = document.getElementById('offcanvasRight');
-        if (offcanvasEl) {
-            const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
-            bsOffcanvas.show();
-        }
-    });
-});
 
         });
     </script>

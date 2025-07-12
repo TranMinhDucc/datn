@@ -13,26 +13,27 @@ class SyncGHNOrderStatus extends Command
 {
     protected $signature = 'ghn:sync-order-status';
     protected $description = 'Sync GHN order shipping status and update to DB';
+
     protected $statusDescriptions = [
-        'ready_to_pick' => 'Đơn đã sẵn sàng, chờ GHN đến lấy.',
+        'ready_to_pick' => 'Tạo đơn vận chuyển thành công',
         'picking' => 'Đơn hàng đang được nhân viên GHN đến lấy tại shop.',
         'cancel' => 'Đơn hàng đã bị huỷ.',
-        'money_collect_picking' => 'GHN đang thu tiền khi lấy hàng (trạng thái hiện tại).',
+        'money_collect_picking' => 'GHN đang thu tiền khi lấy hàng.',
         'picked' => 'Đơn hàng đã được GHN lấy thành công.',
         'storing' => 'Hàng đang được lưu tại kho GHN.',
-        'transporting' => 'Đơn hàng đang trên đường vận chuyển đến kho tiếp theo hoặc khách hàng.',
-        'sorting' => 'Hàng đang trong quá trình phân loại tại kho trung chuyển.',
-        'delivering' => 'Đơn hàng đang được giao đến tay người nhận.',
-        'money_collect_delivering' => 'Đơn hàng đang được giao và GHN sẽ thu tiền từ người nhận (COD).',
-        'delivered' => 'Đơn hàng đã giao thành công cho người nhận.',
+        'transporting' => 'Đơn hàng đang trên đường vận chuyển.',
+        'sorting' => 'Hàng đang phân loại tại kho trung chuyển.',
+        'delivering' => 'Đơn hàng đang được giao đến khách.',
+        'money_collect_delivering' => 'GHN đang giao và thu tiền (COD).',
+        'delivered' => 'Đơn hàng đã giao thành công.',
         'delivery_fail' => 'GHN giao hàng thất bại.',
-        'waiting_to_return' => 'Đơn hàng đang chờ xử lý trả hàng.',
-        'return' => 'Đơn hàng đã chuyển sang trạng thái trả hàng.',
-        'return_transporting' => 'Đơn hàng đang trên đường trả về.',
-        'return_sorting' => 'Đơn hàng đang được phân loại khi trả về.',
-        'returning' => 'Đơn hàng đang trên đường trả lại shop.',
+        'waiting_to_return' => 'Đang đợi trả hàng về cho SHOP',
+        'return' => 'Đơn đang chuyển sang trả hàng.',
+        'return_transporting' => 'Đang trả hàng về.',
+        'return_sorting' => 'Đang phân loại khi trả.',
+        'returning' => 'Đang trả lại shop.',
         'return_fail' => 'Trả hàng thất bại.',
-        'returned' => 'Đơn hàng đã được trả lại shop.',
+        'returned' => 'Đã trả lại shop.',
     ];
 
     public function handle()
@@ -64,8 +65,34 @@ class SyncGHNOrderStatus extends Command
                     // Cập nhật đơn hàng nếu có
                     $order = Order::find($shippingOrder->order_id);
                     if ($order) {
-                        $order->update(['shipping_status' => $newStatus]);
+                        $newOrderStatus = $order->status;
+
+                        // Nếu đơn đã giao thành công
+                        if ($newStatus === 'delivered') {
+                            $newOrderStatus = 'completed';
+                        }
+                        // Nếu đang trong quá trình giao hàng
+                        elseif (in_array($newStatus, [
+                            'picked',
+                            'storing',
+                            'transporting',
+                            'sorting',
+                            'delivering',
+                            'money_collect_delivering',
+                        ])) {
+                            $newOrderStatus = 'shipping';
+                        }
+                        // Nếu GHN huỷ đơn
+                        elseif ($newStatus === 'cancel') {
+                            $newOrderStatus = 'cancelled';
+                        }
+
+                        $order->update([
+                            'shipping_status' => $newStatus,
+                            'status' => $newOrderStatus,
+                        ]);
                     }
+
 
                     // Ghi log
                     ShippingLog::create([
@@ -73,7 +100,7 @@ class SyncGHNOrderStatus extends Command
                         'provider'      => 'ghn',
                         'tracking_code' => $shippingOrder->shipping_code,
                         'status'        => $newStatus,
-                        'description' => $this->statusDescriptions[$newStatus] ?? 'Cập nhật trạng thái từ GHN',
+                        'description'   => $this->statusDescriptions[$newStatus] ?? 'Cập nhật trạng thái từ GHN',
                         'received_at'   => now(),
                     ]);
 
