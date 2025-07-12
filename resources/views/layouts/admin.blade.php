@@ -38,7 +38,6 @@
     <link href="{{ asset('assets/admin/css/styles.css') }}" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
-
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-52YZ3XGZJ6"></script>
 
@@ -98,8 +97,6 @@
     data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true"
     data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
 
-
-    <!--begin::Theme mode setup on page load-->
     <script>
         var defaultThemeMode = "light";
         var themeMode;
@@ -122,8 +119,8 @@
 
             if (themeMode === "system") {
                 themeMode = window.matchMedia(
-                    "(prefers-color-scheme: dark)"
-                ).matches ?
+                        "(prefers-color-scheme: dark)"
+                    ).matches ?
                     "dark" :
                     "light";
             }
@@ -136,23 +133,23 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php
-if (isset($_SESSION['error'])) {
-    echo "<script type='text/javascript'>
-                toastr.error('" .
-        addslashes($_SESSION['error']) .
-        "');
-            </script>";
-    unset($_SESSION['error']); // Xóa để không hiển thị lại
-}
-
-if (isset($_SESSION['success'])) {
-    echo "<script type='text/javascript'>
-                toastr.success('" .
-        addslashes($_SESSION['success']) .
-        "');
-            </script>";
-    unset($_SESSION['success']); // Xóa để không hiển thị lại
-}
+    if (isset($_SESSION['error'])) {
+        echo "<script type='text/javascript'>
+                                    toastr.error('" .
+            addslashes($_SESSION['error']) .
+            "');
+                                </script>";
+        unset($_SESSION['error']); // Xóa để không hiển thị lại
+    }
+    
+    if (isset($_SESSION['success'])) {
+        echo "<script type='text/javascript'>
+                                    toastr.success('" .
+            addslashes($_SESSION['success']) .
+            "');
+                                </script>";
+        unset($_SESSION['success']); // Xóa để không hiển thị lại
+    }
     
     ?>
 
@@ -160,6 +157,8 @@ if (isset($_SESSION['success'])) {
     <!-- Toast Container -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
 
+
+        {{-- Success Toast --}}
         @if (session('success'))
             <div class="toast align-items-center text-bg-success show" role="alert" aria-live="assertive"
                 aria-atomic="true">
@@ -173,9 +172,25 @@ if (isset($_SESSION['success'])) {
             </div>
         @endif
 
+        {{-- Error Toast (from session) --}}
+        @if (session('error'))
+            <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
+        {{-- Validation Errors --}}
         @if ($errors->any())
             @foreach ($errors->all() as $error)
-                <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive"
+                    aria-atomic="true">
                     <div class="d-flex">
                         <div class="toast-body">
                             {{ $error }}
@@ -234,7 +249,8 @@ if (isset($_SESSION['success'])) {
                 <div class="card-toolbar">
                     <button type="button" class="btn btn-sm btn-icon btn-active-light-primary me-n5"
                         id="kt_activities_close">
-                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span
+                                class="path2"></span></i>
                     </button>
                 </div>
             </div>
@@ -290,9 +306,9 @@ if (isset($_SESSION['success'])) {
     @yield('js')
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-            var toastList = toastElList.map(function (toastEl) {
+            var toastList = toastElList.map(function(toastEl) {
                 return new bootstrap.Toast(toastEl).show()
             })
         });

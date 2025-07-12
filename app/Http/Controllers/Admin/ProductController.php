@@ -200,6 +200,10 @@ class ProductController extends Controller
             'starts_at' => $request->starts_at,
             'ends_at' => $request->ends_at,
             'sale_times' => $request->sale_times ?? 0,
+            'weight' => $request->weight,
+            'length' => $request->length,
+            'width' => $request->width,
+            'height' => $request->height,
         ]);
 
         // 4. Ảnh đại diện
@@ -240,6 +244,10 @@ class ProductController extends Controller
                     'price' => $variant['price'],
                     'quantity' => $variant['quantity'],
                     'sku' => $sku,
+                    'weight' => $variant['weight'],
+                    'length' => $variant['length'],
+                    'width' => $variant['width'],
+                    'height' => $variant['height'],
                 ]);
 
                 // Tách thuộc tính

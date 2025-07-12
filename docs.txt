@@ -1,0 +1,53 @@
+Link cron trạng thái đơn hàng
+http://127.0.0.1:8000/cron/sync-ghn-orders
+
+
+  {
+            "ProvinceID": 226,
+            "ProvinceName": "Thái Bình",
+            "CountryID": 1,
+            "Code": "36",
+            "NameExtension": [
+                "Thái Bình",
+                "Tỉnh Thái Bình",
+                "T.Thái Bình",
+                "T Thái Bình",
+                "thaibinh"
+            ],
+            "IsEnable": 1,
+            "RegionID": 6,
+            "RegionCPN": 4,
+            "UpdatedBy": 1718600,
+            "CreatedAt": "2019-12-05 15:41:26.891289 +0700 +07 m=+0.010353730",
+            "UpdatedAt": "2019-12-05 15:41:26.89129 +0700 +07 m=+0.010354792",
+            "CanUpdateCOD": false,
+            "Status": 1,
+            "UpdatedEmployee": 8888,
+            "UpdatedSource": "online--stream--master-data.RawData--UpdateMasterData",
+            "UpdatedDate": "2025-03-05T09:49:56.034Z"
+        },
+
+          {
+            "ProvinceID": 268,
+            "ProvinceName": "Hưng Yên",
+            "CountryID": 1,
+            "Code": "321",
+            "NameExtension": [
+                "Hưng Yên",
+                "Tỉnh Hưng Yên",
+                "T.Hưng Yên",
+                "T Hưng Yên",
+                "hungyen"
+            ],
+            "IsEnable": 1,
+            "RegionID": 6,
+            "RegionCPN": 4,
+            "UpdatedBy": 1718600,
+            "CreatedAt": "2019-12-05 15:41:26.89138 +0700 +07 m=+0.010444468",
+            "UpdatedAt": "2019-12-05 15:41:26.891383 +0700 +07 m=+0.010447473",
+            "CanUpdateCOD": false,
+            "Status": 1,
+            "UpdatedEmployee": 8888,
+            "UpdatedSource": "online--stream--master-data.RawData--UpdateMasterData",
+            "UpdatedDate": "2025-03-05T09:49:56.011Z"
+        },

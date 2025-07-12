@@ -28,7 +28,7 @@ class CreateCouponsTable extends Migration
             $table->unsignedInteger('used_count')->default(0);
             $table->unsignedInteger('per_user_limit')->nullable();
 
-            $table->json('eligible_user_roles')->nullable();
+            // Đã xoá: $table->json('eligible_user_roles')->nullable();
 
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();

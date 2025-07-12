@@ -7,21 +7,18 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách sản phẩm, có thể dùng paginate
-
         return view('client.products.index');
     }
 
-
     public function show(string $slug)
     {
-        // test trước khi thêm slug vào hàm
-
         $product = Product::with([
             'variants.options.attribute',
             'variants.options.value',
@@ -30,13 +27,12 @@ class ProductController extends Controller
             'tags',
             'images',
         ])->where('slug', $slug)->firstOrFail();
-        $test_id = $product->id;
-        // 👉 Lấy danh sách ảnh phụ (không phải thumbnail)
+
         $productImages = ProductImage::where('product_id', $product->id)
             ->where('is_thumbnail', false)
             ->get();
 
-        // 👉 Gom các giá trị phân loại (Size, Màu...)
+        // Gom các thuộc tính
         $attributeGroups = [];
 
         foreach ($product->variants as $variant) {
@@ -54,14 +50,7 @@ class ProductController extends Controller
             }
         }
 
-        // // 👉 Lấy đánh giá và thông tin người đánh giá
-        $reviews = Review::join('users', 'reviews.user_id', '=', 'users.id')
-            ->where('reviews.product_id', $product->id)
-            ->where('reviews.verified_purchase', 1)
-            ->orderBy('reviews.id', 'desc')
-            ->select('reviews.*', 'users.fullname as user_fullname', 'users.avatar as user_avatar')
-            ->get();
-
+        // Lấy đánh giá
         $reviews = Review::where('product_id', $product->id)
             ->where('approved', true)
             ->with('user')
@@ -79,11 +68,7 @@ class ProductController extends Controller
         ];
 
         if ($rating_summary['total_rating'] > 0) {
-            $star_5 = 0;
-            $star_4 = 0;
-            $star_3 = 0;
-            $star_2 = 0;
-            $star_1 = 0;
+            $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
 
             foreach ($reviews as $review) {
                 switch ($review->rating) {
@@ -105,24 +90,103 @@ class ProductController extends Controller
                 }
             }
 
-            $rating_summary['1_star_percent'] = round($star_1 / $rating_summary['total_rating'] * 100);
-            $rating_summary['2_star_percent'] = round($star_2 / $rating_summary['total_rating'] * 100);
-            $rating_summary['3_star_percent'] = round($star_3 / $rating_summary['total_rating'] * 100);
-            $rating_summary['4_star_percent'] = round($star_4 / $rating_summary['total_rating'] * 100);
-            $rating_summary['5_star_percent'] = round($star_5 / $rating_summary['total_rating'] * 100);
-
-            $rating_summary['avg_rating'] = (
-                $star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1 * 1
-            ) / $rating_summary['total_rating'];
+            $total = $rating_summary['total_rating'];
+            $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+            $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+            $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+            $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+            $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+            $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
         }
-        // dd($rating_summary);
+
+        // Lấy danh sách biến thể (variants) để truyền sang JavaScript
+        $variants = ProductVariant::where('product_id', $product->id)
+            ->with(['variantOptions.attribute', 'variantOptions.value'])
+            ->get();
+
+        $formattedVariants = $variants->map(function ($variant) {
+            $attributes = [];
+            foreach ($variant->variantOptions as $option) {
+                $attributes[$option->attribute->name] = $option->value->value;
+            }
+
+            return [
+                'id' => $variant->id,
+                'attributes' => $attributes,
+                'price' => $variant->price,
+                'quantity' => $variant->quantity,
+                'weight' => $variant->weight,
+                'length' => $variant->length,
+                'width' => $variant->width,
+                'height' => $variant->height,
+            ];
+        });
+
+        // Gom thuộc tính hiển thị
+        $attributes = [];
+
+        foreach ($variants as $variant) {
+            foreach ($variant->variantOptions as $option) {
+                $attrId = $option->attribute->id;
+                $attrName = $option->attribute->name;
+                $value = [
+                    'id' => $option->value->id,
+                    'value' => $option->value->value
+                ];
+
+                if (!isset($attributes[$attrId])) {
+                    $attributes[$attrId] = [
+                        'name' => $attrName,
+                        'values' => []
+                    ];
+                }
+
+                $attributes[$attrId]['values'][$value['id']] = $value['value'];
+            }
+        }
+
+        $product->related_products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
         return view('client.products.show', compact(
             'product',
             'attributeGroups',
             'productImages',
             'reviews',
             'rating_summary',
-            'test_id'
-        ));
+            'attributes'
+        ))->with('variants', $formattedVariants);
+    }
+
+    public function getVariantInfo(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $attributes = $request->input('attributes', []);
+
+        Log::info("productId", [$productId]);
+        Log::info("attributes", [$attributes]);
+
+        $variantQuery = ProductVariant::where('product_id', $productId);
+
+        foreach ($attributes as $attributeId => $valueId) {
+            $variantQuery->whereHas('variantOptions', function ($q) use ($attributeId, $valueId) {
+                $q->where('attribute_id', $attributeId)
+                    ->where('value_id', $valueId);
+            });
+        }
+
+        $variant = $variantQuery->first();
+
+        if ($variant) {
+            return response()->json([
+                'status' => 'ok',
+                'price' => $variant->price,
+                'quantity' => $variant->quantity,
+            ]);
+        }
+
+        return response()->json(['status' => 'not_found']);
     }
 }

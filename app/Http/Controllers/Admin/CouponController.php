@@ -35,13 +35,11 @@ class CouponController extends Controller
             'only_for_new_users' => 'nullable|boolean',
             'is_exclusive' => 'nullable|boolean',
             'active' => 'nullable|boolean',
-            'eligible_user_roles' => 'nullable|array',
             'applicable_product_ids' => 'nullable|string',
             'applicable_category_ids' => 'nullable|string',
             'apply_all_products' => 'nullable|boolean',
         ]);
 
-        $validated['eligible_user_roles'] = $request->filled('eligible_user_roles') ? $request->eligible_user_roles : null;
         $validated['applicable_product_ids'] = $request->has('apply_all_products') ? null : $this->toIntArrayOrNull($request->applicable_product_ids);
         $validated['applicable_category_ids'] = $this->toIntArrayOrNull($request->applicable_category_ids);
 
@@ -75,13 +73,11 @@ class CouponController extends Controller
             'only_for_new_users' => 'nullable|boolean',
             'is_exclusive' => 'nullable|boolean',
             'active' => 'nullable|boolean',
-            'eligible_user_roles' => 'nullable|array',
             'applicable_product_ids' => 'nullable|string',
             'applicable_category_ids' => 'nullable|string',
             'apply_all_products' => 'nullable|boolean',
         ]);
 
-        $validated['eligible_user_roles'] = $request->filled('eligible_user_roles') ? $request->eligible_user_roles : null;
         $validated['applicable_product_ids'] = $request->has('apply_all_products') ? null : $this->toIntArrayOrNull($request->applicable_product_ids);
         $validated['applicable_category_ids'] = $this->toIntArrayOrNull($request->applicable_category_ids);
 

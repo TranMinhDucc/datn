@@ -52,7 +52,8 @@ class BlogController extends Controller
             'category_id' => 'required|exists:blog_categories,id',
             'content' => 'required|string',
             'author_id' => 'nullable|exists:users,id',
-            'thumbnail' => 'nullable|image|max:2048'
+            'thumbnail' => 'nullable|image|max:2048',
+            'published_at' => 'nullable|date',
         ], [
             'title.required' => 'Tiêu đề không được để trống.',
             'title.max' => 'Tiêu đề không được quá 255 ký tự.',
@@ -64,7 +65,7 @@ class BlogController extends Controller
             'category_id.required' => 'Chuyên mục không được để trống.',
             'category_id.exists' => 'Chuyên mục không hợp lệ.',
             'thumbnail.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
-            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',         
+            'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',
         ]);
 
         // Nếu có ảnh đại diện được upload
@@ -82,6 +83,8 @@ class BlogController extends Controller
             'category_id' => $request->category_id,
             'author_id' => $request->author_id ?: auth()->id(),
             'thumbnail' => $data['thumbnail'] ?? null,
+            'status' => $request->published_at ? 'published' : 'draft',
+            'published_at' => $request->published_at ? now() : null,
         ]);
 
         return redirect()->route('admin.blogs.index')
@@ -93,7 +96,12 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
-        $blog->load('author');
+        $blog->load(['author'])->loadCount([
+            'comments' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ]);
+
         return view('admin.blogs.show', compact('blog'));
     }
 
@@ -156,7 +164,6 @@ class BlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog đã được cập nhật thành công!');
     }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -167,7 +174,25 @@ class BlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog đã được xóa thành công!');
     }
+    /**
+     * Toggle the status of the blog post
+     */
+    public function toggleStatus(Blog $blog)
+    {
+        if ($blog->status === 'published') {
+            // Chuyển về nháp
+            $blog->status = 'draft';
+            $blog->published_at = null;
+        } else {
+            // Chuyển sang xuất bản
+            $blog->status = 'published';
+            $blog->published_at = now();
+        }
+        $blog->save();
 
+        return redirect()->route('admin.blogs.index')
+            ->with('success', 'Cập nhật trạng thái blog thành công!');
+    }
     /**
      * Generate slug from title
      */

@@ -1,5 +1,6 @@
 <footer class="footer-layout-img">
          <section class="section-b-space footer-1">
+      <section class="section-b-space footer-1">
           <div class="custom-container container">
               <div class="row">
                   <div class="col-xl-3 col-lg-4 col-md-6">
@@ -49,7 +50,7 @@
                                       <li> <a class="nav" href="product-bundle.html">Latest Shoes</a></li>
                                       <li> <a class="nav" href="variant-radio.html">Branded Jeans</a></li>
                                       <li> <a class="nav" href="product.html">New Jackets</a></li>
-                                      <li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
+<li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
                                       <li> <a class="nav" href="variant-dropdown.html">Best Perfume</a></li>
                                   </ul>
                               </div>
@@ -115,3 +116,27 @@
         </div>
     </div>
 </footer>
+      <div class="sub-footer">
+          <div class="custom-container container">
+              <div class="row">
+                  <div class="col-xl-6 col-md-6 col-sm-12">
+                      <div class="footer-end">
+                          <h6>2024 Copyright By Themeforest Powered By Pixelstrap </h6>
+                      </div>
+                  </div>
+                  <div class="col-xl-6 col-md-6 col-sm-12">
+                      <div class="payment-card-bottom">
+                          <ul>
+                              <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt="">
+</li>
+                              <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt="">
+                              </li>
+                              <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>
+                              <li><img src="{{ asset('assets/client/images/footer/giro.png') }}" alt=""></li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </footer>

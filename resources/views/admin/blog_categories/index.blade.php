@@ -40,7 +40,7 @@
             </div>
             <!--end::Card header-->
             <!--begin::Card body-->
-            <div class="card-body py-4">
+            <div class="card-body py-4 table-responsive">
                 <!-- @if(session('success'))
                     <div class="alert alert-success d-flex align-items-center p-5 mb-10">
                         <i class="ki-duotone ki-shield-tick fs-2hx text-success me-4">
@@ -132,7 +132,7 @@
                         Hiển thị {{ $categories->firstItem() ?? 0 }} đến {{ $categories->lastItem() ?? 0 }}
                         trong tổng số {{ $categories->total() }} kết quả
                     </div>
-                    {{ $categories->links() }}
+                    {{ $categories->links('vendor.pagination.adminPagi') }}
                 </div>
                 <!--end::Pagination-->
             </div>

@@ -61,41 +61,43 @@
                                     src="{{ asset('assets/client/images/gif/fire.gif') }}" alt="">
                                 <p>Move fast!</p>
                             </div>
+                            @php
+                                $now = \Carbon\Carbon::now();
+                                $start = \Carbon\Carbon::parse($product->starts_at);
+                                $end = \Carbon\Carbon::parse($product->ends_at);
+
+                                $isInDiscountTime = $now->between($start, $end);
+                                $finalPrice = $isInDiscountTime
+                                    ? $product->base_price * (1 - $product->sale_times / 100)
+                                    : $product->sale_price;
+                            @endphp
+                            <script>
+                                const isInDiscountTime = @json($isInDiscountTime);
+                                const saleTimes = @json($product->sale_times);
+                            </script>
                             <h3>{{ $product->name }}</h3>
-                            <p>${{ number_format($product->sale_price ?? $product->base_price) }}
-                                @if ($product->sale_price)
-                                    <del>${{ number_format($product->base_price) }}</del>
-                                    <span
-                                        class="offer-btn">{{ round((1 - $product->sale_price / $product->base_price) * 100) }}%
-                                        off</span>
+                            <p id="main-price">{{ number_format($finalPrice) }} đ
+                                <del>{{ number_format($product->base_price) }} đ</del>
+                                @if ($isInDiscountTime)
+                                    <span>-{{ $product->sale_times }}%</span>
                                 @endif
                             </p>
+                            <p></p>
                             <div class="rating">
                                 <ul class="rating">
-                                    @php
-                                        $fullStars = floor($product->rating_avg); // sao đầy
-                                        $halfStar = $product->rating_avg - $fullStars >= 0.5; // sao nửa
-                                        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0); // sao rỗng
-                                    @endphp
-
-                                    {{-- sao đầy --}}
-                                    @for ($i = 0; $i < $fullStars; $i++)
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                    @endfor
-
-                                    {{-- sao nửa --}}
-                                    @if ($halfStar)
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    @endif
-
-                                    {{-- sao rỗng --}}
-                                    @for ($i = 0; $i < $emptyStars; $i++)
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                    @endfor
-
-                                    <li>{{ number_format($product->rating_avg, 1) }}</li>
+                                    <li>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($rating_summary['avg_rating'] >= $i)
+                                                <i class="fa-solid fa-star"></i>
+                                            @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
+                                                <i class="fa-solid fa-star-half-stroke"></i>
+                                            @else
+                                                <i class="fa-regular fa-star"></i>
+                                            @endif
+                                        @endfor
+                                    </li>
+                                    <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-
                                 <p>{{ $product->description }}</p>
                             </div>
                             <div class="buy-box border-buttom">
@@ -112,36 +114,37 @@
                                 </ul>
                             </div>
                             {{-- Size --}}
-                            {{-- @dd($attributeGroups) --}}
+                            {{-- @foreach ($attributes as $attrId => $attr)
+                                <div class="mb-2">
+                                    <label><strong>{{ $attr['name'] }}:</strong></label>
+                                    <select class="form-select variant-select" data-attr="{{ $attrId }}">
+                                        <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
+                                        @foreach ($attr['values'] as $valueId => $value)
+                                            <option value="{{ $valueId }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> <!-- Đóng thẻ div.mb-2 -->
+                            @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
-                                <div class="d-flex mb-3">
-                                    <div>
-                                        <h5>{{ ucfirst($groupName) }}:</h5>
-
-                                        @if (in_array(strtolower($groupName), ['màu sắc', 'color', 'màu']))
-                                            {{-- Nếu là màu sắc thì hiển thị đặc biệt --}}
-                                            <div class="color-box">
-                                                <ul class="color-variant">
-                                                    @foreach ($values as $color)
-                                                        <li data-color="{{ $color }}">{{ $color }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @else
-                                            {{-- Các thuộc tính khác --}}
-                                            <div class="size-box">
-                                                <ul class="selected size-list">
-                                                    @foreach ($values as $val)
-                                                        <li><a href="#">{{ strtolower($val) }}</a></li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif
-                                    </div>
+                                <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+                                    <h6>{{ ucfirst($groupName) }}</h6>
+                                    <ul class="variant-list d-flex gap-2">
+                                        @foreach ($values as $val)
+                                            <li class="variant-item px-3 py-1 border rounded"
+                                                data-value="{{ $val }}" style="cursor: pointer;">
+                                                {{ $val }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="variant-error text-danger small mt-1" style="display: none;"></div>
+                                    <!-- thêm dòng này -->
                                 </div>
                             @endforeach
 
-
+                            <div id="variant-info" class="mt-3" style="display: none;">
+                                {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
+                                <p>Số lượng còn lại: <span id="variant-quantity"></span></p>
+                            </div>
 
 
                             <div class="quantity-box d-flex align-items-center gap-3">
@@ -155,12 +158,11 @@
                                         data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-price="{{ $product->sale_price }}"
                                         data-original-price="{{ $product->base_price }}"
-                                        data-image="{{ asset('storage/' . $product->image) }}" data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                                        data-image="{{ asset('storage/' . $product->image) }}"
+                                        data-brand="{{ $product->brand->name ?? 'Unknown' }}"
+                                        aria-controls="offcanvasRight">
                                         Add To Cart
                                     </a>
-
-
 
                                     <a class="btn btn_outline sm" href="#">Buy Now</a>
                                 </div>
@@ -177,30 +179,34 @@
                                 </ul>
                             </div>
                             <div class="sale-box">
-                                <div class="d-flex align-items-center gap-2"><img
-                                        src="{{ asset('assets/client/images/gif/timer.gif') }}" alt="">
-                                    <p>Limited Time Left! Hurry, Sale Ending!</p>
-                                </div>
-                                <div class="countdown">
-                                    <ul class="clockdiv1">
+
+                                <div class="countdown"
+                                    data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
+                                    data-endtime="{{ optional($product->ends_at ? \Carbon\Carbon::parse($product->ends_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}">
+
+                                    <div class="d-flex align-items-center gap-2"><img
+                                            src="{{ asset('assets/client/images/gif/timer.gif') }}" alt="">
+                                        <p>Limited Time Left! Hurry, Sale Ending!</p>
+                                    </div>
+                                    <ul>
                                         <li>
                                             <div class="timer">
                                                 <div class="days"></div>
                                             </div><span class="title">Days</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="hours"></div>
                                             </div><span class="title">Hours</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="minutes"></div>
                                             </div><span class="title">Min</span>
                                         </li>
-                                        <li>:</li>
+                                        <li class="dot"><span>:</span></li>
                                         <li>
                                             <div class="timer">
                                                 <div class="seconds"></div>
@@ -581,7 +587,8 @@
                                                                 <div class="user-info">
                                                                     <div class="d-flex justify-content-between gap-3">
                                                                         <h6><i class="iconsax" data-icon="user-1"></i>
-                                                                            {{ $review->user->fullname ?? 'Ẩn danh' }}</h6>
+                                                                            {{ $review->user->fullname ?? 'Ẩn danh' }}
+                                                                        </h6>
 
 
                                                                         <span> <i class="iconsax"
@@ -629,287 +636,77 @@
             </div>
             <div class="swiper special-offer-slide-2">
                 <div class="swiper-wrapper ratio1_3">
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/11.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/9.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                                <div class="countdown">
-                                    <ul class="clockdiv2">
-                                        <li>
-                                            <div class="timer">
-                                                <div class="days"></div>
-                                            </div><span class="title">Days</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="hours"></div>
-                                            </div><span class="title">Hours</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="minutes"></div>
-                                            </div><span class="title">Min</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="seconds"></div>
-                                            </div><span class="title">Sec</span>
-                                        </li>
-                                    </ul>
+                    @foreach ($product->related_products as $value)
+                        <div class="swiper-slide">
+                            <div class="product-box-3">
+                                <div class="img-wrapper">
+                                    <div class="label-block"><span class="lable-1">NEW</span><a
+                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
+                                    <div class="product-image"><a class="pro-first"
+                                            href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                            href="product.html"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a></div>
+                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
+                                                data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Add to cart"> </i></a><a href="compare.html"
+                                            tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                                aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                                data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Quick View"></i></a></div>
+                                    <div class="countdown">
+                                        <ul class="clockdiv2">
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="days"></div>
+                                                </div><span class="title">Days</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="hours"></div>
+                                                </div><span class="title">Hours</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="minutes"></div>
+                                                </div><span class="title">Min</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="seconds"></div>
+                                                </div><span class="title">Sec</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-detail">
+                                    <ul class="rating">
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li>{{ $value->rating_avg ?? 0 }}</li>
+                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                        <h6>{{ $value->name }}</h6>
+                                    </a>
+                                    <p>${{ number_format($value->sale_price, 2) }}
+                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Greciilooks Women's Stylish Top</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/18.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Wide Linen-Blend Trousers</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$18.00 </del>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/10.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Long Sleeve Rounded T-Shirt</h6>
-                                </a>
-                                <p>$120.30
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/16.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/20.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                                <div class="countdown">
-                                    <ul class="clockdiv11">
-                                        <li>
-                                            <div class="timer">
-                                                <div class="days"></div>
-                                            </div><span class="title">Days</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="hours"></div>
-                                            </div><span class="title">Hours</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="minutes"></div>
-                                            </div><span class="title">Min</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="seconds"></div>
-                                            </div><span class="title">Sec</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Blue lined White T-Shirt</h6>
-                                </a>
-                                <p>$190.00
-                                    <del>$210.00</del>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="product-box-3">
-                            <div class="img-wrapper">
-                                <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                        href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                            aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to Wishlist"></i></a></div>
-                                <div class="product-image"><a class="pro-first" href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/22.jpg') }}"
-                                            alt="product"></a><a class="pro-sec" href="product.html"> <img
-                                            class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-3/12.jpg') }}"
-                                            alt="product"></a></div>
-                                <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                            data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Add to cart"> </i></a><a href="compare.html" tabindex="0"><i
-                                            class="iconsax" data-icon="arrow-up-down" aria-hidden="true"
-                                            data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                            class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                            data-bs-title="Quick View"></i></a></div>
-                                <div class="countdown">
-                                    <ul class="clockdiv10">
-                                        <li>
-                                            <div class="timer">
-                                                <div class="days"></div>
-                                            </div><span class="title">Days</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="hours"></div>
-                                            </div><span class="title">Hours</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="minutes"></div>
-                                            </div><span class="title">Min</span>
-                                        </li>
-                                        <li class="dot"> <span>:</span></li>
-                                        <li>
-                                            <div class="timer">
-                                                <div class="seconds"></div>
-                                            </div><span class="title">Sec</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4.3</li>
-                                </ul><a href="product.html">
-                                    <h6>Greciilooks Women's Stylish Top</h6>
-                                </a>
-                                <p>$100.00
-                                    <del>$140.00</del><span>-20%</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -926,7 +723,7 @@
                     @auth
                         <form action="{{ route('client.review') }}" method="POST" class="row g-3">
                             @csrf
-                            <input type="hidden" name="product_id" value="{{ $test_id }}">
+                            {{-- <input type="hidden" name="product_id" value="{{ $test_id }}"> --}}
                             <input type="hidden" name="rating" id="rating-value" value="0">
 
                             <div class="col-12">
@@ -969,22 +766,46 @@
                         <script>
                             const stars = document.querySelectorAll('.star');
                             const ratingInput = document.getElementById('rating-value');
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const form = document.getElementById('rating-form');
+                                const stars = document.querySelectorAll('.star');
+                                const ratingInput = document.getElementById('rating-value');
+                                const commentInput = document.getElementById('comment');
 
-                            stars.forEach((star, index) => {
-                                star.addEventListener('click', () => {
-                                    const rating = star.getAttribute('data-value');
-                                    ratingInput.value = rating;
+                                stars.forEach((star, index) => {
+                                    star.addEventListener('click', () => {
+                                        const rating = star.getAttribute('data-value');
+                                        ratingInput.value = rating;
 
-                                    stars.forEach(s => s.querySelector('i').classList.replace('fa-solid', 'fa-regular'));
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
+                                            'fa-regular'));
+                                        stars.forEach(s => s.querySelector('i').classList.replace('fa-solid',
+                                            'fa-regular'));
 
-                                    for (let i = 0; i < rating; i++) {
-                                        stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
-                                    }
+                                        for (let i = 0; i < rating; i++) {
+                                            stars[i].querySelector('i').classList.replace('fa-regular', 'fa-solid');
+                                        }
+                                    });
                                 });
-                            });
+
+                                document.querySelectorAll('.submit-rating').forEach(button => {
+                                    button.addEventListener('click', function() {
+                                        const rate = ratingInput.value;
+                                        const comment = commentInput.value;
+                                        if (isNaN(rate) || (rate <= 0 || rate > 5)) {
+                                            Swal.fire('Thông báo', 'Vui lòng lựa chọn đánh giá của bạn', 'warning');
+                                            return;
+                                        }
+                                        if (comment == '') {
+                                            Swal.fire('Thông báo', 'Vui lòng nhập nội dung đánh giá', 'warning');
+                                            return;
+                                        }
+                                        form.submit();
+                                    })
+                                });
+                            })
                         </script>
                     @endauth
-
                     @guest
                         <div class="alert alert-warning mt-3 d-flex justify-content-between align-items-center">
                             <div class="me-3">
@@ -1001,284 +822,320 @@
                 </div>
             </div>
         </div>
-    </div>Your browser
+    </div>
 @endsection
 @section('js')
     <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cartList = document.querySelector('.offcanvas-cart');
+    <script>
+        const allVariants = @json($variants);
+        const variantGroups = document.querySelectorAll('.variant-group');
 
-            // Load lại giỏ hàng từ localStorage
-            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            cartItems.forEach(item => {
-                renderCartItem(item);
+        // Normalize key để so sánh key như "Màu sắc" và "mau_sac"
+        function normalize(str) {
+            return str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/\s+/g, '_');
+        }
+
+        // Lấy các lựa chọn hiện tại
+        function getSelectedAttributes() {
+            const selected = {};
+            variantGroups.forEach(group => {
+                const groupName = group.getAttribute('data-attribute');
+                const active = group.querySelector('.variant-item.active');
+                if (active) {
+                    selected[groupName] = active.getAttribute('data-value');
+                }
             });
+            return selected;
+        }
 
-            // Gắn sự kiện cho nút Add to Cart
-            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = {
-                        id: this.dataset.id,
-                        name: this.dataset.name,
-                        price: parseFloat(this.dataset.price),
-                        originalPrice: parseFloat(this.dataset.originalPrice),
-                        image: this.dataset.image,
-                        quantity: 1
-                    };
+        // So khớp biến thể đã chọn với biến thể thực tế trong allVariants
+        function attributesMatch(a, b) {
+            const keysA = Object.keys(a);
+            const keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) return false;
 
-                    // Nếu sản phẩm đã tồn tại, tăng quantity
-                    const index = cartItems.findIndex(p => p.id === item.id);
-                    if (index !== -1) {
-                        cartItems[index].quantity += 1;
-                    } else {
-                        cartItems.push(item);
-                    }
+            return keysA.every(keyA => {
+                const keyB = keysB.find(k => normalize(k) === normalize(keyA));
+                return keyB && a[keyA] === b[keyB];
+            });
+        }
 
-                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                    renderCartItems();
+        // Cập nhật thông tin biến thể
+        function updateVariantInfo() {
+            const selected = getSelectedAttributes();
+            if (Object.keys(selected).length !== variantGroups.length) {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+                return;
+            }
+
+            const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
+            if (matched) {
+                document.getElementById('variant-quantity').textContent = matched.quantity;
+                document.getElementById('variant-info').style.display = 'block';
+
+                const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+                document.getElementById('main-price').textContent = formattedPrice;
+            } else {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+            }
+        }
+
+        // Bắt sự kiện click vào mỗi lựa chọn
+        document.querySelectorAll('.variant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.variant-item').forEach(i => i.classList.remove(
+                    'active'));
+                this.classList.add('active');
+                updateVariantInfo();
+            });
+        });
+    </script>
+
+
+    <script>
+        function getTimeRemaining(endtime) {
+            const t = Date.parse(endtime) - Date.now();
+            const seconds = Math.floor((t / 1000) % 60);
+            const minutes = Math.floor((t / 1000 / 60) % 60);
+            const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                total: t,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+        function initializeClock($clock, starttimeStr, endtimeStr) {
+            const $days = $clock.find('.days');
+            const $hours = $clock.find('.hours');
+            const $minutes = $clock.find('.minutes');
+            const $seconds = $clock.find('.seconds');
+
+            function updateClock() {
+                const now = Date.now();
+                const start = Date.parse(starttimeStr);
+                const end = Date.parse(endtimeStr);
+
+                if (isNaN(start) || isNaN(end)) {
+                    $clock.hide();
+                    return;
+                }
+                if (now < start) {
+                    // Chưa đến thời gian bắt đầu
+                    $clock.hide();
+                    return;
+                }
+                if (now > end) {
+                    // Đã hết hạn
+                    $clock.hide();
+                    return;
+                }
+                const t = getTimeRemaining(endtimeStr);
+                $clock.show();
+                $days.text(String(t.days).padStart(2, '0'));
+                $hours.text(String(t.hours).padStart(2, '0'));
+                $minutes.text(String(t.minutes).padStart(2, '0'));
+                $seconds.text(String(t.seconds).padStart(2, '0'));
+            }
+            updateClock();
+            const interval = setInterval(function() {
+                const now = Date.now();
+                const end = Date.parse(endtimeStr);
+                if (now > end) {
+                    $clock.hide();
+                    clearInterval(interval);
+                    return;
+                }
+                updateClock();
+            }, 1000);
+        }
+
+        $(document).ready(function() {
+            $('.countdown[data-starttime][data-endtime]').each(function() {
+                const $clock = $(this);
+                const start = $clock.attr('data-starttime');
+                const end = $clock.attr('data-endtime');
+                if (!start || !end) {
+                    $clock.hide();
+                    return;
+                }
+                initializeClock($clock, start, end);
+            });
+        });
+    </script>
+
+
+
+    <script>
+        window.variantData = @json($variants);
+        console.log(window.variantData);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ✅ Xử lý chọn thuộc tính
+            document.querySelectorAll('.variant-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const group = this.closest('.variant-list');
+                    if (!group) return;
+
+                    group.querySelectorAll('.variant-item').forEach(i => {
+                        i.classList.remove('active');
+                        i.style.setProperty('border', '1px solid #ddd', 'important');
+                        i.style.fontWeight = 'normal';
+                        i.style.color = '';
+                    });
+
+                    this.classList.add('active');
+                    this.style.setProperty('border', '2px solid #222', 'important');
+                    this.style.fontWeight = 'bold';
+                    this.style.color = '#222';
                 });
             });
 
-            // === Hiển thị lại toàn bộ giỏ hàng ===
-            function renderCartItems() {
-                cartList.innerHTML = '';
-                cartItems.forEach(item => renderCartItem(item));
-                updateTotal();
-            }
+            function showToast(message, type = 'error') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
 
-            // === Render từng item ===
-            function renderCartItem(item) {
-                const li = document.createElement('li');
+                toast.className = 'toast-box';
+                toast.style.background =
+                    type === 'error' ? '#dc3545' :
+                    type === 'warning' ? '#ffc107' :
+                    type === 'info' ? '#17a2b8' :
+                    '#28a745';
 
-                li.innerHTML = `
-        <a href="#"><img src="${item.image}" alt=""></a>
-        <div>
-            <h6 class="mb-0">${item.name}</h6>
-            <p>$${item.price.toLocaleString()}
-                <del>$${item.originalPrice.toLocaleString()}</del>
-                <span class="btn-cart">$<span class="btn-cart__total">${item.price.toLocaleString()}</span></span>
-            </p>
-            <div class="btn-containter">
-                <div class="btn-control">
-                    <button class="btn-control__remove">&minus;</button>
-                    <div class="btn-control__quantity">
-                        <div id="quantity-previous">${item.quantity - 1}</div>
-                        <div id="quantity-current">${item.quantity}</div>
-                        <div id="quantity-next">${item.quantity + 1}</div>
-                    </div>
-                    <button class="btn-control__add">+</button>
-                </div>
-            </div>
-        </div>
-        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+                toast.innerHTML = `
+    <div class="icon">
+        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+        <span>${message}</span>
+    </div>
+    <button class="close-btn">&times;</button>
     `;
 
-                // === Tăng / giảm số lượng ===
-                li.querySelector('.btn-control__add').addEventListener('click', () => {
-                    item.quantity += 1;
-                    saveAndRender();
-                });
+                container.appendChild(toast);
 
-                li.querySelector('.btn-control__remove').addEventListener('click', () => {
-                    if (item.quantity > 1) {
-                        item.quantity -= 1;
-                        saveAndRender();
-                    }
-                });
+                toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
 
-                // === Xoá sản phẩm ===
-                li.querySelector('.delete-icon').addEventListener('click', () => {
-                    cartItems = cartItems.filter(p => p.id !== item.id);
-                    saveAndRender();
-                });
+                setTimeout(() => {
+                    toast.style.transition = 'opacity 0.5s ease';
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000 + container.children.length * 500);
+            }
 
-                cartList.appendChild(li);
+            // ✅ Lấy ID biến thể từ selected attributes
+            function getSelectedVariantId(attributes) {
+                const variantData = window.variantData || [];
+                return variantData.find(v => {
+                    return Object.entries(attributes).every(([key, val]) => {
+                        // So sánh key và value đều không phân biệt hoa thường
+                        return (
+                            Object.keys(v.attributes).some(attrKey =>
+                                attrKey.toLowerCase() === key.toLowerCase() &&
+                                v.attributes[attrKey].toLowerCase() === val.toLowerCase()
+                            )
+                        );
+                    });
+                })?.id || null;
             }
 
 
-            // Cập nhật tổng tiền
-            function updateTotal() {
-                let total = 0;
-                cartItems.forEach(item => {
-                    total += item.price * item.quantity;
-                });
-                document.querySelector('.price-box p').textContent = `$ ${total.toFixed(2)} USD`;
-            }
-
-            // Lưu và hiển thị lại giỏ
-            function saveAndRender() {
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                renderCartItems();
-            }
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            // Xử lý chọn Size
-            const sizeItems = document.querySelectorAll('.size-box ul li');
-            sizeItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    sizeItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    this.parentNode.classList.add('selected');
-                });
-            });
-
-            // Xử lý chọn Màu
-            const colorItems = document.querySelectorAll('.color-variant li');
-            colorItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    colorItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-        });
-    </script> -->
-
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cartList = document.querySelector('.offcanvas-cart');
-            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-            renderCartItems();
-
-            // Sự kiện Add to Cart
+            // ✅ Sự kiện Add to Cart
             document.querySelectorAll('.add-to-cart-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const id = this.dataset.id;
                     const name = this.dataset.name;
-                    const price = parseFloat(this.dataset.price);
-                    const originalPrice = parseFloat(this.dataset.originalPrice);
                     const image = this.dataset.image;
+                    const quantity = parseInt(document.querySelector('.quantity input')?.value ||
+                        1);
+                    const brand = this.dataset.brand || 'Unknown';
 
-                    // ✅ Lấy size đang được chọn
-                    const selectedSize = document.querySelector('.size-box ul li.active');
-                    const size = selectedSize ? selectedSize.textContent.trim() : 'Default';
+                    const currentUser = localStorage.getItem('currentUser') || 'guest';
+                    const cartKey = `cartItems_${currentUser}`;
+                    const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-                    // ✅ Lấy màu đang được chọn
-                    const selectedColor = document.querySelector('.color-variant li.active');
-                    const color = selectedColor ? selectedColor.dataset.color || selectedColor
-                        .title || 'Default' : 'Default';
+                    const selectedAttributes = {};
+                    let valid = true;
+                    const missingAttrs = [];
 
-                    // ✅ Lấy số lượng
-                    const quantityInput = document.querySelector('.quantity input');
-                    const quantity = parseInt(quantityInput?.value || 1);
+                    document.querySelectorAll('.variant-group').forEach(group => {
+                        const attrName = group.dataset.attribute;
+                        const selected = group.querySelector('.variant-item.active');
 
-                    // ✅ Kiểm tra xem đã có sản phẩm với cùng ID, size, color chưa
-                    const index = cartItems.findIndex(p => p.id === id && p.size === size && p
-                        .color === color);
+                        if (!selected) {
+                            valid = false;
+                            missingAttrs.push(attrName);
+                        } else {
+                            selectedAttributes[attrName] = selected.dataset.value ||
+                                selected.textContent.trim();
+                        }
+                    });
+
+                    if (!valid) {
+                        missingAttrs.forEach(attr => {
+                            showToast(`Vui lòng chọn ${attr}`, 'error');
+                        });
+                        return;
+                    }
+
+                    // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
+                    const variantId = getSelectedVariantId(selectedAttributes);
+
+                    let price = parseFloat(this.dataset.price);
+                    let originalPrice = parseFloat(this.dataset.originalPrice);
+
+                    if (variantId) {
+                        const matchedVariant = window.variantData.find(v => v.id === variantId);
+                        if (matchedVariant) {
+                            price = matchedVariant.price;
+                            originalPrice = matchedVariant.original_price || originalPrice;
+                        }
+                    }
+
+                    const index = cartItems.findIndex(item =>
+                        item.id === id &&
+                        ((variantId && item.variant_id === variantId) ||
+                            (!variantId && JSON.stringify(item.attributes || {}) === JSON
+                                .stringify(selectedAttributes)))
+                    );
+
                     if (index !== -1) {
                         cartItems[index].quantity += quantity;
                     } else {
                         cartItems.push({
                             id,
+                            variant_id: variantId,
                             name,
                             price,
                             originalPrice,
                             image,
                             quantity,
-                            size,
-                            color
+                            brand,
+                            attributes: selectedAttributes
                         });
                     }
 
-                    saveAndRender();
-                });
+                    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+                    document.dispatchEvent(new Event('cartUpdated'));
 
-            });
-
-            function renderCartItems() {
-                cartList.innerHTML = '';
-                cartItems.forEach(item => renderCartItem(item));
-                updateTotal();
-            }
-
-            function renderCartItem(item) {
-                const li = document.createElement('li');
-                li.innerHTML = `
-            <a href="#"><img src="${item.image}" alt=""></a>
-            <div>
-                <h6 class="mb-0">${item.name}</h6>
-                <p>$${item.price.toLocaleString()}
-                    <del>$${item.originalPrice.toLocaleString()}</del>
-                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
-                </p>
-                <p>Size: <span>${item.size || 'Default'}</span></p>
-<p>Color: <span>${item.color || 'Default'}</span></p>
-
-                <div class="btn-containter">
-                    <div class="btn-control">
-                        <button class="btn-control__remove">&minus;</button>
-                        <div class="btn-control__quantity">
-                            <div id="quantity-previous">${item.quantity - 1}</div>
-                            <div id="quantity-current">${item.quantity}</div>
-                            <div id="quantity-next">${item.quantity + 1}</div>
-                        </div>
-                        <button class="btn-control__add">+</button>
-                    </div>
-                </div>
-            </div>
-            <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-        `;
-
-                li.querySelector('.btn-control__add').addEventListener('click', () => {
-                    item.quantity += 1;
-                    saveAndRender();
-                });
-
-                li.querySelector('.btn-control__remove').addEventListener('click', () => {
-                    if (item.quantity > 1) {
-                        item.quantity -= 1;
-                        saveAndRender();
+                    const offcanvasEl = document.getElementById('offcanvasRight');
+                    if (offcanvasEl) {
+                        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
+                        bsOffcanvas.show();
                     }
                 });
-
-                li.querySelector('.delete-icon').addEventListener('click', () => {
-                    cartItems = cartItems.filter(p => p.id !== item.id);
-                    saveAndRender();
-                });
-
-                cartList.appendChild(li);
-            }
-
-            function updateTotal() {
-                let total = 0;
-                cartItems.forEach(item => {
-                    total += item.price * item.quantity;
-                });
-                const totalElement = document.querySelector('.price-box p');
-                if (totalElement) {
-                    totalElement.textContent = `$ ${total.toFixed(2)} USD`;
-                }
-            }
-
-            function saveAndRender() {
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                renderCartItems();
-            }
-
-            // Xử lý chọn size
-            const sizeItems = document.querySelectorAll('.size-box ul li');
-            sizeItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    sizeItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    this.parentNode.classList.add('selected');
-                });
             });
 
-            // Xử lý chọn màu
-            const colorItems = document.querySelectorAll('.color-variant li');
-            colorItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    colorItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
         });
-    </script> -->
-
-
+    </script>
 
 @endsection
