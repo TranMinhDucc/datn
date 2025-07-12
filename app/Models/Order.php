@@ -50,6 +50,10 @@ class Order extends Model
     {
         return $this->belongsTo(ShippingAddress::class, 'address_id');
     }
+    public function address()
+    {
+        return $this->belongsTo(ShippingAddress::class, 'address_id');
+    }
 
     public function paymentMethod()
     {

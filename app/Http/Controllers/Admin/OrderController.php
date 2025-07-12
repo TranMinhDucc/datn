@@ -304,18 +304,24 @@ class OrderController extends Controller
         // Tính toán lại chính xác kích thước và cân nặng
         foreach ($order->items as $item) {
             $variant = $item->productVariant;
+            $product = $variant?->product ?? $item->product;
 
-            $totalWeight += $variant->weight * $item->quantity;
-
-            if ($variant->length > $maxLength) {
-                $maxLength = $variant->length;
+            if (!$variant && !$product) {
+                Log::error("❌ Không tìm thấy biến thể và sản phẩm cho OrderItem ID: {$item->id}, Order ID: {$order->id}");
+                continue;
             }
 
-            if ($variant->width > $maxWidth) {
-                $maxWidth = $variant->width;
-            }
+            $weight = $variant?->weight ?? $product?->weight ?? 100;
+            $length = $variant?->length ?? $product?->length ?? 10;
+            $width  = $variant?->width ?? $product?->width ?? 10;
+            $height = $variant?->height ?? $product?->height ?? 10;
 
-            $totalHeight += $variant->height * $item->quantity;
+            $totalWeight += $weight * $item->quantity;
+
+            if ($length > $maxLength) $maxLength = $length;
+            if ($width > $maxWidth) $maxWidth = $width;
+
+            $totalHeight += $height * $item->quantity;
         }
 
         $toDistrictId = PartnerLocationCode::where([
@@ -373,12 +379,15 @@ class OrderController extends Controller
             'height'              => $totalHeight ?: 10,
             'service_id' => $serviceId,
             'items' => $order->items->map(function ($item) {
+                $variant = $item->productVariant;
+                $product = $variant?->product ?? $item->product;
+
                 return [
-                    'name' => $item->productVariant->product->name,
+                    'name' => $product->name ?? 'Không rõ',
                     'quantity' => $item->quantity,
-                    'code' => $item->productVariant->sku,
-                    'image' => asset('storage/' . $item->productVariant->product->image),
-                    'weight' => $item->productVariant->weight,
+                    'code' => $variant?->sku ?? $product->sku ?? 'UNKNOWN',
+                    'image' => asset('storage/' . ($product->image ?? 'default.png')),
+                    'weight' => $variant?->weight ?? $product?->weight ?? 100,
                 ];
             })->toArray(),
 
