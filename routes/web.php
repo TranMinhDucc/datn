@@ -1,12 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\Bank;
 use App\Models\User;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\Setting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 // ========== CLIENT CONTROLLERS ==========
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\AdminMiddleware;
+use App\Services\BankTransactionService;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
@@ -25,30 +37,41 @@ use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 
 
 // ========== ADMIN CONTROLLERS ==========
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\BankController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\ReviewController;
-use App\Http\Controllers\Admin\PaymentBankController;
-use App\Http\Controllers\Admin\StatusController;
-use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\FaqController;
-use App\Http\Controllers\Admin\TagController;
-use App\Http\Controllers\Admin\VariantAttributeController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SigninController;
+use App\Http\Controllers\Admin\StatusController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Admin\ProductLabelController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Client\AccountController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Admin\PaymentBankController;
+use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\BlogCategoryController;
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\ProductLabelController;
+use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\EmailCampaignController;
+use App\Http\Controllers\Webhook\BankWebhookController;
+use App\Http\Controllers\Admin\ShippingMethodController;
+
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Admin\VariantAttributeController;
+use App\Http\Controllers\Client\ShippingAddressController;
+use App\Http\Controllers\Client\FaqController as ClientFaqController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ReviewController as ClientReviewController;
+use App\Http\Controllers\Client\ContactController as ClientContactController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 
 use App\Http\Controllers\Admin\SearchController;
 
@@ -336,6 +359,12 @@ Route::prefix('admin')
 
         Route::resource('brands', BrandController::class);
         Route::resource('tags', TagController::class);
+        //Blog
+        Route::resource('blogs', BlogController::class)->names('blogs');
+        Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
+        Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
+
+    Route::resource('menus', MenuController::class);
 
         // Variant Attributes
         Route::resource('variant_attributes', VariantAttributeController::class);
