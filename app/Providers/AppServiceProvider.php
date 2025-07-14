@@ -26,10 +26,6 @@ use App\Actions\Fortify\LoginResponse as CustomLoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
-use App\Http\Requests\CustomResetPasswordRequest;
-use App\Models\Setting;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 
@@ -65,7 +61,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // ✅ Chia sẻ cho tất cả view
-        View::share('settings', $settings);
        View::composer('*', function ($view) {
     $headerMenus = Menu::with('children')
                         ->where('position', 'header')
