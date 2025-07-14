@@ -144,5 +144,13 @@
   </div>
 </section>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUser = localStorage.getItem('currentUser') || 'guest';
+        localStorage.removeItem(`cartItems_${currentUser}`);
+        sessionStorage.removeItem('shippingCoupon');
+        sessionStorage.removeItem('productCoupon');
+    });
+</script>
 
 @endsection

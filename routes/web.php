@@ -130,7 +130,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
-    Route::get('/order-success', [CheckoutController::class, 'success'])->name('client.order.success');
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('client.checkout.success');
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
@@ -405,3 +405,6 @@ Route::get('/cron/sync-ghn-orders', function () {
         'message' => 'GHN sync triggered via HTTP.',
     ]);
 });
+
+Route::post('/checkout/initiate-payment', [\App\Http\Controllers\Client\CheckoutController::class, 'initiatePayment'])->name('client.checkout.initiate-payment');
+Route::get('/checkout/payment-callback', [\App\Http\Controllers\Client\CheckoutController::class, 'paymentCallback'])->name('client.checkout.payment-callback');

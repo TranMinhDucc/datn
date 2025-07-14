@@ -18,6 +18,7 @@ class WardSeeder extends Seeder
         foreach ($data as $item) {
             Ward::updateOrCreate(['id' => $item['id']], [
                 'name' => $item['name'],
+                'ward_code' => 100,
                 'district_id' => $item['district_id'],
             ]);
         }
