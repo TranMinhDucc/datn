@@ -690,7 +690,7 @@
 
                                                             {{-- Theo dõi đơn hàng --}}
                                                             @if ($order->status === 'shipping')
-                                                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
                                                                     🚚 Theo dõi đơn hàng
                                                                 </a>
                                                             @endif
@@ -740,7 +740,8 @@
                                                                     <ul>
                                                                         <li>
                                                                             <p>Price :</p>
-                                                                            <span>${{ $item->price }}</span>
+                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+
                                                                         </li>
                                                                         @php
                                                                             $variantValues = json_decode(

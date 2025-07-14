@@ -143,7 +143,7 @@
 
                             <div id="variant-info" class="mt-3" style="display: none;">
                                 {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
-                                <p><strong>Số lượng còn lại:</strong> <span id="variant-quantity"></span></p>
+                                <p>Số lượng còn lại: <span id="variant-quantity"></span></p>
                             </div>
 
 
@@ -830,67 +830,76 @@
 
     <script>
         const allVariants = @json($variants);
-        const product = @json($product);
+        const variantGroups = document.querySelectorAll('.variant-group');
 
-        function getSelectedVariantId(selectedAttributes) {
-            return allVariants.find(v =>
-                JSON.stringify(v.attributes) === JSON.stringify(selectedAttributes)
-            )?.id || null;
+        // Normalize key để so sánh key như "Màu sắc" và "mau_sac"
+        function normalize(str) {
+            return str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/\s+/g, '_');
         }
 
-        $('.variant-select').on('change', function() {
-            let selected = {};
-            $('.variant-select').each(function() {
-                let attr = $(this).data('attr');
-                let val = $(this).val();
-                if (val) selected[attr] = val;
+        // Lấy các lựa chọn hiện tại
+        function getSelectedAttributes() {
+            const selected = {};
+            variantGroups.forEach(group => {
+                const groupName = group.getAttribute('data-attribute');
+                const active = group.querySelector('.variant-item.active');
+                if (active) {
+                    selected[groupName] = active.getAttribute('data-value');
+                }
             });
+            return selected;
+        }
 
-            if (Object.keys(selected).length === {{ count($attributes) }}) {
-                $.ajax({
-                    url: "{{ route('api.get-variant-info') }}",
-                    type: "POST",
-                    data: {
-                        product_id: product.id,
-                        attributes: selected,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(res) {
-                        if (res.status === 'ok') {
-                            let price = res.price;
-                            if (isInDiscountTime) {
-                                price = price * (1 - saleTimes / 100);
-                            }
-                            $('#variant-info').show();
-                            $('#variant-price').text(Math.round(price));
-                            $('#variant-quantity').text(res.quantity);
-                            $('#main-price').html(
-                                new Intl.NumberFormat().format(Math.round(price)) + ' đ' +
-                                ' <del>' + new Intl.NumberFormat().format(res.price) + ' đ</del>' +
-                                (isInDiscountTime ? ' <span>-' + saleTimes + '%</span>' : '')
-                            );
-                        } else {
-                            $('#variant-info').hide();
-                            $('#main-price').html(
-                                new Intl.NumberFormat().format({{ round($finalPrice) }}) + ' đ' +
-                                ' <del>' + new Intl.NumberFormat().format(
-                                    {{ round($product->base_price) }}) + ' đ</del>' +
-                                (@json($isInDiscountTime) ?
-                                    ' <span>-{{ $product->sale_times }}%</span>' : '')
-                            );
-                        }
-                    }
-                });
-            } else {
-                $('#variant-info').hide();
-                $('#main-price').html(
-                    new Intl.NumberFormat().format({{ round($finalPrice) }}) + ' đ' +
-                    ' <del>' + new Intl.NumberFormat().format({{ round($product->base_price) }}) + ' đ</del>' +
-                    (@json($isInDiscountTime) ? ' <span>-{{ $product->sale_times }}%</span>' : '')
-                );
+        // So khớp biến thể đã chọn với biến thể thực tế trong allVariants
+        function attributesMatch(a, b) {
+            const keysA = Object.keys(a);
+            const keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) return false;
+
+            return keysA.every(keyA => {
+                const keyB = keysB.find(k => normalize(k) === normalize(keyA));
+                return keyB && a[keyA] === b[keyB];
+            });
+        }
+
+        // Cập nhật thông tin biến thể
+        function updateVariantInfo() {
+            const selected = getSelectedAttributes();
+            if (Object.keys(selected).length !== variantGroups.length) {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+                return;
             }
+
+            const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
+            if (matched) {
+                document.getElementById('variant-quantity').textContent = matched.quantity;
+                document.getElementById('variant-info').style.display = 'block';
+
+                const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+                document.getElementById('main-price').textContent = formattedPrice;
+            } else {
+                document.getElementById('variant-info').style.display = 'none';
+                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+            }
+        }
+
+        // Bắt sự kiện click vào mỗi lựa chọn
+        document.querySelectorAll('.variant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.variant-item').forEach(i => i.classList.remove(
+                    'active'));
+                this.classList.add('active');
+                updateVariantInfo();
+            });
         });
     </script>
+
+
     <script>
         function getTimeRemaining(endtime) {
             const t = Date.parse(endtime) - Date.now();
@@ -1045,8 +1054,6 @@
                 button.addEventListener('click', function() {
                     const id = this.dataset.id;
                     const name = this.dataset.name;
-                    const price = parseFloat(this.dataset.price);
-                    const originalPrice = parseFloat(this.dataset.originalPrice);
                     const image = this.dataset.image;
                     const quantity = parseInt(document.querySelector('.quantity input')?.value ||
                         1);
@@ -1080,10 +1087,19 @@
                         return;
                     }
 
+                    // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
                     const variantId = getSelectedVariantId(selectedAttributes);
-                    console.log("🟡 Các thuộc tính đã chọn:", selectedAttributes);
-                    console.log("🟢 Dữ liệu variantData:", window.variantData);
-                    console.log("🔵 variant_id tìm được:", variantId);
+
+                    let price = parseFloat(this.dataset.price);
+                    let originalPrice = parseFloat(this.dataset.originalPrice);
+
+                    if (variantId) {
+                        const matchedVariant = window.variantData.find(v => v.id === variantId);
+                        if (matchedVariant) {
+                            price = matchedVariant.price;
+                            originalPrice = matchedVariant.original_price || originalPrice;
+                        }
+                    }
 
                     const index = cartItems.findIndex(item =>
                         item.id === id &&
@@ -1118,6 +1134,7 @@
                     }
                 });
             });
+
         });
     </script>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -26,7 +27,6 @@ class OrderController extends Controller
             abort(403);
         }
 
-        // Lấy lý do hủy (bao gồm trường hợp chọn "Khác")
         $reason = $request->cancel_reason === 'Khác'
             ? $request->cancel_reason_other
             : $request->cancel_reason;
@@ -37,7 +37,10 @@ class OrderController extends Controller
             $order->cancel_reason = $reason;
             $order->save();
 
-            return back()->with('success', 'Đơn hàng đã được hủy.');
+            // ✅ Hoàn lại số lượng vào kho
+            $this->restoreStock($order);
+
+            return back()->with('success', 'Đơn hàng đã được hủy và sản phẩm đã hoàn kho.');
         }
 
         if ($order->status === 'confirmed' && !$order->cancel_request) {
@@ -51,6 +54,7 @@ class OrderController extends Controller
         return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
     }
 
+
     public function show(Order $order)
     {
         // Đảm bảo người dùng chỉ xem đơn của chính họ
@@ -62,5 +66,16 @@ class OrderController extends Controller
         $order->load(['orderItems.product', 'address', 'address.province', 'address.district', 'address.ward']);
 
         return view('client.account.tracking', compact('order'));
+    }
+    protected function restoreStock(Order $order)
+    {
+        $order->load('orderItems');
+
+        foreach ($order->orderItems as $item) {
+            if ($item->product_variant_id && $item->quantity) {
+                ProductVariant::where('id', $item->product_variant_id)
+                    ->increment('quantity', $item->quantity);
+            }
+        }
     }
 }
