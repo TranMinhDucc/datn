@@ -23,13 +23,23 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();
+        // Latest products
+        $latestProducts = Product::where('is_active', 1)
+            ->latest('created_at')
+            ->take(8)
+            ->get();
+        // Best seller products
+        $bestSellerProducts = Product::where('is_active', 1)
+            ->orderByDesc('sold_quantity')
+            ->take(8)
+            ->get();
         $categories = Category::whereNull('parent_id')->get(); // ← thêm dòng này
         $latestBlogs = Blog::with(['author']) // eager load author
             ->published()
             ->latest('published_at')
             ->take(3) // hoặc số lượng bạn muốn
             ->get();
-        return view('client.home', compact('banners', 'categories', 'products', 'latestBlogs'));
+        return view('client.home', compact('banners', 'categories', 'products', 'latestBlogs', 'latestProducts', 'bestSellerProducts'));
     }
     public function policy()
     {

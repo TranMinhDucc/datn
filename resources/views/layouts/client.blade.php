@@ -29,112 +29,94 @@
     @stack('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<style>
-    #toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+    <style>
+        .toast-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #dc3545;
+            color: white;
+            font-weight: 500;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            min-width: 260px;
+            max-width: 300px;
+            animation: fade-in 0.3s ease;
 
-.toast-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #fff;
-    border-left: 4px solid #dc3545; /* mặc định error */
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 12px 16px;
-    min-width: 260px;
-    max-width: 320px;
-    font-size: 14px;
-    color: #333;
-    transition: opacity 0.5s ease;
-}
+        }
 
-.toast-box.success {
-    border-left-color: #28a745;
-}
-.toast-box.warning {
-    border-left-color: #ffc107;
-}
-.toast-box.info {
-    border-left-color: #17a2b8;
-}
+        .toast-box .icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
 
-.toast-box .icon {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
-}
+        .toast-box .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-.toast-box .icon span:first-child {
-    font-size: 16px;
-}
+        .toast-box .icon span:first-child {
+            font-size: 18px;
+            opacity: 0.9;
+        }
 
-.toast-box .close-btn {
-    background: transparent;
-    border: none;
-    font-size: 16px;
-    color: #aaa;
-    cursor: pointer;
-    margin-left: 10px;
-    font-weight: bold;
-}
-.toast-box .close-btn:hover {
-    color: #333;
-}
-
-
-
-</style>
+        .toast-box .icon span:last-child {
+            color: #ffffff;
+            font-size: 14px;
+        }
+    </style>
+    @yield('style')
 </head>
 
 <script>
     @auth
-        localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
+    localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
     @else
         localStorage.setItem('currentUser', 'guest');
     @endauth
 </script>
 
 <script>
-        @auth
-                    const userId = '{{ auth()->user()->id }}';
-            const guestKey = 'cartItems_guest';
-            const userKey = `cartItems_${userId}`;
+    @auth
+    const userId = '{{ auth()->user()->id }}';
+    const guestKey = 'cartItems_guest';
+    const userKey = `cartItems_${userId}`;
 
-            const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
-            const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
+    const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
+    const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
 
-            // Hàm merge
-            function mergeCarts(userCart, guestCart) {
-                guestCart.forEach(gItem => {
-                    const index = userCart.findIndex(
-                        uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
-                    );
+    // Hàm merge
+    function mergeCarts(userCart, guestCart) {
+        guestCart.forEach(gItem => {
+            const index = userCart.findIndex(
+                uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
+            );
 
-                    if (index !== -1) {
-                        userCart[index].quantity += gItem.quantity;
-                    } else {
-                        userCart.push(gItem);
-                    }
-                });
-
-                return userCart;
+            if (index !== -1) {
+                userCart[index].quantity += gItem.quantity;
+            } else {
+                userCart.push(gItem);
             }
+        });
 
-            const mergedCart = mergeCarts(userCart, guestCart);
+        return userCart;
+    }
 
-            localStorage.setItem(userKey, JSON.stringify(mergedCart));
-            localStorage.removeItem(guestKey); // xoá cart guest
-            localStorage.setItem('currentUser', userId); // cập nhật currentUser
-        @endauth
+    const mergedCart = mergeCarts(userCart, guestCart);
+
+    localStorage.setItem(userKey, JSON.stringify(mergedCart));
+    localStorage.removeItem(guestKey); // xoá cart guest
+    localStorage.setItem('currentUser', userId); // cập nhật currentUser
+    @endauth
 </script>
 
 <body>
@@ -219,9 +201,11 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i
+                                                class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i
+                                                class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -257,7 +241,7 @@
                 </div>
             </div>
             <div class="price-box">
-                <h6>Total :</h6>
+                <h6>Tổng :</h6>
                 <p>$ 49.59 USD</p>
             </div>
             <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> View
@@ -279,17 +263,20 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Shoes
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>
@@ -300,173 +287,45 @@
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Dresses</a></li>
                 </ul>
-                <h4>You Might Like</h4>
+                <h4>Có thể bạn sẽ thích</h4>
                 <div class="row gy-4 ratio_square-2 preemptive-search">
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/1.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <div><a href="product.html">
-                                        <h6> Women's Stylish Top</h6>
-                                    </a>
-                                    <p>$50.00 </p>
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li>4+</li>
-                                    </ul>
+                    @foreach ($recommendedProducts as $item)
+                        <div class="col-xl-2 col-sm-4 col-6">
+                            <div class="product-box-6">
+                                <div class="img-wrapper">
+                                    <div class="product-image">
+                                        <a href="{{ route('client.products.show', $item->slug) }}">
+                                            <img class="bg-img" src="{{ asset('storage/' . $item->image) }}"
+                                                alt="{{ $item->name }}">
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="product-detail">
+                                    <div>
+                                        <a href="{{ route('client.products.show', $item->slug) }}">
+                                            <h6>{{ $item->name }}</h6>
+                                        </a>
+                                        <p>{{ number_format($item->sale_price ?? $item->base_price, 0, ',', '.') }}₫
+                                        </p>
+                                        <ul class="rating">
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                            <li><i class="fa-regular fa-star"></i></li>
+                                            <li>4+</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/2.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <div><a href="product.html">
-                                        <h6> Women's Stylish Top</h6>
-                                    </a>
-                                    <p>$95.00
-                                        <del>$140.00</del>
-                                    </p>
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li>3+</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/3.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <div><a href="product.html">
-                                        <h6> Women's Stylish Top</h6>
-                                    </a>
-                                    <p>$80.00
-                                        <del>$140.00</del>
-                                    </p>
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li>4</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/4.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <div><a href="product.html">
-                                        <h6> Women's Stylish Top</h6>
-                                    </a>
-                                    <p>$90.00 </p>
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li>2+</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/5.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail">
-                                <div><a href="product.html">
-                                        <h6> Women's Stylish Top</h6>
-                                    </a>
-                                    <p>$180.00
-                                        <del>$140.00</del>
-                                    </p>
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        <li><i class="fa-regular fa-star"></i></li>
-                                        <li>4+</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-sm-4 col-6">
-                        <div class="product-box-6">
-                            <div class="img-wrapper">
-                                <div class="product-image"><a href="product.html"> <img class="bg-img"
-                                            src="{{ asset('assets/client/images/product/product-2/blazers/6.jpg') }}"
-                                            alt="product"></a></div>
-                            </div>
-                            <div class="product-detail"><a href="product.html">
-                                    <h6> Women's Stylish Top</h6>
-                                </a>
-                                <p>$120.00 </p>
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                    <li>4+</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
+
             </div>
         </div>
     </div>
-    {{-- <div class="wrapper">
-        <div class="title-box"> <img src="{{ asset('assets/client/images/other-img/cookie.png') }}" alt="">
-            <h3>Cookies Consent</h3>
-        </div>
-        <div class="info">
-            <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you
-                accept our cookie policy.</p>
-        </div>
-        <div class="buttons">
-            <button class="button btn btn_outline sm" id="acceptBtn">Accept</button>
-            <button class="button btn btn_black sm">Decline</button>
-        </div>
-    </div> --}}
+
     <div class="theme-btns">
         <button class="btntheme" id="dark-btn"><i class="fa-regular fa-moon"></i>
             <div class="text">Dark</div>
@@ -525,199 +384,117 @@
         </script>
     @endif
 
-    <div id="toast-container"></div>
+    <div id="toast-container"
+        style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+">
+    </div>
 </body>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const cartList = document.querySelector('.offcanvas-cart');
+    // ================================
+    // 1. BIẾN TOÀN CỤC
+    // ================================
+    const cartList = document.querySelector('.offcanvas-cart');
+    let currentUser = localStorage.getItem('currentUser') || 'guest';
+    let cartKey = `cartItems_${currentUser}`;
+    let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-        let currentUser = localStorage.getItem('currentUser') || 'guest';
-        let cartKey = `cartItems_${currentUser}`;
-        let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+    // ================================
+    // 2. HÀM CHÍNH
+    // ================================
+    function renderCartItems() {
+        cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+        cartList.innerHTML = '';
+        cartItems.forEach(item => renderCartItem(item));
+        updateTotal();
+    }
 
-        renderCartItems();
+    function renderCartItem(item) {
+        const li = document.createElement('li');
+        const attributesHTML = Object.entries(item.attributes || {}).map(([key, value]) =>
+            `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`
+        ).join('<br>');
 
-        function showToast(message, type = 'error') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-
-    toast.className = `toast-box ${type}`; // Thêm class để đổi màu border
-
-    toast.innerHTML = `
-        <div class="icon">
-            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'info' ? 'ℹ️' : '⚠️'}</span>
-            <span>${message}</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    `;
-
-    container.appendChild(toast);
-
-    toast.querySelector('.close-btn').addEventListener('click', () => {
-        toast.remove();
-    });
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000 + container.children.length * 500);
-}
-
-
-
-        // Sự kiện Add to Cart
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const price = parseFloat(this.dataset.price);
-                const originalPrice = parseFloat(this.dataset.originalPrice);
-                const image = this.dataset.image;
-                const quantity = parseInt(document.querySelector('.quantity input')?.value || 1);
-                const brand = this.dataset.brand || 'Unknown';
-
-                const currentUser = localStorage.getItem('currentUser') || 'guest';
-                const cartKey = `cartItems_${currentUser}`;
-                const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-                const selectedAttributes = {};
-                let valid = true;
-                const missingAttrs = [];
-
-                document.querySelectorAll('.variant-group').forEach(group => {
-                    const attrName = group.dataset.attribute;
-                    const selected = group.querySelector('.variant-item.active');
-
-                    if (!selected) {
-                        showToast(`Vui lòng chọn ${attrName}`, 'error');
-                        valid = false;
-                    } else {
-                        selectedAttributes[attrName] = selected.dataset.value || selected.textContent.trim();
-                    }
-                });
-
-                if (!valid) return;
-
-                // ✅ Thêm vào giỏ
-                const index = cartItems.findIndex(item =>
-                    item.id === id &&
-                    JSON.stringify(item.attributes || {}) === JSON.stringify(selectedAttributes)
-                );
-
-                if (index !== -1) {
-                    cartItems[index].quantity += quantity;
-                } else {
-                    cartItems.push({
-                        id,
-                        name,
-                        price,
-                        originalPrice,
-                        image,
-                        quantity,
-                        brand,
-                        attributes: selectedAttributes
-                    });
-                }
-
-                localStorage.setItem(cartKey, JSON.stringify(cartItems));
-
-                // ✅ Cập nhật giỏ hàng UI
-                if (typeof renderCartItems === 'function') {
-                    renderCartItems();
-                }
-
-                // ✅ Mở giỏ hàng
-                const offcanvasEl = document.getElementById('offcanvasRight');
-                if (offcanvasEl) {
-                    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
-                    bsOffcanvas.show(); // Mở lại giỏ hàng nếu đang đóng
-                }
-
-            });
-        });
-
-
-
-        function renderCartItems() {
-            cartItems = JSON.parse(localStorage.getItem(cartKey)) || []; // Cập nhật từ localStorage mới nhất
-            cartList.innerHTML = '';
-            cartItems.forEach(item => renderCartItem(item));
-            updateTotal();
-        }
-
-        function renderCartItem(item) {
-            const li = document.createElement('li');
-
-            const attributesHTML = Object.entries(item.attributes || {}).map(([key, value]) => {
-                return `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`;
-            }).join('<br>');
-
-            li.innerHTML = `
-        <a href="#"><img src="${item.image}" alt=""></a>
-        <div>
-            <h6 class="mb-0">${item.name}</h6>
-            <p>$${item.price.toLocaleString()}
-                <del>$${item.originalPrice.toLocaleString()}</del>
-                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
-            </p>
-            <p class="attributes">${attributesHTML}</p>
-
-            <div class="btn-containter">
-                <div class="btn-control">
-                    <button class="btn-control__remove">&minus;</button>
-                    <div class="btn-control__quantity">
-                        <div id="quantity-previous">${item.quantity - 1}</div>
-                        <div id="quantity-current">${item.quantity}</div>
-                        <div id="quantity-next">${item.quantity + 1}</div>
+        li.innerHTML = `
+            <a href="#"><img src="${item.image}" alt=""></a>
+            <div>
+                <h6 class="mb-0">${item.name}</h6>
+                <p>$${item.price.toLocaleString()}
+                    <del>$${item.originalPrice.toLocaleString()}</del>
+                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * item.quantity).toLocaleString()}</span></span>
+                </p>
+                <p class="attributes">${attributesHTML}</p>
+                <div class="btn-containter">
+                    <div class="btn-control">
+                        <button class="btn-control__remove">&minus;</button>
+                        <div class="btn-control__quantity">
+                            <div id="quantity-previous">${item.quantity - 1}</div>
+                            <div id="quantity-current">${item.quantity}</div>
+                            <div id="quantity-next">${item.quantity + 1}</div>
+                        </div>
+                        <button class="btn-control__add">+</button>
                     </div>
-                    <button class="btn-control__add">+</button>
                 </div>
             </div>
-        </div>
-        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-    `;
+            <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+        `;
 
-            li.querySelector('.btn-control__add').addEventListener('click', () => {
-                item.quantity += 1;
+        li.querySelector('.btn-control__add').addEventListener('click', () => {
+            item.quantity += 1;
+            saveAndRender();
+        });
+
+        li.querySelector('.btn-control__remove').addEventListener('click', () => {
+            if (item.quantity > 1) {
+                item.quantity -= 1;
                 saveAndRender();
-            });
-
-            li.querySelector('.btn-control__remove').addEventListener('click', () => {
-                if (item.quantity > 1) {
-                    item.quantity -= 1;
-                    saveAndRender();
-                }
-            });
-
-            li.querySelector('.delete-icon').addEventListener('click', () => {
-                cartItems = cartItems.filter(p =>
-                    !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
-                );
-                saveAndRender();
-            });
-
-            cartList.appendChild(li);
-        }
-
-
-
-        function updateTotal() {
-            let total = 0;
-            cartItems.forEach(item => {
-                total += item.price * item.quantity;
-            });
-            const totalElement = document.querySelector('.price-box p');
-            if (totalElement) {
-                totalElement.textContent = `$ ${total.toFixed(2)} USD`;
-
             }
-        }
+        });
 
-        function saveAndRender() {
-            localStorage.setItem(cartKey, JSON.stringify(cartItems));
-            renderCartItems();
-        }
+        li.querySelector('.delete-icon').addEventListener('click', () => {
+            cartItems = cartItems.filter(p =>
+                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
+            );
+            saveAndRender();
+        });
+
+        cartList.appendChild(li);
+    }
+
+    function updateTotal() {
+        let total = 0;
+        cartItems.forEach(item => {
+            total += item.price * item.quantity;
+        });
+        const totalElement = document.querySelector('.price-box p');
+if (totalElement) {
+    totalElement.textContent = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(total);
+}
+    }
+
+    function saveAndRender() {
+        localStorage.setItem(cartKey, JSON.stringify(cartItems));
+        renderCartItems();
+    }
+
+    // ================================
+    // 3. DOMContentLoaded: GÁN SỰ KIỆN
+    // ================================
+    document.addEventListener('DOMContentLoaded', function () {
+        renderCartItems();
+
+        // Bấm nút thêm vào giỏ hàng
+
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
@@ -725,7 +502,6 @@
             item.addEventListener('click', function () {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                this.parentNode.classList.add('selected');
             });
         });
 
@@ -738,13 +514,28 @@
             });
         });
     });
+
+    // Reload lại nếu quay lại bằng Back/Forward
     window.addEventListener('pageshow', function (event) {
         if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
             window.location.reload();
         }
     });
+
+    // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
+    document.addEventListener('cartUpdated', function () {
+        renderCartItems();
+    });
 </script>
 
+
+<script>
+    document.addEventListener('cartUpdated', function() {
+        if (typeof renderCartItems === 'function') {
+            renderCartItems();
+        }
+    });
+</script>
 
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->

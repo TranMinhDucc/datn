@@ -48,6 +48,7 @@
         <!--end::Breadcrumb-->
     </div>
 <!--end::Page title-->
+
 <!--begin::Actions-->
 <div class="d-flex align-items-center gap-2 gap-lg-3">
     
@@ -67,8 +68,8 @@
         <!--end::Secondary button-->
     
     <!--begin::Primary button-->
-            <a href="../apps/ecommerce/sales/details.html" class="btn btn-sm fw-bold btn-primary" >
-            Show        </a>
+            {{-- <a href="../apps/ecommerce/sales/details.html" class="btn btn-sm fw-bold btn-primary" >
+            Show        </a> --}}
         <!--end::Primary button-->
 </div>
 <!--end::Actions-->
@@ -76,7 +77,6 @@
         <!--end::Toolbar container-->
     </div>
 <!--end::Toolbar-->                                        
-                    
 <!--begin::Content-->
 <div id="kt_app_content" class="app-content  flex-column-fluid " >
     
@@ -84,49 +84,108 @@
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
             <!--begin::Row-->
+  <form method="GET" action="{{ route('admin.dashboard') }}" class="row g-3 align-items-end mb-5">
+    <div class="col-md-3">
+        <input type="text" name="order_code" class="form-control" placeholder="Mã đơn hàng" value="{{ request('order_code') }}">
+    </div>
+
+    <div class="col-md-2"> {{-- Đã chỉnh nhỏ lại --}}
+        <input type="text" name="user_id" class="form-control" placeholder="ID KH" value="{{ request('user_id') }}">
+    </div>
+
+    <div class="col-md-2">
+        <select name="payment_status" class="form-select">
+            <option value="">Tất cả trạng thái</option>
+            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Đã thanh toán</option>
+            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Chưa thanh toán</option>
+            <option value="refunded" {{ request('payment_status') == 'refunded' ? 'selected' : '' }}>Hoàn tiền</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
+    </div>
+
+    <div class="col-md-2">
+        <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
+    </div>
+
+    <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-primary">Tìm</button>
+    </div>
+</form>
+@if(isset($searchResults) && $searchResults->count() > 0)
+    <h5 class="mt-4">🔍 Kết quả tìm kiếm:</h5>
+    {{-- <a href="{{ url()->previous() }}" class="btn btn-sm btn-secondary">← Quay lại</a> --}}
+    <table class="table table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Mã Đơn</th>
+                <th>ID Khách hàng</th>
+                <th>Ngày tạo</th>
+                <th>Trạng thái thanh toán</th>
+                <th>Tổng tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($searchResults as $order)
+                <tr>
+                    <td>{{ $order->order_code }}</td>
+                    <td>{{ $order->user_id }}</td> {{-- hiển thị ID khách hàng --}}
+                    <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                    <td>{{ ucfirst($order->payment_status) }}</td>
+                    <td>{{ number_format($order->total_amount) }}₫</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {!! $searchResults->appends(request()->query())->links('pagination::bootstrap-5') !!}
+@endif
 <div class="row g-5 gx-xl-10">
     <!--begin::Col-->
-    <div class="col-xxl-6 mb-md-5 mb-xl-10">
+    <div class="col-12 mb-md-5 mb-xl-10">
         <!--begin::Row-->
         <div class="row g-5 g-xl-10">
             <!--begin::Col-->
-            <div class="col-md-6 col-xl-6 mb-xxl-10">
+            <div class="col-md-4 col-xl-4 mb-xxl-4">
                 <!--begin::Card widget 8-->
 <div class="card overflow-hidden h-md-50 mb-5 mb-xl-10">
     <!--begin::Card body-->
     <div class="card-body d-flex justify-content-between flex-column px-0 pb-0">
-        <!--begin::Statistics-->
-        <div class="mb-4 px-9">   
-            <!--begin::Info-->
-            <div class="d-flex align-items-center mb-2"> 
-                                    <!--begin::Currency-->
-                    <span class="fs-4 fw-semibold text-gray-500 align-self-start me-1>">$</span>                                    
-                    <!--end::Currency--> 
-                 
-                
-                <!--begin::Value-->
-                <span class="fs-2hx fw-bold text-gray-800 me-2 lh-1">69,700</span>
-                <!--end::Value-->
+    <!--begin::Statistics-->
+    <div class="mb-4 px-9">
+        <!--begin::Info-->
+        <div class="d-flex align-items-center mb-2">
+            <!--begin::Icon (hoặc đơn vị nếu cần)-->
+            <span class="fs-4 fw-semibold text-gray-500 align-self-start me-1">🛒</span>
+            <!--end::Icon-->
 
-                <!--begin::Label-->
-                                    <span class="badge badge-light-success fs-base">
-                        <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1"><span class="path1"></span><span class="path2"></span></i> 
-                        2.2%                    </span>  
-                    
-                <!--end::Label-->               
-            </div>
-            <!--end::Info-->
+            <!--begin::Value-->
+            <span class="fs-2hx fw-bold text-gray-800 me-2 lh-1">
+                {{ $total_active_products }}
+            </span>
+            <!--end::Value-->
 
-            <!--begin::Description-->
-            <span class="fs-6 fw-semibold text-gray-500">Total Online Sales</span>
-            <!--end::Description-->
+            <!--begin::Label (có thể bỏ nếu không cần % tăng giảm)-->
+            {{-- <span class="badge badge-light-success fs-base">
+                <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1"><span class="path1"></span><span class="path2"></span></i>
+                2.2%
+            </span> --}}
+            <!--end::Label-->
         </div>
-        <!--end::Statistics-->        
-        
-        <!--begin::Chart-->
-        <div id="kt_card_widget_8_chart" class="min-h-auto" style="height: 125px"></div>
-        <!--end::Chart--> 
+        <!--end::Info-->
+
+        <!--begin::Description-->
+        <span class="fs-6 fw-semibold text-gray-500">Tổng số sản phẩm đang bán</span>
+        <!--end::Description-->
     </div>
+    <!--end::Statistics-->
+
+    <!--begin::Chart-->
+    {{-- <div id="kt_card_widget_8_chart" class="min-h-auto" style="height: 125px"></div> --}}
+    <!--end::Chart-->
+</div>
     <!--end::Card body-->
 </div>
 <!--end::Card widget 8--> 
@@ -140,48 +199,43 @@
             <!--begin::Info--> 
             <div class="d-flex align-items-center">
                 <!--begin::Amount-->
-                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_order) ? number_format($total_order) : 0 }}</span>
-                <!--end::Amount-->
-                 
-                <!--begin::Badge-->
-                {{-- <span class="badge badge-light-danger fs-base">                                
-                    <i class="ki-duotone ki-arrow-down fs-5 text-danger ms-n1"><span class="path1"></span><span class="path2"></span></i> 
-                    2.2%
-                </span>             --}}
-                <!--end::Badge-->                
+                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">
+                    {{ isset($total_order) ? number_format($total_order) : 0 }}
+                </span>
+                <!--end::Amount-->    
             </div>
             <!--end::Info--> 
 
             <!--begin::Subtitle-->
-            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Đơn Hàng</span>             
+            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Đơn Hàng</span>
+
+            <!--begin::Sub stats-->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                    <span>Hôm nay:</span>
+                    <span>{{ number_format($ordersToday ?? 0) }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                    <span>Trong tháng:</span>
+                    <span>{{ number_format($ordersThisMonth ?? 0) }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7">
+                    <span>Trong năm:</span>
+                    <span>{{ number_format($ordersThisYear ?? 0) }}</span>
+                </div>
+            </div>
+            <!--end::Sub stats-->
             <!--end::Subtitle--> 
         </div>
         <!--end::Title-->         
     </div>
     <!--end::Header-->
-
-    <!--begin::Card body-->
-    {{-- <div class="card-body d-flex align-items-end pt-0">
-        <!--begin::Progress-->
-        <div class="d-flex align-items-center flex-column mt-3 w-100">
-            <div class="d-flex justify-content-between w-100 mt-auto mb-2">
-                <span class="fw-bolder fs-6 text-gray-900">1,048 to Goal</span>
-                <span class="fw-bold fs-6 text-gray-500">62%</span>
-            </div>
-
-            <div class="h-8px mx-3 w-100 bg-light-success rounded">
-                <div class="bg-success rounded h-8px" role="progressbar" style="width: 62%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        <!--end::Progress-->
-    </div> --}}
-    <!--end::Card body-->
 </div>
 <!--end::Card widget 5-->            </div>
             <!--end::Col-->
             
             <!--begin::Col-->
-            <div class="col-md-6 col-xl-6 mb-xxl-10">
+            <div class="col-md-4 col-xl-4 mb-xxl-4">
                 
 <!--begin::Card widget 9-->
 <div class="card overflow-hidden h-md-50 mb-5 mb-xl-10">
@@ -192,32 +246,54 @@
             <!--begin::Statistics-->
             <div class="d-flex align-items-center mb-2">                  
                 <!--begin::Value-->
-                <span class="fs-2hx fw-bold text-gray-800 me-2 lh-1">29,420</span>
+                <span class="fs-2hx fw-bold text-gray-800 me-2 lh-1">
+                    {{ number_format($revenueThisMonth ?? 0) }}₫
+                </span>
                 <!--end::Value-->
 
-               <!--begin::Label-->
-                                    <span class="badge badge-light-success fs-base">                                
-                        <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1"><span class="path1"></span><span class="path2"></span></i> 
-                        2.6%                    </span>  
-                    
+                <!--begin::Label-->
+                {{-- <span class="badge badge-light-success fs-base">                                 
+                    <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1">
+                        <span class="path1"></span><span class="path2"></span>
+                    </i> 
+                    +2.6%
+                </span> --}}
                 <!--end::Label-->       
             </div>
             <!--end::Statistics-->
 
             <!--begin::Description-->
-            <span class="fs-6 fw-semibold text-gray-500">Total Online Visitors</span>
+            <span class="fs-6 fw-semibold text-gray-500">💰 Doanh thu tháng này</span>
+
+            <!--begin::Sub stats-->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                    <span>Hôm nay:</span>
+                    <span>{{ number_format($revenueToday ?? 0) }}₫</span>
+                </div>
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                    <span>Trong tháng:</span>
+                    <span>{{ number_format($revenueThisMonth ?? 0) }}₫</span>
+                </div>
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7">
+                    <span>Trong năm:</span>
+                    <span>{{ number_format($revenueThisYear ?? 0) }}₫</span>
+                </div>
+            </div>
+            <!--end::Sub stats-->
+
             <!--end::Description-->
         </div>
         <!--end::Statistics-->        
         
         <!--begin::Chart-->
-        <div id="kt_card_widget_9_chart" class="min-h-auto" style="height: 125px"></div>
+        {{-- <div id="kt_card_widget_9_chart" class="min-h-auto" style="height: 125px"></div> --}}
         <!--end::Chart--> 
     </div>
     <!--end::Card body-->
 </div>
-<!--end::Card widget 9-->
 
+<!--end::Card widget 9-->
                   
 
                 
@@ -226,64 +302,110 @@
     <!--begin::Header-->
     <div class="card-header pt-5">
         <!--begin::Title-->
-        <div class="card-title d-flex flex-column">                
+        <div class="card-title d-flex flex-column">
             <!--begin::Amount-->
-            <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_user) ? number_format($total_user) : 0 }}</span>
-            <!--end::Amount-->           
+            <div class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">
+                {{ number_format(($unpaidOrders ?? 0) + ($refundedOrders ?? 0)) }}
+            </div>
+            <!--end::Amount-->
 
             <!--begin::Subtitle-->
-            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Người Dùng</span>
-            <!--end::Subtitle--> 
+            <span class="text-gray-500 pt-1 fw-semibold fs-6">
+                Đơn chưa hoàn tất (Unpaid / Refunded)
+            </span>
+            <!--end::Subtitle-->
+
+            <!--begin::Sub breakdown-->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                    <span>Chưa thanh toán:</span>
+                    <span class="text-warning">{{ number_format($unpaidOrders ?? 0) }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7">
+                    <span>Đã hoàn tiền:</span>
+                    <span class="text-danger">{{ number_format($refundedOrders ?? 0) }}</span>
+                </div>
+            </div>
+            <!--end::Sub breakdown-->
         </div>
-        <!--end::Title-->           
+        <!--end::Title-->
     </div>
     <!--end::Header-->
-
-    <!--begin::Card body-->
-    {{-- <div class="card-body d-flex flex-column justify-content-end pe-0">
-        <!--begin::Title-->
-        <span class="fs-6 fw-bolder text-gray-800 d-block mb-2">Today’s Heroes</span>
-        <!--end::Title-->
-
-        <!--begin::Users group-->
-        <div class="symbol-group symbol-hover flex-nowrap">
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Alan Warden">
-                                            <span class="symbol-label bg-warning text-inverse-warning fw-bold">A</span>
-                                    </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Michael Eberon">
-                                            <img alt="Pic" src="../assets/media/avatars/300-11.jpg" />
-                                    </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Susan Redwood">
-                                            <span class="symbol-label bg-primary text-inverse-primary fw-bold">S</span>
-                                    </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Melody Macy">
-                                            <img alt="Pic" src="../assets/media/avatars/300-2.jpg" />
-                                    </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Perry Matthew">
-                                            <span class="symbol-label bg-danger text-inverse-danger fw-bold">P</span>
-                                    </div>
-                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Barry Walter">
-                                            <img alt="Pic" src="../assets/media/avatars/300-12.jpg" />
-                                    </div>
-                        <a href="#" class="symbol symbol-35px symbol-circle"  data-bs-toggle="modal" data-bs-target="#kt_modal_view_users">
-                <span class="symbol-label bg-light text-gray-400 fs-8 fw-bold">+42</span>
-            </a>
-        </div>
-        <!--end::Users group-->
-    </div>
-    <!--end::Card body--> --}}
 </div>
-<!--end::Card widget 7-->            </div>
-            <!--end::Col-->
+
+<!--end::Card widget 7-->            
         </div>
-        <!--end::Row-->
+            <!--end::Col-->
+            <div class="col-md-4 col-xl-4 mb-xxl-4">
+                <!--begin::Card widget 9-->
+                <div class="card overflow-hidden h-md-50 mb-5 mb-xl-10">
+                    <!--begin::Card body-->
+                    <div class="card-body d-flex justify-content-between flex-column px-0 pb-0">
+                        <!--begin::Statistics-->
+                        <div class="mb-4 px-9">
+                            <div class="card-title d-flex flex-column">                
+                                <!--begin::Amount-->
+                                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_user) ? number_format($total_user) : 0 }}</span>
+                                <!--end::Amount-->           
+
+                                <!--begin::Subtitle-->
+                                <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Người Dùng</span>
+                                <!--end::Subtitle--> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-flush h-md-50 mb-xl-10">
+                    <!--begin::Header-->
+                    <div class="card-header pt-5">
+                        <div class="card-title d-flex flex-column">
+                            <!--begin::Tổng số-->
+                            <div class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">
+                                {{ number_format(($totalReviews ?? 0) + ($totalComments ?? 0)) }}
+                            </div>
+                            <!--end::Tổng số-->
+
+                            <!--begin::Subtitle-->
+                            <span class="text-gray-500 fw-semibold fs-6">
+                                Tổng đánh giá & bình luận sản phẩm
+                            </span>
+                            <!--end::Subtitle-->
+
+                            <!--begin::Chi tiết-->
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                                    <span>Đánh giá:</span>
+                                    <span class="text-primary">{{ number_format($totalReviews ?? 0) }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7 mb-1">
+                                    <span>Bình luận:</span>
+                                    <span class="text-success">{{ number_format($totalComments ?? 0) }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-gray-700 fw-semibold fs-7">
+                                    <span>Đánh giá trung bình:</span>
+                                    <span class="text-warning">
+                                        {{ number_format($averageRating ?? 0, 1) }}
+                                        <i class="bi bi-star-fill ms-1" style="font-size: 12px;"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <!--end::Chi tiết-->
+                        </div>
+                    </div>
+                    <!--end::Header-->
+                </div>
+            </div>
+            
+        </div>
+       <!--end::Row-->
     </div>
     <!--end::Col-->
 
     <!--begin::Col-->
     <div class="col-xxl-6 mb-5 mb-xl-10">
         <!--begin::Maps widget 1-->
-<div class="card card-flush h-md-100">
+{{-- <div class="card card-flush h-md-100">
     <!--begin::Header-->
     <div class="card-header pt-7">
         <!--begin::Title-->
@@ -423,7 +545,60 @@
         <!--end::Map container-->
     </div>
     <!--end::Body-->
+</div> --}}
+<?php /*
+<div class="card card-flush h-md-50 mb-xl-10">
+    <!--begin::Header-->
+    <div class="card-header pt-5">
+        <!--begin::Title-->
+        <div class="card-title d-flex flex-column">                
+            <!--begin::Amount-->
+            <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{ isset($total_user) ? number_format($total_user) : 0 }}</span>
+            <!--end::Amount-->           
+
+            <!--begin::Subtitle-->
+            <span class="text-gray-500 pt-1 fw-semibold fs-6">Tổng Người Dùng</span>
+            <!--end::Subtitle--> 
+        </div>
+        <!--end::Title-->           
+    </div>
+    <!--end::Header-->
+
+    <!--begin::Card body-->
+    {{-- <div class="card-body d-flex flex-column justify-content-end pe-0">
+        <!--begin::Title-->
+        <span class="fs-6 fw-bolder text-gray-800 d-block mb-2">Today’s Heroes</span>
+        <!--end::Title-->
+
+        <!--begin::Users group-->
+        <div class="symbol-group symbol-hover flex-nowrap">
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Alan Warden">
+                                            <span class="symbol-label bg-warning text-inverse-warning fw-bold">A</span>
+                                    </div>
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Michael Eberon">
+                                            <img alt="Pic" src="../assets/media/avatars/300-11.jpg" />
+                                    </div>
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Susan Redwood">
+                                            <span class="symbol-label bg-primary text-inverse-primary fw-bold">S</span>
+                                    </div>
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Melody Macy">
+                                            <img alt="Pic" src="../assets/media/avatars/300-2.jpg" />
+                                    </div>
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Perry Matthew">
+                                            <span class="symbol-label bg-danger text-inverse-danger fw-bold">P</span>
+                                    </div>
+                            <div class="symbol symbol-35px symbol-circle" data-bs-toggle="tooltip" title="Barry Walter">
+                                            <img alt="Pic" src="../assets/media/avatars/300-12.jpg" />
+                                    </div>
+                        <a href="#" class="symbol symbol-35px symbol-circle"  data-bs-toggle="modal" data-bs-target="#kt_modal_view_users">
+                <span class="symbol-label bg-light text-gray-400 fs-8 fw-bold">+42</span>
+            </a>
+        </div>
+        <!--end::Users group-->
+    </div>
+    <!--end::Card body--> --}}
 </div>
+*/ ?>
 <!--end::Maps widget 1-->    </div>
     <!--end::Col-->   
 </div>
@@ -435,7 +610,7 @@
     <div class="col-xl-4 mb-xl-10">
         
 <!--begin::Engage widget 1-->
-<div class="card h-md-100" dir="ltr"> 
+{{-- <div class="card h-md-100" dir="ltr"> 
     <!--begin::Body-->
     <div class="card-body d-flex flex-column flex-center">  
         <!--begin::Heading-->
@@ -471,15 +646,7 @@
         <!--end::Links-->
     </div>
     <!--end::Body-->
-</div>
-<!--end::Engage widget 1-->
-
-     </div>
-    <!--end::Col-->
-
-    <!--begin::Col-->
-    <div class="col-xl-4 mb-xl-10">
-        <!--begin::Chart widget 5-->
+</div> --}}
 <div class="card card-flush h-md-100">
     <!--begin::Header-->
     <div class="card-header flex-nowrap pt-5">
@@ -487,8 +654,8 @@
         <h3 class="card-title align-items-start flex-column">
 			<span class="card-label fw-bold text-gray-900">Danh mục bán chạy nhất</span>
 
-			<span class="text-gray-500 pt-2 fw-semibold fs-6">8k social visitors</span>
-		</h3>
+			{{-- <span class="text-gray-500 pt-2 fw-semibold fs-6">8k social visitors</span>
+		</h3> --}}
         <!--end::Title-->
 
         <!--begin::Toolbar-->
@@ -602,10 +769,15 @@
     </div>
     <!--end::Body-->
 </div>
-<!--end::Chart widget 5-->
 
+
+<!--end::Engage widget 1-->
 
      </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+   
     <!--end::Col-->
 
     <!--begin::Col-->
@@ -618,7 +790,7 @@
         <!--begin::Title-->
         <h3 class="card-title align-items-start flex-column">
 			<span class="card-label fw-bold text-gray-800">Sản phẩm bán chạy nhất</span>
-			<span class="text-gray-500 mt-1 fw-semibold fs-6">8k social visitors</span>
+			{{-- <span class="text-gray-500 mt-1 fw-semibold fs-6">8k social visitors</span> --}}
 		</h3>
         <!--end::Title-->
 
@@ -648,23 +820,25 @@
 
                 <!--begin::Table body-->
                 {{-- @dd($bestSellingProducts) --}}
-                <tbody>
-                    @if (isset($bestSellingProducts) && is_array($bestSellingProducts) && count($bestSellingProducts) > 0)
-                        @foreach ($bestSellingProducts as $product)
-                            <tr>
-                                <td>                                    
-                                    <img src="{{ $product->products->image }}" class="w-50px" alt=""/>                             
-                                </td>
-                                <td class="ps-0">
-                                    <a href="../apps/ecommerce/sales/details.html" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">Elephant 1802</a>
-                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">{{ $product->products->name }}</span>
-                                </td>
-                                <td>                                            
-                                    <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ $product->products->sale_price }}</span>
-                                </td>                                        
-                            </tr>  
-                        @endforeach    
-                    @endif
+           <tbody>
+@if (isset($bestSellingProducts) && count($bestSellingProducts) > 0)
+    @foreach ($bestSellingProducts as $product)
+        <tr>
+            <td>
+                <img src="{{ asset('uploads/products/' . $product->image) }}" class="w-50px" alt=""/>
+            </td>
+            <td class="ps-0">
+                <a href="#" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">{{ $product->name }}</a>
+                <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">{{ $product->name }}</span>
+            </td>
+            <td>
+                <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ number_format($product->sale_price) }}₫</span>
+            </td>
+        </tr>
+    @endforeach
+@endif
+</tbody>
+
                     {{-- <tr>
                         <td>                                    
                             <img src="../assets/media/stock/ecommerce/210.png" class="w-50px" alt=""/>                             
@@ -727,7 +901,7 @@
 <!--end::Row-->
 
 <!--begin::Row-->
-<div class="row g-5 g-xl-10">
+{{-- <div class="row g-5 g-xl-10">
     <!--begin::Col-->
     <div class="col-xxl-4 mb-xxl-10">
         
@@ -2499,7 +2673,7 @@
 <!--end::Row-->        </div>
         <!--end::Content container-->
     </div>
-<!--end::Content-->	
+<!--end::Content-->	 --}}
 
                                     </div>
                 <!--end::Content wrapper-->

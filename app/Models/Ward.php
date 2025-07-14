@@ -9,7 +9,7 @@ class Ward extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['district_id', 'name', 'code'];
+    protected $fillable = ['district_id', 'name', 'code', 'ward_code', 'ghn_id'];
 
     public function district()
     {

@@ -11,7 +11,11 @@ class ProductVariant extends Model
         'variant_name',
         'price',
         'quantity',
-        'sku'
+        'sku',
+        'weight',
+        'length',
+        'width',
+        'height',
     ];
 
     // Quan hệ với sản phẩm
@@ -24,14 +28,14 @@ class ProductVariant extends Model
     {
         return $this->hasMany(InventoryTransaction::class);
     }
-    
+
     // Quan hệ với các thuộc tính biến thể
     public function variantOptions()
     {
         return $this->hasMany(ProductVariantOption::class);
     }
     public function options()
-{
-    return $this->hasMany(ProductVariantOption::class, 'product_variant_id');
-}
+    {
+        return $this->hasMany(ProductVariantOption::class, 'product_variant_id');
+    }
 }

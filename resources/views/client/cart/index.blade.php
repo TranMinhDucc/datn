@@ -4,383 +4,415 @@
 
 @section('content')
 
-<section class="section-b-space pt-0">
-    <div class="heading-banner">
-        <div class="custom-container container">
-            <div class="row align-items-center">
-                <div class="col-sm-6">
-                    <h4>Cart</h4>
-                </div>
-                <div class="col-sm-6">
-                    <ul class="breadcrumb float-end">
-                        <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
-                        <li class="breadcrumb-item active"> <a href="#">Cart</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="section-b-space pt-0">
-    <div class="custom-container container">
-        <div class="row g-4">
-            <div class="col-12">
-                <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}"
-                        alt="">
-                    <h6>Please, hurry! Someone has placed an order on one of the items you have in the cart. We'll keep
-                        it for you for<span id="countdown"></span>minutes.</h6>
-                </div>
-            </div>
-            <div class="col-xxl-9 col-xl-8">
-                <div class="cart-table">
-                    <div class="table-title">
-                        <h5>Cart<span id="cartTitle">(0)</span></h5>
-                        <button id="clearAllButton">Clear All</button>
+    <section class="section-b-space pt-0">
+        <div class="heading-banner">
+            <div class="custom-container container">
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <h4>Cart</h4>
                     </div>
-                    <div class="table-responsive theme-scrollbar">
-                        <table class="table" id="cart-table">
-                            <thead>
-                                <tr>
-                                    <th>Product </th>
-                                    <th>Price </th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="cart-body">
-
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="no-data" id="data-show"><img src="{{ asset('assets/client/images/cart/1.gif') }}"
-                            alt="">
-                        <h4>You have nothing in your shopping cart!</h4>
-                        <p>Today is a great day to purchase the things you have been holding onto! or <span>Carry on
-                                Buying</span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-xl-4">
-                <div class="cart-items">
-                    <div class="cart-progress">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 43%"
-                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                                <span><i class="iconsax" data-icon="truck-fast"></i></span>
-                            </div>
-                        </div>
-                        <p>Almost there, add <span id="free-shipping-remaining">$267.00</span> more to get <span>FREE Shipping !!</span></p>
-                    </div>
-
-                    <div class="cart-body">
-                        <h6>Đơn hàng (<span id="item-count">0</span> đơn)</h6>
-                        <ul>
-                            <li>
-                                <p>Tạm tính</p>
-                                <span id="bag-total" data-original="0">
-                                    0đ
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <p class="mb-1 fw-medium text-secondary">Mã giảm giá</p>
-                                <div id="coupon-discount" class="d-flex flex-column gap-1">
-                                    <span class="badge rounded-pill bg-light border text-secondary px-3 py-2 d-inline-flex align-items-center gap-1" style="font-size: 14px;">
-                                        🎫 Apply Coupon
-                                    </span>
-                                </div>
-                            </li>
-
+                    <div class="col-sm-6">
+                        <ul class="breadcrumb float-end">
+                            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
+                            <li class="breadcrumb-item active"> <a href="#">Cart</a></li>
                         </ul>
                     </div>
-
-                    <div class="cart-bottom">
-                        <h6>Tạm tính <span id="subtotal">$0</span></h6>
-                        <span> Thuế và phí vận chuyển sẽ được tính khi thanh toán</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section-b-space pt-0">
+        <div class="custom-container container">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}"
+                            alt="">
+                        <h6>Please, hurry! Someone has placed an order on one of the items you have in the cart. We'll keep
+                            it for you for<span id="countdown"></span>minutes.</h6>
                     </div>
+                </div>
+                <div class="col-xxl-9 col-xl-8">
+                    <div class="cart-table">
+                        <div class="table-title">
+                            <h5>Cart<span id="cartTitle">(0)</span></h5>
+                            <button id="clearAllButton">Clear All</button>
+                        </div>
+                        <div class="table-responsive theme-scrollbar">
+                            <table class="table" id="cart-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product </th>
+                                        <th>Price </th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-body">
 
 
-                    <div class="coupon-box">
-                        <h6>Coupon</h6>
-
-
-                        <!-- Nút mở hộp chọn voucher -->
-                        <!-- Nút mở modal -->
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#voucherShopeeModal">
-                            🎫 Chọn mã Shopee Voucher
-                        </button>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="voucherShopeeModal" tabindex="-1" aria-labelledby="voucherShopeeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-                                <div class="modal-content rounded-3">
-                                    <div class="modal-header border-0 pb-0">
-                                        <h5 class="modal-title fw-bold">Chọn Shopee Voucher</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body pt-1">
-    @php
-    $user = auth()->user();
-    $isNewUser = false;
-
-    if ($user && $user->registered_at) {
-        $isNewUser = \Carbon\Carbon::parse($user->registered_at)->diffInDays(now()) <= 7;
-    }
-    @endphp
-
-    <!-- FREESHIP -->
-    <div class="voucher-section mb-4">
-        <h6 class="text-muted fw-bold">Mã Miễn Phí Vận Chuyển</h6>
-
-        @foreach($availableCoupons->where('type', 'shipping_discount') as $coupon)
-            @php
-                $onlyNew = (int) ($coupon->only_for_new_users ?? 0);
-                $canUse = $coupon->usage_limit == 0 || $coupon->used_count < $coupon->usage_limit;
-            @endphp
-
-            @if ($coupon->active && $canUse && (!$onlyNew || ($onlyNew && $isNewUser)))
-                <label class="voucher-card d-flex position-relative"
-                    data-code="{{ $coupon->code ?? '' }}"
-                    data-applicable-product-ids="{{ e(json_encode($coupon->applicable_product_ids ?? [])) }}"
-                    data-applicable-category-ids="{{ e(json_encode($coupon->applicable_category_ids ?? [])) }}">
-
-                    <!-- Ribbon bên trái -->
-                    <div class="voucher-ribbon bg-info text-white text-center px-2 py-3 d-flex flex-column justify-content-center align-items-center" style="width: 100px;">
-                        <div class="fw-bold" style="font-size: 13px; line-height: 1.2;">FREE SHIP</div>
-                        <div class="fw-semibold" style="font-size: 11px;">TOÀN NGÀNH<br>HÀNG</div>
-                    </div>
-
-                    <!-- Nội dung chính -->
-                    <div class="voucher-body flex-grow-1 px-3 py-2">
-                        <div>Giảm tối đa {{ number_format($coupon->discount_value) }}đ</div>
-                        <div class="text-muted small">Đơn tối thiểu {{ number_format($coupon->min_order_amount ?? 0) }}đ</div>
-
-                        @if ($onlyNew)
-                            <div class="badge bg-danger small mt-1">Dành cho bạn mới</div>
-                        @endif
-
-                        @if ($coupon->is_exclusive)
-                            <div class="badge bg-secondary small mt-1">Không dùng chung</div>
-                        @endif
-
-                        <div class="text-muted small">
-                            HSD: {{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}
-                            <a href="#" class="text-primary small">Điều kiện</a>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="no-data" id="data-show"><img src="{{ asset('assets/client/images/cart/1.gif') }}"
+                                alt="">
+                            <h4>You have nothing in your shopping cart!</h4>
+                            <p>Today is a great day to purchase the things you have been holding onto! or <span>Carry on
+                                    Buying</span></p>
                         </div>
                     </div>
+                </div>
+                <div class="col-xxl-3 col-xl-4">
+                    <div class="cart-items">
+                        <div class="cart-progress">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 43%"
+                                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                    <span><i class="iconsax" data-icon="truck-fast"></i></span>
+                                </div>
+                            </div>
+                            <p>Almost there, add <span id="free-shipping-remaining">$267.00</span> more to get <span>FREE
+                                    Shipping !!</span></p>
+                        </div>
 
-                    <!-- x10 góc trên phải -->
-                    <div class="position-absolute top-0 end-0 text-danger small me-2 mt-2">x10</div>
+                        <div class="cart-body">
+                            <h6>Đơn hàng (<span id="item-count">0</span> đơn)</h6>
+                            <ul>
+                                <li>
+                                    <p>Tạm tính</p>
+                                    <span id="bag-total" data-original="0">
+                                        0đ
+                                    </span>
+                                </li>
 
-                    <!-- Input ẩn -->
-                    <input type="radio" class="form-check-input align-self-center me-3 coupon-radio"
-                        data-id="{{ $coupon->id }}"
-                        name="shipping_coupon"
-                        value="{{ $coupon->code }}"
-                        data-type="{{ $coupon->type }}"
-                        data-value="{{ $coupon->discount_value }}"
-                        data-value-type="{{ $coupon->value_type }}"
-                        data-max-discount="{{ $coupon->max_discount_amount }}"
-                        data-min-order="{{ $coupon->min_order_amount }}"
-                        data-start-date="{{ $coupon->start_date }}"
-                        data-end-date="{{ $coupon->end_date }}"
-                        data-active="{{ $coupon->active }}"
-                        data-only-for-new-users="{{ $coupon->only_for_new_users }}"
-                        data-is-exclusive="{{ $coupon->is_exclusive }}"
-                        data-applicable-product-ids='@json($coupon->applicable_product_ids ?? [])'
-                        data-applicable-category-ids='@json($coupon->applicable_category_ids ?? [])'>
-                </label>
-            @endif
-        @endforeach
-    </div>
 
-    <!-- GIẢM GIÁ -->
-    <div class="voucher-section product-discount">
-        <h6 class="text-muted fw-bold">Giảm Giá</h6>
+                                <li>
+                                    <p class="mb-1 fw-medium text-secondary">Mã giảm giá</p>
+                                    <div id="coupon-discount" class="d-flex flex-column gap-1">
+                                        <span
+                                            class="badge rounded-pill bg-light border text-secondary px-3 py-2 d-inline-flex align-items-center gap-1"
+                                            style="font-size: 14px;">
+                                            🎫 Apply Coupon
+                                        </span>
+                                    </div>
+                                </li>
 
-        @foreach($availableCoupons->where('type', 'product_discount') as $coupon)
-            @php
-                $onlyNew = (int) ($coupon->only_for_new_users ?? 0);
-                $canUse = $coupon->usage_limit == 0 || $coupon->used_count < $coupon->usage_limit;
-            @endphp
+                            </ul>
+                        </div>
 
-            @if ($coupon->active && $canUse && (!$onlyNew || ($onlyNew && $isNewUser)))
-                <label class="voucher-card d-flex position-relative"
-                    data-code="{{ $coupon->code ?? '' }}"
-                    data-applicable-product-ids="{{ e(json_encode($coupon->applicable_product_ids ?? [])) }}"
-                    data-applicable-category-ids="{{ e(json_encode($coupon->applicable_category_ids ?? [])) }}">
+                        <div class="cart-bottom">
+                            <h6>Tạm tính <span id="subtotal">$0</span></h6>
+                            <span> Thuế và phí vận chuyển sẽ được tính khi thanh toán</span>
+                        </div>
 
-                    <div class="voucher-ribbon bg-warning text-white text-center px-2 py-3 d-flex flex-column justify-content-center align-items-center" style="width: 100px;">
-                        <i class="fa fa-shopping-bag fa-lg mb-1"></i>
-                        <div class="fw-semibold small" style="font-size: 12px;">Khách hàng mới</div>
-                    </div>
 
-                    <div class="voucher-body flex-grow-1 px-3 py-2">
-                        <div>
-                            @if($coupon->value_type === 'percentage')
-                                Giảm {{ $coupon->discount_value }}%
-                            @else
-                                Giảm {{ number_format($coupon->discount_value) }}đ
+                        <div class="coupon-box">
+                            <h6>Coupon</h6>
+
+
+                            <!-- Nút mở hộp chọn voucher -->
+                            <!-- Nút mở modal -->
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#voucherShopeeModal">
+                                🎫 Chọn mã Shopee Voucher
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="voucherShopeeModal" tabindex="-1"
+                                aria-labelledby="voucherShopeeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content rounded-3">
+                                        <div class="modal-header border-0 pb-0">
+                                            <h5 class="modal-title fw-bold">Chọn Shopee Voucher</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body pt-1">
+                                            @php
+                                                $user = auth()->user();
+                                                $isNewUser = false;
+
+                                                if ($user && $user->registered_at) {
+                                                    $isNewUser =
+                                                        \Carbon\Carbon::parse($user->registered_at)->diffInDays(
+                                                            now(),
+                                                        ) <= 7;
+                                                }
+                                            @endphp
+
+                                            <!-- FREESHIP -->
+                                            <div class="voucher-section mb-4">
+                                                <h6 class="text-muted fw-bold">Mã Miễn Phí Vận Chuyển</h6>
+
+                                                @foreach ($availableCoupons->where('type', 'shipping_discount') as $coupon)
+                                                    @php
+                                                        $onlyNew = (int) ($coupon->only_for_new_users ?? 0);
+                                                        $canUse =
+                                                            $coupon->usage_limit == 0 ||
+                                                            $coupon->used_count < $coupon->usage_limit;
+                                                    @endphp
+
+                                                    @if ($coupon->active && $canUse && (!$onlyNew || ($onlyNew && $isNewUser)))
+                                                        <label class="voucher-card d-flex position-relative"
+                                                            data-code="{{ $coupon->code ?? '' }}"
+                                                            data-applicable-product-ids="{{ e(json_encode($coupon->applicable_product_ids ?? [])) }}"
+                                                            data-applicable-category-ids="{{ e(json_encode($coupon->applicable_category_ids ?? [])) }}">
+
+                                                            <!-- Ribbon bên trái -->
+                                                            <div class="voucher-ribbon bg-info text-white text-center px-2 py-3 d-flex flex-column justify-content-center align-items-center"
+                                                                style="width: 100px;">
+                                                                <div class="fw-bold"
+                                                                    style="font-size: 13px; line-height: 1.2;">FREE SHIP
+                                                                </div>
+                                                                <div class="fw-semibold" style="font-size: 11px;">TOÀN
+                                                                    NGÀNH<br>HÀNG</div>
+                                                            </div>
+
+                                                            <!-- Nội dung chính -->
+                                                            <div class="voucher-body flex-grow-1 px-3 py-2">
+                                                                <div>Giảm tối đa
+                                                                    {{ number_format($coupon->discount_value) }}đ</div>
+                                                                <div class="text-muted small">Đơn tối thiểu
+                                                                    {{ number_format($coupon->min_order_amount ?? 0) }}đ
+                                                                </div>
+
+                                                                @if ($onlyNew)
+                                                                    <div class="badge bg-danger small mt-1">Dành cho bạn mới
+                                                                    </div>
+                                                                @endif
+
+                                                                @if ($coupon->is_exclusive)
+                                                                    <div class="badge bg-secondary small mt-1">Không dùng
+                                                                        chung</div>
+                                                                @endif
+
+                                                                <div class="text-muted small">
+                                                                    HSD:
+                                                                    {{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}
+                                                                    <a href="#" class="text-primary small">Điều
+                                                                        kiện</a>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- x10 góc trên phải -->
+                                                            <div
+                                                                class="position-absolute top-0 end-0 text-danger small me-2 mt-2">
+                                                                x10</div>
+
+                                                            <!-- Input ẩn -->
+                                                            <input type="radio"
+                                                                class="form-check-input align-self-center me-3 coupon-radio"
+                                                                data-id="{{ $coupon->id }}" name="shipping_coupon"
+                                                                value="{{ $coupon->code }}" data-type="{{ $coupon->type }}"
+                                                                data-value="{{ $coupon->discount_value }}"
+                                                                data-value-type="{{ $coupon->value_type }}"
+                                                                data-max-discount="{{ $coupon->max_discount_amount }}"
+                                                                data-min-order="{{ $coupon->min_order_amount }}"
+                                                                data-start-date="{{ $coupon->start_date }}"
+                                                                data-end-date="{{ $coupon->end_date }}"
+                                                                data-active="{{ $coupon->active }}"
+                                                                data-only-for-new-users="{{ $coupon->only_for_new_users }}"
+                                                                data-is-exclusive="{{ $coupon->is_exclusive }}"
+                                                                data-applicable-product-ids='@json($coupon->applicable_product_ids ?? [])'
+                                                                data-applicable-category-ids='@json($coupon->applicable_category_ids ?? [])'>
+                                                        </label>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+
+                                            <!-- GIẢM GIÁ -->
+                                            <div class="voucher-section product-discount">
+                                                <h6 class="text-muted fw-bold">Giảm Giá</h6>
+
+                                                @foreach ($availableCoupons->where('type', 'product_discount') as $coupon)
+                                                    @php
+                                                        $onlyNew = (int) ($coupon->only_for_new_users ?? 0);
+                                                        $canUse =
+                                                            $coupon->usage_limit == 0 ||
+                                                            $coupon->used_count < $coupon->usage_limit;
+                                                    @endphp
+
+                                                    @if ($coupon->active && $canUse && (!$onlyNew || ($onlyNew && $isNewUser)))
+                                                        <label class="voucher-card d-flex position-relative"
+                                                            data-code="{{ $coupon->code ?? '' }}"
+                                                            data-applicable-product-ids="{{ e(json_encode($coupon->applicable_product_ids ?? [])) }}"
+                                                            data-applicable-category-ids="{{ e(json_encode($coupon->applicable_category_ids ?? [])) }}">
+
+                                                            <div class="voucher-ribbon bg-warning text-white text-center px-2 py-3 d-flex flex-column justify-content-center align-items-center"
+                                                                style="width: 100px;">
+                                                                <i class="fa fa-shopping-bag fa-lg mb-1"></i>
+                                                                <div class="fw-semibold small" style="font-size: 12px;">
+                                                                    Khách hàng mới</div>
+                                                            </div>
+
+                                                            <div class="voucher-body flex-grow-1 px-3 py-2">
+                                                                <div>
+                                                                    @if ($coupon->value_type === 'percentage')
+                                                                        Giảm {{ $coupon->discount_value }}%
+                                                                    @else
+                                                                        Giảm {{ number_format($coupon->discount_value) }}đ
+                                                                    @endif
+                                                                </div>
+                                                                <div class="text-muted small">Đơn tối thiểu
+                                                                    {{ number_format($coupon->min_order_amount ?? 0) }}đ
+                                                                </div>
+
+                                                                @if ($onlyNew)
+                                                                    <div class="badge bg-danger small mt-1">Dành cho bạn
+                                                                        mới</div>
+                                                                @endif
+
+                                                                @if ($coupon->is_exclusive)
+                                                                    <div class="badge bg-secondary small mt-1">Không dùng
+                                                                        chung</div>
+                                                                @endif
+
+                                                                <div class="text-muted small">
+                                                                    HSD:
+                                                                    {{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}
+                                                                    <a href="#" class="text-primary small">Điều
+                                                                        kiện</a>
+                                                                </div>
+                                                            </div>
+
+                                                            <input type="radio"
+                                                                class="form-check-input align-self-center me-3 coupon-radio"
+                                                                data-id="{{ $coupon->id }}" name="product_coupon"
+                                                                value="{{ $coupon->code }}"
+                                                                data-type="{{ $coupon->type }}"
+                                                                data-value="{{ $coupon->discount_value }}"
+                                                                data-value-type="{{ $coupon->value_type }}"
+                                                                data-max-discount="{{ $coupon->max_discount_amount }}"
+                                                                data-min-order="{{ $coupon->min_order_amount }}"
+                                                                data-start-date="{{ $coupon->start_date }}"
+                                                                data-end-date="{{ $coupon->end_date }}"
+                                                                data-active="{{ $coupon->active }}"
+                                                                data-only-for-new-users="{{ $coupon->only_for_new_users }}"
+                                                                data-is-exclusive="{{ $coupon->is_exclusive }}"
+                                                                data-applicable-product-ids='@json($coupon->applicable_product_ids ?? [])'
+                                                                data-applicable-category-ids='@json($coupon->applicable_category_ids ?? [])'>
+                                                        </label>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+
+                                        <div class="modal-footer border-0 justify-content-between">
+                                            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Trở
+                                                lại</button>
+                                            <button class="btn btn-danger" id="applySelectedCouponBtn">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            @if (session()->has('coupon'))
+                                <span id="coupon-data" data-type="{{ session('coupon.type') }}"
+                                    data-value="{{ session('coupon.value') }}" style="display:none;"></span>
                             @endif
                         </div>
-                        <div class="text-muted small">Đơn tối thiểu {{ number_format($coupon->min_order_amount ?? 0) }}đ</div>
-
-                        @if ($onlyNew)
-                            <div class="badge bg-danger small mt-1">Dành cho bạn mới</div>
-                        @endif
-
-                        @if ($coupon->is_exclusive)
-                            <div class="badge bg-secondary small mt-1">Không dùng chung</div>
-                        @endif
-
-                        <div class="text-muted small">
-                            HSD: {{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}
-                            <a href="#" class="text-primary small">Điều kiện</a>
-                        </div>
                     </div>
 
-                    <input type="radio" class="form-check-input align-self-center me-3 coupon-radio"
-                        data-id="{{ $coupon->id }}"
-                        name="product_coupon"
-                        value="{{ $coupon->code }}"
-                        data-type="{{ $coupon->type }}"
-                        data-value="{{ $coupon->discount_value }}"
-                        data-value-type="{{ $coupon->value_type }}"
-                        data-max-discount="{{ $coupon->max_discount_amount }}"
-                        data-min-order="{{ $coupon->min_order_amount }}"
-                        data-start-date="{{ $coupon->start_date }}"
-                        data-end-date="{{ $coupon->end_date }}"
-                        data-active="{{ $coupon->active }}"
-                        data-only-for-new-users="{{ $coupon->only_for_new_users }}"
-                        data-is-exclusive="{{ $coupon->is_exclusive }}"
-                        data-applicable-product-ids='@json($coupon->applicable_product_ids ?? [])'
-                        data-applicable-category-ids='@json($coupon->applicable_category_ids ?? [])'>
-                </label>
-            @endif
-        @endforeach
-    </div>
-</div>
 
-
-                                    <div class="modal-footer border-0 justify-content-between">
-                                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Trở lại</button>
-                                        <button class="btn btn-danger" id="applySelectedCouponBtn">OK</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        @if (session()->has('coupon'))
-                        <span id="coupon-data"
-                            data-type="{{ session('coupon.type') }}"
-                            data-value="{{ session('coupon.value') }}"
-                            style="display:none;"></span>
-                        @endif
-                    </div>
+                    <a class="btn btn_black w-100 rounded sm" href="{{ route('client.account.checkout') }}">Check Out</a>
                 </div>
-
-
-                <a class="btn btn_black w-100 rounded sm" href="{{ route('client.account.checkout') }}">Check Out</a>
             </div>
-        </div>
 
-        <div class="col-12">
-            <div class="cart-slider">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div>
-                        <h6>For a trendy and modern twist, especially during transitional seasons.</h6>
-                        <p> <img class="me-2" src="{{ asset('assets/client/images/gif/discount.gif') }}"
-                                alt="">You will
-                            get 10% OFF on each product</p>
-                    </div><a class="btn btn_outline sm rounded" href="product.html">View All
-                        <svg>
-                            <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use>
-                        </svg></a>
-                </div>
-                <div class="swiper cart-slider-box">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="cart-box"> <a href="product.html"> <img
-                                        src="{{ asset('assets/client/images/user/4.jpg') }}" alt=""></a>
-                                <div> <a href="product.html">
-                                        <h5>Polo-neck Body Dress</h5>
-                                    </a>
-                                    <h6>Sold By: <span>Brown Shop</span></h6>
-                                    <div class="category-dropdown">
-                                        <select class="form-select" name="carlist">
-                                            <option value="">Best color</option>
-                                            <option value="">White</option>
-                                            <option value="">Black</option>
-                                            <option value="">Green</option>
-                                        </select>
+            <div class="col-12">
+                <div class="cart-slider">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <h6>For a trendy and modern twist, especially during transitional seasons.</h6>
+                            <p> <img class="me-2" src="{{ asset('assets/client/images/gif/discount.gif') }}"
+                                    alt="">You will
+                                get 10% OFF on each product</p>
+                        </div><a class="btn btn_outline sm rounded" href="product.html">View All
+                            <svg>
+                                <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use>
+                            </svg></a>
+                    </div>
+                    <div class="swiper cart-slider-box">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <div class="cart-box"> <a href="product.html"> <img
+                                            src="{{ asset('assets/client/images/user/4.jpg') }}" alt=""></a>
+                                    <div> <a href="product.html">
+                                            <h5>Polo-neck Body Dress</h5>
+                                        </a>
+                                        <h6>Sold By: <span>Brown Shop</span></h6>
+                                        <div class="category-dropdown">
+                                            <select class="form-select" name="carlist">
+                                                <option value="">Best color</option>
+                                                <option value="">White</option>
+                                                <option value="">Black</option>
+                                                <option value="">Green</option>
+                                            </select>
+                                        </div>
+                                        <p>$19.90 <span>
+                                                <del>$14.90 </del></span></p><a class="btn" href="#">Add</a>
                                     </div>
-                                    <p>$19.90 <span>
-                                            <del>$14.90 </del></span></p><a class="btn" href="#">Add</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="cart-box"> <a href="product.html"> <img
-                                        src="{{ asset('assets/client/images/user/5.jpg') }}" alt=""></a>
-                                <div> <a href="product.html">
-                                        <h5>Short Sleeve Sweater</h5>
-                                    </a>
-                                    <h6>Sold By: <span>Brown Shop</span></h6>
-                                    <div class="category-dropdown">
-                                        <select class="form-select" name="carlist">
-                                            <option value="">Best color</option>
-                                            <option value="">White</option>
-                                            <option value="">Black</option>
-                                            <option value="">Green</option>
-                                        </select>
+                            <div class="swiper-slide">
+                                <div class="cart-box"> <a href="product.html"> <img
+                                            src="{{ asset('assets/client/images/user/5.jpg') }}" alt=""></a>
+                                    <div> <a href="product.html">
+                                            <h5>Short Sleeve Sweater</h5>
+                                        </a>
+                                        <h6>Sold By: <span>Brown Shop</span></h6>
+                                        <div class="category-dropdown">
+                                            <select class="form-select" name="carlist">
+                                                <option value="">Best color</option>
+                                                <option value="">White</option>
+                                                <option value="">Black</option>
+                                                <option value="">Green</option>
+                                            </select>
+                                        </div>
+                                        <p>$22.90 <span>
+                                                <del>$24.90 </del></span></p><a class="btn" href="#">Add</a>
                                     </div>
-                                    <p>$22.90 <span>
-                                            <del>$24.90 </del></span></p><a class="btn" href="#">Add</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="cart-box"> <a href="product.html"> <img
-                                        src="{{ asset('assets/client/images/user/6.jpg') }}" alt=""></a>
-                                <div> <a href="product.html">
-                                        <h5>Oversized Cotton Short</h5>
-                                    </a>
-                                    <h6>Sold By: <span>Brown Shop</span></h6>
-                                    <div class="category-dropdown">
-                                        <select class="form-select" name="carlist">
-                                            <option value="">Best color</option>
-                                            <option value="">White</option>
-                                            <option value="">Black</option>
-                                            <option value="">Green</option>
-                                        </select>
+                            <div class="swiper-slide">
+                                <div class="cart-box"> <a href="product.html"> <img
+                                            src="{{ asset('assets/client/images/user/6.jpg') }}" alt=""></a>
+                                    <div> <a href="product.html">
+                                            <h5>Oversized Cotton Short</h5>
+                                        </a>
+                                        <h6>Sold By: <span>Brown Shop</span></h6>
+                                        <div class="category-dropdown">
+                                            <select class="form-select" name="carlist">
+                                                <option value="">Best color</option>
+                                                <option value="">White</option>
+                                                <option value="">Black</option>
+                                                <option value="">Green</option>
+                                            </select>
+                                        </div>
+                                        <p>$10.90 <span>
+                                                <del>$18.90 </del></span></p><a class="btn" href="#">Add</a>
                                     </div>
-                                    <p>$10.90 <span>
-                                            <del>$18.90 </del></span></p><a class="btn" href="#">Add</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="cart-box"> <a href="product.html"> <img
-                                        src="{{ asset('assets/client/images/user/7.jpg') }}" alt=""></a>
-                                <div> <a href="product.html">
-                                        <h5>Oversized Women Shirt</h5>
-                                    </a>
-                                    <h6>Sold By: <span>Brown Shop</span></h6>
-                                    <div class="category-dropdown">
-                                        <select class="form-select" name="carlist">
-                                            <option value="">Best color</option>
-                                            <option value="">White</option>
-                                            <option value="">Black</option>
-                                            <option value="">Green</option>
-                                        </select>
+                            <div class="swiper-slide">
+                                <div class="cart-box"> <a href="product.html"> <img
+                                            src="{{ asset('assets/client/images/user/7.jpg') }}" alt=""></a>
+                                    <div> <a href="product.html">
+                                            <h5>Oversized Women Shirt</h5>
+                                        </a>
+                                        <h6>Sold By: <span>Brown Shop</span></h6>
+                                        <div class="category-dropdown">
+                                            <select class="form-select" name="carlist">
+                                                <option value="">Best color</option>
+                                                <option value="">White</option>
+                                                <option value="">Black</option>
+                                                <option value="">Green</option>
+                                            </select>
+                                        </div>
+                                        <p>$15.90 <span>
+                                                <del>$20.90 </del></span></p><a class="btn" href="#">Add</a>
                                     </div>
-                                    <p>$15.90 <span>
-                                            <del>$20.90 </del></span></p><a class="btn" href="#">Add</a>
                                 </div>
                             </div>
                         </div>
@@ -388,16 +420,15 @@
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-</section>
+        </div>
+    </section>
 
 @endsection
 @section('js')
-<script src="{{ asset('assets/client/js/cart-timer.js') }}"></script>
-<script src="{{ asset('assets/client/js/cart.js') }}"></script>
+    <script src="{{ asset('assets/client/js/cart-timer.js') }}"></script>
+    <script src="{{ asset('assets/client/js/cart.js') }}"></script>
 
-<script>
+    <script>
         let currentUser = localStorage.getItem('currentUser') || 'guest';
         let cartKey = `cartItems_${currentUser}`;
         let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
@@ -480,20 +511,21 @@
     <div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return `<p class = "mb-0"> ${
-                        key.charAt(0).toUpperCase() + key.slice(1)
-                    }: <span> ${
-                        value
-                    }</span></p>`;
+    return `<p class = "mb-0" >${
+                            key.charAt(0).toUpperCase() + key.slice(1)
+                        }: <span>${
+                            value
+                        } </span></p>
+                        `;
     }).join('')}</div></div></td>
-    <td class="align-middle">$${item.price.toFixed(2)}</td>
+    <td>${item.price.toLocaleString('vi-VN')}<span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span></td>
     <td class="align-middle">
     <div class="quantity d-flex align-items-center gap-2">
     <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-minus"></i></button>
     <input type="number" value="${item.quantity}" min="1" max="99" data-index="${index}" class="form-control form-control-sm text-center quantity-input" style="width: 60px;">
     <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}"><i class="fa-solid fa-plus"></i></button>
     </div></td>
-    <td class="align-middle">$${itemTotal.toFixed(2)}</td>
+        <td class="align-middle">${itemTotal.toLocaleString('vi-VN')}<span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span></td>
     <td class="align-middle"><a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}"><i class="fa fa-trash"></i></a></td>`;
                     cartBody.appendChild(tr);
                 });
@@ -701,11 +733,11 @@
     ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
     <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-1" > $ {
+    return `<p class = "mb-1" > ${
                         key
-                    }: < span > $ {
+                    }: <span >${
                         value
-                    } < /span></p > `;
+                    } </span></p>`;
     }).join('')}
     <div class="btn-containter">
     <div class="btn-control">
@@ -979,8 +1011,10 @@
 
 
                     // ✅ Kiểm tra không dùng chung
-                    const isExclusiveShipping = shippingCoupon ? Number(shippingCoupon.dataset.isExclusive || 0) : 0;
-                    const isExclusiveProduct = productCoupon ? Number(productCoupon.dataset.isExclusive || 0) : 0;
+                    const isExclusiveShipping = shippingCoupon ? Number(shippingCoupon.dataset
+                        .isExclusive || 0) : 0;
+                    const isExclusiveProduct = productCoupon ? Number(productCoupon.dataset.isExclusive ||
+                        0) : 0;
 
                     if ((shippingCoupon && productCoupon) && (isExclusiveShipping || isExclusiveProduct)) {
                         alert('❌ Mã này không được dùng chung với mã khác.');
@@ -1005,8 +1039,10 @@
                             active: Number(shippingCoupon.dataset.active),
                             only_for_new_users: Number(shippingCoupon.dataset.onlyForNewUsers),
                             is_exclusive: Number(shippingCoupon.dataset.isExclusive || 0),
-                            applicable_product_ids: JSON.parse(shippingCoupon.dataset.applicableProductIds || '[]'),
-                            applicable_category_ids: JSON.parse(shippingCoupon.dataset.applicableCategoryIds || '[]')
+                            applicable_product_ids: JSON.parse(shippingCoupon.dataset
+                                .applicableProductIds || '[]'),
+                            applicable_category_ids: JSON.parse(shippingCoupon.dataset
+                                .applicableCategoryIds || '[]')
                         }));
                     }
 
@@ -1024,8 +1060,10 @@
                             active: Number(productCoupon.dataset.active),
                             only_for_new_users: Number(productCoupon.dataset.onlyForNewUsers),
                             is_exclusive: Number(productCoupon.dataset.isExclusive || 0),
-                            applicable_product_ids: JSON.parse(productCoupon.dataset.applicableProductIds || '[]'),
-                            applicable_category_ids: JSON.parse(productCoupon.dataset.applicableCategoryIds || '[]')
+                            applicable_product_ids: JSON.parse(productCoupon.dataset
+                                .applicableProductIds || '[]'),
+                            applicable_category_ids: JSON.parse(productCoupon.dataset
+                                .applicableCategoryIds || '[]')
                         }));
                     }
 
@@ -1098,12 +1136,15 @@
                 const categoryIdsInCart = cartItems.map(item => String(item.category_id));
 
                 // ✅ LỌC MÃ GIẢM GIÁ SẢN PHẨM
-                const productVoucherCards = document.querySelectorAll('.voucher-section.product-discount .voucher-card[data-applicable-product-ids]');
+                const productVoucherCards = document.querySelectorAll(
+                    '.voucher-section.product-discount .voucher-card[data-applicable-product-ids]');
                 let hasMatchingProductVoucher = false;
 
                 productVoucherCards.forEach(voucher => {
-                    const applicableProductIds = JSON.parse(voucher.dataset.applicableProductIds || '[]').map(String);
-                    const applicableCategoryIds = JSON.parse(voucher.dataset.applicableCategoryIds || '[]').map(String);
+                    const applicableProductIds = JSON.parse(voucher.dataset.applicableProductIds || '[]')
+                        .map(String);
+                    const applicableCategoryIds = JSON.parse(voucher.dataset.applicableCategoryIds || '[]')
+                        .map(String);
 
                     const productMatch = applicableProductIds.length === 0 ||
                         productIdsInCart.every(id => applicableProductIds.includes(id));
@@ -1123,12 +1164,15 @@
                 }
 
                 // ✅ LỌC MÃ MIỄN PHÍ VẬN CHUYỂN
-                const shippingVoucherCards = document.querySelectorAll('.voucher-section .voucher-card[data-applicable-product-ids]');
+                const shippingVoucherCards = document.querySelectorAll(
+                    '.voucher-section .voucher-card[data-applicable-product-ids]');
                 let hasMatchingShippingVoucher = false;
 
                 shippingVoucherCards.forEach(voucher => {
-                    const applicableProductIds = JSON.parse(voucher.dataset.applicableProductIds || '[]').map(String);
-                    const applicableCategoryIds = JSON.parse(voucher.dataset.applicableCategoryIds || '[]').map(String);
+                    const applicableProductIds = JSON.parse(voucher.dataset.applicableProductIds || '[]')
+                        .map(String);
+                    const applicableCategoryIds = JSON.parse(voucher.dataset.applicableCategoryIds || '[]')
+                        .map(String);
 
                     const productMatch = applicableProductIds.length === 0 ||
                         productIdsInCart.every(id => applicableProductIds.includes(id));
@@ -1186,7 +1230,7 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('voucherShopeeModal'));
             modal.hide();
         });
-</script>
+    </script>
 
 
 

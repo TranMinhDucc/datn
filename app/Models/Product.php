@@ -27,6 +27,10 @@ class Product extends Model
         'starts_at',
         'ends_at',
         'sale_times',
+        'weight',
+        'length',
+        'width',
+        'height',
     ];
 
     // Quan hệ với danh mục
@@ -54,6 +58,12 @@ class Product extends Model
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function inventoryTransactions()

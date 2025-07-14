@@ -55,7 +55,7 @@ class WishlistController extends Controller
             ->delete();
 
         // return response()->json(['success' => true, 'message' => 'Đã xoá khỏi danh sách yêu thích.']);
-      
-    return back()->with('success', 'Đã xoá khỏi danh sách yêu thích!');
+
+        return back()->with('success', 'Đã xoá khỏi danh sách yêu thích!');
     }
 }

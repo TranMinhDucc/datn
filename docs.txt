@@ -1,0 +1,2 @@
+Link cron trạng thái đơn hàng
+http://127.0.0.1:8000/cron/sync-ghn-orders
