@@ -119,8 +119,8 @@
 
             if (themeMode === "system") {
                 themeMode = window.matchMedia(
-                        "(prefers-color-scheme: dark)"
-                    ).matches ?
+                    "(prefers-color-scheme: dark)"
+                ).matches ?
                     "dark" :
                     "light";
             }
@@ -133,23 +133,23 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php
-    if (isset($_SESSION['error'])) {
-        echo "<script type='text/javascript'>
+if (isset($_SESSION['error'])) {
+    echo "<script type='text/javascript'>
                                     toastr.error('" .
-            addslashes($_SESSION['error']) .
-            "');
+        addslashes($_SESSION['error']) .
+        "');
                                 </script>";
-        unset($_SESSION['error']); // Xóa để không hiển thị lại
-    }
-    
-    if (isset($_SESSION['success'])) {
-        echo "<script type='text/javascript'>
+    unset($_SESSION['error']); // Xóa để không hiển thị lại
+}
+
+if (isset($_SESSION['success'])) {
+    echo "<script type='text/javascript'>
                                     toastr.success('" .
-            addslashes($_SESSION['success']) .
-            "');
+        addslashes($_SESSION['success']) .
+        "');
                                 </script>";
-        unset($_SESSION['success']); // Xóa để không hiển thị lại
-    }
+    unset($_SESSION['success']); // Xóa để không hiển thị lại
+}
     
     ?>
 
@@ -174,8 +174,7 @@
 
         {{-- Error Toast (from session) --}}
         @if (session('error'))
-            <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive"
-                aria-atomic="true">
+            <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{ session('error') }}
@@ -189,8 +188,7 @@
         {{-- Validation Errors --}}
         @if ($errors->any())
             @foreach ($errors->all() as $error)
-                <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive"
-                    aria-atomic="true">
+                <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="d-flex">
                         <div class="toast-body">
                             {{ $error }}
@@ -249,8 +247,7 @@
                 <div class="card-toolbar">
                     <button type="button" class="btn btn-sm btn-icon btn-active-light-primary me-n5"
                         id="kt_activities_close">
-                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span
-                                class="path2"></span></i>
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
                     </button>
                 </div>
             </div>
@@ -301,14 +298,15 @@
 
     @yield('scripts')
 
-    {{-- <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
+    {{--
+    <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
 
     @yield('js')
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-            var toastList = toastElList.map(function(toastEl) {
+            var toastList = toastElList.map(function (toastEl) {
                 return new bootstrap.Toast(toastEl).show()
             })
         });
