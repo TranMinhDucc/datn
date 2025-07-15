@@ -346,6 +346,8 @@ Route::prefix('admin')
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
         //Ckeditor
         Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
+        Route::post('admin/ckeditor/upload', [CKEditorController::class, 'upload'])->name('admin.ckeditor.upload');
+
         //Shipping
         Route::resource('shipping-fees', ShippingFeeController::class)->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
@@ -421,6 +423,7 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
 
     return '✅ Đã chạy xong cron nạp tiền!';
 });
+
 
 /**
  * Route Api 
