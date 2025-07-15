@@ -47,7 +47,6 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with(['user', 'orderItems.product', 'paymentMethod', 'address'])->findOrFail($id);
-
         return view('admin.orders.show', compact('order'));
     }
 
@@ -271,5 +270,9 @@ class OrderController extends Controller
         }
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
+    }
+    public function invoice(string $id) {
+        $order = Order::with(['user', 'orderItems.product', 'paymentMethod', 'address'])->findOrFail($id);
+        return view('client.account.theme-invoice.invoice',compact('order'));
     }
 }

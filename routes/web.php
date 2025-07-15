@@ -408,3 +408,4 @@ Route::get('/cron/sync-ghn-orders', function () {
 
 Route::post('/checkout/initiate-payment', [\App\Http\Controllers\Client\CheckoutController::class, 'initiatePayment'])->name('client.checkout.initiate-payment');
 Route::get('/checkout/payment-callback', [\App\Http\Controllers\Client\CheckoutController::class, 'paymentCallback'])->name('client.checkout.payment-callback');
+Route::get('/order-invoices/{id}', [OrderController::class, 'invoice'])->name('orders.invoice');
