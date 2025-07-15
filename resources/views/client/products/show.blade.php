@@ -987,12 +987,12 @@
                                 '#28a745';
 
                 toast.innerHTML = `
-                                                        <div class="icon">
-                                                            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-                                                            <span>${message}</span>
-                                                        </div>
-                                                        <button class="close-btn">&times;</button>
-                                                        `;
+                                                            <div class="icon">
+                                                                <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+                                                                <span>${message}</span>
+                                                            </div>
+                                                            <button class="close-btn">&times;</button>
+                                                            `;
 
                 container.appendChild(toast);
 
