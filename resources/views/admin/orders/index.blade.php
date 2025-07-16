@@ -180,17 +180,61 @@
                                             </td>
 
                                             <td class="text-center">
-                                                <span class="fw-bold">${{ number_format($order->total_amount) }}</span>
+                                                <span class="fw-bold">{{ number_format($order->total_amount) }}đ</span>
                                             </td>
                                             <td class="text-center">
                                                 <span class="fw-bold">{{ $order->created_at->format('d/m/Y') }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <div
-                                                    class="badge badge-light-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'primary') }}">
-                                                    {{ ucfirst($order->status) }}
-                                                </div>
+                                                @php
+                                                    $orderStatuses = [
+                                                        'pending' => [
+                                                            'label' => 'Đang chờ xác nhận',
+                                                            'color' => 'warning',
+                                                            'icon' => 'ki-clock',
+                                                        ],
+                                                        'confirmed' => [
+                                                            'label' => 'Đã xác nhận',
+                                                            'color' => 'primary',
+                                                            'icon' => 'ki-check-square',
+                                                        ],
+                                                        'shipping' => [
+                                                            'label' => 'Đang giao hàng',
+                                                            'color' => 'info',
+                                                            'icon' => 'ki-settings',
+                                                        ],
+                                                        'completed' => [
+                                                            'label' => 'Hoàn thành',
+                                                            'color' => 'success',
+                                                            'icon' => 'ki-check-circle',
+                                                        ],
+                                                        'cancelled' => [
+                                                            'label' => 'Đã hủy',
+                                                            'color' => 'danger',
+                                                            'icon' => 'ki-cross-circle',
+                                                        ],
+                                                        'refunded' => [
+                                                            'label' => 'Đã hoàn tiền',
+                                                            'color' => 'secondary',
+                                                            'icon' => 'ki-undo',
+                                                        ],
+                                                    ];
+
+                                                    $status = $order->status ?? 'pending';
+
+                                                    $orderStatus = $orderStatuses[$status] ?? [
+                                                        'label' => ucfirst($status),
+                                                        'color' => 'light',
+                                                        'icon' => 'ki-question-circle',
+                                                    ];
+                                                @endphp
+
+                                                <span class="badge badge-light-{{ $orderStatus['color'] }}">
+                                                    <i class="ki-duotone {{ $orderStatus['icon'] }} fs-6 me-1"></i>
+                                                    {{ $orderStatus['label'] }}
+                                                </span>
                                             </td>
+
                                             {{-- <td class="text-center">
                                                 <span class="fw-bold">{{ $order->updated_at->format('d/m/Y') }}</span>
                                             </td> --}}
@@ -329,7 +373,7 @@
 
 
                                             <td class="text-center">
-                                                {{ $order->shippingOrder->shipping_code ?? '—' }}
+                                                {{ $order->shippingOrder->shipping_code ?? 'Chưa tạo vận đơn' }}
                                             </td>
 
 

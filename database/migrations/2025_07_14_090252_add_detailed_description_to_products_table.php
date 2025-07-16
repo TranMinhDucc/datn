@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banner_buttons', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('banner_id')->constrained('banners')->onDelete('cascade');
-            $table->string('ten');
-            $table->string('duong_dan');
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->text('detailed_description')->nullable();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banner_buttons');
+        Schema::table('products', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -37,6 +37,8 @@ return [
     'ghn' => [
         'token' => env('GHN_TOKEN'),
         'shop_id' => env('GHN_SHOP_ID'),
+        'from_district_id' => (int) env('GHN_FROM_DISTRICT_ID'),
+
     ],
 
 

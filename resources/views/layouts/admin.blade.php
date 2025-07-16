@@ -97,8 +97,6 @@
     data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true"
     data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
 
-
-    <!--begin::Theme mode setup on page load-->
     <script>
         var defaultThemeMode = "light";
         var themeMode;
@@ -137,19 +135,19 @@
     <?php
 if (isset($_SESSION['error'])) {
     echo "<script type='text/javascript'>
-                toastr.error('" .
+                                    toastr.error('" .
         addslashes($_SESSION['error']) .
         "');
-            </script>";
+                                </script>";
     unset($_SESSION['error']); // Xóa để không hiển thị lại
 }
 
 if (isset($_SESSION['success'])) {
     echo "<script type='text/javascript'>
-                toastr.success('" .
+                                    toastr.success('" .
         addslashes($_SESSION['success']) .
         "');
-            </script>";
+                                </script>";
     unset($_SESSION['success']); // Xóa để không hiển thị lại
 }
     
@@ -159,6 +157,8 @@ if (isset($_SESSION['success'])) {
     <!-- Toast Container -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
 
+
+        {{-- Success Toast --}}
         @if (session('success'))
             <div class="toast align-items-center text-bg-success show" role="alert" aria-live="assertive"
                 aria-atomic="true">
@@ -172,6 +172,20 @@ if (isset($_SESSION['success'])) {
             </div>
         @endif
 
+        {{-- Error Toast (from session) --}}
+        @if (session('error'))
+            <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
+        {{-- Validation Errors --}}
         @if ($errors->any())
             @foreach ($errors->all() as $error)
                 <div class="toast align-items-center text-bg-danger show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -284,7 +298,8 @@ if (isset($_SESSION['success'])) {
 
     @yield('scripts')
 
-    {{-- <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
+    {{--
+    <script src="{{ asset('assets/js/custom/apps/ecommerce/catalog/categories.js') }}"></script> --}}
 
     @yield('js')
 
