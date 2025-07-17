@@ -14,6 +14,17 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/client/images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/client/images/favicon.png') }}" type="image/x-icon">
+<!-- Thêm trong <head> -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Thêm trước </body> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Swiper CSS (phải trong <head>) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Swiper JS (phải nằm TRƯỚC khi bạn gọi new Swiper()) -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/fontawesome.css') }}">
@@ -84,6 +95,25 @@
         localStorage.setItem('currentUser', 'guest');
     @endauth
 </script>
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiper = new Swiper('.main-images', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    });
+</script> --}}
 
 <script>
     @auth
@@ -117,6 +147,30 @@
     localStorage.removeItem(guestKey); // xoá cart guest
     localStorage.setItem('currentUser', userId); // cập nhật currentUser
     @endauth
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slides = document.querySelectorAll('.fade-slide');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            slides[index].classList.add('active');
+            slides[index].style.display = 'block';
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            showSlide(currentIndex);
+        }
+
+        showSlide(currentIndex);
+        setInterval(nextSlide, 5000); // chuyển slide mỗi 5 giây
+    });
 </script>
 
 <body>

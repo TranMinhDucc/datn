@@ -6,18 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Banner extends Model
 {
-    protected $fillable = [
-        'ten',
-        'hinh_anh',
-        'mo_ta',
-        'ngon_ngu',
-        'thu_tu',
+      protected $fillable = [
+        'subtitle',
+        'title',
+        'description',
+        'main_image',
+        'sub_image_1',
+        'sub_image_1_name',
+        'sub_image_1_price',
+        'sub_image_2',
+        'sub_image_2_name',
+        'sub_image_2_price',
         'status',
-        'is_app'
     ];
 
-    public function buttons()
-    {
-        return $this->hasMany(BannerButton::class);
-    }
+   
 }

@@ -135,19 +135,19 @@
     <?php
     if (isset($_SESSION['error'])) {
         echo "<script type='text/javascript'>
-                                                    toastr.error('" .
+                                        toastr.error('" .
             addslashes($_SESSION['error']) .
             "');
-                                                </script>";
+                                    </script>";
         unset($_SESSION['error']); // Xóa để không hiển thị lại
     }
     
     if (isset($_SESSION['success'])) {
         echo "<script type='text/javascript'>
-                                                    toastr.success('" .
+                                        toastr.success('" .
             addslashes($_SESSION['success']) .
             "');
-                                                </script>";
+                                    </script>";
         unset($_SESSION['success']); // Xóa để không hiển thị lại
     }
     
@@ -267,10 +267,8 @@
     </script>
 
     <!--begin::Global Javascript Bundle (mandatory for all pages)-->
-    <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/sales/listing.js') }}"></script>
     <script src="{{ asset('assets/admin/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/admin/js/scripts.bundle.js') }}"></script>
-
     <!--end::Global Javascript Bundle-->
 
     <!--begin::Vendors Javascript (used for this page only)-->
@@ -293,7 +291,6 @@
     <script src="{{ asset('assets/admin/js/widgets.bundle.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/widgets.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/apps/chat/chat.js') }}"></script>
-
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/upgrade-plan.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/create-app.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/utilities/modals/new-target.js') }}"></script>

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductDetail;
 
 class Product extends Model
 {
@@ -18,6 +20,7 @@ class Product extends Model
         'slug',
         'sku',
         'description',
+        'detailed_description',
         'image',
         'import_price',
         'base_price',
@@ -76,5 +79,13 @@ class Product extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags');
+    }
+    public function detail()
+    {
+        return $this->hasMany(ProductDetail::class, 'product_id', 'id');
+    }
+    public function productDetails()
+    {
+        return $this->hasMany(ProductDetail::class, 'product_id', 'id');
     }
 }

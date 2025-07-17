@@ -27,11 +27,9 @@
         <div class="col-12">
             <div class="main-menu">
                 <a class="brand-logo" href="{{ url('/') }}">
-                    <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}"
-                        alt="logo">
+                    <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}" alt="logo">
 
-                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}"
-                        alt="logo">
+                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo">
 
                 </a>
                 @include('layouts.partials.client.navbar')
