@@ -325,12 +325,24 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
 
-                                <label class="form-label">Slug</label>
-                                <input type="text" name="slug" id="product-slug" class="form-control mb-2"
-                                    placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
-                                @error('slug')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Slug</label>
+                                        <input type="text" name="slug" id="product-slug" class="form-control mb-2"
+                                            placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
+                                        @error('slug')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">SKU</label>
+                                        <input type="text" name="sku" class="form-control mb-2"
+                                            placeholder="Mã sản phẩm" value="{{ old('sku', $product->sku ?? '') }}">
+                                        @error('slug')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-md-6">

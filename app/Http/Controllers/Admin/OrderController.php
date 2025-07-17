@@ -9,6 +9,7 @@ use App\Models\PartnerLocationCode;
 use App\Models\ShippingOrder;
 use App\Models\ShopSetting;
 use App\Services\GhnService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +20,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with(['user', 'shippingOrder'])->orderBy('id', 'desc')->paginate(10);
+        $orders = Order::with(['user', 'shippingOrder'])->orderBy('id', 'desc')->get();
         return view('admin.orders.index', compact('orders'));
     }
 
@@ -291,7 +292,14 @@ class OrderController extends Controller
     public function confirmGHN($id, Request $request, GhnService $service)
     {
         $order = Order::with('items.productVariant.product', 'user', 'address')->findOrFail($id);
+        $existingTracking = DB::table('shipping_logs')
+            ->where('order_id', $order->id)
+            ->whereNotNull('tracking_code')
+            ->exists();
 
+        if ($existingTracking) {
+            return redirect()->back()->with('error', 'Đơn hàng này đã được gửi GHN rồi!');
+        }
         if ($order->status !== 'pending') {
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
         }

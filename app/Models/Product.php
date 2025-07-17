@@ -16,6 +16,7 @@ class Product extends Model
         'label_id',
         'name',
         'slug',
+        'sku',
         'description',
         'image',
         'import_price',
