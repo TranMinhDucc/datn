@@ -46,17 +46,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with([
-            'user',
-            'shippingLogs',
-            'orderItems.product',
-            'paymentMethod',
-            'shippingAddress.province',
-            'shippingAddress.district',
-            'shippingAddress.ward',
-        ])->findOrFail($id);
-
-
+        $order = Order::with(['user', 'orderItems.product', 'paymentMethod', 'address'])->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -78,120 +68,6 @@ class OrderController extends Controller
             ->paginate(10);
 
         return view('admin.orders.cancel', compact('orders'));
-    }
-    public function retryShipping($orderId)
-    {
-        Log::info('📦 retryShipping called with order id: ' . $orderId);
-
-        // Tìm đơn GHN trong bảng shipping_orders
-        $shippingOrder = ShippingOrder::where('order_id', $orderId)
-            ->where('shipping_partner', 'ghn')
-            ->latest()
-            ->first();
-
-        if (!$shippingOrder || !$shippingOrder->shipping_code) {
-            return back()->with('error', '❌ Không tìm thấy mã GHN cho đơn hàng.');
-        }
-
-        // Gọi API GHN để lấy trạng thái hiện tại
-        $statusResponse = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Token' => config('services.ghn.token'),
-        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail', [
-            'order_code' => $shippingOrder->shipping_code,
-        ]);
-
-        $currentStatus = $statusResponse->json('data.status') ?? 'unknown';
-        Log::info("📦 Trạng thái GHN hiện tại của {$shippingOrder->shipping_code} là: $currentStatus");
-
-        // ✅ Chỉ cho phép retry nếu trạng thái là waiting_to_return hoặc delivery_fail
-        $allowedStatuses = ['waiting_to_return', 'delivery_fail'];
-        if (!in_array($currentStatus, $allowedStatuses)) {
-            return back()->with('error', "⚠️ Không thể giao lại đơn hàng vì trạng thái hiện tại là: $currentStatus.");
-        }
-
-        // Gọi API GHN để chuyển trạng thái đơn hàng sang "storing"
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Token' => config('services.ghn.token'),
-            'ShopId' => config('services.ghn.shop_id'),
-        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/storing', [
-            'order_codes' => [$shippingOrder->shipping_code]
-        ]);
-
-        $responseData = $response->json();
-        Log::info('🔁 GHN Retry Shipping response', $responseData);
-
-        if ($response->successful() && $responseData['code'] == 200) {
-            $result = $responseData['data'][0]['result'] ?? false;
-            $ghnMessage = $responseData['data'][0]['message'] ?? 'Không rõ thông báo';
-
-            if ($result === true) {
-                Log::info('✅ Giao lại đơn GHN thành công', [
-                    'order_id' => $orderId,
-                    'shipping_code' => $shippingOrder->shipping_code,
-                ]);
-                return back()->with('success', '✅ Đã gửi yêu cầu giao lại đơn hàng thành công.');
-            }
-
-            Log::warning("⚠️ GHN từ chối giao lại đơn (mã: {$shippingOrder->shipping_code}) vì: $ghnMessage");
-            return back()->with('error', "⚠️ GHN từ chối giao lại đơn: $ghnMessage. Trạng thái hiện tại: $currentStatus");
-        }
-
-        Log::error('❌ Lỗi khi gửi lại đơn GHN', [
-            'order_id' => $orderId,
-            'shipping_code' => $shippingOrder->shipping_code,
-            'response' => $response->body(),
-        ]);
-
-        return back()->with('error', '❌ Giao lại đơn hàng thất bại: ' . ($responseData['message'] ?? 'Không rõ lỗi'));
-    }
-    public function cancelShippingOrder($orderId)
-    {
-        Log::info('🛑 Bắt đầu huỷ đơn GHN cho order_id: ' . $orderId);
-
-        $shippingOrder = ShippingOrder::where('order_id', $orderId)
-            ->where('shipping_partner', 'ghn')
-            ->latest()
-            ->first();
-
-        if (!$shippingOrder || !$shippingOrder->shipping_code) {
-            return back()->with('error', '❌ Không tìm thấy mã GHN.');
-        }
-
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Token' => config('services.ghn.token'),
-            'ShopId' => config('services.ghn.shop_id'),
-        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/cancel', [
-            'order_codes' => [$shippingOrder->shipping_code]
-        ]);
-
-        $data = $response->json('data')[0] ?? [];
-        $result = $data['result'] ?? false;
-        $message = $data['message'] ?? 'Không rõ lý do';
-
-        Log::info('🛑 GHN Cancel response', $response->json());
-
-        if ($result === true) {
-            // ✅ Cập nhật status trong bảng orders
-            Order::where('id', $orderId)->update(['status' => 'cancelled']);
-
-            Log::info('✅ Huỷ đơn GHN thành công & cập nhật DB', [
-                'order_id' => $orderId,
-                'shipping_code' => $shippingOrder->shipping_code,
-            ]);
-
-            return back()->with('success', '✅ Huỷ đơn hàng thành công.');
-        } else {
-            Log::warning('⚠️ GHN từ chối huỷ đơn', [
-                'order_id' => $orderId,
-                'shipping_code' => $shippingOrder->shipping_code,
-                'ghn_message' => $message,
-            ]);
-
-            return back()->with('error', '⚠️ GHN từ chối huỷ đơn: ' . $message);
-        }
     }
 
     public function approveCancel(Order $order)
@@ -304,24 +180,18 @@ class OrderController extends Controller
         // Tính toán lại chính xác kích thước và cân nặng
         foreach ($order->items as $item) {
             $variant = $item->productVariant;
-            $product = $variant?->product ?? $item->product;
 
-            if (!$variant && !$product) {
-                Log::error("❌ Không tìm thấy biến thể và sản phẩm cho OrderItem ID: {$item->id}, Order ID: {$order->id}");
-                continue;
+            $totalWeight += $variant->weight * $item->quantity;
+
+            if ($variant->length > $maxLength) {
+                $maxLength = $variant->length;
             }
 
-            $weight = $variant?->weight ?? $product?->weight ?? 100;
-            $length = $variant?->length ?? $product?->length ?? 10;
-            $width  = $variant?->width ?? $product?->width ?? 10;
-            $height = $variant?->height ?? $product?->height ?? 10;
+            if ($variant->width > $maxWidth) {
+                $maxWidth = $variant->width;
+            }
 
-            $totalWeight += $weight * $item->quantity;
-
-            if ($length > $maxLength) $maxLength = $length;
-            if ($width > $maxWidth) $maxWidth = $width;
-
-            $totalHeight += $height * $item->quantity;
+            $totalHeight += $variant->height * $item->quantity;
         }
 
         $toDistrictId = PartnerLocationCode::where([
@@ -343,21 +213,7 @@ class OrderController extends Controller
             'mapped to_ward_code' => $toWardCode,
         ]);
         $shop = ShopSetting::with(['province', 'district', 'ward'])->first();
-        $availableServices = Http::withHeaders([
-            'Token' => config('services.ghn.token'),
-            'Content-Type' => 'application/json',
-        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', [
-            'shop_id' => (int) config('services.ghn.shop_id'),
-            'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
-            'to_district'   => (int)$toDistrictId,
-        ]);
 
-        $serviceId = data_get($availableServices->json(), 'data.0.service_id');
-
-        if (!$serviceId) {
-            Log::error('❌ Không lấy được service_id từ GHN', $availableServices->json());
-            return redirect()->back()->with('error', 'GHN không trả về service_id hợp lệ.');
-        }
         $data = [
             'from_name'           => $shop->shop_name,
             'from_phone'          => $shop->shop_phone,
@@ -377,17 +233,14 @@ class OrderController extends Controller
             'length'              => $maxLength ?: 10,
             'width'               => $maxWidth ?: 10,
             'height'              => $totalHeight ?: 10,
-            'service_id' => $serviceId,
+            'service_id'          => 53321,
             'items' => $order->items->map(function ($item) {
-                $variant = $item->productVariant;
-                $product = $variant?->product ?? $item->product;
-
                 return [
-                    'name' => $product->name ?? 'Không rõ',
+                    'name' => $item->productVariant->product->name,
                     'quantity' => $item->quantity,
-                    'code' => $variant?->sku ?? $product->sku ?? 'UNKNOWN',
-                    'image' => asset('storage/' . ($product->image ?? 'default.png')),
-                    'weight' => $variant?->weight ?? $product?->weight ?? 100,
+                    'code' => $item->productVariant->sku,
+                    'image' => asset('storage/' . $item->productVariant->product->image),
+                    'weight' => $item->productVariant->weight,
                 ];
             })->toArray(),
 
@@ -413,9 +266,13 @@ class OrderController extends Controller
                 'response_payload' => json_encode(['order_code' => $ghnOrderCode]),
             ]);
 
-            return redirect()->back()->with('success', 'Đã gửi đơn hàng sang GHN!');
+            return redirect()->back()->with('success', '✅ Đã gửi đơn hàng sang GHN!');
         }
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
+    }
+    public function invoice(string $id) {
+        $order = Order::with(['user', 'orderItems.product', 'paymentMethod', 'address'])->findOrFail($id);
+        return view('client.account.theme-invoice.invoice',compact('order'));
     }
 }
