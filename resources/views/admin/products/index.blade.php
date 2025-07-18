@@ -254,104 +254,104 @@
                     </a>
                     <!--end::Add product-->
                 </div>
-                <!--end::Card toolbar-->
-            </div>
-            <!--end::Card header-->
 
-            <!--begin::Card body-->
-            <div class="card-body pt-0">
+                <!--end::Card header-->
 
-                <!--begin::Table-->
-                <div style="overflow-x: auto;">
-                    <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;"
-                        id="kt_ecommerce_products_table">
+                <!--begin::Card body-->
+                <div class="card-body pt-0">
 
-                        <thead>
-                            <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                <!-- Checkbox đầu bảng -->
-                                <th class="w-10px pe-2 text-center">
-                                    <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                        <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                            data-kt-check-target="#kt_ecommerce_products_table .form-check-input"
-                                            value="1" />
-                                    </div>
-                                </th>
+                    <!--begin::Table-->
+                    <div style="overflow-x: auto;">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5 " style="min-width: 1300px;"
+                            id="kt_ecommerce_products_table">
 
-                                <th class="text-center min-w-60px">ID</th>
-                                <th class="text-center min-w-90px">Ảnh</th>
-                                <th class="min-w-150px">Tên sản phẩm</th>
-                                <th class="text-center min-w-90px">Giá nhập</th>
-                                <th class="text-center min-w-90px">Giá gốc</th>
-                                <th class="text-center min-w-100px">Giá KM</th>
-                                <th class="text-center min-w-90px">Kho hàng</th>
-                                <th class="text-center min-w-130px">Danh mục</th>
-                                <th class="text-center min-w-120px">Đánh giá</th>
-                                <th class="text-center min-w-100px">Trạng thái</th>
-                                <th class="text-center min-w-120px">Thao tác</th>
-                            </tr>
-                        </thead>
+                            <thead>
+                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                                    <!-- Checkbox đầu bảng -->
+                                    <th class="w-10px pe-2 text-center">
+                                        <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                            <input class="form-check-input" type="checkbox" data-kt-check="true"
+                                                data-kt-check-target="#kt_ecommerce_products_table .form-check-input"
+                                                value="1" />
+                                        </div>
+                                    </th>
 
-                        <tbody class="fw-semibold text-gray-600 align-middle">
-                            @foreach ($products as $product)
-                            <tr>
-                                {{-- Checkbox --}}
-                                <td class="text-center">
-                                    <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox"
-                                            value="{{ $product->id }}" />
-                                    </div>
-                                </td>
+                                    <th class="text-center min-w-60px">ID</th>
+                                    <th class="text-center min-w-90px">Ảnh</th>
+                                    <th class="min-w-150px">Tên sản phẩm</th>
+                                    <th class="text-center min-w-90px">Giá nhập</th>
+                                    <th class="text-center min-w-90px">Giá gốc</th>
+                                    <th class="text-center min-w-100px">Giá KM</th>
+                                    <th class="text-center min-w-90px">Kho hàng</th>
+                                    <th class="text-center min-w-130px">Danh mục</th>
+                                    <th class="text-center min-w-120px">Đánh giá</th>
+                                    <th class="text-center min-w-100px">Trạng thái</th>
+                                    <th class="text-center min-w-120px">Thao tác</th>
+                                </tr>
+                            </thead>
 
-                                {{-- ID --}}
-                                <td class="text-center">{{ $product->id }}</td>
+                            <tbody class="fw-semibold text-gray-600 align-middle">
+                                @foreach ($products as $product)
+                                    <tr>
+                                        {{-- Checkbox --}}
+                                        <td class="text-center">
+                                            <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $product->id }}" />
+                                            </div>
+                                        </td>
 
-                                {{-- Ảnh --}}
-                                <td class="text-center" style="min-width: 150px;">
-                                    <a href="{{ route('admin.products.edit', $product->id) }}">
-                                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
-                                            width="80" height="80" class="rounded shadow-sm"
-                                            style="object-fit: cover;" alt="{{ $product->name }}">
-                                    </a>
-                                </td>
+                                        {{-- ID --}}
+                                        <td class="text-center">{{ $product->id }}</td>
 
-                                {{-- Tên sản phẩm --}}
-                                <td class="align-middle" style="min-width: 120px;">
-                                    <a href="{{ route('admin.products.edit', $product->id) }}"
-                                        class="text-gray-800 text-hover-primary fs-6 fw-bold">
-                                        {{ $product->name }}
-                                    </a>
-                                </td>
+                                        {{-- Ảnh --}}
+                                        <td class="text-center" style="min-width: 150px;">
+                                            <a href="{{ route('admin.products.edit', $product->id) }}">
+                                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
+                                                    width="80" height="80" class="rounded shadow-sm"
+                                                    style="object-fit: cover;" alt="{{ $product->name }}">
+                                            </a>
+                                        </td>
 
-                                {{-- Giá nhập --}}
-                                <td class="text-center">
-                                    <span
-                                        class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }}
-                                        đ</span>
-                                </td>
+                                        {{-- Tên sản phẩm --}}
+                                        <td class="align-middle" style="min-width: 120px;">
+                                            <a href="{{ route('admin.products.edit', $product->id) }}"
+                                                class="text-gray-800 text-hover-primary fs-6 fw-bold">
+                                                {{ $product->name }}
+                                            </a>
+                                        </td>
 
-                                {{-- Giá gốc --}}
-                                <td class="text-center">
-                                    <span
-                                        class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }}
-                                        đ</span>
-                                </td>
+                                        {{-- Giá nhập --}}
+                                        <td class="text-center">
+                                            <span
+                                                class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }}
+                                                đ</span>
+                                        </td>
 
-                                {{-- Giá khuyến mãi --}}
-                                <td class="text-center">
-                                    <span
-                                        class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }}
-                                        đ</span>
-                                </td>
+                                        {{-- Giá gốc --}}
+                                        <td class="text-center">
+                                            <span
+                                                class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }}
+                                                đ</span>
+                                        </td>
 
-                                {{-- Kho hàng --}}
-                                <td class="text-center">{{ $product->stock_quantity }}</td>
+                                        {{-- Giá khuyến mãi --}}
+                                        <td class="text-center">
+                                            <span
+                                                class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }}
+                                                đ</span>
+                                        </td>
 
-                                {{-- Danh mục --}}
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-info btn-sm">
-                                        {{ $product->category->name ?? 'Chưa phân loại' }}
+                                        {{-- Kho hàng --}}
+                                        <td class="text-center">{{ $product->stock_quantity }}</td>
 
-                                        {{-- <span class="badge bg-light-info text-dark">
+                                        {{-- Danh mục --}}
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-info btn-sm">
+                                                {{ $product->category->name ?? '
+                                                ' }}
+
+                                                {{-- <span class="badge bg-light-info text-dark">
                                                     {{ $product->category->name ?? 'Chưa phân loại' }}
                                         </span> --}}
                                     </a>

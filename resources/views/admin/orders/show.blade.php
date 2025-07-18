@@ -37,11 +37,63 @@
                     <a href="listing.html" class="btn btn-icon btn-light btn-active-secondary btn-sm ms-auto me-lg-n7">
                         <i class="fa-solid fa-arrow-left fs-2"></i> </a>
                     <!--end::Button-->
+                    {{-- <div class="mb-4">
+                        <h2>📝 Trạng thái đơn hàng:</h2>
+
+                    </div> --}}
 
                     <div class="d-flex gap-2">
                         {{-- <a href="" class="btn btn-success btn-sm">Edit Order</a> --}}
 
                         <a href="add-order.html" class="btn btn-primary btn-sm">Edit Order</a>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-light-primary fw-bold dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ ucfirst($order->status) }} {{-- Hiển thị trạng thái hiện tại --}}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="pending">
+                                        <button type="submit" class="dropdown-item">🕐 Chờ xác nhận</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="confirmed">
+                                        <button type="submit" class="dropdown-item">✅ Đã xác nhận</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="shipping">
+                                        <button type="submit" class="dropdown-item">🚚 Đang giao</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" class="dropdown-item">🎉 Đã hoàn tất</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="cancelled">
+                                        <button type="submit" class="dropdown-item">❌ Đã hủy</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                         @php
                             $latestLog = $order->shippingLogs->sortByDesc('created_at')->first();
                         @endphp
@@ -623,28 +675,7 @@
                 </div>
                 <!--end::Tab content-->
             </div>
-            <div class="mb-4">
-                <h2>📝 Trạng thái đơn hàng:</h2>
-                <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}"
-                    id="status-form-{{ $order->id }}">
-                    @csrf
-                    @method('PUT')
-                    <select name="status" class="form-select fw-semibold"
-                        onchange="document.getElementById('status-form-{{ $order->id }}').submit();">
-                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>🕐 Chờ xác nhận
-                        </option>
-                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>✅ Đã xác nhận
-                        </option>
-                        <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>🚚 Đang giao
-                        </option>
-                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>🎉 Đã hoàn tất
-                        </option>
-                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>❌ Đã hủy</option>
-                    </select>
-                </form>
-            </div>
 
-            <!--end::Order details page-->
         </div>
         <!--end::Content container-->
     </div>
