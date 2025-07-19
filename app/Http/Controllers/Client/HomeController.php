@@ -14,10 +14,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-            $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
+        $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
 
         $products = Product::where('is_active', 1)
-            ->with(['label'])
+            ->with('label') // 👈 hasOne: trả về 1 object
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();

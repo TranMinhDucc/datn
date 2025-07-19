@@ -48,9 +48,8 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Client\WishlistController;
+
 use App\Http\Controllers\Admin\PaymentBankController;
-use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\ProductLabelController;
 use App\Http\Controllers\Admin\ShippingZoneController;
@@ -64,13 +63,13 @@ use App\Http\Controllers\Admin\VariantAttributeController;
 
 use App\Http\Controllers\Admin\SearchController;
 
+
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
-use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -134,7 +133,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
-    Route::get('/order-success', [CheckoutController::class, 'success'])->name('client.order.success');
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('client.checkout.success');
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
@@ -325,6 +324,8 @@ Route::prefix('admin')
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
         //Ckeditor
         Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
+        Route::post('admin/ckeditor/upload', [CKEditorController::class, 'upload'])->name('admin.ckeditor.upload');
+
         //Shipping
         Route::resource('shipping-fees', ShippingFeeController::class)->names('shipping-fees');
         Route::post('/shipping-zones/quick-add', [ShippingZoneController::class, 'quickAdd'])->name('shipping-zones.quick-add');
@@ -338,7 +339,7 @@ Route::prefix('admin')
         Route::post('blogs/generate-slug', [BlogController::class, 'generateSlug'])->name('blogs.generate-slug');
         Route::resource('blog-categories', BlogCategoryController::class)->names('blog-categories');
 
-    Route::resource('menus', MenuController::class);
+        Route::resource('menus', MenuController::class);
 
         // Variant Attributes
         Route::resource('variant_attributes', VariantAttributeController::class);
@@ -401,6 +402,7 @@ Route::get('/cron/sync-bank-transactions', function (Request $request) {
     return '✅ Đã chạy xong cron nạp tiền!';
 });
 
+
 /**
  * Route Api 
  */
@@ -419,3 +421,7 @@ Route::get('/cron/sync-ghn-orders', function () {
         'message' => 'GHN sync triggered via HTTP.',
     ]);
 });
+
+Route::post('/checkout/initiate-payment', [\App\Http\Controllers\Client\CheckoutController::class, 'initiatePayment'])->name('client.checkout.initiate-payment');
+Route::get('/checkout/payment-callback', [\App\Http\Controllers\Client\CheckoutController::class, 'paymentCallback'])->name('client.checkout.payment-callback');
+Route::get('/order-invoices/{id}', [OrderController::class, 'invoice'])->name('orders.invoice');

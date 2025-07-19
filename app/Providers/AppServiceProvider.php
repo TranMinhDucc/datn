@@ -59,32 +59,26 @@ class AppServiceProvider extends ServiceProvider
             app(CustomLoginValidation::class)($request);
             return User::where('email', $request->email)->first();
         });
-
+        // Lấy tất cả settings từ database
+        $settings = Setting::all()->pluck('value', 'key')->toArray();
         // ✅ Chia sẻ cho tất cả view
-       View::composer('*', function ($view) {
-    $headerMenus = Menu::with('children')
-                        ->where('position', 'header')
-                        ->where('active', 1)
-                        ->whereNull('parent_id')
-                        ->orderBy('sort_order')
-                        ->get();
 
-    $footerMenus = Menu::with('children')
-                        ->where('position', 'footer')
-                        ->where('active', 1)
-                        ->whereNull('parent_id')
-                        ->orderBy('sort_order')
-                        ->get();
+            $footerMenus = Menu::with('children')
+                ->where('position', 'footer')
+                ->where('active', 1)
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->get();
 
-    $sidebarMenus = Menu::with('children')
-                         ->where('position', 'sidebar')
-                         ->where('active', 1)
-                         ->whereNull('parent_id')
-                         ->orderBy('sort_order')
-                         ->get();
+            $sidebarMenus = Menu::with('children')
+                ->where('position', 'sidebar')
+                ->where('active', 1)
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->get();
 
-    $view->with(compact('headerMenus', 'footerMenus', 'sidebarMenus'));
-});
+            $view->with(compact('headerMenus', 'footerMenus', 'sidebarMenus'));
+        });
 
 
         // ✅ Kiểm tra bảng settings có tồn tại không trước khi truy cập

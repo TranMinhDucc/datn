@@ -251,18 +251,22 @@
                                             <div class="product-box-3">
                                                 <div class="img-wrapper">
                                                     <div class="label-block">
-                                                        <a class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0">
-                                                            <i class="iconsax" data-icon="heart" aria-hidden="true"
-                                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i>
+                                                        <a class="label-2 wishlist-icon add-to-wishlist" href="javascript:void(0)"
+                                                            data-id="{{ $product->id }}">
+                                                            <i class="iconsax {{ in_array($product->id, $wishlistProductIds ?? []) ? 'active' : '' }}"
+                                                                data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                                                data-bs-title="Add to Wishlist"></i>
                                                         </a>
+
                                                     </div>
+
                                                     <div class="product-image">
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
                                                             <div class="product-image bg-size"
                                                                 style="background-image: url('{{ asset('storage/' . $product->image) }}');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-size: cover;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-position: center;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-size: cover;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-position: center;">
                                                             </div>
                                                         </a>
                                                     </div>
@@ -431,23 +435,52 @@
     </style>
 @endsection
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const minInput = document.getElementById('minPriceInput');
-        const maxInput = document.getElementById('maxPriceInput');
-        const minLabel = document.getElementById('minPriceLabel');
-        const maxLabel = document.getElementById('maxPriceLabel');
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const productId = this.dataset.id;
+                    const icon = this.querySelector('i');
 
-        function updateLabels() {
-            let minVal = parseInt(minInput.value);
-            let maxVal = parseInt(maxInput.value);
-            if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+                    fetch(`/account/wishlist/add/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            const status = data.status || (data.success ? 'ok' : 'error');
 
-            minLabel.innerText = minVal.toLocaleString();
-            maxLabel.innerText = maxVal.toLocaleString();
-        }
-
-        minInput.addEventListener('input', updateLabels);
-        maxInput.addEventListener('input', updateLabels);
-        window.addEventListener('DOMContentLoaded', updateLabels);
+                            if (status === 'ok') {
+                                icon.classList.add('active');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: data.message,
+                                    timer: 1200,
+                                    showConfirmButton: false
+                                });
+                            } else if (status === 'exists') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: data.message,
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: data.message || 'Có lỗi xảy ra!'
+                                });
+                            }
+                        })
+                });
+            });
+        });
     </script>
+
+
+
 @endsection

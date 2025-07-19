@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\ProductVariant;
+use App\Models\ProductDetail;
 use App\Models\ProductVariantOption;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
@@ -36,128 +37,6 @@ class ProductController extends Controller
         $attributes = Attribute::with('values')->get();
         return view('admin.products.create', compact('categories', 'brands', 'attributes'));
     }
-
-    // public function store(Request $request)
-    // {
-    //     dd($request->all());
-    //     $validator = Validator::make($request->all(), [
-    //         'name' => 'required|string|max:255',
-    //         'slug' => 'nullable|string|max:255',
-    //         'import_price' => 'required|numeric',
-    //         'base_price' => 'required|numeric',
-    //         'sale_price' => 'nullable|numeric',
-    //         'stock_quantity' => 'required|integer',
-    //         'is_active' => 'required|boolean',
-    //         'image' => 'nullable|image|max:2048',
-    //         'images.*' => 'nullable|image|max:2048',
-    //         'category_id' => 'required|exists:categories,id',
-    //         'brand_id' => 'required|exists:brands,id',
-    //         'variants' => 'nullable|array',
-    //         'variants.*.price' => 'required_with:variants|numeric',
-    //         'variants.*.quantity' => 'required_with:variants|integer',
-    //         'variants.*.sku' => 'nullable|string',
-    //         'variants.*.attributes' => 'nullable|string',
-    //         'attributeGroups' => 'nullable|array',
-    //     ]);
-
-    //     $validator->after(function ($validator) use ($request) {
-    //         if ($request->import_price >= $request->base_price) {
-    //             $validator->errors()->add('import_price', 'Giá nhập phải nhỏ hơn giá gốc.');
-    //         }
-    //         if ($request->sale_price !== null && $request->sale_price >= $request->base_price) {
-    //             $validator->errors()->add('sale_price', 'Giá khuyến mãi phải nhỏ hơn giá gốc.');
-    //         }
-    //     });
-
-    //     if ($validator->fails()) {
-    //         return back()->withErrors($validator)->withInput();
-    //     }
-
-    //     DB::beginTransaction();
-    //     try {
-    //         // 1. Tạo sản phẩm
-    //         $data = $request->only([
-    //             'name', 'slug', 'import_price', 'base_price', 'sale_price',
-    //             'stock_quantity', 'is_active', 'category_id', 'brand_id',
-    //             'description'
-    //         ]);
-    //         $data['rating_avg'] = 0;
-
-    //         if ($request->hasFile('image')) {
-    //             $data['image'] = $request->file('image')->store('products', 'public');
-    //         }
-
-    //         $product = Product::create($data);
-
-    //         // 2. Lưu ảnh phụ
-    //         if ($request->hasFile('images')) {
-    //             foreach ($request->file('images') as $img) {
-    //                 $path = $img->store('products', 'public');
-    //                 ProductImage::create([
-    //                     'product_id' => $product->id,
-    //                     'image_url' => $path,
-    //                     'is_thumbnail' => false,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // 3. Xử lý attributeGroups: tạo Attribute nếu chưa có
-    //         $attributeMap = []; // "Màu sắc" => attribute_id
-    //         foreach ($request->input('attributeGroups', []) as $attrName) {
-    //             $attribute = \App\Models\Attribute::firstOrCreate(['name' => $attrName]);
-    //             $attributeMap[$attrName] = $attribute->id;
-    //         }
-
-    //         // 4. Tạo các giá trị nếu cần (valueMap lưu attribute_id => [value => value_id])
-    //         $valueMap = [];
-    //         foreach ($request->variants as $variant) {
-    //             $values = explode(' / ', $variant['attributes']);
-    //             foreach ($values as $index => $valueText) {
-    //                 $attrName = $request->input('attributeGroups')[$index];
-    //                 $attributeId = $attributeMap[$attrName];
-    //                 if (!isset($valueMap[$attributeId])) $valueMap[$attributeId] = [];
-
-    //                 if (!isset($valueMap[$attributeId][$valueText])) {
-    //                     $attrValue = \App\Models\AttributeValue::firstOrCreate([
-    //                         'attribute_id' => $attributeId,
-    //                         'value' => $valueText
-    //                     ]);
-    //                     $valueMap[$attributeId][$valueText] = $attrValue->id;
-    //                 }
-    //             }
-    //         }
-
-    //         // 5. Tạo biến thể và gán option
-    //         foreach ($request->variants as $variantData) {
-    //             $variant = ProductVariant::create([
-    //                 'product_id' => $product->id,
-    //                 'sku' => $variantData['sku'] ?? null,
-    //                 'price' => $variantData['price'],
-    //                 'quantity' => $variantData['quantity'],
-    //             ]);
-
-    //             $values = explode(' / ', $variantData['attributes']);
-    //             foreach ($values as $index => $valueText) {
-    //                 $attrName = $request->input('attributeGroups')[$index];
-    //                 $attributeId = $attributeMap[$attrName];
-    //                 $valueId = $valueMap[$attributeId][$valueText];
-
-    //                 ProductVariantOption::create([
-    //                     'product_variant_id' => $variant->id,
-    //                     'attribute_id' => $attributeId,
-    //                     'value_id' => $valueId,
-    //                 ]);
-    //             }
-    //         }
-
-    //         DB::commit();
-    //         return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()])->withInput();
-    //     }
-    // }
-
 
     public function store(Request $request)
     {
@@ -189,7 +68,9 @@ class ProductController extends Controller
         $product = Product::create([
             'name' => $request->name,
             'slug' => $slug,
+            'sku' => $request->sku,
             'description' => $request->description,
+            'detailed_description' => $request->detailed_description, // ✅ thêm dòng này
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
             'is_active' => $request->is_active ? 1 : 0,
@@ -205,6 +86,25 @@ class ProductController extends Controller
             'width' => $request->width,
             'height' => $request->height,
         ]);
+        // 🟩 Thêm đoạn này để lưu chi tiết sản phẩm
+        if ($request->has('details')) {
+            foreach ($request->details as $group) {
+                $groupName = $group['group_name'] ?? null;
+
+                if (!$groupName || empty($group['items'])) continue;
+
+                foreach ($group['items'] as $item) {
+                    if (!empty($item['label']) || !empty($item['value'])) {
+                        $product->productDetails()->create([
+                            'group_name' => $groupName,
+                            'label' => $item['label'],
+                            'value' => $item['value'],
+                        ]);
+                    }
+                }
+            }
+        }
+
 
         // 4. Ảnh đại diện
         if ($request->hasFile('image')) {
@@ -282,7 +182,11 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+
         $product = Product::with('variants')->findOrFail($id);
+
+        $product = Product::findOrFail($id);
+        $details = ProductDetail::where('product_id', $id)->get();
 
         $variants = $product->variants;
         $variantIds = $variants->pluck('id');
@@ -346,7 +250,8 @@ class ProductController extends Controller
             'attributeGroups',
             'attributeValues',
             'categories',
-            'brands'
+            'brands',
+            'details'
         ));
     }
 
@@ -363,7 +268,7 @@ class ProductController extends Controller
             'sale_price' => 'nullable|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'description' => 'nullable|string',
-
+            'detailed_description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
@@ -402,6 +307,7 @@ class ProductController extends Controller
                 'category_id' => $request->input('category_id'),
                 'brand_id' => $request->input('brand_id'),
                 'description' => $request->input('description'),
+                'detailed_description' => $request->input('detailed_description'),
                 'import_price' => $request->input('import_price'),
                 'base_price' => $request->input('base_price'),
                 'sale_price' => $request->input('sale_price'),
@@ -449,6 +355,28 @@ class ProductController extends Controller
                 $variant->options()->delete();
                 $variant->delete();
             });
+
+
+            // === 6. Xoá chi tiết sản phẩm cũ nếu có ===
+            $product->productDetails()->delete(); // Xoá chi tiết cũ
+
+            $details = $request->input('details', []);
+
+            foreach ($details as $group) {
+                $groupName = $group['group_name'] ?? null;
+
+                if (!$groupName || empty($group['items'])) continue;
+
+                foreach ($group['items'] as $item) {
+                    if (!empty($item['label']) || !empty($item['value'])) {
+                        $product->productDetails()->create([
+                            'group_name' => $groupName,
+                            'label' => $item['label'],
+                            'value' => $item['value'] ?? null
+                        ]);
+                    }
+                }
+            }
 
             // === 6. Lưu lại biến thể mới nếu có ===
             $manualVariants = $request->input('variants', []);
