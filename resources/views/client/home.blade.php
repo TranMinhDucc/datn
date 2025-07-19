@@ -1,6 +1,7 @@
 @extends('layouts.client')
 
 @section('title', 'Trang chủ')
+
 <style>
     .slideshow-container {
         position: relative;
@@ -28,12 +29,15 @@
 </style>
 @section('content')
 
+
+
+@section('content')
+
     {{-- <section class="section-space home-section-4">
         <div class="home-content">
             <div class="row">
                 <div class="col-12">
                     <div class="home-content">
-
                         <p> </p>
                         <h2> </h2>
                         <h1> </h1>
@@ -122,11 +126,17 @@
                         </div>
                     </div>
                     <div class="home-images">
+
                         <div class="main-images"></div>
                         <img class="img-fluid" src="{{ asset('assets/client/images/layout-4/1.png') }}" alt="">
                     </div>
 
 
+
+
+                        <div class="main-images"></div><img class="img-fluid"
+                            src="{{ asset('assets/client/images/layout-4/1.png') }}" alt="">
+                    </div>
 
                     <div class="home-box-1"> <span> </span></div>
                     <div class="home-box-2"> <span> </span></div>
@@ -147,6 +157,7 @@
                 </div>
             </div>
         </div>
+
     </section>
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
@@ -205,7 +216,6 @@
     </div>
 
     <section class="section-t-space">
-
     </section>
     <section class="section-t-space">
         {{-- <div class="container-fluid fashion-images">

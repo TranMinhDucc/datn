@@ -258,7 +258,7 @@
 
                     <!--begin::Table-->
                     <div style="overflow-x: auto;">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;"
+                        <table class="table align-middle table-row-dashed fs-6 gy-5 " style="min-width: 1300px;"
                             id="kt_ecommerce_products_table">
 
                             <thead>

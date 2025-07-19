@@ -18,6 +18,7 @@ class Product extends Model
         'label_id',
         'name',
         'slug',
+        'sku',
         'description',
         'detailed_description',
         'image',
