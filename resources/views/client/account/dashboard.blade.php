@@ -20,6 +20,7 @@
             </div>
         </div>
     </section>
+
     <section class="section-b-space pt-0">
         <div class="custom-container container user-dashboard-section">
             <div class="row">
@@ -496,6 +497,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="tab-pane fade" id="order" role="tabpanel" aria-labelledby="order-tab">
                             <div class="dashboard-right-box">
                                 <div class="order">
@@ -692,7 +694,7 @@
 
                                                             {{-- Theo dõi đơn hàng --}}
                                                             @if ($order->status === 'shipping')
-                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
+                                                                <a href="#" class="btn btn-outline-primary btn-sm">
                                                                     🚚 Theo dõi đơn hàng
                                                                 </a>
                                                             @endif

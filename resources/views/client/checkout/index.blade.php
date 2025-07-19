@@ -105,22 +105,13 @@
                                     <li>
                                         <p>Tạm tính</p> <span class="subtotal-amount">$0.00</span>
                                     </li>
-                                    {{-- <li>
+                                    <li>
                                         <p>Phí vận chuyển</p>
                                         <span>
                                             {{ $shippingFee > 0 ? number_format($shippingFee) . ' ₫' : 'Chọn địa chỉ để tính phí' }}
                                         </span>
 
-                                    </li> --}}
-                                    <li>
-                                        <p>Phí vận chuyển:</p>
-                                        <span class="shipping-fee-amount ">
-                                            {{ number_format((float) data_get($shippingFee, 'data.total', 0), 0, ',', '.') }}đ
-                                        </span>
                                     </li>
-
-
-
                                     <li>
                                         <p>Thuế</p>
                                         <span id="tax-value" data-vat="{{ $settings['vat'] ?? 0 }}">
@@ -167,7 +158,7 @@
                             </ul>
                         </div>
                     @endif
-                    <form action="{{ route('client.checkout.address.store') }}" method="POST" class="row g-3"
+                    <form action="{{ route('client.checkout.address.store') }}"  method="POST" class="row g-3"
                         id="address-form">
                         @csrf
 
@@ -270,11 +261,10 @@
 @endsection
 
 @section('js')
-    <script>
-        const placeOrderUrl = "{{ route('client.checkout.place-order') }}";
 
-        sessionStorage.setItem('originalShippingFee',
-            {{ isset($shippingFee['success']) && $shippingFee['success'] ? $shippingFee['data']['total'] : 0 }});
+    <script>
+        const placeOrderUrl = "{{ route('client.checkout.place-order') }}"; // phải khớp tên
+        sessionStorage.setItem('originalShippingFee', {{ $shippingFee ?? 0 }});
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -311,14 +301,13 @@
             const actualShipping = Math.max(0, originalShippingFee - shippingDiscount);
 
             // ✅ Hiển thị phí ship
-            const shippingDisplay = document.querySelector('.shipping-fee-amount');
+            const shippingDisplay = document.querySelector('.summary-total ul li:nth-child(2) span');
             if (shippingDisplay) {
                 shippingDisplay.textContent = actualShipping.toLocaleString('vi-VN', {
                     style: 'currency',
                     currency: 'VND'
                 });
             }
-
 
             // ✅ VAT
             const taxElement = document.getElementById('tax-value');
@@ -364,11 +353,7 @@
                     currency: 'VND'
                 });
             }
-            const defaultAddressRadio = document.querySelector('input[name="shipping_address_id"]:checked');
-            if (defaultAddressRadio) {
-                // Giả lập sự kiện change để tính phí ship
-                defaultAddressRadio.dispatchEvent(new Event('change'));
-            }
+
             // ✅ Danh sách sản phẩm
             const cartList = document.getElementById('checkout-cart-items');
             if (cartList) {
@@ -381,9 +366,9 @@
                     <div>
                         <h6>${item.name}</h6>
                         <span>${Object.entries(item.attributes || {}).map(([k, v]) => `
-                        $ {
+                        ${
                             k
-                        }: $ {
+                        }: ${
                             v
                         }
                         `).join(' / ')}</span>
@@ -397,102 +382,7 @@
                 }
             }
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = localStorage.getItem('currentUser') || 'guest';
-            const cartKey = `cartItems_${currentUser}`;
-            const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-            function updateCheckoutSummary(shippingFee = null) {
-                const currentUser = localStorage.getItem('currentUser') || 'guest';
-                const cartKey = `cartItems_${currentUser}`;
-                const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-                let subtotal = 0;
-                cartItems.forEach(item => subtotal += item.price * item.quantity);
-
-                const productDiscount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
-                const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
-
-                const baseShipping = shippingFee !== null ?
-                    shippingFee :
-                    parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
-
-                const actualShipping = Math.max(0, baseShipping - shippingDiscount);
-                const subtotalAfterDiscount = Math.max(0, subtotal - productDiscount);
-                const vatRate = parseFloat(document.getElementById('tax-value')?.dataset.vat || 0);
-                const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
-                const total = Math.max(0, subtotalAfterDiscount + actualShipping + taxAmount);
-
-                // Cập nhật UI
-                const shippingEl = document.querySelector('.shipping-fee-amount');
-                if (shippingEl) {
-                    shippingEl.textContent = actualShipping.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    });
-                }
-
-                const subtotalEl = document.querySelector('.subtotal-amount');
-                if (subtotalEl) {
-                    subtotalEl.textContent = subtotalAfterDiscount.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    });
-                }
-
-                const vatEl = document.getElementById('tax-value');
-                if (vatEl) {
-                    vatEl.textContent = `${taxAmount.toLocaleString('vi-VN')} ₫`;
-                }
-
-                const totalEl = document.querySelector('.total h6:last-child');
-                if (totalEl) {
-                    totalEl.textContent = total.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    });
-                }
-            }
-
-            // 👉 Sự kiện chọn địa chỉ sẽ cập nhật phí ship động
-            document.querySelectorAll('input[name="shipping_address_id"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const addressId = this.value;
-
-                    // Lấy cart items từ localStorage
-                    const currentUser = localStorage.getItem('currentUser') || 'guest';
-                    const cartKey = `cartItems_${currentUser}`;
-                    const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-                    fetch(`/shipping-fee/calculate?address_id=${addressId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content'),
-                            },
-                            body: JSON.stringify({
-                                cartItems
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                const newFee = parseFloat(data.total);
-                                sessionStorage.setItem('originalShippingFee', newFee);
-                                updateCheckoutSummary(newFee);
-                            } else {
-                                alert('❌ Không thể tính phí vận chuyển: ' + data.message);
-                            }
-                        })
-                        .catch(err => {
-                            console.error('❌ Lỗi khi gọi API phí ship:', err);
-                        });
-                });
-            });
-
-            updateCheckoutSummary(); // Khởi tạo lần đầu
-        });
 
         if (window.location.href.includes('/checkout')) {
             const newOrder = sessionStorage.getItem('orderJustPlaced');
@@ -514,6 +404,11 @@
                 ?.value;
             const selectedPaymentMethodId = document.querySelector('input[name="payment_method_id"]:checked')
                 ?.value;
+
+            // Lấy code phương thức thanh toán
+            const paymentMethods = @json($paymentMethods);
+            const selectedPaymentMethod = paymentMethods.find(m => m.id == selectedPaymentMethodId);
+            const paymentCode = selectedPaymentMethod ? selectedPaymentMethod.code : '';
 
             const productCoupon = JSON.parse(sessionStorage.getItem('productCoupon') || '{}');
             const productCouponId = productCoupon.id || null;
@@ -540,49 +435,64 @@
                 shipping_coupon_id: shippingCouponId,
                 discount_amount: parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0,
                 shipping_fee: parseFloat(sessionStorage.getItem('originalShippingFee')) || 0,
-                tax_amount: taxAmount
+                tax_amount: taxAmount,
+                total_amount: subtotalAfterDiscount + actualShipping + taxAmount
             };
 
-            console.log("📦 Dữ liệu gửi đi:", dataToSend);
-
-            fetch(placeOrderUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                    },
-                    body: JSON.stringify(dataToSend)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        localStorage.removeItem(`cartItems_${currentUser}`);
-
-                        // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
-                        sessionStorage.removeItem('shippingCoupon');
-                        sessionStorage.removeItem('productCoupon');
-
-                        // 
-                        window.location.href = '/order-success';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(err => {
-                    console.error('❌ Lỗi fetch:', err);
-                    alert('Lỗi khi gửi đơn hàng');
-                });
-
-            sessionStorage.removeItem('shippingCoupon');
-            sessionStorage.removeItem('productCoupon');
+            if (paymentCode === 'momo' || paymentCode === 'vnpay') {
+                fetch("{{ route('client.checkout.initiate-payment') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.url) {
+                            window.location.href = data.url;
+                        } else {
+                            alert('❌ ' + (data.message || 'Lỗi khởi tạo thanh toán online'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('❌ Lỗi fetch:', err);
+                        alert('Lỗi khi gửi đơn hàng');
+                    });
+            } else {
+                // Thanh toán thường (ví, COD...)
+                fetch(placeOrderUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.removeItem(`cartItems_${currentUser}`);
+                            sessionStorage.removeItem('shippingCoupon');
+                            sessionStorage.removeItem('productCoupon');
+                            window.location.href = '/order-success';
+                        } else {
+                            alert('❌ ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('❌ Lỗi fetch:', err);
+                        alert('Lỗi khi gửi đơn hàng');
+                    });
+            }
         });
     </script>
 
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
