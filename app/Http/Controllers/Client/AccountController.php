@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Models\ShippingAddress;
 use App\Models\Wishlist;
-
-
+use App\Notifications\OrderStatusNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,6 +20,7 @@ class AccountController extends Controller
 
     public function dashboard()
     {
+        
         $user = Auth::user();
 
         $addresses = ShippingAddress::with('user')
@@ -38,9 +38,17 @@ class AccountController extends Controller
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
-$provinces = Province::all(); // chỉ cần load tỉnh ban đầu
 
-        return view('client.account.dashboard', compact('addresses', 'user', 'wishlists', 'orders', 'provinces'));
+             $notifications = $user->notifications()
+        ->where('type', OrderStatusNotification::class)
+        ->latest()
+        ->take(10)
+        ->get();
+
+
+        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
+
+        return view('client.account.dashboard', compact('notifications','addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
 
 

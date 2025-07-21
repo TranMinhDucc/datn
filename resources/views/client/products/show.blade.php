@@ -31,7 +31,8 @@
                                 <div class="swiper-wrapper">
                                     @foreach ($product->images as $image)
                                         <div class="swiper-slide">
-                                            <img src="{{ asset('storage/' . $image->image_url) }}" alt="Ảnh phụ của sản phẩm">
+                                            <img src="{{ asset('storage/' . $image->image_url) }}"
+                                                alt="Ảnh phụ của sản phẩm">
                                         </div>
                                     @endforeach
                                 </div>
@@ -97,7 +98,7 @@
                                     </li>
                                     <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-                                <p>{!! $product->description !!}</p>
+                                <p>{{ $product->description }}</p>
                             </div>
                             <div class="buy-box border-buttom">
                                 <ul>
@@ -114,23 +115,23 @@
                             </div>
                             {{-- Size --}}
                             {{-- @foreach ($attributes as $attrId => $attr)
-                            <div class="mb-2">
-                                <label><strong>{{ $attr['name'] }}:</strong></label>
-                                <select class="form-select variant-select" data-attr="{{ $attrId }}">
-                                    <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
-                                    @foreach ($attr['values'] as $valueId => $value)
-                                    <option value="{{ $valueId }}">{{ $value }}</option>
-                                    @endforeach
-                                </select>
-                            </div> <!-- Đóng thẻ div.mb-2 -->
+                                <div class="mb-2">
+                                    <label><strong>{{ $attr['name'] }}:</strong></label>
+                                    <select class="form-select variant-select" data-attr="{{ $attrId }}">
+                                        <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
+                                        @foreach ($attr['values'] as $valueId => $value)
+                                            <option value="{{ $valueId }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> <!-- Đóng thẻ div.mb-2 -->
                             @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
                                 <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
                                     <h6>{{ ucfirst($groupName) }}</h6>
                                     <ul class="variant-list d-flex gap-2">
                                         @foreach ($values as $val)
-                                            <li class="variant-item px-3 py-1 border rounded" data-value="{{ $val }}"
-                                                style="cursor: pointer;">
+                                            <li class="variant-item px-3 py-1 border rounded"
+                                                data-value="{{ $val }}" style="cursor: pointer;">
                                                 {{ $val }}
                                             </li>
                                         @endforeach
@@ -153,8 +154,9 @@
                                     <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                 </div>
                                 <div class="d-flex align-items-center gap-3 w-100">
-                                    <a href="#" class="btn btn_black sm add-to-cart-btn" data-id="{{ $product->id }}"
-                                        data-name="{{ $product->name }}" data-price="{{ $product->sale_price }}"
+                                    <a href="#" class="btn btn_black sm add-to-cart-btn"
+                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
+                                        data-price="{{ $product->sale_price }}"
                                         data-original-price="{{ $product->base_price }}"
                                         data-image="{{ asset('storage/' . $product->image) }}"
                                         data-brand="{{ $product->brand->name ?? 'Unknown' }}"
@@ -171,8 +173,9 @@
                                             Wishlist</a></li>
                                     <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
                                             Compare</a></li>
-                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box" title="Quick View"
-                                            tabindex="0"><i class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
+                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
+                                            title="Quick View" tabindex="0"><i
+                                                class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
                                 </ul>
                             </div>
                             <div class="sale-box">
@@ -246,7 +249,8 @@
                             </div>
                             <div class="share-option">
                                 <h5>Secure Checkout</h5><img class="img-fluid"
-                                    src="{{ asset('assets/client/images/other-img/secure_payments.png') }}" alt="">
+                                    src="{{ asset('assets/client/images/other-img/secure_payments.png') }}"
+                                    alt="">
                             </div>
                         </div>
                     </div>
@@ -262,8 +266,8 @@
                         <ul class="product-tab theme-scrollbar nav nav-tabs nav-underline" id="Product" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="Description-tab" data-bs-toggle="tab"
-                                    data-bs-target="#Description-tab-pane" role="tab" aria-controls="Description-tab-pane"
-                                    aria-selected="true">Mô tả</button>
+                                    data-bs-target="#Description-tab-pane" role="tab"
+                                    aria-controls="Description-tab-pane" aria-selected="true">Description</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="specification-tab" data-bs-toggle="tab"
@@ -286,31 +290,54 @@
                                 aria-labelledby="Description-tab" tabindex="0">
                                 <div class="row gy-4">
                                     <div class="col-12">
-                                        {!! $product->detailed_description !!}
+                                        <p class="paragraphs">Experience the perfect blend of comfort and style with our
+                                            Summer Breeze Cotton Dress. Crafted from 100% premium cotton, this dress offers
+                                            a soft and breathable feel, making it ideal for warm weather. The lightweight
+                                            fabric ensures you stay cool and comfortable throughout the day.</p>
+                                        <p class="paragraphs">Perfect for casual outings, beach trips, or summer parties.
+                                            Pair it with sandals for a relaxed look or dress it up with heels and
+                                            accessories for a more polished ensemble.</p>
                                     </div>
                                     <div class="col-12">
-
-                                        @if($groupedDetails->isNotEmpty())
-                                            <div class="row gy-4">
-                                                @foreach ($groupedDetails as $groupName => $items)
-                                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                                        <div class="general-summery">
-                                                            <h5>{{ $groupName }}</h5>
-                                                            <ul>
-                                                                @foreach ($items as $item)
-                                                                    <li>{{ $item->label }}{{ $item->value ? ': ' . $item->value : '' }}
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
+                                        <div class="row gy-4">
+                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                <div class="general-summery">
+                                                    <h5>Product Specifications</h5>
+                                                    <ul>
+                                                        <li>100% Premium Cotton</li>
+                                                        <li>A-line silhouette with a flattering fit</li>
+                                                        <li>Knee-length for versatile styling</li>
+                                                        <li>V-neck for a touch of elegance</li>
+                                                        <li>Short sleeves for a casual look</li>
+                                                        <li>Available in solid colors and floral prints</li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        @else
-                                            <p><strong>Không có số liệu kĩ thuật.</strong></p>
-                                        @endif
+                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                <div class="general-summery">
+                                                    <h5>Washing Instructions</h5>
+                                                    <ul>
+                                                        <li>Use cold water for washing</li>
+                                                        <li>Use a low heat setting for drying.</li>
+                                                        <li>Avoid using bleach on this fabric.</li>
+                                                        <li>Use a low heat setting when ironing.</li>
+                                                        <li>Do not take this item to a dry cleaner.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                <div class="general-summery">
+                                                    <h5>Size & Fit</h5>
+                                                    <ul>
+                                                        <li>The model (height 5'8) is wearing a size S</li>
+                                                        <li>Measurements taken from size Small</li>
+                                                        <li>Chest: 30"</li>
+                                                        <li>Length: 20"</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="specification-tab-pane" role="tabpanel"
@@ -368,8 +395,8 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="question-tab-pane" role="tabpanel" aria-labelledby="question-tab"
-                                tabindex="0">
+                            <div class="tab-pane fade" id="question-tab-pane" role="tabpanel"
+                                aria-labelledby="question-tab" tabindex="0">
                                 <div class="question-main-box">
                                     <h5>Have Doubts Regarding This Product ?</h5>
                                     <h6 data-bs-toggle="modal" data-bs-target="#question-modal" title="Quick View"
@@ -459,8 +486,8 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="Reviews-tab-pane" role="tabpanel" aria-labelledby="Reviews-tab"
-                                tabindex="0">
+                            <div class="tab-pane fade" id="Reviews-tab-pane" role="tabpanel"
+                                aria-labelledby="Reviews-tab" tabindex="0">
                                 <div class="row gy-4">
                                     <div class="col-lg-4">
                                         <div class="review-right">
@@ -539,7 +566,8 @@
                                                     </li>
                                                 </ul>
                                                 <button class="btn reviews-modal" data-bs-toggle="modal"
-                                                    data-bs-target="#Reviews-modal" title="Quick View" tabindex="0">Write a
+                                                    data-bs-target="#Reviews-modal" title="Quick View"
+                                                    tabindex="0">Write a
                                                     review</button>
                                             </div>
                                         </div>
@@ -549,48 +577,45 @@
                                             <h5>Comments </h5>
                                             <ul class="theme-scrollbar">
                                                 @foreach ($reviews as $review)
-                                                            <li style="width:100%">
-                                                                <div class="comment-items">
-                                                                    <div class="user-img"> <img
-                                                                            src="{{ $review->user_avatar ?? asset('assets/client/images/user/3.jpg') }}"
-                                                                            alt="">
+                                                    <li style="width:100%">
+                                                        <div class="comment-items">
+                                                            <div class="user-img"> <img
+                                                                    src="{{ $review->user_avatar ?? asset('assets/client/images/user/3.jpg') }}"
+                                                                    alt="">
+                                                            </div>
+                                                            <div class="user-content">
+                                                                <div class="user-info">
+                                                                    <div class="d-flex justify-content-between gap-3">
+                                                                        <h6><i class="iconsax" data-icon="user-1"></i>
+                                                                            {{ $review->user->fullname ?? 'Ẩn danh' }}
+                                                                        </h6>
+
+
+                                                                        <span> <i class="iconsax"
+                                                                                data-icon="clock"></i>{{ $review->created_at->format('d/m/Y H:i') }}</span>
                                                                     </div>
-                                                                    <div class="user-content">
-                                                                        <div class="user-info">
-                                                                            <div class="d-flex justify-content-between gap-3">
-                                                                                <h6><i class="iconsax" data-icon="user-1"></i>
-                                                                                    {{ $review->user->fullname ?? 'Ẩn danh' }}
-                                                                                </h6>
-
-
-                                                                                <span> <i class="iconsax"
-                                                                                        data-icon="clock"></i>{{ $review->created_at->format('d/m/Y H:i') }}</span>
-                                                                            </div>
-                                                                            <!-- Hiển thị số sao đánh giá -->
-                                                                            <ul class="rating p-0 mb">
-                                                                                @for ($i = 1; $i <= 5; $i++)
-                                                                                    <li>
-                                                                                        <i
-                                                                                            class="{{ $i <= $review->rating ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
-                                                                                    </li>
-                                                                                @endfor
-                                                                            </ul>
-                                                                        </div>
-                                                                        @if ($review->approved)
-                                                                            <p>{{ $review->comment }}</p>
-                                                                        @endif
-
-                                                                        {{-- <a href="#"> <span> <i class="iconsax"
-                                                                                    data-icon="undo"></i>
-                                                                                Replay</span></a> --}}
-                                                                    </div>
+                                                                    <!-- Hiển thị số sao đánh giá -->
+                                                                    <ul class="rating p-0 mb">
+                                                                        @for ($i = 1; $i <= 5; $i++)
+                                                                            <li>
+                                                                                <i
+                                                                                    class="{{ $i <= $review->rating ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                                                                            </li>
+                                                                        @endfor
+                                                                    </ul>
                                                                 </div>
-                                                    </div>
+                                                                @if ($review->approved)
+                                                                    <p>{{ $review->comment }}</p>
+                                                                @endif
+
+                                                                {{-- <a href="#"> <span> <i class="iconsax" data-icon="undo"></i>
+                                                                        Replay</span></a> --}}
+                                                            </div>
+                                                        </div>
                                                     </li>
-
                                                 @endforeach
-                                        </ul>
-
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -598,7 +623,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </section>
     <section class="section-b-space pt-0">
@@ -616,23 +640,26 @@
                         <div class="swiper-slide">
                             <div class="product-box-3">
                                 <div class="img-wrapper">
-                                    <div class="label-block"><span class="lable-1">NEW</span><a class="label-2 wishlist-icon"
-                                            href="javascript:void(0)" tabindex="0"><i class="iconsax" data-icon="heart"
-                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                data-bs-title="Add to Wishlist"></i></a></div>
+                                    <div class="label-block"><span class="lable-1">NEW</span><a
+                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
                                     <div class="product-image"><a class="pro-first"
                                             href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
                                                 src="{{ asset('storage/' . $value->image) }}"
-                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec" href="product.html"> <img
-                                                class="bg-img" src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                            href="product.html"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
                                                 alt="Áo phông cucci LV collab"></a></div>
-                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal" data-bs-target="#addtocart"
-                                            tabindex="0"><i class="iconsax" data-icon="basket-2" aria-hidden="true"
-                                                data-bs-toggle="tooltip" data-bs-title="Add to cart"> </i></a><a
-                                            href="compare.html" tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                                aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="Compare"></i></a><a
-                                            href="#" data-bs-toggle="modal" data-bs-target="#quick-view" tabindex="0"><i
-                                                class="iconsax" data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
+                                                data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Add to cart"> </i></a><a href="compare.html"
+                                            tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                                aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                                data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
                                                 data-bs-title="Quick View"></i></a></div>
                                     <div class="countdown">
                                         <ul class="clockdiv2">
@@ -739,7 +766,7 @@
                         <script>
                             const stars = document.querySelectorAll('.star');
                             const ratingInput = document.getElementById('rating-value');
-                            document.addEventListener('DOMContentLoaded', function () {
+                            document.addEventListener('DOMContentLoaded', function() {
                                 const form = document.getElementById('rating-form');
                                 const stars = document.querySelectorAll('.star');
                                 const ratingInput = document.getElementById('rating-value');
@@ -762,7 +789,7 @@
                                 });
 
                                 document.querySelectorAll('.submit-rating').forEach(button => {
-                                    button.addEventListener('click', function () {
+                                    button.addEventListener('click', function() {
                                         const rate = ratingInput.value;
                                         const comment = commentInput.value;
                                         if (isNaN(rate) || (rate <= 0 || rate > 5)) {
@@ -850,20 +877,29 @@
 
             const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
             if (matched) {
-                document.getElementById('variant-quantity').textContent = matched.quantity;
-                document.getElementById('variant-info').style.display = 'block';
+    const quantity = matched.quantity;
 
-                const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-                document.getElementById('main-price').textContent = formattedPrice;
-            } else {
-                document.getElementById('variant-info').style.display = 'none';
-                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
-            }
+    const qtyEl = document.getElementById('variant-quantity');
+    if (quantity <= 0) {
+        qtyEl.textContent = 'Hết hàng';
+        qtyEl.style.color = 'red';
+    } else {
+        qtyEl.textContent = quantity;
+        qtyEl.style.color = '';
+    }
+
+    document.getElementById('variant-info').style.display = 'block';
+    const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+    document.getElementById('main-price').textContent = formattedPrice;
+}
+
+
+            
         }
 
         // Bắt sự kiện click vào mỗi lựa chọn
         document.querySelectorAll('.variant-item').forEach(item => {
-            item.addEventListener('click', function () {
+            item.addEventListener('click', function() {
                 this.parentElement.querySelectorAll('.variant-item').forEach(i => i.classList.remove(
                     'active'));
                 this.classList.add('active');
@@ -922,7 +958,7 @@
                 $seconds.text(String(t.seconds).padStart(2, '0'));
             }
             updateClock();
-            const interval = setInterval(function () {
+            const interval = setInterval(function() {
                 const now = Date.now();
                 const end = Date.parse(endtimeStr);
                 if (now > end) {
@@ -934,8 +970,8 @@
             }, 1000);
         }
 
-        $(document).ready(function () {
-            $('.countdown[data-starttime][data-endtime]').each(function () {
+        $(document).ready(function() {
+            $('.countdown[data-starttime][data-endtime]').each(function() {
                 const $clock = $(this);
                 const start = $clock.attr('data-starttime');
                 const end = $clock.attr('data-endtime');
@@ -954,10 +990,10 @@
         window.variantData = @json($variants);
         console.log(window.variantData);
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // ✅ Xử lý chọn thuộc tính
             document.querySelectorAll('.variant-item').forEach(item => {
-                item.addEventListener('click', function () {
+                item.addEventListener('click', function() {
                     const group = this.closest('.variant-list');
                     if (!group) return;
 
@@ -982,17 +1018,17 @@
                 toast.className = 'toast-box';
                 toast.style.background =
                     type === 'error' ? '#dc3545' :
-                        type === 'warning' ? '#ffc107' :
-                            type === 'info' ? '#17a2b8' :
-                                '#28a745';
+                    type === 'warning' ? '#ffc107' :
+                    type === 'info' ? '#17a2b8' :
+                    '#28a745';
 
                 toast.innerHTML = `
-                                                            <div class="icon">
-                                                                <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-                                                                <span>${message}</span>
-                                                            </div>
-                                                            <button class="close-btn">&times;</button>
-                                                            `;
+    <div class="icon">
+        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+        <span>${message}</span>
+    </div>
+    <button class="close-btn">&times;</button>
+    `;
 
                 container.appendChild(toast);
 
@@ -1024,7 +1060,7 @@
 
             // ✅ Sự kiện Add to Cart
             document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     const id = this.dataset.id;
                     const name = this.dataset.name;
                     const image = this.dataset.image;
@@ -1065,14 +1101,22 @@
 
                     let price = parseFloat(this.dataset.price);
                     let originalPrice = parseFloat(this.dataset.originalPrice);
+let matchedVariant = null;
 
-                    if (variantId) {
-                        const matchedVariant = window.variantData.find(v => v.id === variantId);
-                        if (matchedVariant) {
-                            price = matchedVariant.price;
-                            originalPrice = matchedVariant.original_price || originalPrice;
-                        }
-                    }
+if (variantId) {
+    matchedVariant = window.variantData.find(v => v.id === variantId);
+    if (matchedVariant) {
+        if (matchedVariant.quantity <= 0) {
+            showToast('Sản phẩm đã hết hàng', 'warning');
+            return;
+        }
+
+        price = matchedVariant.price;
+        originalPrice = matchedVariant.original_price || originalPrice;
+    }
+}
+
+
 
                     const index = cartItems.findIndex(item =>
                         item.id === id &&
@@ -1099,6 +1143,8 @@
 
                     localStorage.setItem(cartKey, JSON.stringify(cartItems));
                     document.dispatchEvent(new Event('cartUpdated'));
+                    updateCartBadge(); // ← Thêm dòng này
+
 
                     const offcanvasEl = document.getElementById('offcanvasRight');
                     if (offcanvasEl) {
@@ -1110,5 +1156,8 @@
 
         });
     </script>
+
+
+
 
 @endsection

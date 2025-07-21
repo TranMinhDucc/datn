@@ -969,7 +969,9 @@
             </div>
         </div>
     </section>
+    
 @endsection
+
 @section('js')
 
 
