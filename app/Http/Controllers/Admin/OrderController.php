@@ -11,6 +11,7 @@ use App\Models\ShopSetting;
 use App\Services\GhnService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\OrderStatusNotification;
 
 class OrderController extends Controller
 {
@@ -60,6 +61,7 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
+
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
@@ -69,8 +71,12 @@ class OrderController extends Controller
         $order->status = $validated['status'];
         $order->save();
 
+        // Gửi notification realtime tới user
+        $order->user->notify(new OrderStatusNotification($order->id, $order->status, $order, $request->cancel_reason, $request->image));
+
         return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
+
     public function cancel()
     {
         $orders = Order::where('cancel_request', true)
