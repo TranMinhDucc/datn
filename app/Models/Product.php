@@ -18,6 +18,7 @@ class Product extends Model
         'label_id',
         'name',
         'slug',
+        'sku',
         'description',
         'detailed_description',
         'image',
@@ -43,7 +44,7 @@ class Product extends Model
     }
     public function label()
     {
-        return $this->hasMany(ProductLabel::class, 'product_id');
+        return $this->hasOne(ProductLabel::class, 'product_id');
     }
     // Quan hệ với thương hiệu
     public function brand()

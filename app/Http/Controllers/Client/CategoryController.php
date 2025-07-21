@@ -6,25 +6,31 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Wishlist;
 
 class CategoryController extends Controller
 {
     //
     public function show($id)
     {
-        // Lấy danh mục cha
-        $category = Category::with('products')->findOrFail($id);
+        $category = Category::findOrFail($id);
 
-        // Lấy ID các danh mục con
-        // $childCategoryIds = Category::where('parent_id', $category->id)->pluck('id');
+        // Phân trang sản phẩm theo category_id
+        $products = Product::where('category_id', $id)
+            ->with('label') // 👈 load label luôn
+            ->orderBy('created_at', 'desc')
+            ->paginate(4);
 
-        // // Bao gồm cả danh mục cha và con để lọc sản phẩm
-        // $categoryIds = $childCategoryIds->push($category->id);
+        // Wishlist ID
+        $wishlistProductIds = auth()->check()
+            ? Wishlist::where('user_id', auth()->id())->pluck('product_id')->toArray()
+            : [];
 
-        // // Lấy sản phẩm thuộc các danh mục này
-        // $products = Product::whereIn('category_id', $categoryIds)->paginate(12);
-        return view('client.categories.show', compact('category'));
+        return view('client.categories.show', compact('category', 'products', 'wishlistProductIds'));
     }
+
+
 
     public function index()
     {
