@@ -51,7 +51,7 @@
                                                 @foreach ($categories as $category)
                                                     <li>
                                                         <input class="custom-checkbox" id="category{{ $category->id }}"
-                                                            type="checkbox" name="category[]" value="{{ $category->id }}" , {{ is_array(request('category')) && in_array($category->id, request('category')) ? 'checked' : '' }}>
+                                                            type="checkbox" name="category[]" value="{{ $category->id }}" {{ is_array(request('category')) && in_array($category->id, request('category')) ? 'checked' : '' }}>
                                                         <label for="category{{ $category->id }}">{{ $category->name }}</label>
                                                     </li>
                                                 @endforeach
@@ -265,8 +265,8 @@
                                                             style="display: block;">
                                                             <div class="product-image bg-size"
                                                                 style="background-image: url('{{ asset('storage/' . $product->image) }}');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-size: cover;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-position: center;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                background-size: cover;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                background-position: center;">
                                                             </div>
                                                         </a>
                                                     </div>
@@ -436,6 +436,13 @@
 @endsection
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                this.closest('form').submit(); // Submit lại form khi có thay đổi checkbox
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.add-to-wishlist').forEach(btn => {
