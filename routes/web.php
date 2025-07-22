@@ -33,13 +33,12 @@ use App\Http\Controllers\Client\ShippingAddressController;
 use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
 
 
 
 // ========== ADMIN CONTROLLERS ==========
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Client\CartController;
-use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -49,50 +48,27 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Client\CheckoutController;
-use App\Http\Controllers\Client\WishlistController;
 use App\Http\Controllers\Admin\PaymentBankController;
-use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\ProductLabelController;
-use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Admin\EmailCampaignController;
-use App\Http\Controllers\Webhook\BankWebhookController;
-use App\Http\Controllers\Admin\ShippingMethodController;
-
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\VariantAttributeController;
-use App\Http\Controllers\Client\ShippingAddressController;
-use App\Http\Controllers\Client\FaqController as ClientFaqController;
-use App\Http\Controllers\Client\BlogController as ClientBlogController;
-use App\Http\Controllers\Client\ReviewController as ClientReviewController;
-use App\Http\Controllers\Client\ContactController as ClientContactController;
-use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
-
 use App\Http\Controllers\Admin\SearchController;
-
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
-use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ShopSettingController;
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\BankWebhookController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
-use App\Models\Bank;
-use App\Models\Setting;
-use App\Services\BankTransactionService;
 use Illuminate\Support\Facades\Artisan;
 
 // GHI ĐÈ route đăng ký Fortify
