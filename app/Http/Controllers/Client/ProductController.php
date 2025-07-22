@@ -370,14 +370,21 @@ class ProductController extends Controller
                 $sizes[] = $value;
             }
         }
+        $wishlistProductIds = [];
 
+        if (auth()->check()) {
+            $wishlistProductIds = \App\Models\Wishlist::where('user_id', auth()->id())
+                ->pluck('product_id')
+                ->toArray();
+        }
         return view('client.products.filter-sidebar', compact(
             'products',
             'categories',
             'brands',
             'colors',
             'sizes',
-            'genders'
+            'genders',
+            'wishlistProductIds',
         ));
     }
     private function getRecommendedProducts($limit = 6)

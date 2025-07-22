@@ -154,6 +154,11 @@ Route::prefix('/')->name('client.')->group(function () {
 
 
     Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+
+    // Mua lại đơn hàng    
+    Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
+    ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
+    ->name('orders.reorderData');
 });
 
 // // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
@@ -189,7 +194,10 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     // routes/web.php
 
-
+Route::get('/account/notifications', function () {
+    $notifications = auth()->user()->notifications()->paginate(10);
+    return view('account.notifications', compact('notifications'));
+})->middleware('auth');
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
