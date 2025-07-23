@@ -173,9 +173,7 @@
 
             <!--begin::Secondary button-->
             <!--end::Secondary button-->
-            <a href="{{ route('admin.products.trash') }}" class="btn btn-secondary">
-                <i class="fa-solid fa-trash"></i> Thùng rác
-            </a>
+
             <!--begin::Primary button-->
             <a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal"
                 data-bs-target="#kt_modal_create_app">
@@ -227,7 +225,9 @@
                         </select>
                         <!--end::Select2-->
                     </div>
-
+                    <a href="{{ route('admin.products.trash') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-trash"></i> Thùng rác
+                    </a>
                     <!--begin::Add product-->
                     <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
                         Thêm Sản Phẩm
