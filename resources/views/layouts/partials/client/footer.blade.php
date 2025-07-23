@@ -115,28 +115,4 @@
             </div>
         </div>
     </div>
-</footer>
-      <div class="sub-footer">
-          <div class="custom-container container">
-              <div class="row">
-                  <div class="col-xl-6 col-md-6 col-sm-12">
-                      <div class="footer-end">
-                          <h6>2024 Copyright By Themeforest Powered By Pixelstrap </h6>
-                      </div>
-                  </div>
-                  <div class="col-xl-6 col-md-6 col-sm-12">
-                      <div class="payment-card-bottom">
-                          <ul>
-                              <li><img src="{{ asset('assets/client/images/footer/discover.png') }}" alt="">
-</li>
-                              <li><img src="{{ asset('assets/client/images/footer/american.png') }}" alt="">
-                              </li>
-                              <li><img src="{{ asset('assets/client/images/footer/master.png') }}" alt=""></li>
-                              <li><img src="{{ asset('assets/client/images/footer/giro.png') }}" alt=""></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </footer>
+

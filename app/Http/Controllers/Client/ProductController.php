@@ -254,9 +254,10 @@ class ProductController extends Controller
             }
         }
 
-        // 🏷 Danh mục
-        if ($request->filled('category')) {
-            $query->whereIn('category_id', $request->category);
+        // 🏷 Danh mục (bảo vệ không lọc nếu không có checkbox nào được chọn)
+        $categoryIds = $request->input('category', []); // luôn trả array (nếu không có -> rỗng)
+        if (!empty($categoryIds)) {
+            $query->whereIn('category_id', $categoryIds);
         }
 
         // 🏢 Thương hiệu
@@ -370,14 +371,21 @@ class ProductController extends Controller
                 $sizes[] = $value;
             }
         }
+        $wishlistProductIds = [];
 
+        if (auth()->check()) {
+            $wishlistProductIds = \App\Models\Wishlist::where('user_id', auth()->id())
+                ->pluck('product_id')
+                ->toArray();
+        }
         return view('client.products.filter-sidebar', compact(
             'products',
             'categories',
             'brands',
             'colors',
             'sizes',
-            'genders'
+            'genders',
+            'wishlistProductIds',
         ));
     }
     private function getRecommendedProducts($limit = 6)

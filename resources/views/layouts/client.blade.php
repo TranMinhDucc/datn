@@ -86,6 +86,9 @@
         }
     </style>
     @yield('style')
+    @if(Auth::check())
+    <meta name="user-id" content="{{ Auth::id() }}">
+@endif
 </head>
 
 <script>
@@ -451,6 +454,8 @@
     </div>
 </body>
 
+
+
 <script>
     // ================================
     // 1. BIẾN TOÀN CỤC
@@ -468,6 +473,7 @@
         cartList.innerHTML = '';
         cartItems.forEach(item => renderCartItem(item));
         updateTotal();
+        updateCartBadge();
     }
 
     function renderCartItem(item) {
@@ -596,7 +602,83 @@ if (totalElement) {
         }
     });
 </script>
+<!-- Toastr CSS + JS (CDN) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<!-- Laravel Echo + Pusher -->
+<script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
+
+<script>
+    @if (Auth::check())
+        const userIdd = '{{ Auth::id() }}';
+
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: '{{ env('VITE_PUSHER_APP_KEY') }}',
+            cluster: '{{ env('VITE_PUSHER_APP_CLUSTER') }}',
+            forceTLS: true
+        });
+
+        window.Echo.private(`App.Models.User.${userIdd}`)
+            .notification((notification) => {
+                toastr.options.onclick = function () {
+    if (notification.url) {
+        window.location.href = notification.url;
+    }
+};
+toastr.info("Bạn có một thông báo mới");
+            });
+    @endif
+</script>
+<script>
+    function updateCartBadge() {
+        const badge = document.querySelector('.cart_qty_cls'); // phần tử badge hiển thị số lượng
+        const currentUser = localStorage.getItem('currentUser') || 'guest';
+        const cartKey = `cartItems_${currentUser}`;
+        const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+        const totalQty = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
+        if (badge) {
+            badge.textContent = totalQty;
+            badge.style.display = totalQty > 0 ? 'inline-block' : 'none';
+        }
+    }
+
+    // Gọi khi load trang
+    document.addEventListener('DOMContentLoaded', updateCartBadge);
+
+    // Gọi lại khi giỏ hàng được cập nhật
+    document.addEventListener('cartUpdated', updateCartBadge);
+</script>
+@if(Auth::check() && $unreadNotifications->count())
+    <script>
+        const unreadNotifications = @json($unreadNotifications);
+
+        unreadNotifications.forEach((notification, index) => {
+            const data = notification.data;
+            const message = `🔔 Đơn hàng #${data.order_id} đã chuyển sang trạng thái: ${data.status.toUpperCase()}`;
+
+            // Debug log để chắc chắn đoạn này chạy
+            console.log(`✅ Hiển thị Toast ${index + 1}:`, message);
+
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "8000",
+                "extendedTimeOut": "1000",
+                "onclick": function () {
+                    if (data.url) {
+                        window.location.href = data.url;
+                    }
+                }
+            };
+
+            toastr.info(message, "Thông báo đơn hàng");
+        });
+    </script>
+@endif
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
