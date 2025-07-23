@@ -78,4 +78,23 @@ class OrderController extends Controller
             }
         }
     }
+
+    public function reorderData(Order $order)
+{
+    $items = $order->orderItems->map(function ($item) {
+        return [
+            'id' => $item->product_id,
+            'variant_id' => $item->product_variant_id,
+            'name' => $item->product_name,
+            'sku' => $item->sku ?? '',
+            'brand' => $item->product->brand->name ?? 'Unknown', // Thêm brand từ product
+            'image' => $item->image_url ?? '',
+            'price' => floatval($item->price),
+            'quantity' => intval($item->quantity),
+            'attributes' => json_decode($item->variant_values ?? '{}', true),
+        ];
+    });
+
+    return response()->json(['success' => true, 'items' => $items]);
+}
 }

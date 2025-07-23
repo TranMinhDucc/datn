@@ -12,33 +12,55 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
+public function index()
+{
+    $banners = Banner::where('status', 1)->get();
 
-        $products = Product::where('is_active', 1)
-            ->with('label') // 👈 hasOne: trả về 1 object
-            ->orderBy('created_at', 'desc')
-            ->take(8)
-            ->get();
-        // Latest products
-        $latestProducts = Product::where('is_active', 1)
-            ->latest('created_at')
-            ->take(8)
-            ->get();
-        // Best seller products
-        $bestSellerProducts = Product::where('is_active', 1)
-            ->orderByDesc('sold_quantity')
-            ->take(8)
-            ->get();
-        $categories = Category::whereNull('parent_id')->get(); // ← thêm dòng này
-        $latestBlogs = Blog::with(['author']) // eager load author
-            ->published()
-            ->latest('published_at')
-            ->take(3) // hoặc số lượng bạn muốn
-            ->get();
-        return view('client.home', compact('banners', 'categories', 'products', 'latestBlogs', 'latestProducts', 'bestSellerProducts'));
+    $products = Product::where('is_active', 1)
+        ->with(['label'])
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
+    $latestProducts = Product::where('is_active', 1)
+        ->latest('created_at')
+        ->take(8)
+        ->get();
+
+    $bestSellerProducts = Product::where('is_active', 1)
+        ->orderByDesc('sold_quantity')
+        ->take(8)
+        ->get();
+
+    $categories = Category::whereNull('parent_id')->get();
+
+    $latestBlogs = Blog::with(['author'])
+        ->published()
+        ->latest('published_at')
+        ->take(3)
+        ->get();
+
+    $unreadNotifications = collect();
+
+    if (Auth::check()) {
+        $user = Auth::user();
+        $unreadNotifications = $user->unreadNotifications;
+
+        // ✅ Đánh dấu tất cả là đã đọc để không thông báo lại
+        $user->unreadNotifications->markAsRead();
     }
+
+    return view('client.home', compact(
+        'banners',
+        'categories',
+        'products',
+        'latestBlogs',
+        'latestProducts',
+        'bestSellerProducts',
+        'unreadNotifications'
+    ));
+}
+
     public function policy()
     {
         return view('client.policy');

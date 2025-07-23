@@ -425,35 +425,37 @@
                                 <input type="file" name="images[]" id="image-input" class="form-control" multiple
                                     accept=".png,.jpg,.jpeg">
                                 <div id="image-preview-container" class="mt-2 d-flex flex-wrap gap-3"></div>
-     <div id="product-details-container">
-    <h5 class="mb-3">Chi tiết sản phẩm</h5>
-
-    {{-- Nhóm đầu tiên mặc định --}}
-    <div class="group-wrapper mb-4" data-group-index="0">
-        <div class="mb-2">
-            <input type="text" name="details[0][group_name]" class="form-control"
-                placeholder="Tên nhóm (ví dụ: Cách giặt)">
-        </div>
-
-        <div class="sub-items-wrapper">
-            <div class="row mb-2 sub-item">
-                <div class="col-md-5">
-                    <input type="text" name="details[0][items][0][label]" class="form-control" placeholder="Nhãn">
-                </div>
-                <div class="col-md-5">
-                    <input type="text" name="details[0][items][0][value]" class="form-control" placeholder="Giá trị">
-                </div>
-                <div class="col-md-2 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
-                </div>
-            </div>
-        </div>
-
-        <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
-            <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
-        </button>
-    </div>
-</div>
+                                <!-- Thêm header và nút xóa tất cả chi tiết sản phẩm -->
+                                <div id="product-details-header" class="d-flex align-items-center mb-3">
+                                    <h5 class="mb-0 me-3">Chi tiết sản phẩm</h5>
+                                    
+                                </div>
+                                <div id="product-details-container">
+                                    {{-- Nhóm đầu tiên mặc định --}}
+                                    <div class="group-wrapper mb-4 position-relative" data-group-index="0">
+                                        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" aria-label="Close"></button>
+                                        <div class="mb-2">
+                                            <input type="text" name="details[0][group_name]" class="form-control"
+                                                placeholder="Tên nhóm (ví dụ: Cách giặt)">
+                                        </div>
+                                        <div class="sub-items-wrapper">
+                                            <div class="row mb-2 sub-item">
+                                                <div class="col-md-5">
+                                                    <input type="text" name="details[0][items][0][label]" class="form-control" placeholder="Nhãn">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="details[0][items][0][value]" class="form-control" placeholder="Giá trị">
+                                                </div>
+                                                <div class="col-md-2 d-flex align-items-center">
+                                                    <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+                                            <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+                                        </button>
+                                    </div>
+                                </div>
 
 {{-- Nút thêm nhóm chi tiết mới --}}
 <button type="button" class="btn btn-light-primary btn-sm mt-3" id="add-group">
@@ -546,6 +548,8 @@
 
     </div>
     <!-- CDN SortableJS -->
+
+
 
 
 <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
@@ -977,32 +981,32 @@ filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token
     document.getElementById('add-group').addEventListener('click', function () {
         const container = document.getElementById('product-details-container');
 
-        const groupHTML = `
-            <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
-                <div class="mb-2">
-                    <input type="text" name="details[${groupIndex}][group_name]" class="form-control"
-                        placeholder="Tên nhóm (ví dụ: Kích thước)">
-                </div>
+        // const groupHTML = `
+        //     <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
+        //         <div class="mb-2">
+        //             <input type="text" name="details[${groupIndex}][group_name]" class="form-control"
+        //                 placeholder="Tên nhóm (ví dụ: Kích thước)">
+        //         </div>
 
-                <div class="sub-items-wrapper">
-                    <div class="row mb-2 sub-item">
-                        <div class="col-md-5">
-                            <input type="text" name="details[${groupIndex}][items][0][label]" class="form-control" placeholder="Nhãn">
-                        </div>
-                        <div class="col-md-5">
-                            <input type="text" name="details[${groupIndex}][items][0][value]" class="form-control" placeholder="Giá trị">
-                        </div>
-                        <div class="col-md-2 d-flex align-items-center">
-                            <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
-                        </div>
-                    </div>
-                </div>
+        //         <div class="sub-items-wrapper">
+        //             <div class="row mb-2 sub-item">
+        //                 <div class="col-md-5">
+        //                     <input type="text" name="details[${groupIndex}][items][0][label]" class="form-control" placeholder="Nhãn">
+        //                 </div>
+        //                 <div class="col-md-5">
+        //                     <input type="text" name="details[${groupIndex}][items][0][value]" class="form-control" placeholder="Giá trị">
+        //                 </div>
+        //                 <div class="col-md-2 d-flex align-items-center">
+        //                     <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+        //                 </div>
+        //             </div>
+        //         </div>
 
-                <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
-                    <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
-                </button>
-            </div>
-        `;
+        //         <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+        //             <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+        //         </button>
+        //     </div>
+        // `;
 
         container.insertAdjacentHTML('beforeend', groupHTML);
         groupIndex++;
@@ -1039,8 +1043,64 @@ filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token
         }
     });
 });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Xoá nhóm chi tiết sản phẩm
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-group')) {
+                const group = e.target.closest('.group-wrapper');
+                if (group) {
+                    group.remove();
+                }
+            }
+        });
+    });
+$('#add-group').click(function () {
+    let index = $('.group-wrapper').length;
+    let html = `
+<div class="group-wrapper position-relative mb-4" data-group-index="${index}">
+    <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" style="z-index:10;" aria-label="Close"></button>
+    <div class="mb-2">
+        <input type="text" name="details[${index}][group_name]" class="form-control" placeholder="Tên nhóm (ví dụ: Cách giặt)">
+    </div>
+    <div class="sub-items-wrapper">
+        <div class="row mb-2 sub-item">
+            <div class="col-md-5">
+                <input type="text" name="details[${index}][items][0][label]" class="form-control" placeholder="Nhãn">
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="details[${index}][items][0][value]" class="form-control" placeholder="Giá trị">
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+        <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+    </button>
+</div>
+`;
 
+    $('#product-details-container').append(html);
+});
+$(document).on('click', '.remove-group', function () {
+    $(this).closest('.group-wrapper').remove();
+});
     </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('product-details-container');
+
+        // Xóa nhóm chi tiết
+        container.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-group')) {
+                const group = e.target.closest('.group-wrapper');
+                if (group) group.remove();
+            }
+        });
+    });
+</script>
+
 
 
 

@@ -592,24 +592,54 @@ class ProductController extends Controller
         }
     }
 
-
+    public function show(Product $product)
+    {
+        // Chỉ cần trả về view với sản phẩm
+    }
 
 
 
     public function destroy(Product $product)
     {
+        $product->delete();
+
+        return redirect()->route('admin.products.index')->with('success', 'Đã chuyển vào thùng rác.');
+    }
+    public function trash()
+    {
+        $products = Product::onlyTrashed()->paginate(10);
+        return view('admin.products.trash', compact('products'));
+    }
+
+    public function restore($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        $product->restore();
+
+        return redirect()->route('admin.products.trash')->with('success', 'Khôi phục sản phẩm thành công.');
+    }
+
+    public function forceDelete($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+
+        // Xoá ảnh phụ
         $product->images()->each(function ($img) {
             Storage::disk('public')->delete($img->image_url);
             $img->delete();
         });
 
+        // Xoá ảnh đại diện
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
 
+        // Xoá biến thể
         $product->variants()->delete();
-        $product->delete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Xoá sản phẩm thành công!');
+        // Xoá bản ghi chính
+        $product->forceDelete();
+
+        return redirect()->route('admin.products.trash')->with('success', 'Xóa vĩnh viễn sản phẩm.');
     }
 }

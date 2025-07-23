@@ -262,162 +262,53 @@
                                 <div class="notification-tab">
                                     <div class="sidebar-title">
                                         <div class="loader-line"></div>
-                                        <h4>Notifications</h4>
+                                        <h4>Thông báo</h4>
                                     </div>
+                                    @php
+function getStatusLabel($status) {
+    return match ($status) {
+        'pending' => '🕐 Chờ xác nhận',
+        'confirmed' => '✅ Đã xác nhận',
+        'shipping' => '🚚 Đang giao hàng',
+        'completed' => '🎉 Đã hoàn tất',
+        'cancelled' => '❌ Đã huỷ',
+        default => ucfirst($status),
+    };
+}
+@endphp
+
                                     <ul class="notification-body">
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/1.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Mint - is your budget ready for spring spending?<span>2:14PM</span></h6>
-                                                <p>A quick weekend trip, a staycation in your own town, or a weeklong vacay
-                                                    with the family—it’s
-                                                    your choice if it’s in the budget. No matter what you plan on doing
-                                                    during spring break, budget
-                                                    ahead for it.</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/2.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                                                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
-                                                    your email address
-                                                    verified:</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/3.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                                                <p>Hello, Everyone understands why a new language would be advantageous: one
-                                                    could refuse to pay
-                                                    for high-priced translators.</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/4.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Trip Reminder.<span>2:14PM</span></h6>
-                                                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
-                                                    the title is the most
-                                                    crucial component of any article. Your reader won't even make it to the
-                                                    first sentence without
-                                                    an engaging title. </p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/5.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                                                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
-                                                    your email address
-                                                    verified:</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/6.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                                                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
-                                                    your email address
-                                                    verified:</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/7.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                                                <p>Hello, Everyone understands why a new language would be advantageous: one
-                                                    could refuse to pay
-                                                    for high-priced translators.</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/8.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Trip Reminder.<span>2:14PM</span></h6>
-                                                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
-                                                    the title is the most
-                                                    crucial component of any article. Your reader won't even make it to the
-                                                    first sentence without
-                                                    an engaging title.</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/9.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                                                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
-                                                    your email address
-                                                    verified:</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/10.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Flipkart - Confirmed order<span>2:14PM</span></h6>
-                                                <p>Thanks for signing up for CodePen! We're happy you're here. Let's get
-                                                    your email address
-                                                    verified:</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/11.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Figma - Move work forward<span>2:14PM</span></h6>
-                                                <p>Hello, Everyone understands why a new language would be advantageous: one
-                                                    could refuse to pay
-                                                    for high-priced translators.</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="user-img"> <img
-                                                    src="{{ asset('assets/client/images/notification/12.jpg') }}"
-                                                    alt="">
-                                            </div>
-                                            <div class="user-contant">
-                                                <h6>Trip Reminder.<span>2:14PM</span></h6>
-                                                <p>I'm sorry, but I have to disagree with Mr. Zingier. We are all aware that
-                                                    the title is the most
-                                                    crucial component of any article. Your reader won't even make it to the
-                                                    first sentence without
-                                                    an engaging title. </p>
-                                            </div>
-                                        </li>
-                                    </ul>
+    @forelse ($notifications as $notification)
+        <li>
+            <div class="user-img">
+@php
+
+    $item = \App\Models\OrderItem::where('order_id', $notification->data['order_id'])->first();
+    $image = $item?->image_url ?? asset('assets/client/images/default.png');
+@endphp
+
+<img src="{{ $image }}" alt="Đơn hàng" width="50">
+            </div>
+            <div class="user-contant">
+                <h6>
+                    Đơn hàng #{{ $notification->data['order_code'] ?? 'N/A' }} -
+                    {{ getStatusLabel($notification->data['status'] ?? '') }}
+                    <span>{{ $notification->created_at->format('H:i d/m') }}</span>
+                </h6>
+                <p>
+                    Trạng thái đơn hàng đã được cập nhật thành
+                    <strong>{{ getStatusLabel($notification->data['status'] ?? '') }}</strong>.
+                    @if(($notification->data['status'] ?? '') === 'cancelled' && !empty($notification->data['cancel_reason_by_admin']))
+                        <br><span>Lý do: {{ $notification->data['cancel_reason_by_admin'] }}</span>
+                    @endif
+                </p>
+            </div>
+        </li>
+    @empty
+        <li><p class="text-center">Không có thông báo nào.</p></li>
+    @endforelse
+</ul>
+
                                 </div>
                             </div>
                         </div>
@@ -501,7 +392,7 @@
                                 <div class="order">
                                     <div class="sidebar-title">
                                         <div class="loader-line"></div>
-                                        <h4>My Orders History</h4>
+                                        <h4>Lịch sử đơn hàng</h4>
                                     </div>
                                     <div class="row gy-4">
                                         <div class="col-12">
@@ -521,23 +412,43 @@
                                                             </div>
 
                                                             <div class="order-detail">
-                                                                <h5 class="mb-0">{{ ucfirst($order->status) }}</h5>
-                                                                <p class="mb-0 text-muted" style="font-size: 0.875rem;">on
-                                                                    {{ optional($order->ordered_at)->format('D, j M') }}
-                                                                </p>
+    {{-- Tiêu đề trạng thái bằng tiếng Việt --}}
+    <h5 class="mb-0">
+        @php
+            $statusText = match ($order->status) {
+                'refunded' => 'Đã hoàn tiền',
+                'cancelled' => 'Đã hủy',
+                'pending' => 'Chờ xác nhận',
+                'confirmed' => 'Đã xác nhận',
+                'shipping' => 'Đang giao hàng',
+                'completed' => 'Đã hoàn tất',
+                default => 'Không rõ trạng thái',
+            };
+        @endphp
+        {{ $statusText }}
+    </h5>
 
-                                                                @if ($order->status === 'cancelled')
-                                                                    <h6><b>Refund initiated :</b>
-                                                                        ${{ $order->refund_amount }} on
-                                                                        {{ optional($order->refunded_at)->format('D, d M Y') }}.
-                                                                    </h6>
-                                                                @elseif($order->status === 'refunded')
-                                                                    <p>Your Refund Of <b>${{ $order->refund_amount }}</b>
-                                                                        has been processed successfully on
-                                                                        {{ optional($order->refunded_at)->format('j M') }}.
-                                                                    </p>
-                                                                @endif
-                                                            </div>
+    {{-- Ngày đặt hàng --}}
+    <p class="mb-0 text-muted" style="font-size: 0.875rem;">
+        vào ngày {{ optional($order->ordered_at)->format('d/m/Y') }}
+    </p>
+
+    {{-- Thông báo hoàn tiền --}}
+    @if ($order->status === 'cancelled')
+        <h6>
+            <b>Hoàn tiền đang xử lý:</b>
+            {{ number_format($order->refund_amount, 0, ',', '.') }}₫ vào ngày 
+            {{ optional($order->refunded_at)->format('d/m/Y') }}.
+        </h6>
+    @elseif($order->status === 'refunded')
+        <p>
+            Số tiền hoàn <b>{{ number_format($order->refund_amount, 0, ',', '.') }}₫</b> 
+            đã được hoàn thành thành công vào ngày 
+            {{ optional($order->refunded_at)->format('d/m/Y') }}.
+        </p>
+    @endif
+</div>
+
                                                         </div>
 
 
@@ -548,9 +459,7 @@
 
                                                             <!-- Nút mở modal -->
 
-                                                            <a href="{{ route('orders.invoice',$order->id) }}" class="btn btn-outline-primary btn-sm">
-                                                                Xem hóa đơn
-                                                            </a>
+
 
                                                             <!-- Modal -->
 
@@ -703,13 +612,10 @@
 
                                                             {{-- Mua lại (nếu đã hoàn thành) --}}
                                                             @if (in_array($order->status, ['completed', 'cancelled']))
-                                                                <form action="" method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    <button type="submit"
-                                                                        class="btn-sm btn btn-danger fw-bold">Mua
-                                                                        Lại</button>
-                                                                </form>
-                                                            @endif
+    <button class="btn btn-danger btn-sm fw-bold" onclick="reorderToCart({{ $order->id }})">
+        Mua Lại
+    </button>
+@endif
 
                                                             @if (($order->status === 'cancelled' || $order->cancel_request) && $order->cancel_reason)
                                                                 <a href="{{ route('admin.orders.show', $order->id) }}"
@@ -727,54 +633,42 @@
 
 
                                                     @foreach ($order->orderItems as $item)
-                                                        <div class="product-order-detail">
-                                                            <div class="product-box">
-                                                                <a
-                                                                    href="{{ route('client.orders.tracking.show', $order->id) }}">
-                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                                        alt="{{ $item->product_name }}">
+    <div class="product-order-detail">
+        <div class="product-box position-relative d-flex align-items-start">
+            {{-- Ảnh sản phẩm --}}
+            <img src="{{ asset('storage/' . $item->product->image) }}"
+                 alt="{{ $item->product_name }}"
+                 style="max-width: 150px;">
 
-                                                                </a>
+            {{-- Nội dung --}}
+            <div class="order-wrap">
+                <h5>{{ $item->product_name }}</h5>
+                <p>{{ $item->product->description ?? 'Không có mô tả' }}</p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li><p>Giá :</p> <span>{{ number_format($item->price, 0, ',', '.') }}₫</span></li>
 
-                                                                <div class="order-wrap">
-                                                                    <h5>{{ $item->product_name }}</h5>
-                                                                    <p>{{ $item->product->description ?? 'No description' }}
-                                                                    </p>
-                                                                    <ul>
-                                                                        <li>
-                                                                            <p>Price :</p>
-                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+@php
+    $variantValues = json_decode($item->variant_values ?? '{}', true);
+@endphp
 
-                                                                        </li>
-                                                                        @php
-                                                                            $variantValues = json_decode(
-                                                                                $item->variant_values ?? '{}',
-                                                                                true,
-                                                                            );
-                                                                        @endphp
+@if (!empty($variantValues))
+    @foreach ($variantValues as $key => $value)
+        <li><p>{{ ucfirst($key) }} :</p> <span>{{ $value }}</span></li>
+    @endforeach
+@endif
 
-                                                                        @if (!empty($variantValues))
-                                                                            @foreach ($variantValues as $key => $value)
-                                                                                <li>
-                                                                                    <p>{{ ucfirst($key) }} :</p>
-                                                                                    <span>{{ $value }}</span>
-                                                                                </li>
-                                                                            @endforeach
-                                                                        @else
-                                                                            <li>
-                                                                                <p>Size :</p> <span>N/A</span>
-                                                                            </li>
-                                                                        @endif
 
-                                                                        <li>
-                                                                            <p>Order Id :</p>
-                                                                            <span>{{ $item->order->order_code ?? '---' }}</span>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
+                    <li><p>Mã đơn hàng :</p> <span>{{ $item->order->order_code ?? '---' }}</span></li>
+                </ul>
+            </div>
+
+            {{-- Link ẩn phủ toàn bộ box --}}
+            <a href="{{ route('client.orders.tracking.show', $order->id) }}"
+               class="stretched-link"></a>
+        </div>
+    </div>
+@endforeach
+
 
                                                     <div class="return-box">
                                                         <div class="review-box">
@@ -787,7 +681,9 @@
                                                                     <i class="fa-regular fa-star"></i>
                                                                 </li>
                                                             </ul>
-                                                            <span>Write Review</span>
+                                                            <a href="{{ route('client.products.show', $item->product->slug) }}#review">
+    <span>Viết đánh giá</span>
+</a>
                                                         </div>
                                                         <h6>* Exchange/Return window closed on 20 Mar</h6>
                                                     </div>
@@ -1990,7 +1886,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                    success ') }}',
+                                                                                    success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });
@@ -2023,6 +1919,40 @@
             });
         });
     </script>
+
+
+<script>
+function reorderToCart(orderId) {
+    fetch(`/orders/${orderId}/reorder-data`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Không thể mua lại đơn hàng.");
+                return;
+            }
+
+            const currentUser = localStorage.getItem('currentUser') || 'guest';
+            const cartKey = `cartItems_${currentUser}`;
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+            data.items.forEach(item => {
+                const existing = cart.find(ci => ci.variant_id == item.variant_id);
+                if (existing) {
+                    existing.quantity += item.quantity;
+                } else {
+                    cart.push(item);
+                }
+            });
+
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            window.location.href = '/cart'; // ✅ Chuyển đến giỏ hàng
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Lỗi khi mua lại đơn hàng.");
+        });
+}
+</script>
 
 
 @endsection
