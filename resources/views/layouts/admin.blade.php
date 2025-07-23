@@ -135,19 +135,19 @@
     <?php
     if (isset($_SESSION['error'])) {
         echo "<script type='text/javascript'>
-                                    toastr.error('" .
+                                        toastr.error('" .
             addslashes($_SESSION['error']) .
             "');
-                                </script>";
+                                    </script>";
         unset($_SESSION['error']); // Xóa để không hiển thị lại
     }
     
     if (isset($_SESSION['success'])) {
         echo "<script type='text/javascript'>
-                                    toastr.success('" .
+                                        toastr.success('" .
             addslashes($_SESSION['success']) .
             "');
-                                </script>";
+                                    </script>";
         unset($_SESSION['success']); // Xóa để không hiển thị lại
     }
     

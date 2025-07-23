@@ -26,8 +26,10 @@ use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
             app(CustomLoginValidation::class)($request);
             return User::where('email', $request->email)->first();
         });
+        // Lấy tất cả settings từ database
+        $settings = Setting::all()->pluck('value', 'key')->toArray();
+        // ✅ Chia sẻ cho tất cả view
+        View::share('settings', $settings);
 
         View::composer('*', function ($view) {
             $headerMenus = Menu::with('children')
@@ -94,5 +100,18 @@ class AppServiceProvider extends ServiceProvider
 
             View::share('settings', $settings);
         }
+
+        View::composer('*', function ($view) {
+            $notifications = collect();
+
+            if (Auth::check()) {
+                $notifications = DatabaseNotification::where('notifiable_id', Auth::id())
+                    ->where('notifiable_type', \App\Models\User::class)
+                    ->whereNull('read_at')
+                    ->get();
+            }
+
+            $view->with('unreadNotifications', $notifications);
+        });
     }
 }
