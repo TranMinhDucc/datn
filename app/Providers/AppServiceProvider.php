@@ -26,9 +26,10 @@ use App\Actions\Fortify\LoginResponse as CustomLoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
-
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -98,5 +99,18 @@ class AppServiceProvider extends ServiceProvider
 
             View::share('settings', $settings);
         }
+
+        View::composer('*', function ($view) {
+            $notifications = collect();
+
+            if (Auth::check()) {
+                $notifications = DatabaseNotification::where('notifiable_id', Auth::id())
+                    ->where('notifiable_type', \App\Models\User::class)
+                    ->whereNull('read_at')
+                    ->get();
+            }
+
+            $view->with('unreadNotifications', $notifications);
+        });
     }
 }
