@@ -387,9 +387,9 @@
                     {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
                     <!--end::Table-->
                     <!--begin::Pagination-->
-                    <div class="d-flex justify-content-end mt-5">
+                    {{-- <div class="d-flex justify-content-end mt-5">
                         {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
-                    </div>
+                    </div> --}}
                     <!--end::Pagination-->
 
                     {{-- <div class="d-flex justify-content-end">
