@@ -2,24 +2,7 @@
 @section('title', 'Danh sách sản phẩm')
 @section('content')
 
-    <div class="d-flex flex-column flex-column-fluid">
-        @if (session('success'))
-            <div class="alert alert-success d-flex align-items-center p-5">
-                <!--begin::Icon-->
-                <i class="fa-solid fa-circle-check fs-2hx text-success me-4"><span class="path1"></span><span
-                        class="path2"></span></i>
-                <!--end::Icon-->
 
-                <!--begin::Wrapper-->
-                <div class="d-flex flex-column">
-                    <span>{{ session('success') }}</span>
-                </div>
-                <!--end::Wrapper-->
-            </div>
-            <!--end::Alert-->
-    </div>
-    <!--end::Alert-->
-    @endif
     <!--begin::Toolbar-->
     <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
