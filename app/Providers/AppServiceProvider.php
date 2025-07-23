@@ -8,8 +8,6 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Cache;
 use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\ServiceProvider;
 use App\Actions\Fortify\ResetUserPassword;
@@ -26,6 +24,8 @@ use App\Actions\Fortify\LoginResponse as CustomLoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
@@ -65,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $settings = Setting::all()->pluck('value', 'key')->toArray();
         // ✅ Chia sẻ cho tất cả view
         View::share('settings', $settings);
+
         View::composer('*', function ($view) {
             $headerMenus = Menu::with('children')
                 ->where('position', 'header')
