@@ -8,13 +8,18 @@ use App\Models\Category;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\ReturnDistanceTrait;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    use ReturnDistanceTrait;
+
+
     public function index()
     {
-            $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
+        
+        $banners = Banner::where('status', 1)->get(); // bỏ with('buttons') và orderBy('thu_tu')
 
         $products = Product::where('is_active', 1)
             ->with(['label'])

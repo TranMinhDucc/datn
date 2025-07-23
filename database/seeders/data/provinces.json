@@ -1,254 +1,380 @@
 [
   {
     "id": 1,
-    "name": "Thành phố Hà Nội"
+    "name": "Thành phố Hà Nội",
+    "lat": 21.0285,
+    "lng": 105.8542
   },
   {
     "id": 2,
-    "name": "Tỉnh Hà Giang"
+    "name": "Tỉnh Hà Giang",
+    "lat": 22.8233,
+    "lng": 104.9836
   },
   {
     "id": 4,
-    "name": "Tỉnh Cao Bằng"
+    "name": "Tỉnh Cao Bằng",
+    "lat": 22.6657,
+    "lng": 106.2570
   },
   {
     "id": 6,
-    "name": "Tỉnh Bắc Kạn"
+    "name": "Tỉnh Bắc Kạn",
+    "lat": 22.1470,
+    "lng": 105.8348
   },
   {
     "id": 8,
-    "name": "Tỉnh Tuyên Quang"
+    "name": "Tỉnh Tuyên Quang",
+    "lat": 21.8239,
+    "lng": 105.2140
   },
   {
     "id": 10,
-    "name": "Tỉnh Lào Cai"
+    "name": "Tỉnh Lào Cai",
+    "lat": 22.4856,
+    "lng": 103.9707
   },
   {
     "id": 11,
-    "name": "Tỉnh Điện Biên"
+    "name": "Tỉnh Điện Biên",
+    "lat": 21.3860,
+    "lng": 103.0230
   },
   {
     "id": 12,
-    "name": "Tỉnh Lai Châu"
+    "name": "Tỉnh Lai Châu",
+    "lat": 22.3964,
+    "lng": 103.4589
   },
   {
     "id": 14,
-    "name": "Tỉnh Sơn La"
+    "name": "Tỉnh Sơn La",
+    "lat": 21.3259,
+    "lng": 103.9182
   },
   {
     "id": 15,
-    "name": "Tỉnh Yên Bái"
+    "name": "Tỉnh Yên Bái",
+    "lat": 21.7051,
+    "lng": 104.8700
   },
   {
     "id": 17,
-    "name": "Tỉnh Hoà Bình"
+    "name": "Tỉnh Hoà Bình",
+    "lat": 20.8579,
+    "lng": 105.3376
   },
   {
     "id": 19,
-    "name": "Tỉnh Thái Nguyên"
+    "name": "Tỉnh Thái Nguyên",
+    "lat": 21.5928,
+    "lng": 105.8440
   },
   {
     "id": 20,
-    "name": "Tỉnh Lạng Sơn"
+    "name": "Tỉnh Lạng Sơn",
+    "lat": 21.8537,
+    "lng": 106.7616
   },
   {
     "id": 22,
-    "name": "Tỉnh Quảng Ninh"
+    "name": "Tỉnh Quảng Ninh",
+    "lat": 21.0064,
+    "lng": 107.2925
   },
   {
     "id": 24,
-    "name": "Tỉnh Bắc Giang"
+    "name": "Tỉnh Bắc Giang",
+    "lat": 21.2810,
+    "lng": 106.1972
   },
   {
     "id": 25,
-    "name": "Tỉnh Phú Thọ"
+    "name": "Tỉnh Phú Thọ",
+    "lat": 21.3974,
+    "lng": 105.2541
   },
   {
     "id": 26,
-    "name": "Tỉnh Vĩnh Phúc"
+    "name": "Tỉnh Vĩnh Phúc",
+    "lat": 21.3080,
+    "lng": 105.6049
   },
   {
     "id": 27,
-    "name": "Tỉnh Bắc Ninh"
+    "name": "Tỉnh Bắc Ninh",
+    "lat": 21.1861,
+    "lng": 106.0763
   },
   {
     "id": 30,
-    "name": "Tỉnh Hải Dương"
+    "name": "Tỉnh Hải Dương",
+    "lat": 20.9400,
+    "lng": 106.3330
   },
   {
     "id": 31,
-    "name": "Thành phố Hải Phòng"
+    "name": "Thành phố Hải Phòng",
+    "lat": 20.8449,
+    "lng": 106.6881
   },
   {
     "id": 33,
-    "name": "Tỉnh Hưng Yên"
+    "name": "Tỉnh Hưng Yên",
+    "lat": 20.6460,
+    "lng": 106.0511
   },
   {
     "id": 34,
-    "name": "Tỉnh Thái Bình"
+    "name": "Tỉnh Thái Bình",
+    "lat": 20.4503,
+    "lng": 106.3366
   },
   {
     "id": 35,
-    "name": "Tỉnh Hà Nam"
+    "name": "Tỉnh Hà Nam",
+    "lat": 20.5411,
+    "lng": 105.9182
   },
   {
     "id": 36,
-    "name": "Tỉnh Nam Định"
+    "name": "Tỉnh Nam Định",
+    "lat": 20.4388,
+    "lng": 106.1621
   },
   {
     "id": 37,
-    "name": "Tỉnh Ninh Bình"
+    "name": "Tỉnh Ninh Bình",
+    "lat": 20.2506,
+    "lng": 105.9745
   },
   {
     "id": 38,
-    "name": "Tỉnh Thanh Hóa"
+    "name": "Tỉnh Thanh Hóa",
+    "lat": 19.8070,
+    "lng": 105.7764
   },
   {
     "id": 40,
-    "name": "Tỉnh Nghệ An"
+    "name": "Tỉnh Nghệ An",
+    "lat": 19.2342,
+    "lng": 104.9200
   },
   {
     "id": 42,
-    "name": "Tỉnh Hà Tĩnh"
+    "name": "Tỉnh Hà Tĩnh",
+    "lat": 18.3428,
+    "lng": 105.9057
   },
   {
     "id": 44,
-    "name": "Tỉnh Quảng Bình"
+    "name": "Tỉnh Quảng Bình",
+    "lat": 17.4689,
+    "lng": 106.6223
   },
   {
     "id": 45,
-    "name": "Tỉnh Quảng Trị"
+    "name": "Tỉnh Quảng Trị",
+    "lat": 16.8154,
+    "lng": 107.1004
   },
   {
     "id": 46,
-    "name": "Thành phố Huế"
+    "name": "Thành phố Huế",
+    "lat": 16.4637,
+    "lng": 107.5909
   },
   {
     "id": 48,
-    "name": "Thành phố Đà Nẵng"
+    "name": "Thành phố Đà Nẵng",
+    "lat": 16.0544,
+    "lng": 108.2022
   },
   {
     "id": 49,
-    "name": "Tỉnh Quảng Nam"
+    "name": "Tỉnh Quảng Nam",
+    "lat": 15.5393,
+    "lng": 108.0191
   },
   {
     "id": 51,
-    "name": "Tỉnh Quảng Ngãi"
+    "name": "Tỉnh Quảng Ngãi",
+    "lat": 15.1214,
+    "lng": 108.8040
   },
   {
     "id": 52,
-    "name": "Tỉnh Bình Định"
+    "name": "Tỉnh Bình Định",
+    "lat": 14.1665,
+    "lng": 108.9027
   },
   {
     "id": 54,
-    "name": "Tỉnh Phú Yên"
+    "name": "Tỉnh Phú Yên",
+    "lat": 13.0882,
+    "lng": 109.0929
   },
   {
     "id": 56,
-    "name": "Tỉnh Khánh Hòa"
+    "name": "Tỉnh Khánh Hòa",
+    "lat": 12.2585,
+    "lng": 109.0523
   },
   {
     "id": 58,
-    "name": "Tỉnh Ninh Thuận"
+    "name": "Tỉnh Ninh Thuận",
+    "lat": 11.6739,
+    "lng": 109.1019
   },
   {
     "id": 60,
-    "name": "Tỉnh Bình Thuận"
+    "name": "Tỉnh Bình Thuận",
+    "lat": 11.0904,
+    "lng": 108.0721
   },
   {
     "id": 62,
-    "name": "Tỉnh Kon Tum"
+    "name": "Tỉnh Kon Tum",
+    "lat": 14.3500,
+    "lng": 107.9833
   },
   {
     "id": 64,
-    "name": "Tỉnh Gia Lai"
+    "name": "Tỉnh Gia Lai",
+    "lat": 13.9833,
+    "lng": 108.0000
   },
   {
     "id": 66,
-    "name": "Tỉnh Đắk Lắk"
+    "name": "Tỉnh Đắk Lắk",
+    "lat": 12.6667,
+    "lng": 108.0500
   },
   {
     "id": 67,
-    "name": "Tỉnh Đắk Nông"
+    "name": "Tỉnh Đắk Nông",
+    "lat": 12.0080,
+    "lng": 107.6887
   },
   {
     "id": 68,
-    "name": "Tỉnh Lâm Đồng"
+    "name": "Tỉnh Lâm Đồng",
+    "lat": 11.5753,
+    "lng": 108.1429
   },
   {
     "id": 70,
-    "name": "Tỉnh Bình Phước"
+    "name": "Tỉnh Bình Phước",
+    "lat": 11.7500,
+    "lng": 106.7500
   },
   {
     "id": 72,
-    "name": "Tỉnh Tây Ninh"
+    "name": "Tỉnh Tây Ninh",
+    "lat": 11.3555,
+    "lng": 106.1076
   },
   {
     "id": 74,
-    "name": "Tỉnh Bình Dương"
+    "name": "Tỉnh Bình Dương",
+    "lat": 11.3254,
+    "lng": 106.4770
   },
   {
     "id": 75,
-    "name": "Tỉnh Đồng Nai"
+    "name": "Tỉnh Đồng Nai",
+    "lat": 10.9453,
+    "lng": 106.8246
   },
   {
     "id": 77,
-    "name": "Tỉnh Bà Rịa - Vũng Tàu"
+    "name": "Tỉnh Bà Rịa - Vũng Tàu",
+    "lat": 10.5417,
+    "lng": 107.2428
   },
   {
     "id": 79,
-    "name": "Thành phố Hồ Chí Minh"
+    "name": "Thành phố Hồ Chí Minh",
+    "lat": 10.7769,
+    "lng": 106.7009
   },
   {
     "id": 80,
-    "name": "Tỉnh Long An"
+    "name": "Tỉnh Long An",
+    "lat": 10.5355,
+    "lng": 106.4137
   },
   {
     "id": 82,
-    "name": "Tỉnh Tiền Giang"
+    "name": "Tỉnh Tiền Giang",
+    "lat": 10.4497,
+    "lng": 106.3421
   },
   {
     "id": 83,
-    "name": "Tỉnh Bến Tre"
+    "name": "Tỉnh Bến Tre",
+    "lat": 10.2415,
+    "lng": 106.3758
   },
   {
     "id": 84,
-    "name": "Tỉnh Trà Vinh"
+    "name": "Tỉnh Trà Vinh",
+    "lat": 9.8127,
+    "lng": 106.2993
   },
   {
     "id": 86,
-    "name": "Tỉnh Vĩnh Long"
+    "name": "Tỉnh Vĩnh Long",
+    "lat": 10.2539,
+    "lng": 105.9722
   },
   {
     "id": 87,
-    "name": "Tỉnh Đồng Tháp"
+    "name": "Tỉnh Đồng Tháp",
+    "lat": 10.5410,
+    "lng": 105.6324
   },
   {
     "id": 89,
-    "name": "Tỉnh An Giang"
+    "name": "Tỉnh An Giang",
+    "lat": 10.5216,
+    "lng": 105.1259
   },
   {
     "id": 91,
-    "name": "Tỉnh Kiên Giang"
+    "name": "Tỉnh Kiên Giang",
+    "lat": 10.0098,
+    "lng": 105.0774
   },
   {
     "id": 92,
-    "name": "Thành phố Cần Thơ"
+    "name": "Thành phố Cần Thơ",
+    "lat": 10.0452,
+    "lng": 105.7469
   },
   {
     "id": 93,
-    "name": "Tỉnh Hậu Giang"
+    "name": "Tỉnh Hậu Giang",
+    "lat": 9.7579,
+    "lng": 105.6410
   },
   {
     "id": 94,
-    "name": "Tỉnh Sóc Trăng"
+    "name": "Tỉnh Sóc Trăng",
+    "lat": 9.6025,
+    "lng": 105.9739
   },
   {
     "id": 95,
-    "name": "Tỉnh Bạc Liêu"
+    "name": "Tỉnh Bạc Liêu",
+    "lat": 9.2812,
+    "lng": 105.7193
   },
   {
     "id": 96,
-    "name": "Tỉnh Cà Mau"
+    "name": "Tỉnh Cà Mau",
+    "lat": 9.1768,
+    "lng": 105.1524
   }
 ]

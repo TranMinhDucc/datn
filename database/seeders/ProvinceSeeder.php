@@ -17,7 +17,9 @@ class ProvinceSeeder extends Seeder
 
         foreach ($data as $item) {
             Province::updateOrCreate(['id' => $item['id']], [
-                'name' => $item['name']
+                'name' => $item['name'],
+                'lat' => $item['lat'],
+                'lng' => $item['lng']
             ]);
         }
     }

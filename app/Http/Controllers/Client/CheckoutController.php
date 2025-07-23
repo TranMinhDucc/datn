@@ -12,13 +12,14 @@ use App\Models\Province;
 use App\Models\Setting;
 use App\Models\ShippingFee;
 use App\Models\User;
+use App\Traits\ReturnDistanceTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
-
+    use ReturnDistanceTrait;
     public function index()
     {
         $user = auth()->user();
@@ -496,7 +497,7 @@ class CheckoutController extends Controller
 
             $isPaid = 0;
             $paymentStatus = 'unpaid';
-            if ($paymentMethod->code === 'wallet')  {  
+            if ($paymentMethod->code === 'wallet') {
                 if ($user->balance < $totalAmount)
                     return response()->json(['success' => false, 'message' => 'Số dư ví không đủ để thanh toán.'], 400);
                 $user->decrement('balance', $totalAmount);
@@ -504,11 +505,11 @@ class CheckoutController extends Controller
                 $paymentStatus = 'paid';
             }
 
-            if ($paymentMethod->code == 'momo' || $paymentMethod->code == 'vnpay' )  {  
-                
+            if ($paymentMethod->code == 'momo' || $paymentMethod->code == 'vnpay') {
+
                 $paymentStatus = 'paid';
             }
-            
+
 
             if ($couponId) {
                 $coupon = \App\Models\Coupon::find($couponId);
@@ -661,5 +662,18 @@ class CheckoutController extends Controller
             Log::error('❌ Lỗi đặt hàng: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['success' => false, 'message' => 'Lỗi hệ thống khi xử lý đơn hàng.', 'error' => $e->getMessage()], 500);
         }
+    }
+
+
+
+
+    public function getShippingFee(Request $request)
+    {
+        if (!$request->lat || !$request->lng) {
+            return response()->json(['success' => false, 'message' => 'Vui lòng cung cấp tọa độ.'], 400);
+        }
+        $km = $this->calculateDistance($request->lat, $request->lng);
+        $total = $this->calculateShippingFee($km);
+        return response()->json(['success' => true, 'data' => $total]);
     }
 }

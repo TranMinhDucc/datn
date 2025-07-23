@@ -35,7 +35,9 @@
                             <div class="row">
                                 @foreach ($addresses as $address)
                                     <div class="col-xxl-4 mb-3">
-                                        <label for="address-{{ $address->id }}">
+                                        <label class="change-address" for="address-{{ $address->id }}"
+                                            data-lat="{{ $address->province->lat }}"
+                                            data-lng="{{ $address->province->lng }}">
                                             <span class="delivery-address-box">
                                                 <span class="form-check">
                                                     <input class="custom-radio" type="radio"
@@ -158,7 +160,7 @@
                             </ul>
                         </div>
                     @endif
-                    <form action="{{ route('client.checkout.address.store') }}"  method="POST" class="row g-3"
+                    <form action="{{ route('client.checkout.address.store') }}" method="POST" class="row g-3"
                         id="address-form">
                         @csrf
 
@@ -283,18 +285,6 @@
             const productDiscount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
             const subtotalAfterDiscount = Math.max(0, originalSubtotal - productDiscount);
 
-            // // ✅ Phí ship gốc và giảm
-            // const originalShippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
-            // const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
-            // const actualShipping = Math.max(0, originalShippingFee - shippingDiscount);
-            // // SHIP
-            // const shippingDisplay = document.querySelector('.summary-total ul li:nth-child(2) span');
-            // if (shippingDisplay) {
-            //     shippingDisplay.textContent = actualShipping.toLocaleString('vi-VN', {
-            //         style: 'currency',
-            //         currency: 'VND'
-            //     });
-            // }
             // ✅ Phí ship gốc và giảm
             const originalShippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
             const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
@@ -329,17 +319,6 @@
                 });
             }
 
-            // Shipping
-            // const shippingEl = document.querySelector('.summary-total ul li:nth-child(2) span');
-            // if (shippingEl) {
-            //     if (shippingDiscount > 0) {
-            //         shippingEl.textContent = `– ${shippingDiscount.toLocaleString('vi-VN')} ₫`;
-            //         shippingEl.classList.add('text');
-            //     } else {
-            //         shippingEl.textContent = 'Không có mã freeship';
-            //     }
-            // }
-
             // VAT
             if (taxElement) {
                 taxElement.textContent = `${taxAmount.toLocaleString('vi-VN')} ₫`;
@@ -366,9 +345,9 @@
                     <div>
                         <h6>${item.name}</h6>
                         <span>${Object.entries(item.attributes || {}).map(([k, v]) => `
-                        ${
+                        $ {
                             k
-                        }: ${
+                        }: $ {
                             v
                         }
                         `).join(' / ')}</span>
@@ -444,7 +423,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
                         },
                         body: JSON.stringify(dataToSend)
                     })
@@ -466,7 +446,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
                         },
                         body: JSON.stringify(dataToSend)
                     })
@@ -492,7 +473,7 @@
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -521,7 +502,7 @@
             }
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         $('#province-select').on('change', function() {
@@ -547,6 +528,84 @@
                     $('#ward-select').html(html);
                 });
             }
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            $('input[name="shipping_address_id"]').on('change', function() {
+                let lat = $(this).closest('label').data('lat');
+                let lng = $(this).closest('label').data('lng');
+
+
+                if (lat && lng) {
+                    $.ajax({
+                        url: '{{ route('client.checkout.get-shipping-fee') }}',
+                        method: 'POST',
+                        data: {
+                            lat: lat,
+                            lng: lng,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                const fee = res.data;
+                                sessionStorage.setItem('originalShippingFee', fee);
+
+                                // Cập nhật giao diện
+                                $('.summary-total ul li:nth-child(2) span').text(fee
+                                    .toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    }));
+                                // ✅ Cập nhật lại tổng tiền
+                                const currentUser = localStorage.getItem('currentUser') ||
+                                    'guest';
+                                const cartItems = JSON.parse(localStorage.getItem(
+                                    `cartItems_${currentUser}`)) || [];
+
+                                let originalSubtotal = 0;
+                                cartItems.forEach(item => {
+                                    originalSubtotal += item.price * item.quantity;
+                                });
+
+                                const productDiscount = parseFloat(sessionStorage.getItem(
+                                    'productDiscountAmount')) || 0;
+                                const subtotalAfterDiscount = Math.max(0, originalSubtotal -
+                                    productDiscount);
+
+                                const shippingDiscount = parseFloat(sessionStorage.getItem(
+                                    'shippingDiscountAmount')) || 0;
+                                const actualShipping = Math.max(0, fee - shippingDiscount);
+
+                                const vatRate = parseFloat(document.getElementById('tax-value')
+                                    ?.dataset.vat || 0);
+                                const taxAmount = Math.round((subtotalAfterDiscount +
+                                    actualShipping) * vatRate / 100);
+
+                                $('.subtotal-amount').text(subtotalAfterDiscount.toLocaleString(
+                                    'vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    }));
+
+                                $('#tax-value').text(`${taxAmount.toLocaleString('vi-VN')} ₫`);
+
+                                $('.total h6:last-child').text((subtotalAfterDiscount +
+                                    actualShipping + taxAmount).toLocaleString(
+                                'vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND'
+                                }));
+                                // Có thể gọi lại hàm cập nhật tổng thanh toán ở đây nếu cần
+                            }
+                        },
+                        error: function(err) {
+                            console.error(err);
+                            alert('Không thể tính phí ship. Vui lòng thử lại.');
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection
