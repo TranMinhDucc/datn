@@ -645,7 +645,10 @@
                                                 class="iconsax" data-icon="heart" aria-hidden="true"
                                                 data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
                                     <div class="product-image"><a class="pro-first"
-                                            href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                            href="{{ route('client.products.show', $value->slug) }}"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                            href="{{ route('client.products.show', $value->slug) }}"> <img class="bg-img"
                                                 src="{{ asset('storage/' . $value->image) }}"
                                                 alt="Áo phông cucci LV collab"></a><a class="pro-sec"
                                             href="product.html"> <img class="bg-img"
@@ -697,7 +700,7 @@
                                         <li><i class="fa-solid fa-star"></i></li>
                                         <li><i class="fa-solid fa-star"></i></li>
                                         <li>{{ $value->rating_avg ?? 0 }}</li>
-                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                    </ul><a href="{{ route('client.products.show', $value->slug) }}">
                                         <h6>{{ $value->name }}</h6>
                                     </a>
                                     <p>${{ number_format($value->sale_price, 2) }}
