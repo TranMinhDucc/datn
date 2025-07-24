@@ -14,17 +14,17 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/client/images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/client/images/favicon.png') }}" type="image/x-icon">
-<!-- Thêm trong <head> -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Thêm trước </body> -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Swiper CSS (phải trong <head>) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Thêm trong <head> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Thêm trước </body> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Swiper CSS (phải trong <head>) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Swiper JS (phải nằm TRƯỚC khi bạn gọi new Swiper()) -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <!-- Swiper JS (phải nằm TRƯỚC khi bạn gọi new Swiper()) -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/fontawesome.css') }}">
@@ -86,9 +86,9 @@
         }
     </style>
     @yield('style')
-    @if(Auth::check())
-    <meta name="user-id" content="{{ Auth::id() }}">
-@endif
+    @if (Auth::check())
+        <meta name="user-id" content="{{ Auth::id() }}">
+    @endif
 </head>
 
 <script>
@@ -152,7 +152,7 @@
     @endauth
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const slides = document.querySelectorAll('.fade-slide');
         let currentIndex = 0;
 
@@ -526,7 +526,8 @@
 
         li.querySelector('.delete-icon').addEventListener('click', () => {
             cartItems = cartItems.filter(p =>
-                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
+                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item
+                    .attributes || {}))
             );
             saveAndRender();
         });
@@ -540,12 +541,12 @@
             total += item.price * item.quantity;
         });
         const totalElement = document.querySelector('.price-box p');
-if (totalElement) {
-    totalElement.textContent = new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-    }).format(total);
-}
+        if (totalElement) {
+            totalElement.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(total);
+        }
     }
 
     function saveAndRender() {
@@ -556,7 +557,7 @@ if (totalElement) {
     // ================================
     // 3. DOMContentLoaded: GÁN SỰ KIỆN
     // ================================
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         renderCartItems();
 
         // Bấm nút thêm vào giỏ hàng
@@ -564,8 +565,8 @@ if (totalElement) {
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        sizeItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -573,8 +574,8 @@ if (totalElement) {
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        colorItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -582,14 +583,15 @@ if (totalElement) {
     });
 
     // Reload lại nếu quay lại bằng Back/Forward
-    window.addEventListener('pageshow', function (event) {
-        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type ===
+                "back_forward")) {
             window.location.reload();
         }
     });
 
     // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
-    document.addEventListener('cartUpdated', function () {
+    document.addEventListener('cartUpdated', function() {
         renderCartItems();
     });
 </script>
@@ -623,12 +625,12 @@ if (totalElement) {
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
-                toastr.options.onclick = function () {
-    if (notification.url) {
-        window.location.href = notification.url;
-    }
-};
-toastr.info("Bạn có một thông báo mới");
+                toastr.options.onclick = function() {
+                    if (notification.url) {
+                        window.location.href = notification.url;
+                    }
+                };
+                toastr.info("Bạn có một thông báo mới");
             });
     @endif
 </script>
@@ -652,7 +654,7 @@ toastr.info("Bạn có một thông báo mới");
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
-@if(Auth::check() && $unreadNotifications->count())
+@if (Auth::check() && $unreadNotifications->count())
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
@@ -668,7 +670,7 @@ toastr.info("Bạn có một thông báo mới");
                 "progressBar": true,
                 "timeOut": "8000",
                 "extendedTimeOut": "1000",
-                "onclick": function () {
+                "onclick": function() {
                     if (data.url) {
                         window.location.href = data.url;
                     }

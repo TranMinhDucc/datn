@@ -20,7 +20,7 @@ class AccountController extends Controller
 
     public function dashboard()
     {
-        
+
         $user = Auth::user();
 
         $addresses = ShippingAddress::with('user')
@@ -39,16 +39,20 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-             $notifications = $user->notifications()
-        ->where('type', OrderStatusNotification::class)
-        ->latest()
-        ->take(10)
-        ->get();
+        if (Auth::check()) {
+            Auth::user()->unreadNotifications->markAsRead();
+        }
+
+        $notifications = $user->notifications()
+            ->where('type', OrderStatusNotification::class)
+            ->latest()
+            ->take(10)
+            ->get();
 
 
         $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
 
-        return view('client.account.dashboard', compact('notifications','addresses', 'user', 'wishlists', 'orders', 'provinces'));
+        return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
 
 

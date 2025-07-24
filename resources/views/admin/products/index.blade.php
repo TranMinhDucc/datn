@@ -1,26 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Danh sách sản phẩm')
 @section('content')
-{{--
-<div class="d-flex flex-column flex-column-fluid">
-    @if (session('success'))
-    <div class="alert alert-success d-flex align-items-center p-5">
-        <!--begin::Icon-->
-        <i class="fa-solid fa-circle-check fs-2hx text-success me-4"><span class="path1"></span><span
-                class="path2"></span></i>
-        <!--end::Icon-->
 
-        <!--begin::Wrapper-->
-        <div class="d-flex flex-column">
-            <span>{{ session('success') }}</span>
-        </div>
-        <!--end::Wrapper-->
-    </div>
-    <!--end::Alert-->
-    @endif
-</div>
-<!--end::Alert-->
---}}
 
 <!--begin::Toolbar-->
 <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
@@ -154,6 +135,7 @@
                             <!--end::Options-->
                         </div>
                         <!--end::Input group-->
+
                         <!--begin::Input group-->
                         <div class="mb-10">
                             <!--begin::Label-->
@@ -243,115 +225,113 @@
                         </select>
                         <!--end::Select2-->
                     </div>
-
                     <a href="{{ route('admin.products.trash') }}" class="btn btn-secondary">
                         <i class="fa-solid fa-trash"></i> Thùng rác
                     </a>
-
                     <!--begin::Add product-->
                     <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
                         Thêm Sản Phẩm
                     </a>
                     <!--end::Add product-->
                 </div>
+                <!--end::Card toolbar-->
+            </div>
+            <!--end::Card header-->
 
-                <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
 
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
+                <!--begin::Table-->
+                <div style="overflow-x: auto;">
+                    <table class="table align-middle table-row-dashed fs-6 gy-5 " style="min-width: 1300px;"
+                        id="kt_ecommerce_products_table">
 
-                    <!--begin::Table-->
-                    <div style="overflow-x: auto;">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5 " style="min-width: 1300px;"
-                            id="kt_ecommerce_products_table">
+                        <thead>
+                            <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                                <!-- Checkbox đầu bảng -->
+                                <th class="w-10px pe-2 text-center">
+                                    <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                        <input class="form-check-input" type="checkbox" data-kt-check="true"
+                                            data-kt-check-target="#kt_ecommerce_products_table .form-check-input"
+                                            value="1" />
+                                    </div>
+                                </th>
 
-                            <thead>
-                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                    <!-- Checkbox đầu bảng -->
-                                    <th class="w-10px pe-2 text-center">
-                                        <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                            <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                                data-kt-check-target="#kt_ecommerce_products_table .form-check-input"
-                                                value="1" />
-                                        </div>
-                                    </th>
+                                <th class="text-center min-w-60px">ID</th>
+                                <th class="text-center min-w-90px">Ảnh</th>
+                                <th class="min-w-150px">Tên sản phẩm</th>
+                                <th class="text-center min-w-90px">Giá nhập</th>
+                                <th class="text-center min-w-90px">Giá gốc</th>
+                                <th class="text-center min-w-100px">Giá KM</th>
+                                <th class="text-center min-w-90px">Kho hàng</th>
+                                <th class="text-center min-w-130px">Danh mục</th>
+                                <th class="text-center min-w-120px">Đánh giá</th>
+                                <th class="text-center min-w-100px">Trạng thái</th>
+                                <th class="text-center min-w-120px">Thao tác</th>
+                            </tr>
+                        </thead>
 
-                                    <th class="text-center min-w-60px">ID</th>
-                                    <th class="text-center min-w-90px">Ảnh</th>
-                                    <th class="min-w-150px">Tên sản phẩm</th>
-                                    <th class="text-center min-w-90px">Giá nhập</th>
-                                    <th class="text-center min-w-90px">Giá gốc</th>
-                                    <th class="text-center min-w-100px">Giá KM</th>
-                                    <th class="text-center min-w-90px">Kho hàng</th>
-                                    <th class="text-center min-w-130px">Danh mục</th>
-                                    <th class="text-center min-w-120px">Đánh giá</th>
-                                    <th class="text-center min-w-100px">Trạng thái</th>
-                                    <th class="text-center min-w-120px">Thao tác</th>
-                                </tr>
-                            </thead>
+                        <tbody class="fw-semibold text-gray-600 align-middle">
+                            @foreach ($products as $product)
+                            <tr>
+                                {{-- Checkbox --}}
+                                <td class="text-center">
+                                    <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="checkbox"
+                                            value="{{ $product->id }}" />
+                                    </div>
+                                </td>
 
-                            <tbody class="fw-semibold text-gray-600 align-middle">
-                                @foreach ($products as $product)
-                                    <tr>
-                                        {{-- Checkbox --}}
-                                        <td class="text-center">
-                                            <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $product->id }}" />
-                                            </div>
-                                        </td>
+                                {{-- ID --}}
+                                <td class="text-center">{{ $product->id }}</td>
 
-                                        {{-- ID --}}
-                                        <td class="text-center">{{ $product->id }}</td>
+                                {{-- Ảnh --}}
+                                <td class="text-center" style="min-width: 150px;">
+                                    <a href="{{ route('admin.products.edit', $product->id) }}">
+                                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
+                                            width="80" height="80" class="rounded shadow-sm"
+                                            style="object-fit: cover;" alt="{{ $product->name }}">
+                                    </a>
+                                </td>
 
-                                        {{-- Ảnh --}}
-                                        <td class="text-center" style="min-width: 150px;">
-                                            <a href="{{ route('admin.products.edit', $product->id) }}">
-                                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
-                                                    width="80" height="80" class="rounded shadow-sm"
-                                                    style="object-fit: cover;" alt="{{ $product->name }}">
-                                            </a>
-                                        </td>
+                                {{-- Tên sản phẩm --}}
+                                <td class="align-middle" style="min-width: 120px;">
+                                    <a href="{{ route('admin.products.edit', $product->id) }}"
+                                        class="text-gray-800 text-hover-primary fs-6 fw-bold">
+                                        {{ $product->name }}
+                                    </a>
+                                </td>
 
-                                        {{-- Tên sản phẩm --}}
-                                        <td class="align-middle" style="min-width: 120px;">
-                                            <a href="{{ route('admin.products.edit', $product->id) }}"
-                                                class="text-gray-800 text-hover-primary fs-6 fw-bold">
-                                                {{ $product->name }}
-                                            </a>
-                                        </td>
+                                {{-- Giá nhập --}}
+                                <td class="text-center">
+                                    <span
+                                        class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }}
+                                        đ</span>
+                                </td>
 
-                                        {{-- Giá nhập --}}
-                                        <td class="text-center">
-                                            <span
-                                                class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }}
-                                                đ</span>
-                                        </td>
+                                {{-- Giá gốc --}}
+                                <td class="text-center">
+                                    <span
+                                        class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }}
+                                        đ</span>
+                                </td>
 
-                                        {{-- Giá gốc --}}
-                                        <td class="text-center">
-                                            <span
-                                                class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }}
-                                                đ</span>
-                                        </td>
+                                {{-- Giá khuyến mãi --}}
+                                <td class="text-center">
+                                    <span
+                                        class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }}
+                                        đ</span>
+                                </td>
 
-                                        {{-- Giá khuyến mãi --}}
-                                        <td class="text-center">
-                                            <span
-                                                class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }}
-                                                đ</span>
-                                        </td>
+                                {{-- Kho hàng --}}
+                                <td class="text-center">{{ $product->stock_quantity }}</td>
 
-                                        {{-- Kho hàng --}}
-                                        <td class="text-center">{{ $product->stock_quantity }}</td>
+                                {{-- Danh mục --}}
+                                <td class="text-center">
+                                    <a href="#" class="btn btn-info btn-sm">
+                                        {{ $product->category->name ?? 'Chưa phân loại' }}
 
-                                        {{-- Danh mục --}}
-                                        <td class="text-center">
-                                            <a href="#" class="btn btn-info btn-sm">
-                                                {{ $product->category->name ?? '
-                                                ' }}
-
-                                                {{-- <span class="badge bg-light-info text-dark">
+                                        {{-- <span class="badge bg-light-info text-dark">
                                                     {{ $product->category->name ?? 'Chưa phân loại' }}
                                         </span> --}}
                                     </a>
@@ -409,9 +389,9 @@
                 {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
                 <!--end::Table-->
                 <!--begin::Pagination-->
-                <div class="d-flex justify-content-end mt-5">
-                    {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
-                </div>
+                {{-- <div class="d-flex justify-content-end mt-5">
+                        {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
+                    </div> --}}
                 <!--end::Pagination-->
 
                 {{-- <div class="d-flex justify-content-end">
