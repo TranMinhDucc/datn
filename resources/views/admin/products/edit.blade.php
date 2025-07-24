@@ -126,7 +126,8 @@
 
                                         <!--begin::Options-->
                                         <label class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="2" checked="checked" />
+                                            <input class="form-check-input" type="checkbox" value="2"
+                                                checked="checked" />
                                             <span class="form-check-label">
                                                 Customer
                                             </span>
@@ -266,9 +267,11 @@
                                 </div>
                                 <div class="card-body pt-0">
                                     <select name="is_active" class="form-select mb-2">
-                                        <option value="1" {{ old('is_active', $product->is_active ?? '1') == '1' ? 'selected' : '' }}>Hiện
+                                        <option value="1"
+                                            {{ old('is_active', $product->is_active ?? '1') == '1' ? 'selected' : '' }}>Hiện
                                         </option>
-                                        <option value="0" {{ old('is_active', $product->is_active ?? '1') == '0' ? 'selected' : '' }}>Ẩn
+                                        <option value="0"
+                                            {{ old('is_active', $product->is_active ?? '1') == '0' ? 'selected' : '' }}>Ẩn
                                         </option>
                                     </select>
                                     @error('is_active')
@@ -290,7 +293,8 @@
                                     <select name="category_id" class="form-select mb-2" data-control="select2">
                                         <option></option>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}"
+                                                {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach
@@ -314,7 +318,8 @@
                                     <select name="brand_id" class="form-select mb-2" data-control="select2">
                                         <option></option>
                                         @foreach ($brands as $brand)
-                                            <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id ?? '') == $brand->id ? 'selected' : '' }}>
+                                            <option value="{{ $brand->id }}"
+                                                {{ old('brand_id', $product->brand_id ?? '') == $brand->id ? 'selected' : '' }}>
                                                 {{ $brand->name }}
                                             </option>
                                         @endforeach
@@ -407,7 +412,8 @@
                                     data-placeholder="Select an option" data-allow-clear="true">
                                     <option value=""></option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}"
+                                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -463,7 +469,8 @@
                                     data-placeholder="Chọn thương hiệu" data-allow-clear="true">
                                     <option value=""></option>
                                     @foreach ($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
+                                        <option value="{{ $brand->id }}"
+                                            {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
@@ -482,25 +489,8 @@
                         <!--end::Category & tags-->
                         <!--begin::Weekly sales-->
                         {{-- <div class="card card-flush py-4">
-                            <!--begin::Card header-->
-                            <div class="card-header">
-                                <!--begin::Card title-->
-                                <div class="card-title">
-                                    <h2>Weekly Sales</h2>
-                                </div>
-                                <!--end::Card title-->
-                            </div>
-                            <!--end::Card header-->
-
-                            <!--begin::Card body-->
-                            <div class="card-body pt-0">
-                                <span class="text-muted">No data available. Sales data will begin capturing once product has
-                                    been published.</span>
-                            </div>
-                            <!--end::Card body-->
-                        </div>
-                        <!--end::Weekly sales-->
-                        <!--begin::Template settings-->
+                           
+                       
                         <div class="card card-flush py-4">
                             <!--begin::Card header-->
                             <div class="card-header">
@@ -565,7 +555,8 @@
                         <!--begin::Tab content-->
                         <div class="tab-content">
                             <!--begin::Tab pane-->
-                            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general"
+                                role="tab-panel">
                                 <div class="d-flex flex-column gap-7 gap-lg-10">
 
                                     <!--begin::General options-->
@@ -579,8 +570,8 @@
                                             <!-- Tên sản phẩm -->
                                             <div class="mb-10 fv-row">
                                                 <label class="required form-label">Tên Sản Phẩm</label>
-                                                <input type="text" id="product-name" name="name" class="form-control mb-2"
-                                                    placeholder="Nhập tên sản phẩm"
+                                                <input type="text" id="product-name" name="name"
+                                                    class="form-control mb-2" placeholder="Nhập tên sản phẩm"
                                                     value="{{ old('name', $product->name ?? '') }}" />
                                                 @error('name')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -589,8 +580,8 @@
 
                                             <div class="mb-10 fv-row">
                                                 <label class="form-label">Slug (tự động tạo)</label>
-                                                <input type="text" name="slug" id="product-slug" class="form-control mb-2"
-                                                    placeholder="slug-tu-dong" readonly
+                                                <input type="text" name="slug" id="product-slug"
+                                                    class="form-control mb-2" placeholder="slug-tu-dong" readonly
                                                     value="{{ old('slug', $product->slug ?? '') }}" />
                                                 @error('slug')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -651,8 +642,8 @@
                                                 <div class="col-md-6">
                                                     <label class="required form-label">Giá bán</label>
                                                     <input type="number" name="base_price" class="form-control"
-                                                        value="{{ old('base_price', $product->base_price ?? 0) }}" min="0"
-                                                        step="0.01">
+                                                        value="{{ old('base_price', $product->base_price ?? 0) }}"
+                                                        min="0" step="0.01">
                                                     @error('base_price')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
@@ -663,8 +654,8 @@
                                                 <div class="col-md-6">
                                                     <label class="form-label">Giá khuyến mãi</label>
                                                     <input type="number" name="sale_price" class="form-control"
-                                                        value="{{ old('sale_price', $product->sale_price ?? 0) }}" min="0"
-                                                        step="0.01">
+                                                        value="{{ old('sale_price', $product->sale_price ?? 0) }}"
+                                                        min="0" step="0.01">
                                                     @error('sale_price')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
@@ -680,7 +671,8 @@
                                                         readonly>
 
                                                     {{-- ✅ Luôn gửi giá trị về server --}}
-                                                    <input type="hidden" id="hidden_stock_quantity" name="stock_quantity"
+                                                    <input type="hidden" id="hidden_stock_quantity"
+                                                        name="stock_quantity"
                                                         value="{{ old('stock_quantity', $product->stock_quantity ?? '') }}">
 
                                                     <small class="text-muted">Tự động tính từ các biến thể (nếu
@@ -693,8 +685,8 @@
                                                 <div class="row mb-10">
                                                     <div class="col-md-6">
                                                         <label class="form-label">Thời gian bắt đầu</label>
-                                                        <input type="datetime-local" name="starts_at" class="form-control"
-                                                            value="{{ $product->starts_at }}">
+                                                        <input type="datetime-local" name="starts_at"
+                                                            class="form-control" value="{{ $product->starts_at }}">
                                                         @error('starts_at')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
@@ -727,8 +719,7 @@
                                             <!-- Mô tả ngắn -->
                                             <div class="mb-10 fv-row">
                                                 <label class="form-label">Mô Tả chi Tiết Sản phẩm</label>
-                                                <textarea id="description" name="description" class="form-control"
-                                                    rows="5">{{ old('description', $product->description ?? '') }}</textarea>
+                                                <textarea id="description" name="description" class="form-control" rows="5">{{ old('description', $product->description ?? '') }}</textarea>
                                                 @error('description')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
@@ -739,9 +730,7 @@
                                             {{-- Mô tả chi tiêt --}}
                                             <div class="mb-10 fv-row">
                                                 <label class="form-label">Mô tả chi tiết sản phẩm</label>
-                                                <textarea id="detailed_description" name="detailed_description"
-                                                    class="form-control"
-                                                    rows="8">{{ old('detailed_description', $product->detailed_description ?? '') }}</textarea>
+                                                <textarea id="detailed_description" name="detailed_description" class="form-control" rows="8">{{ old('detailed_description', $product->detailed_description ?? '') }}</textarea>
                                                 @error('detailed_description')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
@@ -755,7 +744,7 @@
                                                     $groupIndex = 0;
                                                 @endphp
 
-                                                @if($grouped->isEmpty())
+                                                @if ($grouped->isEmpty())
                                                     {{-- Trường hợp không có dữ liệu, hiển thị một nhóm trống --}}
                                                     <div class="group-wrapper mb-4" data-group-index="0">
                                                         <div class="mb-2">
@@ -776,32 +765,37 @@
                                                                     class="btn btn-danger btn-sm remove-sub">X</button>
                                                             </div>
                                                         </div>
-                                                        <button type="button" class="btn btn-success btn-sm add-sub-item">
+                                                        <button type="button"
+                                                            class="btn btn-success btn-sm add-sub-item">
                                                             <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
                                                         </button>
 
                                                     </div>
                                                 @else
                                                     {{-- Lặp qua từng nhóm --}}
-                                                    @foreach($grouped as $groupName => $items)
-                                                        <div class="group-wrapper mb-4" data-group-index="{{ $groupIndex }}">
+                                                    @foreach ($grouped as $groupName => $items)
+                                                        <div class="group-wrapper mb-4"
+                                                            data-group-index="{{ $groupIndex }}">
                                                             <div class="mb-2">
-                                                                <input type="text" name="details[{{ $groupIndex }}][group_name]"
+                                                                <input type="text"
+                                                                    name="details[{{ $groupIndex }}][group_name]"
                                                                     class="form-control" value="{{ $groupName }}">
                                                             </div>
 
-                                                            @foreach($items as $itemIndex => $item)
+                                                            @foreach ($items as $itemIndex => $item)
                                                                 <div class="row mb-2 sub-item">
                                                                     <div class="col-md-5">
                                                                         <input type="text"
                                                                             name="details[{{ $groupIndex }}][items][{{ $itemIndex }}][label]"
-                                                                            class="form-control" value="{{ $item->label }}"
+                                                                            class="form-control"
+                                                                            value="{{ $item->label }}"
                                                                             placeholder="Nhãn">
                                                                     </div>
                                                                     <div class="col-md-5">
                                                                         <input type="text"
                                                                             name="details[{{ $groupIndex }}][items][{{ $itemIndex }}][value]"
-                                                                            class="form-control" value="{{ $item->value }}"
+                                                                            class="form-control"
+                                                                            value="{{ $item->value }}"
                                                                             placeholder="Giá trị">
                                                                     </div>
                                                                     <div class="col-md-2 d-flex align-items-center">
@@ -811,7 +805,8 @@
                                                                 </div>
                                                             @endforeach
 
-                                                            <button type="button" class="btn btn-light btn-sm add-sub-item">+ Thêm
+                                                            <button type="button"
+                                                                class="btn btn-light btn-sm add-sub-item">+ Thêm
                                                                 nhãn/giá trị</button>
                                                         </div>
                                                         @php $groupIndex++; @endphp
@@ -820,7 +815,8 @@
                                             </div>
 
                                             {{-- Nút thêm nhóm mới --}}
-                                            <button type="button" id="add-group" class="btn btn-light-primary">+ Thêm nhóm
+                                            <button type="button" id="add-group" class="btn btn-light-primary">+ Thêm
+                                                nhóm
                                                 mới</button>
 
                                             <div class="mt-3">
@@ -832,14 +828,17 @@
                                                 <div class="d-flex flex-wrap gap-4">
                                                     @foreach ($product->images as $img)
                                                         <div class="position-relative rounded border p-1 shadow-sm"
-                                                            style="width: 120px; height: 120px;" id="image_{{ $img->id }}">
+                                                            style="width: 120px; height: 120px;"
+                                                            id="image_{{ $img->id }}">
                                                             <img src="{{ asset('storage/' . $img->image_url) }}"
-                                                                class="rounded w-100 h-100 object-fit-cover" alt="Ảnh phụ">
+                                                                class="rounded w-100 h-100 object-fit-cover"
+                                                                alt="Ảnh phụ">
 
                                                             {{-- Nút xoá ảnh --}}
                                                             <button type="button"
                                                                 class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                                                                onclick="removeOldImage({{ $img->id }})" title="Xoá ảnh này">
+                                                                onclick="removeOldImage({{ $img->id }})"
+                                                                title="Xoá ảnh này">
                                                                 &times;
                                                             </button>
 
@@ -884,13 +883,13 @@
                                         visibility.</div>
                                     <!--end::Description-->
                                 </div> --}}
-                                <!--end::Input group-->
+                                    <!--end::Input group-->
+                                </div>
+                                <!--end::Card header-->
                             </div>
-                            <!--end::Card header-->
-                        </div>
-                        <!--end::General options-->
-                        <!--begin::Media-->
-                        {{-- <div class="card card-flush py-4">
+                            <!--end::General options-->
+                            <!--begin::Media-->
+                            {{-- <div class="card card-flush py-4">
                             <!--begin::Card header-->
                             <div class="card-header">
                                 <div class="card-title">
@@ -931,611 +930,153 @@
                             </div>
                             <!--end::Card header-->
                         </div> --}}
-                        <!--end::Media-->
+                            <!--end::Media-->
 
-                        <!--begin::Pricing-->
-                        <!-- Phân Loại & Biến Thể -->
-                        <div class="card card-flush py-4 mb-5">
-                            <div class="card-header">
-                                <h2 class="card-title">Phân Loại & Biến Thể</h2>
-                            </div>
-                            <div class="card-body">
-                                <div id="pf_attribute_groups_wrapper"></div>
-                                <button type="button" class="btn btn-light-primary" id="pf_add_attribute_group">
-                                    <i class="bi bi-plus-circle"></i> Thêm phân loại
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Biến Thể -->
-
-                        <div id="pf_variant_section" class="card card-flush py-4" style="display: none">
-                            <!-- Áp dụng cho tất cả -->
-
-                            <div class="card-header">
-                                <h3 class="card-title">Biến thể sản phẩm</h3>
-                            </div>
-                            <div id="pf_apply_all_wrapper" class="card-body pb-0 mb-4" style="display: none;">
-                                <div class="row mb-4 align-items-end">
-                                    <div class="col-md-3">
-                                        <label class="form-label">Áp dụng giá cho tất cả</label>
-                                        <input type="number" class="form-control" id="pf_apply_price"
-                                            placeholder="Nhập giá">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Áp dụng tồn kho</label>
-                                        <input type="number" class="form-control" id="pf_apply_qty"
-                                            placeholder="Nhập tồn kho">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Áp dụng SKU</label>
-                                        <input type="text" class="form-control" id="pf_apply_sku" placeholder="SKU chung">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button type="button" class="btn btn-danger mt-2" onclick="pfApplyToAll()">Áp
-                                            dụng</button>
-                                    </div>
+                            <!--begin::Pricing-->
+                            <!-- Phân Loại & Biến Thể -->
+                            <div class="card card-flush py-4 mb-5">
+                                <div class="card-header">
+                                    <h2 class="card-title">Phân Loại & Biến Thể</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div id="pf_attribute_groups_wrapper"></div>
+                                    <button type="button" class="btn btn-light-primary" id="pf_add_attribute_group">
+                                        <i class="bi bi-plus-circle"></i> Thêm phân loại
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="card-body">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Thuộc tính</th>
-                                            <th>Giá</th>
-                                            <th>Tồn kho</th>
-                                            <th>SKU</th>
-                                            <th>Xoá</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="pf_variant_list"></tbody>
-                                </table>
-                            </div>
-                        </div>
+                            <!-- Biến Thể -->
 
-
-                        <!-- Nút thêm biến thể -->
-
-
-
-                        <!--end::Product Variants-->
-
-
-                        <!--end::Input group-->
-
-                        {{-- <!--begin::Input group-->
-                        <div class="fv-row mb-10">
-                            <!--begin::Label-->
-                            <label class="fs-6 fw-semibold mb-2">
-                                Discount Type
-
-
-                                <span class="ms-1" data-bs-toggle="tooltip"
-                                    title="Select a discount type that will be applied to this product">
-                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
-                                            class="path1"></span><span class="path2"></span><span
-                                            class="path3"></span></i></span> </label>
-                            <!--End::Label-->
-
-                            <!--begin::Row-->
-                            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true"
-                                data-kt-buttons-target="[data-kt-button='true']">
-                                <!--begin::Col-->
-                                <div class="col">
-                                    <!--begin::Option-->
-                                    <label
-                                        class="btn btn-outline btn-outline-dashed btn-active-light-primary active d-flex text-start p-6"
-                                        data-kt-button="true">
-                                        <!--begin::Radio-->
-                                        <span
-                                            class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                                            <input class="form-check-input" type="radio" name="discount_option" value="1"
-                                                checked="checked" />
-                                        </span>
-                                        <!--end::Radio-->
-
-                                        <!--begin::Info-->
-                                        <span class="ms-5">
-                                            <span class="fs-4 fw-bold text-gray-800 d-block">No
-                                                Discount</span>
-                                        </span>
-                                        <!--end::Info-->
-                                    </label>
-                                    <!--end::Option-->
+                            <div id="pf_variant_section" class="card card-flush py-4" style="display: none">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h3 class="card-title fw-bold fs-4 text-dark">🧩 Biến thể sản phẩm</h3>
+                                    <span class="badge bg-primary-soft text-primary">Tự động sinh theo phân loại</span>
                                 </div>
-                                <!--end::Col-->
 
-                                <!--begin::Col-->
-                                <div class="col">
-                                    <!--begin::Option-->
-                                    <label
-                                        class="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6"
-                                        data-kt-button="true">
-                                        <!--begin::Radio-->
-                                        <span
-                                            class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                                            <input class="form-check-input" type="radio" name="discount_option" value="2" />
-                                        </span>
-                                        <!--end::Radio-->
-
-                                        <!--begin::Info-->
-                                        <span class="ms-5">
-                                            <span class="fs-4 fw-bold text-gray-800 d-block">Percentage
-                                                %</span>
-                                        </span>
-                                        <!--end::Info-->
-                                    </label>
-                                    <!--end::Option-->
-                                </div>
-                                <!--end::Col-->
-
-                                <!--begin::Col-->
-                                <div class="col">
-                                    <!--begin::Option-->
-                                    <label
-                                        class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6"
-                                        data-kt-button="true">
-                                        <!--begin::Radio-->
-                                        <span
-                                            class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                                            <input class="form-check-input" type="radio" name="discount_option" value="3" />
-                                        </span>
-                                        <!--end::Radio-->
-
-                                        <!--begin::Info-->
-                                        <span class="ms-5">
-                                            <span class="fs-4 fw-bold text-gray-800 d-block">Fixed
-                                                Price</span>
-                                        </span>
-                                        <!--end::Info-->
-                                    </label>
-                                    <!--end::Option-->
-                                </div>
-                                <!--end::Col-->
-                            </div>
-                            <!--end::Row-->
-                        </div>
-                        <!--end::Input group-->
-
-                        <!--begin::Input group-->
-                        <div class="d-none mb-10 fv-row" id="kt_ecommerce_add_product_discount_percentage">
-                            <!--begin::Label-->
-                            <label class="form-label">Set Discount Percentage</label>
-                            <!--end::Label-->
-
-                            <!--begin::Slider-->
-                            <div class="d-flex flex-column text-center mb-5">
-                                <div class="d-flex align-items-start justify-content-center mb-7">
-                                    <span class="fw-bold fs-3x" id="kt_ecommerce_add_product_discount_label">0</span>
-                                    <span class="fw-bold fs-4 mt-1 ms-2">%</span>
-                                </div>
-                                <div id="kt_ecommerce_add_product_discount_slider" class="noUi-sm">
-                                </div>
-                            </div>
-                            <!--end::Slider-->
-
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Set a percentage discount to be applied on this
-                                product.</div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-
-                        <!--begin::Input group-->
-                        <div class="d-none mb-10 fv-row" id="kt_ecommerce_add_product_discount_fixed">
-                            <!--begin::Label-->
-                            <label class="form-label">Fixed Discounted Price</label>
-                            <!--end::Label-->
-
-                            <!--begin::Input-->
-                            <input type="text" name="dicsounted_price" class="form-control mb-2"
-                                placeholder="Discounted price" />
-                            <!--end::Input-->
-
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Set the discounted product price. The product
-                                will be reduced at the determined fixed price</div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-
-                        <!--begin::Tax-->
-                        <div class="d-flex flex-wrap gap-5">
-                            <!--begin::Input group-->
-                            <div class="fv-row w-100 flex-md-root">
-                                <!--begin::Label-->
-                                <label class="required form-label">Tax Class</label>
-                                <!--end::Label-->
-
-                                <!--begin::Select2-->
-                                <select class="form-select mb-2" name="tax" data-control="select2" data-hide-search="true"
-                                    data-placeholder="Select an option">
-                                    <option></option>
-                                    <option value="0">Tax Free</option>
-                                    <option value="1">Taxable Goods</option>
-                                    <option value="2">Downloadable Product</option>
-                                </select>
-                                <!--end::Select2-->
-
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">Set the product tax class.</div>
-                                <!--end::Description-->
-                            </div>
-                            <!--end::Input group-->
-
-                            <!--begin::Input group-->
-                            <div class="fv-row w-100 flex-md-root">
-                                <!--begin::Label-->
-                                <label class="form-label">VAT Amount (%)</label>
-                                <!--end::Label-->
-
-                                <!--begin::Input-->
-                                <input type="text" class="form-control mb-2" value="" />
-                                <!--end::Input-->
-
-                                <!--begin::Description-->
-                                <div class="text-muted fs-7">Set the product VAT about.</div>
-                                <!--end::Description-->
-                            </div>
-                            <!--end::Input group-->
-                        </div>
-                        <!--end:Tax--> --}}
-                    </div>
-                    <!--end::Card header-->
-            </div>
-            <!--end::Pricing-->
-        </div>
-    </div>
-    <!--end::Tab pane-->
-
-    <!--begin::Tab pane-->
-    {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
-        <div class="d-flex flex-column gap-7 gap-lg-10">
-
-            <!--begin::Inventory-->
-            <div class="card card-flush py-4">
-                <!--begin::Card header-->
-                <div class="card-header">
-                    <div class="card-title">
-                        <h2>Inventory</h2>
-                    </div>
-                </div>
-                <!--end::Card header-->
-
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
-                    <!--begin::Input group-->
-                    <div class="mb-10 fv-row">
-                        <!--begin::Label-->
-                        <label class="required form-label">SKU</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <input type="text" name="sku" class="form-control mb-2" placeholder="SKU Number" value="" />
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Enter the product SKU.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="mb-10 fv-row">
-                        <!--begin::Label-->
-                        <label class="required form-label">Barcode</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <input type="text" name="barcode" class="form-control mb-2" placeholder="Barcode Number" value="" />
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Enter the product barcode number.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="mb-10 fv-row">
-                        <!--begin::Label-->
-                        <label class="required form-label">Quantity</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <div class="d-flex gap-3">
-                            <input type="number" name="shelf" class="form-control mb-2" placeholder="On shelf" value="" />
-                            <input type="number" name="warehouse" class="form-control mb-2" placeholder="In warehouse" />
-                        </div>
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Enter the product quantity.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row">
-                        <!--begin::Label-->
-                        <label class="form-label">Allow Backorders</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <div class="form-check form-check-custom form-check-solid mb-2">
-                            <input class="form-check-input" type="checkbox" value="" />
-                            <label class="form-check-label">
-                                Yes
-                            </label>
-                        </div>
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Allow customers to purchase products that are
-                            out of stock.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <!--end::Card header-->
-            </div>
-            <!--end::Inventory-->
-
-            <!--begin::Variations-->
-            <div class="card card-flush py-4">
-                <!--begin::Card header-->
-                <div class="card-header">
-                    <div class="card-title">
-                        <h2>Variations</h2>
-                    </div>
-                </div>
-                <!--end::Card header-->
-
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
-                    <!--begin::Input group-->
-                    <div class="" data-kt-ecommerce-catalog-add-product="auto-options">
-                        <!--begin::Label-->
-                        <label class="form-label">Add Product Variations</label>
-                        <!--end::Label-->
-
-                        <!--begin::Repeater-->
-                        <div id="kt_ecommerce_add_product_options">
-                            <!--begin::Form group-->
-                            <div class="form-group">
-                                <div data-repeater-list="kt_ecommerce_add_product_options" class="d-flex flex-column gap-3">
-                                    <div data-repeater-item class="form-group d-flex flex-wrap align-items-center gap-5">
-                                        <!--begin::Select2-->
-                                        <div class="w-100 w-md-200px">
-                                            <select class="form-select" name="product_option"
-                                                data-placeholder="Select a variation"
-                                                data-kt-ecommerce-catalog-add-product="product_option">
-                                                <option></option>
-                                                <option value="color">Color</option>
-                                                <option value="size">Size</option>
-                                                <option value="material">Material</option>
-                                                <option value="style">Style</option>
-                                            </select>
+                                <div id="pf_apply_all_wrapper" class="card-body pb-0 mb-4" style="display: none;">
+                                    <div class="row g-4 align-items-end">
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Áp dụng giá</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_price" placeholder="Nhập giá">
                                         </div>
-                                        <!--end::Select2-->
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Áp dụng tồn kho</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_qty" placeholder="Số lượng tồn">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Áp dụng SKU</label>
+                                            <input type="text" class="form-control form-control-solid"
+                                                id="pf_apply_sku" placeholder="SKU chung">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Cân nặng (g)</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_weight" placeholder="Cân nặng">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Dài (cm)</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_length" placeholder="Dài">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Rộng (cm)</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_width" placeholder="Rộng">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label fw-semibold">Cao (cm)</label>
+                                            <input type="number" class="form-control form-control-solid"
+                                                id="pf_apply_height" placeholder="Cao">
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <button type="button" class="btn btn-danger fw-bold mt-2 w-100"
+                                                onclick="pfApplyToAll()">
+                                                <i class="bi bi-check2-circle fs-5 me-1"></i> Áp dụng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                        <!--begin::Input-->
-                                        <input type="text" class="form-control mw-100 w-200px" name="product_option_value"
-                                            placeholder="Variation" />
-                                        <!--end::Input-->
-
-                                        <button type="button" data-repeater-delete
-                                            class="btn btn-sm btn-icon btn-light-danger">
-                                            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span
-                                                    class="path2"></span></i> </button>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-row-dashed table-bordered table-rounded border-gray-300">
+                                            <thead class="fw-bold text-gray-700 bg-light">
+                                                <tr>
+                                                    <th>Thuộc tính</th>
+                                                    <th>Giá bán</th>
+                                                    <th>Số lượng</th>
+                                                    <th>SKU</th>
+                                                    <th>Cân nặng (g)</th>
+                                                    <th>Dài (cm)</th>
+                                                    <th>Rộng (cm)</th>
+                                                    <th>Cao (cm)</th>
+                                                    <th class="text-center">Xóa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pf_variant_list"></tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <!--end::Form group-->
 
-                            <!--begin::Form group-->
-                            <div class="form-group mt-5">
-                                <button type="button" data-repeater-create class="btn btn-sm btn-light-primary">
-                                    <i class="ki-duotone ki-plus fs-2"></i> Add another variation
-                                </button>
-                            </div>
-                            <!--end::Form group-->
+
+
+
+                            <!-- Nút thêm biến thể -->
+
+
+
+                            <!--end::Product Variants-->
+
+
+                            <!--end::Input group-->
+
+                            {{-- <!--begin::Input group-->
+                       
+                     
+
                         </div>
-                        <!--end::Repeater-->
+                        <!--end::Card header-->
                     </div>
-                    <!--end::Input group-->
-                </div>
-                <!--end::Card header-->
+                    <!--end::Pricing-->
             </div>
-            <!--end::Variations-->
-
-            <!--begin::Shipping-->
-            <div class="card card-flush py-4">
-                <!--begin::Card header-->
-                <div class="card-header">
-                    <div class="card-title">
-                        <h2>Shipping</h2>
-                    </div>
-                </div>
-                <!--end::Card header-->
-
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
-                    <!--begin::Input group-->
-                    <div class="fv-row">
-                        <!--begin::Input-->
-                        <div class="form-check form-check-custom form-check-solid mb-2">
-                            <input class="form-check-input" type="checkbox" id="kt_ecommerce_add_product_shipping_checkbox"
-                                value="1" />
-                            <label class="form-check-label">
-                                This is a physical product
-                            </label>
-                        </div>
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Set if the product is a physical or digital
-                            item. Physical products may require shipping.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Shipping form-->
-                    <div id="kt_ecommerce_add_product_shipping" class="d-none mt-10">
-                        <!--begin::Input group-->
-                        <div class="mb-10 fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Weight</label>
-                            <!--end::Label-->
-
-                            <!--begin::Editor-->
-                            <input type="text" name="weight" class="form-control mb-2" placeholder="Product weight"
-                                value="" />
-                            <!--end::Editor-->
-
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Set a product weight in kilograms (kg).
-                            </div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-
-                        <!--begin::Input group-->
-                        <div class="fv-row">
-                            <!--begin::Label-->
-                            <label class="form-label">Dimension</label>
-                            <!--end::Label-->
-
-                            <!--begin::Input-->
-                            <div class="d-flex flex-wrap flex-sm-nowrap gap-3">
-                                <input type="number" name="width" class="form-control mb-2" placeholder="Width (w)"
-                                    value="" />
-                                <input type="number" name="height" class="form-control mb-2" placeholder="Height (h)"
-                                    value="" />
-                                <input type="number" name="length" class="form-control mb-2" placeholder="Lengtn (l)"
-                                    value="" />
-                            </div>
-                            <!--end::Input-->
-
-                            <!--begin::Description-->
-                            <div class="text-muted fs-7">Enter the product dimensions in centimeters
-                                (cm).</div>
-                            <!--end::Description-->
-                        </div>
-                        <!--end::Input group-->
-                    </div>
-                    <!--end::Shipping form-->
-                </div>
-                <!--end::Card header-->
-            </div>
-            <!--end::Shipping-->
-            <!--begin::Meta options-->
-            <div class="card card-flush py-4">
-                <!--begin::Card header-->
-                <div class="card-header">
-                    <div class="card-title">
-                        <h2>Meta Options</h2>
-                    </div>
-                </div>
-                <!--end::Card header-->
-
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
-                    <!--begin::Input group-->
-                    <div class="mb-10">
-                        <!--begin::Label-->
-                        <label class="form-label">Meta Tag Title</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <input type="text" class="form-control mb-2" name="meta_title" placeholder="Meta tag name" />
-                        <!--end::Input-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Set a meta tag title. Recommended to be simple
-                            and precise keywords.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="mb-10">
-                        <!--begin::Label-->
-                        <label class="form-label">Meta Tag Description</label>
-                        <!--end::Label-->
-
-                        <!--begin::Editor-->
-                        <div id="kt_ecommerce_add_product_meta_description" name="kt_ecommerce_add_product_meta_description"
-                            class="min-h-100px mb-2"></div>
-                        <!--end::Editor-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Set a meta tag description to the product for
-                            increased SEO ranking.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div>
-                        <!--begin::Label-->
-                        <label class="form-label">Meta Tag Keywords</label>
-                        <!--end::Label-->
-
-                        <!--begin::Editor-->
-                        <input id="kt_ecommerce_add_product_meta_keywords" name="kt_ecommerce_add_product_meta_keywords"
-                            class="form-control mb-2" />
-                        <!--end::Editor-->
-
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Set a list of keywords that the product is
-                            related to. Separate the keywords by adding a comma <code>,</code>
-                            between each keyword.</div>
-                        <!--end::Description-->
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <!--end::Card header-->
-            </div>
-            <!--end::Meta options-->
         </div>
+      
+        {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+      
     </div> --}}
-    <!--end::Tab pane-->
 
-    </div>
-    <!--end::Tab content-->
+                        </div>
+                        <div class="d-flex justify-content-end gap-3 mt-5" style="padding-right: 2rem;">
+                            <!--begin::Button Cancel-->
+                            <a href="{{ route('admin.products.index') }}" class="btn btn-light">
+                                Cancel
+                            </a>
+                            <!--end::Button Cancel-->
 
-    <!--end::Tab content-->
-
-    <!--begin::Action buttons-->
-    <div class="d-flex justify-content-end gap-3 mt-5" style="padding-right: 2rem;">
-        <!--begin::Button Cancel-->
-        <a href="{{ route('admin.products.index') }}" class="btn btn-light">
-            Cancel
-        </a>
-        <!--end::Button Cancel-->
-
-        <!--begin::Button Save-->
-        <button type="submit" class="btn btn-primary">
-            <span class="indicator-label">Save Changes</span>
-            <span class="indicator-progress">
-                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-            </span>
-        </button>
-        <!--end::Button Save-->
-    </div>
-    <!--end::Action buttons-->
+                            <!--begin::Button Save-->
+                            <button type="submit" class="btn btn-primary">
+                                <span class="indicator-label">Save Changes</span>
+                                <span class="indicator-progress">
+                                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+                            <!--end::Button Save-->
+                        </div>
+                        <!--end::Action buttons-->
 
 
-    </div>
-    <!--end::Main column-->
-    </form>
-    <!--end::Form-->
-    </div>
-    <!--end::Content container-->
-    </div>
-    <!--end::Content-->
+                    </div>
+                    <!--end::Main column-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Content container-->
+        </div>
+        <!--end::Content-->
 
     </div>
 
@@ -1576,18 +1117,18 @@
                 .replace(/^-+|-+$/g, ''); // Loại bỏ dấu - đầu/cuối
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const nameInput = document.getElementById('product-name');
             const slugInput = document.getElementById('product-slug');
 
             if (nameInput && slugInput) {
-                nameInput.addEventListener('input', function () {
+                nameInput.addEventListener('input', function() {
                     slugInput.value = slugify(nameInput.value);
                 });
             }
         });
 
-        document.getElementById('image-input').addEventListener('change', function (e) {
+        document.getElementById('image-input').addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
             const previewContainer = document.getElementById('image-preview-container');
 
@@ -1596,7 +1137,7 @@
 
             files.forEach((file, index) => {
                 const reader = new FileReader();
-                reader.onload = function (event) {
+                reader.onload = function(event) {
                     const wrapper = document.createElement('div');
                     wrapper.className = 'position-relative';
                     wrapper.style.width = '100px';
@@ -1612,7 +1153,7 @@
                     removeBtn.type = 'button';
                     removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
                     removeBtn.innerHTML = '&times;';
-                    removeBtn.onclick = function () {
+                    removeBtn.onclick = function() {
                         wrapper.remove();
 
                         // Remove file khỏi input
@@ -1709,9 +1250,25 @@
                     const tdSku = document.createElement("td");
                     tdSku.innerHTML =
                         `<input type="text" name="variants[${i}][sku]" class="form-control" value="${variant.sku}">`;
+                    const tdWeight = document.createElement("td");
+                    tdWeight.innerHTML =
+                        `<input type="number" name="variants[${i}][weight]" class="form-control" value="${variant.weight ?? ''}">`;
+
+                    const tdLength = document.createElement("td");
+                    tdLength.innerHTML =
+                        `<input type="number" name="variants[${i}][length]" class="form-control" value="${variant.length ?? ''}">`;
+
+                    const tdWidth = document.createElement("td");
+                    tdWidth.innerHTML =
+                        `<input type="number" name="variants[${i}][width]" class="form-control" value="${variant.width ?? ''}">`;
+
+                    const tdHeight = document.createElement("td");
+                    tdHeight.innerHTML =
+                        `<input type="number" name="variants[${i}][height]" class="form-control" value="${variant.height ?? ''}">`;
 
                     const tdDelete = document.createElement("td");
-                    tdDelete.innerHTML = `
+                    tdDelete.innerHTML =
+                        `
                                                                                                                                                                                                                                     <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
                                                                                                                                                                                                                                         <i class="bi bi-trash text-danger fs-5"></i>
                                                                                                                                                                                                                                     </button>
@@ -1721,7 +1278,12 @@
                     row.appendChild(tdPrice);
                     row.appendChild(tdQty);
                     row.appendChild(tdSku);
+                    row.appendChild(tdWeight);
+                    row.appendChild(tdLength);
+                    row.appendChild(tdWidth);
+                    row.appendChild(tdHeight);
                     row.appendChild(tdDelete);
+
                     tbody.appendChild(row);
                 });
 
@@ -1733,7 +1295,7 @@
             }
 
             document.getElementById("pf_add_attribute_group")?.addEventListener("click", pfAddAttributeGroup);
-            document.addEventListener('input', function (e) {
+            document.addEventListener('input', function(e) {
                 if (e.target && e.target.name && e.target.name.includes('[quantity]')) {
                     calculateTotalStock();
                 }
@@ -1756,7 +1318,8 @@
             div.className = "bg-light rounded p-4 border position-relative mb-4";
             div.id = groupId;
 
-            div.innerHTML = `
+            div.innerHTML =
+                `
                                                                                                                                                                                                                                             <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" onclick="pfRemoveAttributeGroup('${groupId}')"></button>
                                                                                                                                                                                                                                             <div class="mb-3 d-flex align-items-center gap-3">
                                                                                                                                                                                                                                                 <label class="form-label fw-bold mb-0" style="min-width: 90px;">Phân loại</label>
@@ -1913,9 +1476,13 @@
                 const quantity = row.querySelector('input[name$="[quantity]"]')?.value || '0';
                 const sku = row.querySelector('input[name$="[sku]"]')?.value || '';
                 oldData[attrs] = {
-                    price,
-                    quantity,
-                    sku
+                    price: row.querySelector('input[name$="[price]"]')?.value || '0',
+                    quantity: row.querySelector('input[name$="[quantity]"]')?.value || '0',
+                    sku: row.querySelector('input[name$="[sku]"]')?.value || '',
+                    weight: row.querySelector('input[name$="[weight]"]')?.value || '',
+                    length: row.querySelector('input[name$="[length]"]')?.value || '',
+                    width: row.querySelector('input[name$="[width]"]')?.value || '',
+                    height: row.querySelector('input[name$="[height]"]')?.value || '',
                 };
             });
 
@@ -1979,7 +1546,8 @@
                 };
 
                 const tdPrice = document.createElement("td");
-                tdPrice.innerHTML = `
+                tdPrice.innerHTML =
+                    `
                                                                                                                                                                                                                                                 <input type="number"
                                                                                                                                                                                                                                                        name="variants[${i}][price]"
                                                                                                                                                                                                                                                        class="form-control"
@@ -1989,7 +1557,8 @@
                                                                                                                                                                                                                                             `;
 
                 const tdQty = document.createElement("td");
-                tdQty.innerHTML = `
+                tdQty.innerHTML =
+                    `
                                                                                                                                                                                                                                                 <input type="number"
                                                                                                                                                                                                                                                        name="variants[${i}][quantity]"
                                                                                                                                                                                                                                                        class="form-control"
@@ -2002,18 +1571,39 @@
                 tdSku.innerHTML =
                     `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
 
-                const tdDelete = document.createElement("td");
-                tdDelete.innerHTML = `
-                                                                                                                                                                                                                                                <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
-                                                                                                                                                                                                                                                    <i class="bi bi-trash text-danger fs-5"></i>
-                                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                            `;
+                const tdWeight = document.createElement("td");
+                tdWeight.innerHTML =
+                    `<input type="number" name="variants[${i}][weight]" class="form-control" value="${existing.weight ?? ''}" placeholder="gram">`;
 
+                const tdLength = document.createElement("td");
+                tdLength.innerHTML =
+                    `<input type="number" name="variants[${i}][length]" class="form-control" value="${existing.length ?? ''}" placeholder="cm">`;
+
+                const tdWidth = document.createElement("td");
+                tdWidth.innerHTML =
+                    `<input type="number" name="variants[${i}][width]" class="form-control" value="${existing.width ?? ''}" placeholder="cm">`;
+
+                const tdHeight = document.createElement("td");
+                tdHeight.innerHTML =
+                    `<input type="number" name="variants[${i}][height]" class="form-control" value="${existing.height ?? ''}" placeholder="cm">`;
+
+                const tdDelete = document.createElement("td");
+                tdDelete.innerHTML =
+                    `
+                    <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
+                   <i class="bi bi-trash text-danger fs-5"></i>
+                   </button>
+                                                                                                                                                                                                                                            `;
                 row.appendChild(tdAttr);
                 row.appendChild(tdPrice);
                 row.appendChild(tdQty);
                 row.appendChild(tdSku);
+                row.appendChild(tdWeight);
+                row.appendChild(tdLength);
+                row.appendChild(tdWidth);
+                row.appendChild(tdHeight);
                 row.appendChild(tdDelete);
+
 
                 tbody.appendChild(row);
             });
@@ -2058,15 +1648,24 @@
             const price = document.getElementById('pf_apply_price').value;
             const qty = document.getElementById('pf_apply_qty').value;
             const sku = document.getElementById('pf_apply_sku').value;
+            const weight = document.getElementById('pf_apply_weight').value;
+            const length = document.getElementById('pf_apply_length').value;
+            const width = document.getElementById('pf_apply_width').value;
+            const height = document.getElementById('pf_apply_height').value;
 
             document.querySelectorAll("#pf_variant_list tr").forEach((row, i) => {
                 if (price !== '') row.querySelector(`[name="variants[${i}][price]"]`).value = price;
                 if (qty !== '') row.querySelector(`[name="variants[${i}][quantity]"]`).value = qty;
                 if (sku !== '') row.querySelector(`[name="variants[${i}][sku]"]`).value = sku;
+                if (weight !== '') row.querySelector(`[name="variants[${i}][weight]"]`).value = weight;
+                if (length !== '') row.querySelector(`[name="variants[${i}][length]"]`).value = length;
+                if (width !== '') row.querySelector(`[name="variants[${i}][width]"]`).value = width;
+                if (height !== '') row.querySelector(`[name="variants[${i}][height]"]`).value = height;
             });
 
-
+            calculateTotalStock(); // Cập nhật lại tổng tồn kho
         }
+
 
         function calculateTotalStock() {
             const stockInput = document.getElementById("stock_quantity");
@@ -2114,11 +1713,11 @@
 
 
         // Edit chi tiết sản phẩm 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             let groupIndex = {{ isset($grouped) ? $grouped->count() : 1 }};
 
             // Thêm nhóm mới
-            document.getElementById('add-group').addEventListener('click', function () {
+            document.getElementById('add-group').addEventListener('click', function() {
                 const container = document.getElementById('product-details-container');
                 const groupHTML = `
                                                                 <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
@@ -2144,7 +1743,7 @@
             });
 
             // Thêm nhãn/giá trị trong nhóm
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
                 if (e.target && e.target.classList.contains('add-sub-item')) {
                     const groupWrapper = e.target.closest('.group-wrapper');
                     const groupIdx = groupWrapper.dataset.groupIndex;
@@ -2174,5 +1773,5 @@
                 }
             });
         });
-    </script><!--end::Content wrapper-->
+    </script>
 @endsection

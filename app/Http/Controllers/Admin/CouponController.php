@@ -10,7 +10,12 @@ class CouponController extends Controller
 {
     public function index()
     {
-        $coupons = Coupon::latest()->paginate(10);
+        $query = Coupon::query();
+
+        // (nếu có tìm kiếm, bạn thêm filter tại đây)
+
+        $coupons = $query->paginate(10); // <-- paginate thay vì get()
+
         return view('admin.coupons.index', compact('coupons'));
     }
 
