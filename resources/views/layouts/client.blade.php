@@ -86,7 +86,11 @@
         }
     </style>
     @yield('style')
+<<<<<<< HEAD
     @if(Auth::check())
+=======
+    @if (Auth::check())
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
@@ -153,7 +157,7 @@
     @endauth
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const slides = document.querySelectorAll('.fade-slide');
         let currentIndex = 0;
 
@@ -521,7 +525,8 @@
 
         li.querySelector('.delete-icon').addEventListener('click', () => {
             cartItems = cartItems.filter(p =>
-                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item.attributes || {}))
+                !(p.id === item.id && JSON.stringify(p.attributes || {}) === JSON.stringify(item
+                    .attributes || {}))
             );
             saveAndRender();
         });
@@ -551,7 +556,7 @@
     // ================================
     // 3. DOMContentLoaded: GÁN SỰ KIỆN
     // ================================
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         renderCartItems();
 
         // Bấm nút thêm vào giỏ hàng
@@ -559,8 +564,8 @@
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        sizeItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -568,8 +573,8 @@
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        colorItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -577,14 +582,15 @@
     });
 
     // Reload lại nếu quay lại bằng Back/Forward
-    window.addEventListener('pageshow', function (event) {
-        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type ===
+                "back_forward")) {
             window.location.reload();
         }
     });
 
     // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
-    document.addEventListener('cartUpdated', function () {
+    document.addEventListener('cartUpdated', function() {
         renderCartItems();
     });
 </script>
@@ -618,7 +624,11 @@
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
+<<<<<<< HEAD
                 toastr.options.onclick = function () {
+=======
+                toastr.options.onclick = function() {
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
                     if (notification.url) {
                         window.location.href = notification.url;
                     }
@@ -647,7 +657,11 @@
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
+<<<<<<< HEAD
 @if(Auth::check() && isset($unreadNotifications) && $unreadNotifications->count())
+=======
+@if (Auth::check() && $unreadNotifications->count())
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
@@ -663,7 +677,7 @@
                 "progressBar": true,
                 "timeOut": "8000",
                 "extendedTimeOut": "1000",
-                "onclick": function () {
+                "onclick": function() {
                     if (data.url) {
                         window.location.href = data.url;
                     }
