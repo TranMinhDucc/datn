@@ -94,7 +94,34 @@ class CheckoutController extends Controller
 
         Log::debug('Thông tin địa chỉ:', $address->toArray());
 
-        // Lấy mã GHN
+        // Kiểm tra phí ship thủ công
+        // 1. Ưu tiên kiểm tra theo province_id, district_id, ward_id
+        $customShippingFee = \App\Models\ShippingFee::where('province_id', $address->province_id)
+            ->where('district_id', $address->district_id)
+            ->where('ward_id', $address->ward_id)
+            ->whereNotNull('price')
+            ->first();
+
+        // 2. Nếu không có, kiểm tra theo province_id (áp dụng cho toàn tỉnh)
+        if (!$customShippingFee) {
+            $customShippingFee = \App\Models\ShippingFee::where('province_id', $address->province_id)
+                ->whereNull('district_id')
+                ->whereNull('ward_id')
+                ->whereNotNull('price')
+                ->first();
+        }
+
+        if ($customShippingFee) {
+            Log::debug('Sử dụng phí ship thủ công', $customShippingFee->toArray());
+            return response()->json([
+                'success' => true,
+                'data' => ['total' => $customShippingFee->price],
+                'total' => $customShippingFee->price,
+                'debug' => ['custom_shipping_fee' => $customShippingFee->price]
+            ]);
+        }
+
+        // Nếu không có phí ship thủ công, tiếp tục tính phí qua GHN
         $districtCode = PartnerLocationCode::where([
             ['location_id', $address->district_id],
             ['type', 'district'],
@@ -199,10 +226,7 @@ class CheckoutController extends Controller
                 'success' => true,
                 'data' => $shippingFee['data'] ?? [],
                 'total' => $shippingFee['data']['total'] ?? 0,
-                'debug' => [ // Thêm thông tin debug
-                    'payload' => $payload,
-                    'cart_items' => $cartItems
-                ]
+                'debug' => ['payload' => $payload, 'cart_items' => $cartItems]
             ]);
         } catch (\Exception $e) {
             Log::error('Lỗi khi tính phí vận chuyển', [
@@ -212,10 +236,7 @@ class CheckoutController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Lỗi khi tính phí vận chuyển: ' . $e->getMessage(),
-                'debug' => [
-                    'payload' => $payload,
-                    'trace' => $e->getTraceAsString()
-                ]
+                'debug' => ['payload' => $payload, 'trace' => $e->getTraceAsString()]
             ]);
         }
     }

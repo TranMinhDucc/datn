@@ -511,11 +511,11 @@
     <div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return `<p class = "mb-0" >${
+    return ` < p class = "mb-0" > $ {
                             key.charAt(0).toUpperCase() + key.slice(1)
-                        }: <span>${
+                        }: < span > $ {
                             value
-                        } </span></p>
+                        } < /span></p >
                         `;
     }).join('')}</div></div></td>
     <td>${item.price.toLocaleString('vi-VN')}<span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span></td>
@@ -569,7 +569,6 @@
                     const start = new Date(start_date);
                     const end = new Date(end_date);
 
-                    // ❌ Không hợp lệ
                     if (now < start || now > end || active !== 1 || bagTotal < min_order_amount) {
                         alert(`❌ Mã "${code}" không hợp lệ (hết hạn, không đủ điều kiện hoặc bị khoá).`);
                         return {
@@ -578,7 +577,6 @@
                         };
                     }
 
-                    // ✅ Hợp lệ
                     let discount = 0;
                     if (value_type === 'percentage') {
                         discount = bagTotal * value / 100;
@@ -594,9 +592,9 @@
                         `-${discount.toLocaleString('vi-VN')}đ`;
 
                     const html = `
-                <div class="text-danger d-flex align-items-center gap-1">
-                    ${icon} <strong>${code}</strong>: ${formatted}
-                </div>`;
+            <div class="text-danger d-flex align-items-center gap-1">
+                ${icon} <strong>${code}</strong>: ${formatted}
+            </div>`;
 
                     return {
                         amount: discount,
@@ -632,7 +630,19 @@
 
                 const totalDiscount = shippingDiscount + productDiscount;
                 const subtotal = Math.max(0, bagTotal - totalDiscount);
+                sessionStorage.setItem('subtotalAfterProductDiscount', subtotal);
+                sessionStorage.setItem('productDiscountAmount', productDiscount);
+                sessionStorage.setItem('shippingDiscountAmount', shippingDiscount);
 
+                // 🚚 Read shipping fee (from sessionStorage)
+                const shippingData = JSON.parse(sessionStorage.getItem('shippingFee')) || {};
+                const shippingFee = Number(shippingData.amount ?? 0);
+
+                // 💸 VAT (10%)
+                const vat = Math.round(subtotal * 0.1);
+                const grandTotal = subtotal + shippingFee + vat;
+
+                // 🧾 Hiển thị dữ liệu
                 if ($('bag-total')) {
                     $('bag-total').textContent = bagTotal.toLocaleString('vi-VN', {
                         style: 'currency',
@@ -643,16 +653,9 @@
                 if ($('item-count')) $('item-count').textContent = itemCount;
 
                 if ($('coupon-discount')) {
-                    if (!shippingHTML && !productHTML) {
-                        $('coupon-discount').innerHTML = `🎫 Apply Coupon`;
-                    } else {
-                        $('coupon-discount').innerHTML = `
-                    <div class="d-flex flex-column gap-1">
-                        ${shippingHTML}
-                        ${productHTML}
-                    </div>
-                `;
-                    }
+                    $('coupon-discount').innerHTML = (!shippingHTML && !productHTML) ?
+                        '🎫 Apply Coupon' :
+                        `<div class="d-flex flex-column gap-1">${shippingHTML}${productHTML}</div>`;
                 }
 
                 if ($('subtotal')) {
@@ -662,7 +665,28 @@
                     });
                 }
 
+                if ($('shipping-cost')) {
+                    $('shipping-cost').textContent = shippingFee.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                }
+
+                if ($('vat-cost')) {
+                    $('vat-cost').textContent = vat.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                }
+
+                if ($('grand-total')) {
+                    $('grand-total').textContent = grandTotal.toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    });
+                }
             }
+
 
 
 
@@ -733,11 +757,11 @@
     ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
     <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return `<p class = "mb-1" > ${
+    return ` < p class = "mb-1" > $ {
                         key
-                    }: <span >${
+                    }: < span > $ {
                         value
-                    } </span></p>`;
+                    } < /span></p > `;
     }).join('')}
     <div class="btn-containter">
     <div class="btn-control">
