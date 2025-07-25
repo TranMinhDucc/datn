@@ -10,7 +10,7 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::all();
+        $brands = Brand::orderByDesc('id')->paginate(10); // hoặc paginate(5), paginate(15), tuỳ bạn
         return view('admin.brands.index', compact('brands'));
     }
 

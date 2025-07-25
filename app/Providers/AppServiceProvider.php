@@ -8,8 +8,6 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Cache;
 use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\ServiceProvider;
 use App\Actions\Fortify\ResetUserPassword;
@@ -26,6 +24,12 @@ use App\Actions\Fortify\LoginResponse as CustomLoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,54 +44,74 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
 
-        // Gán view cho các bước Fortify
         Fortify::loginView(fn() => view('client.auth.login'));
         Fortify::registerView(fn() => view('client.auth.register'));
         Fortify::requestPasswordResetLinkView(fn() => view('client.auth.request-reset-password'));
         Fortify::verifyEmailView(fn() => view('client.auth.verify-email'));
-        // Gán view reset mật khẩu từ token (bắt buộc để fix lỗi)
+
         $this->app->singleton(
             ResetPasswordViewResponse::class,
             CustomResetPasswordViewResponse::class
         );
-        // Custom xác thực
+
         Fortify::authenticateUsing(function (Request $request) {
             app(CustomLoginValidation::class)($request);
             return User::where('email', $request->email)->first();
         });
-        // ✅ Auto load settings và cache trong 1 giờ
-        $settings = Cache::remember('global_settings', 3600, function () {
-            return Setting::all()->pluck('value', 'name');
-        });
-
+        // Lấy tất cả settings từ database
+        $settings = Setting::all()->pluck('value', 'key')->toArray();
         // ✅ Chia sẻ cho tất cả view
         View::share('settings', $settings);
-       View::composer('*', function ($view) {
-    $headerMenus = Menu::with('children')
-                        ->where('position', 'header')
-                        ->where('active', 1)
-                        ->whereNull('parent_id')
-                        ->orderBy('sort_order')
-                        ->get();
 
-    $footerMenus = Menu::with('children')
-                        ->where('position', 'footer')
-                        ->where('active', 1)
-                        ->whereNull('parent_id')
-                        ->orderBy('sort_order')
-                        ->get();
+        View::composer('*', function ($view) {
+            $headerMenus = Menu::with('children')
+                ->where('position', 'header')
+                ->where('active', 1)
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->get();
 
-    $sidebarMenus = Menu::with('children')
-                         ->where('position', 'sidebar')
-                         ->where('active', 1)
-                         ->whereNull('parent_id')
-                         ->orderBy('sort_order')
-                         ->get();
+            $footerMenus = Menu::with('children')
+                ->where('position', 'footer')
+                ->where('active', 1)
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->get();
 
-    $view->with(compact('headerMenus', 'footerMenus', 'sidebarMenus'));
-});
+            $sidebarMenus = Menu::with('children')
+                ->where('position', 'sidebar')
+                ->where('active', 1)
+                ->whereNull('parent_id')
+                ->orderBy('sort_order')
+                ->get();
 
+            $view->with(compact('headerMenus', 'footerMenus', 'sidebarMenus'));
+        });
+
+
+        // ✅ Kiểm tra bảng settings có tồn tại không trước khi truy cập
+        if (Schema::hasTable('settings')) {
+            $settings = Cache::remember('global_settings', 3600, function () {
+                return Setting::all()->pluck('value', 'name');
+            });
+
+            View::share('settings', $settings);
+        }
+
+        View::composer('*', function ($view) {
+            $notifications = collect();
+
+            if (Auth::check()) {
+                $notifications = DatabaseNotification::where('notifiable_id', Auth::id())
+                    ->where('notifiable_type', \App\Models\User::class)
+                    ->whereNull('read_at')
+                    ->get();
+            }
+
+            $view->with('unreadNotifications', $notifications);
+        });
     }
 }

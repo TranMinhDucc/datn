@@ -9,7 +9,7 @@
                     <li class="shopping-cart"> <a href="cart.html"><i class="iconsax"
                                 data-icon="shopping-cart"></i>Cart</a></li>
                     <li><a href="wishlist.html"><i class="iconsax" data-icon="heart"></i>My Wish</a></li>
-                    <li> <a href="{{route('client.account.dashboard')}}"><i class="iconsax"
+                    <li> <a href="{{ route('client.account.dashboard') }}"><i class="iconsax"
                                 data-icon="user-2"></i>Account</a></li>
                 </ul>
             </div>
@@ -27,9 +27,10 @@
         <div class="col-12">
             <div class="main-menu">
                 <a class="brand-logo" href="{{ url('/') }}">
-                    {{-- <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}" alt="logo">
+                    <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}" alt="logo">
 
-                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo"> --}}
+                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo">
+
                 </a>
                 @include('layouts.partials.client.navbar')
 
@@ -44,44 +45,47 @@
                                     data-icon="search-normal-2"></i></button>
                         </li>
                         <li>
-                            <a href="{{ route('client.wishlist.index') }}"><i class="iconsax" data-icon="heart"></i>
-                                <span class="cart_qty_cls">2</span></a>
+                            <a href="{{ route('client.account.wishlist.index') }}"><i class="iconsax"
+                                    data-icon="heart"></i>
+                                <span class=""></span></a>
                         </li>
                         <li class="onhover-div">
                             <a href="#"><i class="iconsax" data-icon="user-2"></i></a>
                             <div class="onhover-show-div user">
                                 <ul>
                                     @auth
-                                        @if (Auth::user()->role === 'admin')
-                                            <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                                        @endif
-                                        <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
-                                        <li>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-link text-start p-0"
-                                                    style="color: #000; text-decoration: none;">
-                                                    Đăng xuất
-                                                </button>
-                                            </form>
-                                        </li>
+                                    @if (Auth::user()->role === 'admin')
+                                    <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+                                    @endif
+                                    <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link text-start p-0"
+                                                style="color: #000; text-decoration: none;">
+                                                Đăng xuất
+                                            </button>
+                                        </form>
+                                    </li>
                                     @else
-                                        <li><a href="{{ route('login') }}">Đăng nhập</a></li>
-                                        <li><a href="{{ route('register') }}">Đăng ký</a></li>
+                                    <li><a href="{{ route('login') }}">Đăng nhập</a></li>
+                                    <li><a href="{{ route('register') }}">Đăng ký</a></li>
                                     @endauth
                                 </ul>
                             </div>
                         </li>
-
-
-                        <li class="onhover-div shopping-cart">
+                        <li class="onhover-div shopping-cart position-relative">
                             <a class="p-0" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
                                 aria-controls="offcanvasRight">
-                                <div class="shoping-prize">
-                                    <i class="iconsax pe-2" data-icon="basket-2"></i>0 items
-                                </div>
+                                <i class="iconsax pe-2 fs-5" data-icon="basket-2"></i>
+
+                                <!-- Badge số lượng sản phẩm -->
+                                <span class="cart_qty_cls" id="cart-count-badge">0</span>
                             </a>
                         </li>
+
+
+
                     </ul>
                 </div>
             </div>
@@ -89,3 +93,34 @@
 
     </div>
 </div>
+<script>
+    function updateCartBadge() {
+        try {
+            const cartData = localStorage.getItem('cartItems');
+            const cart = cartData ? JSON.parse(cartData) : [];
+
+            // Tính tổng quantity
+            const totalItems = cart.reduce((sum, item) => {
+                return sum + (parseInt(item.quantity) || 1);
+            }, 0);
+
+            const badge = document.getElementById('cart-count-badge');
+            if (badge) {
+                if (totalItems > 0) {
+                    badge.textContent = totalItems;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.textContent = '0';
+                    badge.style.display = 'none';
+                }
+            }
+        } catch (e) {
+            console.error('Lỗi khi cập nhật giỏ hàng:', e);
+        }
+    }
+
+    // Cập nhật khi trang tải
+    document.addEventListener('DOMContentLoaded', updateCartBadge);
+
+    // 👉 Gọi lại updateCartBadge() mỗi khi bạn thêm hoặc xóa sản phẩm
+</script>

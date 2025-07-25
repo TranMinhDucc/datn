@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('shipping_fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shipping_zone_id')->constrained()->onDelete('cascade');
-            $table->foreignId('shipping_method_id')->constrained()->onDelete('cascade');
+
+            // Nếu vẫn dùng shipping_zone_id:
+            $table->foreignId('shipping_zone_id')->nullable()->constrained()->onDelete('cascade');
+
+            // Cho phép NULL shipping_method_id:
+            $table->foreignId('shipping_method_id')->nullable()->constrained()->onDelete('cascade');
+
             $table->unsignedInteger('price'); // phí ship cố định (VNĐ)
             $table->unsignedInteger('free_shipping_minimum')->nullable(); // giá trị đơn hàng để được freeship
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

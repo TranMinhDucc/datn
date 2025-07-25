@@ -1,5 +1,6 @@
 <footer class="footer-layout-img">
          <section class="section-b-space footer-1">
+      <section class="section-b-space footer-1">
           <div class="custom-container container">
               <div class="row">
                   <div class="col-xl-3 col-lg-4 col-md-6">
@@ -49,7 +50,7 @@
                                       <li> <a class="nav" href="product-bundle.html">Latest Shoes</a></li>
                                       <li> <a class="nav" href="variant-radio.html">Branded Jeans</a></li>
                                       <li> <a class="nav" href="product.html">New Jackets</a></li>
-                                      <li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
+<li> <a class="nav" href="variant-images.html">Colorful Hoodies</a></li>
                                       <li> <a class="nav" href="variant-dropdown.html">Best Perfume</a></li>
                                   </ul>
                               </div>
@@ -114,4 +115,4 @@
             </div>
         </div>
     </div>
-</footer>
+

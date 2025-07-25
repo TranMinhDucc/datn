@@ -28,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'gender',
         'role',
-        'point', // ✅ có point
+        'point',
         'balance',
         'two_factor_enabled',
         'token_2fa',
@@ -40,8 +40,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'registered_at',
         'last_login_ip',
         'last_login_device',
+        'last_login_at', // ✅ thêm dòng này
         'banned'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -65,7 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'create_date' => 'datetime',
         'update_date' => 'datetime',
     ];
-public function getAvatarUrlAttribute()
+    public function getAvatarUrlAttribute()
     {
         return $this->avatar && file_exists(public_path($this->avatar))
             ? asset($this->avatar)
@@ -82,8 +84,16 @@ public function getAvatarUrlAttribute()
         return $this->hasMany(Review::class);
     }
     public function shippingAddresses()
-{
-    return $this->hasMany(ShippingAddress::class);
-}
+    {
+        return $this->hasMany(ShippingAddress::class);
+    }
 
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_user');
+    }
+    public function wishlist()
+    {
+        return $this->belongsToMany(Product::class, 'wishlists', 'user_id', 'product_id');
+    }
 }

@@ -325,12 +325,24 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
 
-                                <label class="form-label">Slug</label>
-                                <input type="text" name="slug" id="product-slug" class="form-control mb-2"
-                                    placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
-                                @error('slug')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Slug</label>
+                                        <input type="text" name="slug" id="product-slug" class="form-control mb-2"
+                                            placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
+                                        @error('slug')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">SKU</label>
+                                        <input type="text" name="sku" class="form-control mb-2"
+                                            placeholder="Mã sản phẩm" value="{{ old('sku', $product->sku ?? '') }}">
+                                        @error('slug')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -396,17 +408,63 @@
                                     </div>
                                 </div>
 
-                                <label class="form-label">Mô tả</label>
+                                <label class="form-label">Mô tả ngắn</label>
                                 <textarea name="description" id="description" class="form-control" rows="5">{{ old('description') }}</textarea>
                                 @error('description')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
+                            {{-- Mô tả chi tiết --}}
+                                <label class="form-label">Mô tả chi tiết</label>
+<textarea name="detailed_description" id="editor" class="form-control" rows="10">{{ old('detailed_description', $product->detailed_description ?? '') }}</textarea>
+
+@error('detailed_description')
+    <div class="text-danger">{{ $message }}</div>
+@enderror
 
                                 <label>Ảnh phụ</label>
                                 <input type="file" name="images[]" id="image-input" class="form-control" multiple
                                     accept=".png,.jpg,.jpeg">
                                 <div id="image-preview-container" class="mt-2 d-flex flex-wrap gap-3"></div>
+                                <!-- Thêm header và nút xóa tất cả chi tiết sản phẩm -->
+                                <div id="product-details-header" class="d-flex align-items-center mb-3">
+                                    <h5 class="mb-0 me-3">Chi tiết sản phẩm</h5>
+                                    
+                                </div>
+                                <div id="product-details-container">
+                                    {{-- Nhóm đầu tiên mặc định --}}
+                                    <div class="group-wrapper mb-4 position-relative" data-group-index="0">
+                                        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" aria-label="Close"></button>
+                                        <div class="mb-2">
+                                            <input type="text" name="details[0][group_name]" class="form-control"
+                                                placeholder="Tên nhóm (ví dụ: Cách giặt)">
+                                        </div>
+                                        <div class="sub-items-wrapper">
+                                            <div class="row mb-2 sub-item">
+                                                <div class="col-md-5">
+                                                    <input type="text" name="details[0][items][0][label]" class="form-control" placeholder="Nhãn">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="details[0][items][0][value]" class="form-control" placeholder="Giá trị">
+                                                </div>
+                                                <div class="col-md-2 d-flex align-items-center">
+                                                    <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+                                            <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+                                        </button>
+                                    </div>
+                                </div>
+
+{{-- Nút thêm nhóm chi tiết mới --}}
+<button type="button" class="btn btn-light-primary btn-sm mt-3" id="add-group">
+    <i class="fas fa-layer-group me-1"></i> Thêm chi tiết
+</button>
+
+
                             </div>
+                            
                         </div>
 
                         <!-- Biến thể -->
@@ -433,12 +491,39 @@
                                             <th>Giá bán</th>
                                             <th>Số lượng</th>
                                             <th>SKU</th>
+                                            <th>Cân nặng (g)</th>
+                                            <th>Dài (cm)</th>
+                                            <th>Rộng (cm)</th>
+                                            <th>Cao (cm)</th>
                                             <th>Xóa</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody id="pf_variant_list"></tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div id="product-dimensions-wrapper" class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Cân nặng (g) <span class="text-danger">*</span></label>
+                                <input type="number" name="weight" class="form-control"
+                                    value="{{ old('weight', $product->weight ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Dài (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="length" class="form-control"
+                                    value="{{ old('length', $product->length ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Rộng (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="width" class="form-control"
+                                    value="{{ old('width', $product->width ?? '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cao (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="height" class="form-control"
+                                    value="{{ old('height', $product->height ?? '') }}">
                             </div>
                         </div>
 
@@ -467,7 +552,13 @@
 
 
 
-
+<script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('editor', {
+filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
+        filebrowserUploadMethod: 'form'
+    });
+</script>
     <script>
         function slugify(str) {
             return str
@@ -491,6 +582,7 @@
                 slugInput.value = slug;
             });
             calculateTotalStock();
+            toggleProductDimensions();
         });
 
 
@@ -545,7 +637,8 @@
 
         const PF_ATTRIBUTE_SUGGESTIONS = {
             "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng", "Xanh quân đội",
-                "Xanh dương nhạt"],
+                "Xanh dương nhạt"
+            ],
             "Size": ["XS", "S", "M", "L", "XL", "XXL"],
             "Giới tính": ["Nam", "Nữ", "Unisex"]
         };
@@ -725,6 +818,10 @@
     <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào"></td>
     <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0"></td>
     <td><input type="text" class="form-control form-control-sm" id="pf_apply_sku" placeholder="Nhập vào"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_weight" placeholder="gram"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_length" placeholder="cm"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_width" placeholder="cm"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_height" placeholder="cm"></td>
     <td><button type="button" class="btn btn-danger btn-sm" onclick="pfApplyToAllVariants()">Áp dụng</button></td>
 `;
             tbody.appendChild(headerRow);
@@ -740,6 +837,10 @@
     <td><input type="number" name="variants[${i}][price]" class="form-control"></td>
     <td><input type="number" name="variants[${i}][quantity]" class="form-control"></td>
     <td><input type="text" name="variants[${i}][sku]" class="form-control"></td>
+    <td><input type="number" name="variants[${i}][weight]" class="form-control" placeholder="gram"></td>
+    <td><input type="number" name="variants[${i}][length]" class="form-control" placeholder="cm"></td>
+    <td><input type="number" name="variants[${i}][width]" class="form-control" placeholder="cm"></td>
+    <td><input type="number" name="variants[${i}][height]" class="form-control" placeholder="cm"></td>
     <td class="text-center">
         <button type="button" class="btn btn-sm btn-light-danger" onclick="removeVariantRow(this)">
             <i class="bi bi-trash"></i>
@@ -754,21 +855,28 @@
 
             });
             calculateTotalStock();
-
+            toggleProductDimensions(); // GỌI LẠI HÀM NÀY
         }
 
         function pfApplyToAllVariants() {
             const price = document.getElementById('pf_apply_price').value;
             const quantity = document.getElementById('pf_apply_quantity').value;
             const sku = document.getElementById('pf_apply_sku').value;
+            const weight = document.getElementById('pf_apply_weight').value;
+            const length = document.getElementById('pf_apply_length').value;
+            const width = document.getElementById('pf_apply_width').value;
+            const height = document.getElementById('pf_apply_height').value;
 
             const rows = document.querySelectorAll('#pf_variant_list tr');
             rows.forEach((row) => {
                 if (row.querySelector('td')?.textContent.includes('Áp dụng cho tất cả')) return;
-
                 if (price) row.querySelector(`input[name$="[price]"]`).value = price;
                 if (quantity) row.querySelector(`input[name$="[quantity]"]`).value = quantity;
                 if (sku) row.querySelector(`input[name$="[sku]"]`).value = sku;
+                if (weight) row.querySelector(`input[name$="[weight]"]`).value = weight;
+                if (length) row.querySelector(`input[name$="[length]"]`).value = length;
+                if (width) row.querySelector(`input[name$="[width]"]`).value = width;
+                if (height) row.querySelector(`input[name$="[height]"]`).value = height;
             });
             calculateTotalStock();
         }
@@ -813,6 +921,7 @@
             if (row) {
                 row.remove();
                 calculateTotalStock(); // cập nhật lại tổng
+                toggleProductDimensions(); // GỌI LẠI HÀM NÀY
             }
         }
 
@@ -833,7 +942,165 @@
                 if (stockNote) stockNote.style.display = 'none';
             }
         }
+
+        function toggleProductDimensions() {
+            const dimWrapper = document.getElementById('product-dimensions-wrapper');
+            const variantList = document.getElementById('pf_variant_list');
+            let variantCount = 0;
+            if (variantList) {
+                variantCount = Array.from(variantList.children).filter(tr => {
+                    return !tr.textContent.includes('Áp dụng cho tất cả');
+                }).length;
+            }
+            if (dimWrapper) {
+                if (variantCount > 0) {
+                    dimWrapper.style.display = 'none';
+                } else {
+                    dimWrapper.style.display = 'flex'; // hoặc 'block' nếu bạn muốn
+                }
+            }
+        }
+
+        // Gọi khi load trang và mỗi lần render lại biến thể
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleProductDimensions();
+            // Gọi lại mỗi khi render biến thể (sau mỗi lần thêm/xóa biến thể)
+            window.pfGenerateVariants = (function(oldFn) {
+                return function() {
+                    oldFn.apply(this, arguments);
+                    toggleProductDimensions();
+                }
+            })(window.pfGenerateVariants);
+        });
+
+
+        // Chi tiết sản phẩm 
+   document.addEventListener('DOMContentLoaded', function () {
+    let groupIndex = 1;
+
+    document.getElementById('add-group').addEventListener('click', function () {
+        const container = document.getElementById('product-details-container');
+
+        // const groupHTML = `
+        //     <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
+        //         <div class="mb-2">
+        //             <input type="text" name="details[${groupIndex}][group_name]" class="form-control"
+        //                 placeholder="Tên nhóm (ví dụ: Kích thước)">
+        //         </div>
+
+        //         <div class="sub-items-wrapper">
+        //             <div class="row mb-2 sub-item">
+        //                 <div class="col-md-5">
+        //                     <input type="text" name="details[${groupIndex}][items][0][label]" class="form-control" placeholder="Nhãn">
+        //                 </div>
+        //                 <div class="col-md-5">
+        //                     <input type="text" name="details[${groupIndex}][items][0][value]" class="form-control" placeholder="Giá trị">
+        //                 </div>
+        //                 <div class="col-md-2 d-flex align-items-center">
+        //                     <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+        //                 </div>
+        //             </div>
+        //         </div>
+
+        //         <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+        //             <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+        //         </button>
+        //     </div>
+        // `;
+
+        container.insertAdjacentHTML('beforeend', groupHTML);
+        groupIndex++;
+    });
+
+    document.addEventListener('click', function (e) {
+        // Thêm nhãn mới trong nhóm
+        if (e.target.closest('.add-sub-item')) {
+            const groupWrapper = e.target.closest('.group-wrapper');
+            const groupIdx = groupWrapper.dataset.groupIndex;
+            const subItems = groupWrapper.querySelectorAll('.sub-item');
+            const itemIdx = subItems.length;
+
+            const subHTML = `
+                <div class="row mb-2 sub-item">
+                    <div class="col-md-5">
+                        <input type="text" name="details[${groupIdx}][items][${itemIdx}][label]" class="form-control" placeholder="Nhãn">
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" name="details[${groupIdx}][items][${itemIdx}][value]" class="form-control" placeholder="Giá trị">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+                    </div>
+                </div>
+            `;
+
+            groupWrapper.querySelector('.sub-items-wrapper').insertAdjacentHTML('beforeend', subHTML);
+        }
+
+        // Xoá nhãn
+        if (e.target.classList.contains('remove-sub')) {
+            e.target.closest('.sub-item').remove();
+        }
+    });
+});
+    document.addEventListener('DOMContentLoaded', function () {
+        // Xoá nhóm chi tiết sản phẩm
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-group')) {
+                const group = e.target.closest('.group-wrapper');
+                if (group) {
+                    group.remove();
+                }
+            }
+        });
+    });
+$('#add-group').click(function () {
+    let index = $('.group-wrapper').length;
+    let html = `
+<div class="group-wrapper position-relative mb-4" data-group-index="${index}">
+    <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" style="z-index:10;" aria-label="Close"></button>
+    <div class="mb-2">
+        <input type="text" name="details[${index}][group_name]" class="form-control" placeholder="Tên nhóm (ví dụ: Cách giặt)">
+    </div>
+    <div class="sub-items-wrapper">
+        <div class="row mb-2 sub-item">
+            <div class="col-md-5">
+                <input type="text" name="details[${index}][items][0][label]" class="form-control" placeholder="Nhãn">
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="details[${index}][items][0][value]" class="form-control" placeholder="Giá trị">
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+        <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+    </button>
+</div>
+`;
+
+    $('#product-details-container').append(html);
+});
+$(document).on('click', '.remove-group', function () {
+    $(this).closest('.group-wrapper').remove();
+});
     </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('product-details-container');
+
+        // Xóa nhóm chi tiết
+        container.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-group')) {
+                const group = e.target.closest('.group-wrapper');
+                if (group) group.remove();
+            }
+        });
+    });
+</script>
+
 
 
 

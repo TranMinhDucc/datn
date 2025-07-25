@@ -6,13 +6,15 @@
         </li>
         <li> <a class="nav-link" href="#">Shop<span> <i class="fa-solid fa-angle-down"></i></span></a>
             <ul class="nav-submenu">
-                <li> <a href="collection-left-sidebar.html">Collection Left Sidebar</a></li>
+                <li><a href="{{ route('client.products.filterSidebar') }}">Collection Left Sidebar</a></li>
+
+
                 <li> <a href="collection-right-sidebar.html">Collection Right Sidebar</a></li>
                 <li> <a href="collection-no-sidebar.html">Collection No Sidebar</a></li>
                 <li> <a href="collection-3-grid.html">Collection 3 Grid</a></li>
                 <li> <a href="collection-4-grid.html">Collection 4 Grid</a></li>
                 <li> <a href="collection-list-view.html">Collection List View <span
-                            class="badge-sm theme-default">new</span></a></li>
+                            class="badge-sm theme-default">new</span></a></li>s
                 <li> <a href="collection-slider.html">Collection Slider</a></li>
                 <li> <a href="offcanvas-filter.html">Offcanvas Filter </a></li>
                 <li> <a href="load-more.html">Load More<span class="badge-sm danger-color animated">Hot</span></a></li>
@@ -88,7 +90,7 @@
         </li>
         <li> <a class="nav-link" href="#">Page <span> <i class="fa-solid fa-angle-down"></i></span></a>
             <ul class="nav-submenu">
-                <li> <a href="search.html">Search</a></li>
+                <li> <a href="{{route('client.products.search')}}">Search</a></li>
                 <li> <a href="wishlist.html">Wishlist</a></li>
                 <li> <a href="{{ route('client.faq.index') }}">Faq</a></li>
                 <li> <a href="dashboard.html">My Dashboard <span class="badge-sm theme-default">new</span></a></li>

@@ -2,38 +2,7 @@
 @section('title', 'Danh sách sản phẩm')
 @section('content')
 
-<div class="d-flex flex-column flex-column-fluid">
-    @if (session('success'))
-    {{-- <div class="notice d-flex bg-light-success rounded border-success border border-dashed p-6 mb-5">
-        <!--begin::Icon-->
-        <span class="svg-icon svg-icon-2tx svg-icon-success me-4">
-            <i class="ki-duotone ki-check-circle fs-2x text-success"></i>
-        </span>
-        <!--end::Icon-->
 
-        <!--begin::Content-->
-        <div class="d-flex flex-column pe-0 pe-sm-10">
-            <span class="text-gray-700">{{ session('success') }}</span>
-</div>
-<!--end::Content-->
-</div> --}}
-<!--begin::Alert-->
-<div class="alert alert-success d-flex align-items-center p-5">
-    <!--begin::Icon-->
-    <i class="fa-solid fa-circle-check fs-2hx text-success me-4"><span class="path1"></span><span
-            class="path2"></span></i>
-    <!--end::Icon-->
-
-    <!--begin::Wrapper-->
-    <div class="d-flex flex-column">
-        <span>{{ session('success') }}</span>
-    </div>
-    <!--end::Wrapper-->
-</div>
-<!--end::Alert-->
-</div>
-<!--end::Alert-->
-@endif
 <!--begin::Toolbar-->
 <div id="kt_app_toolbar" class="app-toolbar  py-3 py-lg-6 ">
 
@@ -228,16 +197,18 @@
             <!--begin::Card header-->
             <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                 <!--begin::Card title-->
-                <div class="card-title">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
-                        <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"><span
-                                class="path1"></span><span class="path2"></span></i> <input type="text"
-                            data-kt-ecommerce-product-filter="search"
-                            class="form-control form-control-solid w-250px ps-12" placeholder="Search Product" />
+                <form method="GET" action="{{ route('admin.search') }}">
+                    <div class="card-title">
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                            <input type="hidden" name="module" value="products"> <!-- module phải được gửi -->
+                            <input type="text" name="keyword" class="form-control form-control-solid w-250px ps-12"
+                                placeholder="Tìm kiếm sản phẩm" value="{{ request('keyword') }}">
+                        </div>
                     </div>
-                    <!--end::Search-->
-                </div>
+                </form>
+
+
                 <!--end::Card title-->
 
                 <!--begin::Card toolbar-->
@@ -254,7 +225,9 @@
                         </select>
                         <!--end::Select2-->
                     </div>
-
+                    <a href="{{ route('admin.products.trash') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-trash"></i> Thùng rác
+                    </a>
                     <!--begin::Add product-->
                     <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
                         Thêm Sản Phẩm
@@ -270,7 +243,7 @@
 
                 <!--begin::Table-->
                 <div style="overflow-x: auto;">
-                    <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;"
+                    <table class="table align-middle table-row-dashed fs-6 gy-5 " style="min-width: 1300px;"
                         id="kt_ecommerce_products_table">
 
                         <thead>
@@ -279,7 +252,8 @@
                                 <th class="w-10px pe-2 text-center">
                                     <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
                                         <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                            data-kt-check-target="#kt_ecommerce_products_table .form-check-input" value="1" />
+                                            data-kt-check-target="#kt_ecommerce_products_table .form-check-input"
+                                            value="1" />
                                     </div>
                                 </th>
 
@@ -303,7 +277,8 @@
                                 {{-- Checkbox --}}
                                 <td class="text-center">
                                     <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox" value="{{ $product->id }}" />
+                                        <input class="form-check-input" type="checkbox"
+                                            value="{{ $product->id }}" />
                                     </div>
                                 </td>
 
@@ -329,17 +304,23 @@
 
                                 {{-- Giá nhập --}}
                                 <td class="text-center">
-                                    <span class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }} đ</span>
+                                    <span
+                                        class="fw-bold text-gray-800">{{ number_format($product->import_price, 0, ',', '.') }}
+                                        đ</span>
                                 </td>
 
                                 {{-- Giá gốc --}}
                                 <td class="text-center">
-                                    <span class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }} đ</span>
+                                    <span
+                                        class="fw-bold text-dark">{{ number_format($product->base_price, 0, ',', '.') }}
+                                        đ</span>
                                 </td>
 
                                 {{-- Giá khuyến mãi --}}
                                 <td class="text-center">
-                                    <span class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }} đ</span>
+                                    <span
+                                        class="fw-bold text-success">{{ number_format($product->sale_price ?? 0, 0, ',', '.') }}
+                                        đ</span>
                                 </td>
 
                                 {{-- Kho hàng --}}
@@ -351,7 +332,7 @@
                                         {{ $product->category->name ?? 'Chưa phân loại' }}
 
                                         {{-- <span class="badge bg-light-info text-dark">
-                                            {{ $product->category->name ?? 'Chưa phân loại' }}
+                                                    {{ $product->category->name ?? 'Chưa phân loại' }}
                                         </span> --}}
                                     </a>
                                 </td>
@@ -373,17 +354,20 @@
                                 {{-- Thao tác --}}
                                 <td class="text-center">
                                     <div class="dropdown">
-                                        <button class="btn btn-sm btn-light btn-active-light-primary" data-bs-toggle="dropdown">
+                                        <button class="btn btn-sm btn-light btn-active-light-primary"
+                                            data-bs-toggle="dropdown">
                                             <i class="fa-solid fa-ellipsis-h"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a href="{{ route('admin.products.edit', $product->id) }}" class="dropdown-item">
+                                                <a href="{{ route('admin.products.edit', $product->id) }}"
+                                                    class="dropdown-item">
                                                     <i class="fa-solid fa-pen-to-square me-2 text-primary"></i> Sửa
                                                 </a>
                                             </li>
                                             <li>
-                                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Xóa sản phẩm này?')">
+                                                <form action="{{ route('admin.products.destroy', $product->id) }}"
+                                                    method="POST" onsubmit="return confirm('Xóa sản phẩm này?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
@@ -404,9 +388,14 @@
                 </div>
                 {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
                 <!--end::Table-->
+                <!--begin::Pagination-->
+                {{-- <div class="d-flex justify-content-end mt-5">
+                        {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
+                    </div> --}}
+                <!--end::Pagination-->
 
                 {{-- <div class="d-flex justify-content-end">
-                            {{ $products->links() }}
+                        {{ $products->links() }}
             </div> --}}
 
         </div>

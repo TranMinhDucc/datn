@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ProductDetail;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
         'category_id',
         'brand_id',
+        'label_id',
         'name',
         'slug',
+        'sku',
         'description',
+        'detailed_description',
         'image',
         'import_price',
         'base_price',
@@ -26,6 +32,10 @@ class Product extends Model
         'starts_at',
         'ends_at',
         'sale_times',
+        'weight',
+        'length',
+        'width',
+        'height',
     ];
 
     // Quan hệ với danh mục
@@ -33,7 +43,10 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
+    public function label()
+    {
+        return $this->hasOne(ProductLabel::class, 'product_id');
+    }
     // Quan hệ với thương hiệu
     public function brand()
     {
@@ -53,9 +66,27 @@ class Product extends Model
     }
 
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
+
     // Quan hệ với tags
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags');
+    }
+    public function detail()
+    {
+        return $this->hasMany(ProductDetail::class, 'product_id', 'id');
+    }
+    public function productDetails()
+    {
+        return $this->hasMany(ProductDetail::class, 'product_id', 'id');
     }
 }
