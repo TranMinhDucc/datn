@@ -86,11 +86,11 @@
         }
     </style>
     @yield('style')
-<<<<<<< HEAD
-    @if(Auth::check())
-=======
+
+
+
     @if (Auth::check())
->>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
+
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
@@ -125,7 +125,7 @@
 
 <script>
     @auth
-        const userId = '{{ auth()->user()->id }}';
+                const userId = '{{ auth()->user()->id }}';
         const guestKey = 'cartItems_guest';
         const userKey = `cartItems_${userId}`;
 
@@ -157,7 +157,7 @@
     @endauth
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const slides = document.querySelectorAll('.fade-slide');
         let currentIndex = 0;
 
@@ -556,7 +556,7 @@
     // ================================
     // 3. DOMContentLoaded: GÁN SỰ KIỆN
     // ================================
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         renderCartItems();
 
         // Bấm nút thêm vào giỏ hàng
@@ -564,8 +564,8 @@
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        sizeItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -573,8 +573,8 @@
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function(item) {
-            item.addEventListener('click', function() {
+        colorItems.forEach(function (item) {
+            item.addEventListener('click', function () {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -582,15 +582,15 @@
     });
 
     // Reload lại nếu quay lại bằng Back/Forward
-    window.addEventListener('pageshow', function(event) {
+    window.addEventListener('pageshow', function (event) {
         if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type ===
-                "back_forward")) {
+            "back_forward")) {
             window.location.reload();
         }
     });
 
     // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
-    document.addEventListener('cartUpdated', function() {
+    document.addEventListener('cartUpdated', function () {
         renderCartItems();
     });
 </script>
@@ -624,17 +624,17 @@
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
-<<<<<<< HEAD
+
                 toastr.options.onclick = function () {
-=======
-                toastr.options.onclick = function() {
->>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
-                    if (notification.url) {
-                        window.location.href = notification.url;
-                    }
-                };
-                toastr.info("Bạn có một thông báo mới");
-            });
+
+                    toastr.options.onclick = function () {
+
+                        if (notification.url) {
+                            window.location.href = notification.url;
+                        }
+                    };
+                    toastr.info("Bạn có một thông báo mới");
+                });
     @endif
 </script>
 <script>
@@ -657,11 +657,10 @@
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
-<<<<<<< HEAD
-@if(Auth::check() && isset($unreadNotifications) && $unreadNotifications->count())
-=======
+
+
 @if (Auth::check() && $unreadNotifications->count())
->>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
+
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
@@ -677,7 +676,7 @@
                 "progressBar": true,
                 "timeOut": "8000",
                 "extendedTimeOut": "1000",
-                "onclick": function() {
+                "onclick": function () {
                     if (data.url) {
                         window.location.href = data.url;
                     }
@@ -689,6 +688,5 @@
     </script>
 @endif
 
-<!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
 </html>
