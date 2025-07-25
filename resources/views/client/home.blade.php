@@ -163,7 +163,27 @@
                 </div>
             </div>
         </div>
+
     </section>  --}}
+
+
+    </section>  
+<div class="slideshow-container">
+    @foreach ($banners as $index => $banner)
+        <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
+            <div class="custom-container container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="home-content">
+                            <p>{{ $banner->subtitle }} -</p>
+                            @php
+                                $titleWords = explode(' ', $banner->title);
+                                $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
+                                $remainingWords = implode(' ', array_slice($titleWords, 7));
+                            @endphp
+
+    </section> --}}
+
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -177,6 +197,7 @@
                                     $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
                                     $remainingWords = implode(' ', array_slice($titleWords, 7));
                                 @endphp
+
 
                                 <h3>{{ $firstFiveWords }}</h3>
                                 <h2>{{ $remainingWords }}</h2>
@@ -241,6 +262,7 @@
         <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
+
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
                             <div class="fashion-box ">
@@ -252,6 +274,20 @@
                             <h5>{{ $category->name }}</h5>
                         </div>
                     @endforeach
+
+                       @foreach ($categories as $category)
+        <div class="swiper-slide text-center">
+            <div class="fashion-box mb-2">
+                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
+                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
+                    <img class="img-fluid rounded-circle category-circle-img"
+                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                </a>
+            </div>
+            <h5>{{ $category->name }}</h5>
+        </div>
+    @endforeach
+
                 </div>
             </div>
         </div>
@@ -298,20 +334,14 @@
                                             <div class="col-xxl-3 col-md-4 col-6">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-                                                        @if ($product->label)
-                                                            <div class="label-block">
-                                                                @foreach ($product->label as $product_label)
-                                                                    <div class="label-item-wrapper"
-                                                                        style="display:inline-block;max-width:60px;margin-right:10px">
-                                                                        <img style="width:100%"
-                                                                            class="{{ $product_label->position }}"
-                                                                            src="{{ $product_label->image }}"
-                                                                            alt="lable">
-                                                                    </div>
-                                                                @endforeach
-                                                                {{-- <span>on <br>Sale!</span> --}}
-                                                            </div>
-                                                        @endif
+                                                       @if ($product->label && is_object($product->label))
+    <div class="label-block">
+        <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+            <img style="width:100%" class="{{ $product->label->position }}" src="{{ $product->label->image }}" alt="label">
+        </div>
+    </div>
+@endif
+
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
 
