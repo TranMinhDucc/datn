@@ -27,7 +27,6 @@ use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResp
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Notifications\DatabaseNotification;
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;

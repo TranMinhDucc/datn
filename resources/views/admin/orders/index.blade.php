@@ -76,12 +76,23 @@
                         <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                             <!--begin::Card title-->
 <<<<<<< HEAD
+<<<<<<< HEAD
                            <!--begin::Card title-->
 <!--begin::Card title-->
 <!--begin::Card title-->
+=======
+>>>>>>> 3dd5f17a7154e8c40768c620662af0c70540599b
 <div class="card-title w-100">
-    <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3 align-items-end mb-5">
+    <!-- Search đơn hàng -->
+    <div class="d-flex align-items-center position-relative my-1 mb-4">
+        <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+        <input type="text" data-kt-ecommerce-order-filter="search"
+               class="form-control form-control-solid w-250px ps-12"
+               placeholder="Search Order" />
+    </div>
 
+    <!-- Form lọc nâng cao -->
+    <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3 align-items-end mb-5">
         <!-- Mã đơn hàng -->
         <div class="col-md-2">
             <input type="text" name="order_code" class="form-control" placeholder="Mã Đơn Hàng" value="{{ request('order_code') }}">
@@ -122,6 +133,7 @@
         </div>
     </form>
 </div>
+<<<<<<< HEAD
 <!--end::Card title-->
 <!--end::Card title-->
 <!--end::Card title-->
@@ -137,6 +149,8 @@
                                 <!--end::Search-->
                             </div>
 >>>>>>> 492e84b2913a12c321af15a302773a5d717caebe
+=======
+>>>>>>> 3dd5f17a7154e8c40768c620662af0c70540599b
                             <!--end::Card title-->
 
                             <!--begin::Card toolbar-->
