@@ -27,7 +27,6 @@
     }
 </style>
 @section('content')
-
     {{-- <section class="section-space home-section-4">
 <div class="home-content">
             <div class="row">
@@ -117,7 +116,8 @@
                                 <div>
                                     <h6>Pursesess</h6>
                                     <h5>Best Women Bag</h5>
-                                </div><span>$65</span>
+                                </div>
+                                <span>$65</span>
                             </div>
                         </div>
                     </div>
@@ -141,30 +141,17 @@
                             <h4 class="animation-text">Collection</h4>
                         </div>
                     </div>
-                    <div class="shape-images"> <img class="img-1 img-fluid"
+                    <div class="shape-images"> 
+                        <img class="img-1 img-fluid"
                             src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
                             class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
-                            alt=""></div>
+                            alt="">
+                        </div>
                 </div>
             </div>
         </div>
 
     </section>  
-<div class="slideshow-container">
-    @foreach ($banners as $index => $banner)
-        <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
-            <div class="custom-container container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="home-content">
-                            <p>{{ $banner->subtitle }} -</p>
-                            @php
-                                $titleWords = explode(' ', $banner->title);
-                                $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
-                                $remainingWords = implode(' ', array_slice($titleWords, 7));
-                            @endphp
-
-    </section> --}}
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -178,18 +165,14 @@
                                     $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
                                     $remainingWords = implode(' ', array_slice($titleWords, 7));
                                 @endphp
-
-
                                 <h3>{{ $firstFiveWords }}</h3>
                                 <h2>{{ $remainingWords }}</h2>
                                 <h6>{{ strip_tags($banner->description) }}</h6>
                             </div>
-
                             <!-- Product 1 -->
                             <div class="product-1">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}"
-                                        alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}" alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_1_name }}</h6>
                                         <h5>${{ number_format($banner->sub_image_1_price, 0) }}
@@ -199,19 +182,16 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Product 2 -->
                             <div class="product-2">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}"
-                                        alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}" alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_2_name }}</h6>
                                         <span>${{ number_format($banner->sub_image_2_price, 0) }}</span>
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Main Image -->
                             <div class="home-images">
                                 <div class="main-images"></div>
@@ -272,21 +252,27 @@
                 <div class="col-12">
                     <div class="theme-tab-1">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item" role="presentation"><a class="nav-link active" data-bs-toggle="tab"
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" data-bs-toggle="tab"
                                     data-bs-target="#features-products" role="tab" aria-controls="features-products"
                                     aria-selected="true">
                                     <h6>Featured Products</h6>
-                                </a></li>
-                            <li class="nav-item" role="presentation"><a class="nav-link" data-bs-toggle="tab"
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab"
                                     data-bs-target="#latest-products" role="tab" aria-controls="latest-products"
                                     aria-selected="false">
                                     <h6>Latest Products</h6>
-                                </a></li>
-                            <li class="nav-item" role="presentation"><a class="nav-link" data-bs-toggle="tab"
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab"
                                     data-bs-target="#seller-products" role="tab" aria-controls="seller-products"
                                     aria-selected="false">
                                     <h6>Best Seller Products </h6>
-                                </a></li>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
@@ -307,7 +293,7 @@
             <img style="width:100%" class="{{ $product->label->position }}" src="{{ $product->label->image }}" alt="label">
         </div>
     </div>
-@endif
+      @endif
 
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
@@ -321,11 +307,14 @@
                                                                     data-bs-title="Add to Wishlist"></i>
                                                             </a>
                                                         </div>
-                                                        <div class="product-image"><a class="pro-first"
+                                                        <div class="product-image">
+                                                            <a class="pro-first"
                                                                 href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image) }}"
-                                                                    alt="{{ $product->name }}"></a></div>
+                                                                    alt="{{ $product->name }}">
+                                                                </a>
+                                                                </div>
 
                                                         <div class="countdown" style="bottom: 5px;"
                                                             data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
@@ -1107,3 +1096,5 @@
 
 
 @endsection
+
+
