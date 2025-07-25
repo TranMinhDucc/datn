@@ -14,6 +14,9 @@ class ShippingFee extends Model
         'shipping_method_id',
         'price',
         'free_shipping_minimum',
+        'province_id',
+        'district_id',
+        'ward_id',
     ];
     public function zone()
     {

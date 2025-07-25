@@ -31,9 +31,11 @@ class WishlistController extends Controller
         $exists = Wishlist::where('user_id', $userId)
             ->where('product_id', $productId)
             ->first();
-
         if ($exists) {
-            return response()->json(['success' => false, 'message' => 'Sản phẩm đã có trong danh sách yêu thích.']);
+            return response()->json([
+                'status' => 'exists',
+                'message' => 'Sản phẩm đã có trong danh sách yêu thích.'
+            ]);
         }
 
         Wishlist::create([
@@ -42,7 +44,10 @@ class WishlistController extends Controller
             'is_active' => 1,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Đã thêm vào danh sách yêu thích.']);
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Đã thêm vào danh sách yêu thích.'
+        ]);
     }
 
     // Xoá sản phẩm khỏi wishlist
