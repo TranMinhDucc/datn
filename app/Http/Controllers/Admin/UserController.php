@@ -289,13 +289,13 @@ class UserController extends Controller
     {
         $user = User::where('username', $username)->firstOrFail();
 
-        $transactions = Transaction::with('user')
-            ->where('user_id', $user->id)
+        $activities = UserActivityLog::where('username', $user->username)
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        return view('admin.users.balance-log', compact('transactions', 'user'));
+        return view('admin.users.activity-log', compact('activities', 'user'));
     }
+
 
 
 
