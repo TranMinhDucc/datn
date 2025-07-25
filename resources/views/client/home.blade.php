@@ -25,6 +25,18 @@
     position: relative;
     display: block;
 }
+.section-t-space {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.fashion-images {
+    margin-bottom: 0; /* giảm khoảng cách với phần tiếp theo */
+}
+
+.swiper-wrapper {
+    height: auto !important;
+}
 
  </style>
 @section('content')
@@ -165,7 +177,7 @@
                 <div class="swiper-wrapper ratio_square-2">
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
-                            <div class="fashion-box mb-2">
+                            <div class="fashion-box ">
                                 <a href="{{ route('client.category.show', $category->id) }}">
                                     <img class="img-fluid rounded-circle category-circle-img"
                                         src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
