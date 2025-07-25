@@ -19,12 +19,27 @@
         display: none;
     }
 
-    .fade-slide.active {
-        opacity: 1;
-        z-index: 1;
-        position: relative;
-        display: block;
-    }
+
+.fade-slide.active {
+    opacity: 1;
+    z-index: 1;
+    position: relative;
+    display: block;
+}
+.section-t-space {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.fashion-images {
+    margin-bottom: 0; /* giảm khoảng cách với phần tiếp theo */
+}
+
+.swiper-wrapper {
+    height: auto !important;
+}
+
+
 </style>
 @section('content')
 
@@ -77,7 +92,7 @@
 </div>
 </div>
 </section> --}}
-    <section class="section-space home-section-4">
+    {{-- <section class="section-space home-section-4">
         <div class="custom-container container">
             <div class="row">
                 <div class="col-12">
@@ -149,6 +164,9 @@
             </div>
         </div>
 
+    </section>  --}}
+
+
     </section>  
 <div class="slideshow-container">
     @foreach ($banners as $index => $banner)
@@ -165,6 +183,7 @@
                             @endphp
 
     </section> --}}
+
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -243,6 +262,19 @@
         <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
+
+                    @foreach ($categories as $category)
+                        <div class="swiper-slide text-center">
+                            <div class="fashion-box ">
+                                <a href="{{ route('client.category.show', $category->id) }}">
+                                    <img class="img-fluid rounded-circle category-circle-img"
+                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                                </a>
+                            </div>
+                            <h5>{{ $category->name }}</h5>
+                        </div>
+                    @endforeach
+
                        @foreach ($categories as $category)
         <div class="swiper-slide text-center">
             <div class="fashion-box mb-2">
@@ -255,6 +287,7 @@
             <h5>{{ $category->name }}</h5>
         </div>
     @endforeach
+
                 </div>
             </div>
         </div>
