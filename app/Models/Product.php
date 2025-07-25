@@ -47,6 +47,7 @@ class Product extends Model
     {
         return $this->hasOne(ProductLabel::class, 'product_id');
     }
+
     // Quan hệ với thương hiệu
     public function brand()
     {

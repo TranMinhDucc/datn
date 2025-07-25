@@ -86,19 +86,24 @@
         }
     </style>
     @yield('style')
+<<<<<<< HEAD
+    @if(Auth::check())
+=======
     @if (Auth::check())
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
 
 <script>
     @auth
-    localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
+        localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
     @else
         localStorage.setItem('currentUser', 'guest');
     @endauth
 </script>
-{{-- <script>
+{{--
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         const swiper = new Swiper('.main-images', {
             loop: true,
@@ -120,35 +125,35 @@
 
 <script>
     @auth
-    const userId = '{{ auth()->user()->id }}';
-    const guestKey = 'cartItems_guest';
-    const userKey = `cartItems_${userId}`;
+        const userId = '{{ auth()->user()->id }}';
+        const guestKey = 'cartItems_guest';
+        const userKey = `cartItems_${userId}`;
 
-    const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
-    const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
+        const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
+        const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
 
-    // Hàm merge
-    function mergeCarts(userCart, guestCart) {
-        guestCart.forEach(gItem => {
-            const index = userCart.findIndex(
-                uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
-            );
+        // Hàm merge
+        function mergeCarts(userCart, guestCart) {
+            guestCart.forEach(gItem => {
+                const index = userCart.findIndex(
+                    uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
+                );
 
-            if (index !== -1) {
-                userCart[index].quantity += gItem.quantity;
-            } else {
-                userCart.push(gItem);
-            }
-        });
+                if (index !== -1) {
+                    userCart[index].quantity += gItem.quantity;
+                } else {
+                    userCart.push(gItem);
+                }
+            });
 
-        return userCart;
-    }
+            return userCart;
+        }
 
-    const mergedCart = mergeCarts(userCart, guestCart);
+        const mergedCart = mergeCarts(userCart, guestCart);
 
-    localStorage.setItem(userKey, JSON.stringify(mergedCart));
-    localStorage.removeItem(guestKey); // xoá cart guest
-    localStorage.setItem('currentUser', userId); // cập nhật currentUser
+        localStorage.setItem(userKey, JSON.stringify(mergedCart));
+        localStorage.removeItem(guestKey); // xoá cart guest
+        localStorage.setItem('currentUser', userId); // cập nhật currentUser
     @endauth
 </script>
 <script>
@@ -258,11 +263,9 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i
-                                                class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i
-                                                class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -320,20 +323,17 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
                             Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Shoes
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>
@@ -441,8 +441,7 @@
         </script>
     @endif
 
-    <div id="toast-container"
-        style="
+    <div id="toast-container" style="
     position: fixed;
     top: 20px;
     right: 20px;
@@ -598,7 +597,7 @@
 
 
 <script>
-    document.addEventListener('cartUpdated', function() {
+    document.addEventListener('cartUpdated', function () {
         if (typeof renderCartItems === 'function') {
             renderCartItems();
         }
@@ -625,7 +624,11 @@
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
+<<<<<<< HEAD
+                toastr.options.onclick = function () {
+=======
                 toastr.options.onclick = function() {
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
                     if (notification.url) {
                         window.location.href = notification.url;
                     }
@@ -654,7 +657,11 @@
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
+<<<<<<< HEAD
+@if(Auth::check() && isset($unreadNotifications) && $unreadNotifications->count())
+=======
 @if (Auth::check() && $unreadNotifications->count())
+>>>>>>> b3bf6514f22243df615c112f1a4f787d27107ab0
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
