@@ -166,28 +166,7 @@
             </div>
         </div>
 
-    </section>  --}}
-
-
-    </section>  
-
-<div class="slideshow-container">
-    @foreach ($banners as $index => $banner)
-        <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
-            <div class="custom-container container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="home-content">
-                            <p>{{ $banner->subtitle }} -</p>
-                            @php
-                                $titleWords = explode(' ', $banner->title);
-                                $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
-                                $remainingWords = implode(' ', array_slice($titleWords, 7));
-                            @endphp
-
-    </section> --}}
-
-
+    </section>   --}}
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -201,14 +180,17 @@
                                     $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
                                     $remainingWords = implode(' ', array_slice($titleWords, 7));
                                 @endphp
+
                                 <h3>{{ $firstFiveWords }}</h3>
                                 <h2>{{ $remainingWords }}</h2>
                                 <h6>{{ strip_tags($banner->description) }}</h6>
                             </div>
+
                             <!-- Product 1 -->
                             <div class="product-1">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_1_name }}</h6>
                                         <h5>${{ number_format($banner->sub_image_1_price, 0) }}
@@ -218,16 +200,19 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Product 2 -->
                             <div class="product-2">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_2_name }}</h6>
                                         <span>${{ number_format($banner->sub_image_2_price, 0) }}</span>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Main Image -->
                             <div class="home-images">
                                 <div class="main-images"></div>
@@ -259,19 +244,6 @@
         <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
-
-                    @foreach ($categories as $category)
-                        <div class="swiper-slide text-center">
-                            <div class="fashion-box ">
-                                <a href="{{ route('client.category.show', $category->id) }}">
-                                    <img class="img-fluid rounded-circle category-circle-img"
-                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
-                                </a>
-                            </div>
-                            <h5>{{ $category->name }}</h5>
-                        </div>
-                    @endforeach
-
                        @foreach ($categories as $category)
         <div class="swiper-slide text-center">
             <div class="fashion-box mb-2">
@@ -284,7 +256,6 @@
             <h5>{{ $category->name }}</h5>
         </div>
     @endforeach
-
                 </div>
             </div>
         </div>

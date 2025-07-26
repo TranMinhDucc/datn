@@ -125,7 +125,7 @@
 
 <script>
     @auth
-                const userId = '{{ auth()->user()->id }}';
+                                                                                        const userId = '{{ auth()->user()->id }}';
         const guestKey = 'cartItems_guest';
         const userKey = `cartItems_${userId}`;
 
@@ -316,34 +316,27 @@
         </div>
         <div class="offcanvas-body theme-scrollbar">
             <div class="container">
-                <h3>What are you trying to find?</h3>
-                <div class="search-box">
-                    <input type="search" name="text" placeholder="I'm looking for…"><i class="iconsax"
-                        data-icon="search-normal-2"></i>
+                <h3>Bạn đang cố gắng tìm kiếm ?</h3>
+                <div class="search-box position-relative">
+                    <input type="search" id="liveSearchInput" name="text" placeholder="Tôi đang tìm kiếm..."
+                        autocomplete="off">
+                    <i class="iconsax" data-icon="search-normal-2"></i>
+                    <div id="liveSearchResults" class="bg-white border mt-2 position-absolute w-100 p-2 rounded shadow"
+                        style="z-index:999; display:none;">
+                    </div>
                 </div>
-                <h4>Popular Searches</h4>
+                <h4>Tìm kiếm phổ biến</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
-                            Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
-                            Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Blazer Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
-                            Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>T-Shirts Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Bags</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Sneakers Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
-                                data-icon="search-normal-2"></i>Dresses</a></li>
+                    @foreach($popularSearches as $search)
+                        <li>
+                            <a href="{{ route('client.products.search', ['keyword' => $search->keyword]) }}">
+                                <i class="iconsax" data-icon="search-normal-2"></i>{{ ucfirst($search->keyword) }}
+                                ({{ $search->count }})
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
+
                 <h4>Có thể bạn sẽ thích</h4>
                 <div class="row gy-4 ratio_square-2 preemptive-search">
                     @foreach ($recommendedProducts as $item)
@@ -451,7 +444,70 @@
     gap: 10px;
 ">
     </div>
+
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("liveSearchInput");
+        const results = document.getElementById("liveSearchResults");
+
+        if (!input || !results) return;
+
+        input.addEventListener("input", function () {
+            const keyword = input.value.trim();
+
+            if (keyword.length < 2) {
+                results.style.display = "none";
+                return;
+            }
+
+            fetch(`/search/suggest?q=${encodeURIComponent(keyword)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        results.innerHTML = '<div class="text-muted">Không tìm thấy sản phẩm</div>';
+                    } else {
+                        results.innerHTML = data.map(item => `
+                        <a href="/products/${item.slug}" class="d-flex align-items-center gap-2 py-1 text-decoration-none text-dark">
+                            <img src="/storage/${item.image}" width="40" height="40" style="object-fit:cover">
+                            <div>
+                                <div>${item.name}</div>
+                                <small class="text-muted">${(item.sale_price ?? item.base_price).toLocaleString()}₫</small>
+                            </div>
+                        </a>
+                    `).join('');
+                    }
+
+                    results.style.display = "block";
+                });
+        });
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault(); // Ngăn submit form nếu có
+
+                const keyword = input.value.trim();
+                if (keyword.length >= 2) {
+                    window.location.href = `/products/search?keyword=${encodeURIComponent(keyword)}`;
+                }
+            }
+        });
+        // // Thêm đoạn này để xử lý Enter
+        // input.addEventListener("keypress", function (e) {
+        //     if (e.key === "Enter") {
+        //         const keyword = input.value.trim();
+        //         if (keyword.length >= 2) {
+        //             window.location.href = `/search?q=${encodeURIComponent(keyword)}`;
+        //         }
+        //     }
+        // });
+
+        document.addEventListener("click", function (e) {
+            if (!e.target.closest(".search-box")) {
+                results.style.display = "none";
+            }
+        });
+    });
+</script>
 
 
 
@@ -686,6 +742,8 @@
             toastr.info(message, "Thông báo đơn hàng");
         });
     </script>
+
+
 @endif
 
 

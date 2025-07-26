@@ -19,7 +19,7 @@
             data-kt-toggle-name="app-sidebar-minimize">
             <i class="fa-regular fa-square-caret-left fs-3 rotate-180"></i>
             {{-- <i class="ki-duotone ki-black-left-line fs-3 rotate-180"> --}}
-            <span class="path1"></span><span class="path2"></span></i>
+                <span class="path1"></span><span class="path2"></span></i>
         </div>
         <!--end::Sidebar toggle-->
     </div>
@@ -131,6 +131,17 @@
                         </a>
                         <!--end:Menu link-->
                     </div>
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="menu-link" href="{{ route('admin.banners.index') }}" target="_blank">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-star fs-4"><span class="path1"></span><span
+                                        class="path2"></span></i>
+                            </span>
+                            <span class="menu-title">Banner</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
                                     class="fa-solid fa-location-arrow fs-4"></i><span class="path1"></span><span
@@ -141,9 +152,8 @@
                             <!--begin:Menu item-->
                             <div class="menu-item">
                                 <!--begin:Menu link--><a class="menu-link"
-                                    href="{{ route('admin.shipping-addresses.index') }}"><span
-                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
-                                        class="menu-title">Địa chỉ
+                                    href="{{ route('admin.shipping-addresses.index') }}"><span class="menu-bullet"><span
+                                            class="bullet bullet-dot"></span></span><span class="menu-title">Địa chỉ
                                         khách hàng</span></a><!--end:Menu link-->
                             </div>
                             <!--end:Menu item--><!--begin:Menu item-->
@@ -225,32 +235,30 @@
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.coupons.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-percent fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span
-                                        class="path3"></span><span class="path4"></span></i></span><span
-                                class="menu-title">Mã giảm
+                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
+                                        class="path4"></span></i></span><span class="menu-title">Mã giảm
                                 giá</span></a><!--end:Menu link-->
                     </div>
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.brands.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span
-                                        class="path3"></span><span class="path4"></span></i></span><span
-                                class="menu-title">Thương
+                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
+                                        class="path4"></span></i></span><span class="menu-title">Thương
                                 hiệu</span></a><!--end:Menu link-->
                     </div>
 
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.faq.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span
-                                        class="path3"></span><span class="path4"></span></i></span><span
+                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
+                                        class="path4"></span></i></span><span
                                 class="menu-title">FAQ</span></a><!--end:Menu link-->
                     </div>
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.tags.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
-                                        class="path1"></span><span class="path2"></span><span
-                                        class="path3"></span><span class="path4"></span></i></span><span
+                                        class="path1"></span><span class="path2"></span><span class="path3"></span><span
+                                        class="path4"></span></i></span><span
                                 class="menu-title">Tags</span></a><!--end:Menu link-->
                     </div>
                     <!--end:Menu item-->
@@ -271,9 +279,9 @@
                             </div>
                             <!--end:Menu item--><!--begin:Menu item-->
                             <div class="menu-item">
-                                <!--begin:Menu link--><a class="menu-link"
-                                    href="{{ route('admin.blogs.index') }}"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span class="menu-title">Tất cả
+                                <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.blogs.index') }}"><span
+                                        class="menu-bullet"><span class="bullet bullet-dot"></span></span><span
+                                        class="menu-title">Tất cả
                                         bài viết</span></a><!--end:Menu link-->
                             </div>
                             <div class="menu-item">
@@ -295,9 +303,8 @@
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-fees.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-truck-fast fs-4"></i><span
-                                    class="path1"></span><span class="path2"></span><span
-                                    class="path3"></span><span class="path4"></span></i></span><span
-                                class="menu-title">Phí
+                                    class="path1"></span><span class="path2"></span><span class="path3"></span><span
+                                    class="path4"></span></i></span><span class="menu-title">Phí
                                 ship</span></a><!--end:Menu link-->
                     </div>
                     <!--end:Menu item--><!--begin:Menu item-->
