@@ -18,18 +18,19 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use App\Http\Requests\CustomResetPasswordRequest;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
-// Removed import for non-existent ResetPasswordRequest
 use Laravel\Fortify\Contracts\ResetPasswordViewResponse;
 use App\Actions\Fortify\LoginResponse as CustomLoginResponse;
 use App\Actions\Fortify\RegisterResponse as CustomRegisterResponse;
 use App\Actions\Fortify\ResetPasswordResponse as CustomResetPasswordResponse;
 use App\Actions\Fortify\ResetPasswordViewResponse as CustomResetPasswordViewResponse;
+
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SearchHistory;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,7 +40,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(ResetsUserPasswords::class, ResetUserPassword::class);
-        // Removed binding for ResetPasswordRequest as it does not exist in Fortify
     }
 
     public function boot()
@@ -47,10 +47,15 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
 
-        Fortify::loginView(fn() => view('client.auth.login'));
-        Fortify::registerView(fn() => view('client.auth.register'));
-        Fortify::requestPasswordResetLinkView(fn() => view('client.auth.request-reset-password'));
-        Fortify::verifyEmailView(fn() => view('client.auth.verify-email'));
+Fortify::loginView(fn () => view('client.auth.login'));
+Fortify::registerView(fn () => view('client.auth.register'));
+Fortify::requestPasswordResetLinkView(fn () => view('client.auth.request-reset-password'));
+Fortify::verifyEmailView(fn () => view('client.auth.verify-email'));
+
+View::composer('*', function ($view) {
+    $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
+    $view->with('popularSearches', $popularSearches);
+});
 
         $this->app->singleton(
             ResetPasswordViewResponse::class,
@@ -61,11 +66,8 @@ class AppServiceProvider extends ServiceProvider
             app(CustomLoginValidation::class)($request);
             return User::where('email', $request->email)->first();
         });
-        // Lấy tất cả settings từ database
-        $settings = Setting::all()->pluck('value', 'key')->toArray();
-        // ✅ Chia sẻ cho tất cả view
-        View::share('settings', $settings);
 
+        // ✅ Composer menus (header, footer, sidebar)
         View::composer('*', function ($view) {
             $headerMenus = Menu::with('children')
                 ->where('position', 'header')
@@ -91,8 +93,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with(compact('headerMenus', 'footerMenus', 'sidebarMenus'));
         });
 
-
-        // ✅ Kiểm tra bảng settings có tồn tại không trước khi truy cập
+        // ✅ Kiểm tra bảng settings tồn tại rồi chia sẻ
         if (Schema::hasTable('settings')) {
             $settings = Cache::remember('global_settings', 3600, function () {
                 return Setting::all()->pluck('value', 'name');
@@ -101,6 +102,7 @@ class AppServiceProvider extends ServiceProvider
             View::share('settings', $settings);
         }
 
+        // ✅ Composer thông báo chưa đọc
         View::composer('*', function ($view) {
             $notifications = collect();
 

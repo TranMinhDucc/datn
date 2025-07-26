@@ -29,6 +29,13 @@ class ShippingFeeController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
+        $request->merge([
+            'district_id' => $request->input('district_id') ?: null,
+            'ward_id' => $request->input('ward_id') ?: null,
+        ]);
+
         $validated = $request->validate([
             'province_id' => 'required|exists:provinces,id',
             'district_id' => 'nullable|exists:districts,id',
@@ -37,7 +44,7 @@ class ShippingFeeController extends Controller
             'free_shipping_minimum' => 'nullable|numeric|min:0',
         ]);
 
-        ShippingFee::updateOrCreate(
+        $fee =  ShippingFee::updateOrCreate(
             [
                 'province_id' => $validated['province_id'],
                 'district_id' => $validated['district_id'] ?? null,
@@ -48,6 +55,7 @@ class ShippingFeeController extends Controller
                 'free_shipping_minimum' => $validated['free_shipping_minimum'] ?? null,
             ]
         );
+        // dd($fee->toArray());
 
         return redirect()->route('admin.shipping-fees.index')
             ->with('success', 'Phí vận chuyển đã được cập nhật hoặc thêm mới!');

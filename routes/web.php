@@ -49,6 +49,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\ProductLabelController;
@@ -56,17 +57,13 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Admin\SearchController;
-use App\Http\Controllers\Admin\EmailCampaignController;
-use App\Http\Controllers\Admin\ShippingFeeController;
-use App\Http\Controllers\Admin\ShippingMethodController;
-use App\Http\Controllers\Admin\ShippingZoneController;
+
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
-use App\Http\Controllers\Admin\ShopSettingController;
-use App\Http\Controllers\Admin\WishlistController;
+
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -104,6 +101,7 @@ Route::prefix('/')->name('client.')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
             Route::get('/search', 'search')->name('search');
+            Route::get('/search/suggest', 'suggest')->name('suggest');
             Route::get('{slug}', 'show')->name('show');
         });
     Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
@@ -153,8 +151,8 @@ Route::prefix('/')->name('client.')->group(function () {
 
     // Mua lại đơn hàng    
     Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
-    ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
-    ->name('orders.reorderData');
+        ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
+        ->name('orders.reorderData');
 });
 
 // // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
@@ -190,10 +188,10 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     // routes/web.php
 
-Route::get('/account/notifications', function () {
-    $notifications = auth()->user()->notifications()->paginate(10);
-    return view('account.notifications', compact('notifications'));
-})->middleware('auth');
+    Route::get('/account/notifications', function () {
+        $notifications = auth()->user()->notifications()->paginate(10);
+        return view('account.notifications', compact('notifications'));
+    })->middleware('auth');
     // UPDATE PROFILE
     Route::post('/profile/update', [AccountController::class, 'updateProfile'])->name('profile.update'); // ✅ Sửa ở đây
     Route::post('/change-password', [AccountController::class, 'changePassword'])->name('change_password.submit');
@@ -255,7 +253,7 @@ Route::prefix('admin')
         Route::get('products/trash', [ProductController::class, 'trash'])->name('products.trash');
         Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
-        Route::resource('products', ProductController::class); 
+        Route::resource('products', ProductController::class);
 
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);

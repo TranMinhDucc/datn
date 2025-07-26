@@ -273,8 +273,8 @@
     <script>
         const placeOrderUrl = "{{ route('client.checkout.place-order') }}";
 
-        sessionStorage.setItem('originalShippingFee',
-            {{ isset($shippingFee['success']) && $shippingFee['success'] ? $shippingFee['data']['total'] : 0 }});
+        // Khởi tạo sessionStorage với giá trị mặc định 0, sẽ được cập nhật sau
+        sessionStorage.setItem('originalShippingFee', 0);
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -293,18 +293,6 @@
             const productDiscount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
             const subtotalAfterDiscount = Math.max(0, originalSubtotal - productDiscount);
 
-            // // ✅ Phí ship gốc và giảm
-            // const originalShippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
-            // const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
-            // const actualShipping = Math.max(0, originalShippingFee - shippingDiscount);
-            // // SHIP
-            // const shippingDisplay = document.querySelector('.summary-total ul li:nth-child(2) span');
-            // if (shippingDisplay) {
-            //     shippingDisplay.textContent = actualShipping.toLocaleString('vi-VN', {
-            //         style: 'currency',
-            //         currency: 'VND'
-            //     });
-            // }
             // ✅ Phí ship gốc và giảm
             const originalShippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
             const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
@@ -319,18 +307,15 @@
                 });
             }
 
-
             // ✅ VAT
             const taxElement = document.getElementById('tax-value');
             const vatRate = parseFloat(taxElement?.dataset.vat || 0);
             const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
 
-
             // ✅ Tổng tiền thanh toán
             const total = Math.max(0, subtotalAfterDiscount + actualShipping + taxAmount);
 
             // ✅ Gán vào giao diện
-
             // Subtotal
             const subtotalEl = document.querySelector('.subtotal-amount');
             if (subtotalEl) {
@@ -339,17 +324,6 @@
                     currency: 'VND'
                 });
             }
-
-            // Shipping
-            // const shippingEl = document.querySelector('.summary-total ul li:nth-child(2) span');
-            // if (shippingEl) {
-            //     if (shippingDiscount > 0) {
-            //         shippingEl.textContent = `– ${shippingDiscount.toLocaleString('vi-VN')} ₫`;
-            //         shippingEl.classList.add('text');
-            //     } else {
-            //         shippingEl.textContent = 'Không có mã freeship';
-            //     }
-            // }
 
             // VAT
             if (taxElement) {
@@ -364,11 +338,7 @@
                     currency: 'VND'
                 });
             }
-            const defaultAddressRadio = document.querySelector('input[name="shipping_address_id"]:checked');
-            if (defaultAddressRadio) {
-                // Giả lập sự kiện change để tính phí ship
-                defaultAddressRadio.dispatchEvent(new Event('change'));
-            }
+
             // ✅ Danh sách sản phẩm
             const cartList = document.getElementById('checkout-cart-items');
             if (cartList) {
@@ -388,7 +358,6 @@
                         }
                         `).join(' / ')}</span>
                     </div>
-                    
                 `;
                         cartList.appendChild(li);
                     });
@@ -396,7 +365,14 @@
                     cartList.innerHTML = `<li><p>Giỏ hàng trống.</p></li>`;
                 }
             }
+
+            // Gọi API để tính phí ship ngay khi tải trang
+            const defaultAddressRadio = document.querySelector('input[name="shipping_address_id"]:checked');
+            if (defaultAddressRadio) {
+                defaultAddressRadio.dispatchEvent(new Event('change'));
+            }
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             const currentUser = localStorage.getItem('currentUser') || 'guest';
             const cartKey = `cartItems_${currentUser}`;
@@ -491,7 +467,41 @@
                 });
             });
 
-            updateCheckoutSummary(); // Khởi tạo lần đầu
+            // Gọi cập nhật phí ship ban đầu nếu có địa chỉ mặc định
+            const defaultAddressRadio = document.querySelector('input[name="shipping_address_id"]:checked');
+            if (defaultAddressRadio) {
+                const addressId = defaultAddressRadio.value;
+                const currentUser = localStorage.getItem('currentUser') || 'guest';
+                const cartKey = `cartItems_${currentUser}`;
+                const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+                fetch(`/shipping-fee/calculate?address_id=${addressId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                        },
+                        body: JSON.stringify({
+                            cartItems
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const newFee = parseFloat(data.total);
+                            sessionStorage.setItem('originalShippingFee', newFee);
+                            updateCheckoutSummary(newFee);
+                        } else {
+                            alert('❌ Không thể tính phí vận chuyển: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('❌ Lỗi khi gọi API phí ship:', err);
+                    });
+            } else {
+                updateCheckoutSummary(); // Cập nhật với phí 0 nếu không có địa chỉ mặc định
+            }
         });
 
         if (window.location.href.includes('/checkout')) {
@@ -504,6 +514,81 @@
             }
         }
 
+        // document.querySelector('.order-button button').addEventListener('click', function(e) {
+        //     e.preventDefault();
+
+        //     const currentUser = localStorage.getItem('currentUser') || 'guest';
+        //     const cartItems = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`)) || [];
+
+        //     const selectedShippingAddress = document.querySelector('input[name="shipping_address_id"]:checked')
+        //         ?.value;
+        //     const selectedPaymentMethodId = document.querySelector('input[name="payment_method_id"]:checked')
+        //     ?.value;
+
+        //     const productCoupon = JSON.parse(sessionStorage.getItem('productCoupon') || '{}');
+        //     const productCouponId = productCoupon.id || null;
+
+        //     const shippingCoupon = JSON.parse(sessionStorage.getItem('shippingCoupon') || '{}');
+        //     const shippingCouponId = shippingCoupon.id || null;
+
+        //     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        //     const discount = parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0;
+        //     const shippingFee = parseFloat(sessionStorage.getItem('originalShippingFee')) || 0;
+        //     const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
+        //     const actualShipping = Math.max(0, shippingFee - shippingDiscount);
+        //     const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+        //     const taxEl = document.getElementById('tax-value');
+        //     const vatRate = parseFloat(taxEl?.dataset.vat || 0);
+        //     const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
+
+        //     const dataToSend = {
+        //         cartItems,
+        //         shipping_address_id: selectedShippingAddress,
+        //         payment_method_id: selectedPaymentMethodId,
+        //         coupon_id: productCouponId,
+        //         shipping_coupon_id: shippingCouponId,
+        //         discount_amount: parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0,
+        //         shipping_fee: parseFloat(sessionStorage.getItem('originalShippingFee')) || 0,
+        //         tax_amount: taxAmount
+        //     };
+
+        //     console.log("📦 Dữ liệu gửi đi:", dataToSend);
+
+        //     fetch(placeOrderUrl, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+        //                     'content'),
+        //             },
+        //             body: JSON.stringify(dataToSend)
+        //         })
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             if (data.success) {
+        //                 localStorage.removeItem(`cartItems_${currentUser}`);
+
+        //                 // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
+        //                 sessionStorage.removeItem('shippingCoupon');
+        //                 sessionStorage.removeItem('productCoupon');
+
+        //                 window.location.href = '/order-success';
+        //             } else {
+        //                 alert('❌ ' + data.message);
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.error('❌ Lỗi fetch:', err);
+        //             alert('Lỗi khi gửi đơn hàng');
+        //         });
+
+        //     sessionStorage.removeItem('shippingCoupon');
+        //     sessionStorage.removeItem('productCoupon');
+        // });
+
+
+
         document.querySelector('.order-button button').addEventListener('click', function(e) {
             e.preventDefault();
 
@@ -514,6 +599,11 @@
                 ?.value;
             const selectedPaymentMethodId = document.querySelector('input[name="payment_method_id"]:checked')
                 ?.value;
+
+            // Lấy code phương thức thanh toán
+            const paymentMethods = @json($paymentMethods);
+            const selectedPaymentMethod = paymentMethods.find(m => m.id == selectedPaymentMethodId);
+            const paymentCode = selectedPaymentMethod ? selectedPaymentMethod.code : '';
 
             const productCoupon = JSON.parse(sessionStorage.getItem('productCoupon') || '{}');
             const productCouponId = productCoupon.id || null;
@@ -540,47 +630,65 @@
                 shipping_coupon_id: shippingCouponId,
                 discount_amount: parseFloat(sessionStorage.getItem('productDiscountAmount')) || 0,
                 shipping_fee: parseFloat(sessionStorage.getItem('originalShippingFee')) || 0,
-                tax_amount: taxAmount
+                tax_amount: taxAmount,
+                total_amount: subtotalAfterDiscount + actualShipping + taxAmount
             };
-
             console.log("📦 Dữ liệu gửi đi:", dataToSend);
 
-            fetch(placeOrderUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                    },
-                    body: JSON.stringify(dataToSend)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        localStorage.removeItem(`cartItems_${currentUser}`);
 
-                        // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
-                        sessionStorage.removeItem('shippingCoupon');
-                        sessionStorage.removeItem('productCoupon');
+            if (paymentCode === 'momo' || paymentCode === 'vnpay') {
+                fetch("{{ route('client.checkout.initiate-payment') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.url) {
+                            console.log("📦 URL thanh toán:", data.url);
 
-                        // 
-                        window.location.href = '/order-success';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(err => {
-                    console.error('❌ Lỗi fetch:', err);
-                    alert('Lỗi khi gửi đơn hàng');
-                });
-
-            sessionStorage.removeItem('shippingCoupon');
-            sessionStorage.removeItem('productCoupon');
+                            window.location.href = data.url;
+                        } else {
+                            alert('❌ ' + (data.message || 'Lỗi khởi tạo thanh toán online'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('❌ Lỗi fetch:', err);
+                        alert('Lỗi khi gửi đơn hàng');
+                    });
+            } else {
+                // Thanh toán thường (ví, COD...)
+                fetch(placeOrderUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.removeItem(`cartItems_${currentUser}`);
+                            sessionStorage.removeItem('shippingCoupon');
+                            sessionStorage.removeItem('productCoupon');
+                            window.location.href = '/order-success';
+                        } else {
+                            alert('❌ ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('❌ Lỗi fetch:', err);
+                        alert('Lỗi khi gửi đơn hàng');
+                    });
+            }
         });
     </script>
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -611,32 +719,5 @@
             }
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $('#province-select').on('change', function() {
-            const provinceId = $(this).val();
-            $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
-            $('#ward-select').html('<option value="">-- Chọn xã --</option>');
-            if (provinceId) {
-                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
-                    let html = '<option value="">-- Chọn huyện --</option>';
-                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
-                    $('#district-select').html(html);
-                });
-            }
-        });
-
-        $('#district-select').on('change', function() {
-            const districtId = $(this).val();
-            $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
-            if (districtId) {
-                $.get(`/api/wards?district_id=${districtId}`, function(data) {
-                    let html = '<option value="">-- Chọn xã --</option>';
-                    data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
-                    $('#ward-select').html(html);
-                });
-            }
-        });
-    </script>
+    <!-- Loại bỏ script trùng lặp -->
 @endsection
