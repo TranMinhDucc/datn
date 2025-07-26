@@ -30,6 +30,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SearchHistory;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,10 +47,15 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
 
-        Fortify::loginView(fn () => view('client.auth.login'));
-        Fortify::registerView(fn () => view('client.auth.register'));
-        Fortify::requestPasswordResetLinkView(fn () => view('client.auth.request-reset-password'));
-        Fortify::verifyEmailView(fn () => view('client.auth.verify-email'));
+Fortify::loginView(fn () => view('client.auth.login'));
+Fortify::registerView(fn () => view('client.auth.register'));
+Fortify::requestPasswordResetLinkView(fn () => view('client.auth.request-reset-password'));
+Fortify::verifyEmailView(fn () => view('client.auth.verify-email'));
+
+View::composer('*', function ($view) {
+    $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
+    $view->with('popularSearches', $popularSearches);
+});
 
         $this->app->singleton(
             ResetPasswordViewResponse::class,

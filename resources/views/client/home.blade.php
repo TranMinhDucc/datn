@@ -20,26 +20,26 @@
     }
 
 
-.fade-slide.active {
-    opacity: 1;
-    z-index: 1;
-    position: relative;
-    display: block;
-}
-.section-t-space {
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
+    .fade-slide.active {
+        opacity: 1;
+        z-index: 1;
+        position: relative;
+        display: block;
+    }
 
-.fashion-images {
-    margin-bottom: 0; /* giảm khoảng cách với phần tiếp theo */
-}
+    .section-t-space {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
 
-.swiper-wrapper {
-    height: auto !important;
-}
+    .fashion-images {
+        margin-bottom: 0;
+        /* giảm khoảng cách với phần tiếp theo */
+    }
 
-
+    .swiper-wrapper {
+        height: auto !important;
+    }
 </style>
 @section('content')
     {{-- <section class="section-space home-section-4">
@@ -166,28 +166,7 @@
             </div>
         </div>
 
-    </section>  --}}
-
-
-    </section>  
-
-<div class="slideshow-container">
-    @foreach ($banners as $index => $banner)
-        <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
-            <div class="custom-container container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="home-content">
-                            <p>{{ $banner->subtitle }} -</p>
-                            @php
-                                $titleWords = explode(' ', $banner->title);
-                                $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
-                                $remainingWords = implode(' ', array_slice($titleWords, 7));
-                            @endphp
-
-    </section> --}}
-
-
+    </section>   --}}
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -201,14 +180,17 @@
                                     $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
                                     $remainingWords = implode(' ', array_slice($titleWords, 7));
                                 @endphp
+
                                 <h3>{{ $firstFiveWords }}</h3>
                                 <h2>{{ $remainingWords }}</h2>
                                 <h6>{{ strip_tags($banner->description) }}</h6>
                             </div>
+
                             <!-- Product 1 -->
                             <div class="product-1">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_1_name }}</h6>
                                         <h5>${{ number_format($banner->sub_image_1_price, 0) }}
@@ -218,16 +200,19 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Product 2 -->
                             <div class="product-2">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_2_name }}</h6>
                                         <span>${{ number_format($banner->sub_image_2_price, 0) }}</span>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Main Image -->
                             <div class="home-images">
                                 <div class="main-images"></div>
@@ -259,11 +244,11 @@
         <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
-
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
-                            <div class="fashion-box ">
-                                <a href="{{ route('client.category.show', $category->id) }}">
+                            <div class="fashion-box mb-2">
+                                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
+                                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
                                     <img class="img-fluid rounded-circle category-circle-img"
                                         src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
                                 </a>
@@ -271,20 +256,6 @@
                             <h5>{{ $category->name }}</h5>
                         </div>
                     @endforeach
-
-                       @foreach ($categories as $category)
-        <div class="swiper-slide text-center">
-            <div class="fashion-box mb-2">
-                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
-                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
-                    <img class="img-fluid rounded-circle category-circle-img"
-                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
-                </a>
-            </div>
-            <h5>{{ $category->name }}</h5>
-        </div>
-    @endforeach
-
                 </div>
             </div>
         </div>
@@ -303,23 +274,20 @@
                     <div class="theme-tab-1">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" data-bs-toggle="tab"
-                                    data-bs-target="#features-products" role="tab" aria-controls="features-products"
-                                    aria-selected="true">
+                                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#features-products"
+                                    role="tab" aria-controls="features-products" aria-selected="true">
                                     <h6>Featured Products</h6>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#latest-products" role="tab" aria-controls="latest-products"
-                                    aria-selected="false">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#latest-products" role="tab"
+                                    aria-controls="latest-products" aria-selected="false">
                                     <h6>Latest Products</h6>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#seller-products" role="tab" aria-controls="seller-products"
-                                    aria-selected="false">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#seller-products" role="tab"
+                                    aria-controls="seller-products" aria-selected="false">
                                     <h6>Best Seller Products </h6>
                                 </a>
                             </li>
@@ -353,7 +321,6 @@
     </div>
 @endif
 
-
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
 
@@ -372,8 +339,8 @@
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image) }}"
                                                                     alt="{{ $product->name }}">
-                                                                </a>
-                                                                </div>
+                                                            </a>
+                                                        </div>
 
                                                         <div class="countdown" style="bottom: 5px;"
                                                             data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
@@ -1155,5 +1122,3 @@
 
 
 @endsection
-
-
