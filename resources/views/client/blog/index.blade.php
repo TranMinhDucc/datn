@@ -49,7 +49,7 @@
                                             src="{{ asset('assets/client/images/user/1.jpg') }}" alt="">
                                         <h6>by {{ $blog->author->username ?? 'Unknown' }}</h6>
                                     </div>
-                                    <a href="{{ route('client.blog.show', $blog) }}">Read More..</a>
+                                    <a href="{{ route('client.blog.show', $blog) }}">Đọc thêm..</a>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Categories</h5>
+                                    <h5>Danh mục</h5>
                                 </div>
                                 <ul class="categories">
                                     @foreach ($categories as $category)
@@ -96,7 +96,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Top Post</h5>
+                                    <h5>Bài viết nổi bật</h5>
                                 </div>
                                 <ul class="top-post">
                                     @foreach($topViewedBlogs as $top)
@@ -117,7 +117,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Popular Tags</h5>
+                                    <h5>Tag phổ biến</h5>
                                 </div>
                                 <ul class="popular-tag">
                                     <li>
@@ -142,7 +142,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5>Follow Us</h5>
+                                    <h5>Theo dõi chúng tôi</h5>
                                 </div>
                                 <ul class="social-icon">
                                     <li> <a href="https://www.facebook.com/" target="_blank">

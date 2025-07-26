@@ -98,7 +98,7 @@
                                     </li>
                                     <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-                                <p>{{ $product->description }}</p>
+                                <p>{{$product->description}}</p>
                             </div>
                             <div class="buy-box border-buttom">
                                 <ul>
@@ -1267,9 +1267,5 @@
 
         });
     </script>
-
-@endsection
-
-
 
 @endsection

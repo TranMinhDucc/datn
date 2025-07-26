@@ -765,7 +765,7 @@
     <section class="section-t-space">
         <div class="custom-container container">
             <div class="title">
-                <h3>Latest Blog</h3>
+                <h3>Blog Mới Nhất</h3>
                 <svg>
                     <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#main-line"></use>
                 </svg>
@@ -782,7 +782,7 @@
                             </div>
                             <div class="blog-txt">
                                 <p>
-                                    By: {{ $blog->author->username ?? 'Admin' }} /
+                                    Tác giả: {{ $blog->author->username ?? 'Admin' }} /
                                     {{ $blog->published_at->format('d M Y') }}
                                 </p>
                                 <a href="{{ route('client.blog.show', $blog->slug) }}">
@@ -792,7 +792,7 @@
                                 <div class="link-hover-anim underline">
                                     <a class="btn btn_underline link-strong link-strong-unhovered"
                                         href="{{ route('client.blog.show', $blog->slug) }}">
-                                        Read More
+                                        Đọc thêm
                                         <svg>
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -801,7 +801,7 @@
                                     </a>
                                     <a class="btn btn_underline link-strong link-strong-hovered"
                                         href="{{ route('client.blog.show', $blog->slug) }}">
-                                        Read More
+                                        Đọc thêm
                                         <svg>
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
