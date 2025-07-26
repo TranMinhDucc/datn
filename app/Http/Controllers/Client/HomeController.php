@@ -66,10 +66,13 @@ class HomeController extends Controller
         return view('client.policy');
     }
 
-    public function contact()
-    {
-        return view('client.contact');
-    }
+   public function contact()
+{
+    // Lấy settings dạng mảng: ['hotline' => '...', 'email' => '...', ...]
+    $settings = Setting::pluck('value', 'name')->toArray();
+
+    return view('client.contact', compact('settings'));
+}
 
     public function faq()
     {

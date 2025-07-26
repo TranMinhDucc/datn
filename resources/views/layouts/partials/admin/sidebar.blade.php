@@ -107,6 +107,7 @@
                         </div>
                         <!--end:Menu content-->
                     </div>
+                   
                     <!--end:Menu item--><!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.users.index') }}"

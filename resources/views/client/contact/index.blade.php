@@ -30,46 +30,52 @@
                         <p class="pb-0">Hãy liên lạc với chúng tôi<span></span></p>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="location"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="phone-calling"></i></div>
                         <div class="contact-box">
                             <h6>Số điện thoại liên lạc</h6>
-                            <p>0356789087</p>
+                            <p>{{ $settings['hotline'] ?? 'Chưa cài đặt' }}</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="phone-calling"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="mail"></i></i></div>
                         <div class="contact-box">
                             <h6>Địa chỉ email</h6>
-                            <p>tuongtacsale@gmail.com</p>
+                            <p>{{ $settings['email'] ?? 'Chưa cài đặt' }}</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="mail"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="map-1"></i></div>
                         <div class="contact-box">
-                            <h6>Địa chỉ khác</h6>
-                            <p> Phường Xuân Phương, TP Hà Nội</p>
+                            <h6>Cửa hàng </h6>
+                            <p>{{ $settings['title'] ?? 'Chưa cài đặt' }}</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="map-1"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="location"></i></div>
                         <div class="contact-box">
                             <h6>Văn phòng</h6>
-                            <p>13 Trịnh Văn Bô</p>
+                            <p>{{ $settings['address'] ?? 'Chưa cài đặt' }}</p>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </section>
+
 
 <section class="section-b-space pt-0">
     <div class="custom-container container">
