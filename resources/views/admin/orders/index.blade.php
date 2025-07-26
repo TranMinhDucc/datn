@@ -75,6 +75,69 @@
                         <!--begin::Card header-->
                         <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                             <!--begin::Card title-->
+<<<<<<< HEAD
+<<<<<<< HEAD
+                           <!--begin::Card title-->
+<!--begin::Card title-->
+<!--begin::Card title-->
+=======
+>>>>>>> 3dd5f17a7154e8c40768c620662af0c70540599b
+<div class="card-title w-100">
+    <!-- Search đơn hàng -->
+    <div class="d-flex align-items-center position-relative my-1 mb-4">
+        <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+        <input type="text" data-kt-ecommerce-order-filter="search"
+               class="form-control form-control-solid w-250px ps-12"
+               placeholder="Search Order" />
+    </div>
+
+    <!-- Form lọc nâng cao -->
+    <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3 align-items-end mb-5">
+        <!-- Mã đơn hàng -->
+        <div class="col-md-2">
+            <input type="text" name="order_code" class="form-control" placeholder="Mã Đơn Hàng" value="{{ request('order_code') }}">
+        </div>
+
+        <!-- Trạng thái đơn hàng -->
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
+                <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+                <option value="shipping" {{ request('status') == 'shipping' ? 'selected' : '' }}>Đang giao</option>
+                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                <option value="returning" {{ request('status') == 'returning' ? 'selected' : '' }}>Đang hoàn</option>
+                <option value="returned" {{ request('status') == 'returned' ? 'selected' : '' }}>Đã hoàn</option>
+            </select>
+        </div>
+
+        <!-- Từ ngày -->
+        <div class="col-md-2">
+            <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
+        </div>
+
+        <!-- Đến ngày -->
+        <div class="col-md-2">
+            <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}">
+        </div>
+
+        <!-- Nút tìm kiếm -->
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </div>
+
+        <!-- Nút yêu cầu hủy đơn -->
+        <div class="col-md-2 d-grid">
+            <a href="{{ route('admin.orders.cancel') }}" class="btn btn-warning">Yêu cầu hủy đơn</a>
+        </div>
+    </form>
+</div>
+<<<<<<< HEAD
+<!--end::Card title-->
+<!--end::Card title-->
+<!--end::Card title-->
+=======
                             <div class="card-title">
                                 <!--begin::Search-->
                                 <div class="d-flex align-items-center position-relative my-1">
@@ -85,21 +148,24 @@
                                 </div>
                                 <!--end::Search-->
                             </div>
+>>>>>>> 492e84b2913a12c321af15a302773a5d717caebe
+=======
+>>>>>>> 3dd5f17a7154e8c40768c620662af0c70540599b
                             <!--end::Card title-->
 
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
                                 <!--begin::Flatpickr-->
-                                <div class="input-group w-250px">
+                                {{-- <div class="input-group w-250px">
                                     <input class="form-control form-control-solid rounded rounded-end-0"
                                         placeholder="Pick date range" id="kt_ecommerce_sales_flatpickr" />
                                     <button class="btn btn-icon btn-light" id="kt_ecommerce_sales_flatpickr_clear">
                                         <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
                                                 class="path2"></span></i> </button>
-                                </div>
+                                </div> --}}
                                 <!--end::Flatpickr-->
 
-                                <div class="w-100 mw-150px">
+                                {{-- <div class="w-100 mw-150px">
                                     <!--begin::Select2-->
                                     <select class="form-select form-select-solid" data-control="select2"
                                         data-hide-search="true" data-placeholder="Status"
@@ -114,12 +180,9 @@
                                         <option value="Đang giao hàng">Đang giao hàng</option>
                                     </select>
                                     <!--end::Select2-->
-                                </div>
+                                </div> --}}
 
                                 <!--begin::Add product-->
-                                <a href="{{ route('admin.orders.cancel') }}" class="btn btn-warning">
-                                    Yêu cầu hủy đơn
-                                </a>
 
                                 <!--end::Add product-->
                             </div>

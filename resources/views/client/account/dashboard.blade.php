@@ -41,15 +41,14 @@
                                     <div class="profile-image position-relative"
                                         onclick="document.getElementById('avatarInput').click()" style="cursor:pointer;">
                                         <div class="avatar-wrapper">
-                                            <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img"
-                                                style="width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      position: relative;
-      margin: auto;
-      border: 3px solid #fff;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
+                                            <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img" style="width: 130px;
+          height: 130px;
+          border-radius: 50%;
+          overflow: hidden;
+          position: relative;
+          margin: auto;
+          border: 3px solid #fff;
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
                                         </div>
 
                                         <div class="camera-icon-overlay d-flex justify-content-center align-items-center">
@@ -71,8 +70,8 @@
                             aria-orientation="vertical">
                             <li>
                                 <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill"
-                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard"
-                                    aria-selected="true"><i class="iconsax" data-icon="home-1"></i>
+                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true"><i
+                                        class="iconsax" data-icon="home-1"></i>
                                     Dashboard</button>
                             </li>
                             <li>
@@ -104,15 +103,14 @@
                                         data-icon="cue-cards"></i>Address</button>
                             </li>
                             <li>
-                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill"
-                                    data-bs-target="#privacy" role="tab" aria-controls="privacy"
-                                    aria-selected="false"> <i class="iconsax"
+                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy"
+                                    role="tab" aria-controls="privacy" aria-selected="false"> <i class="iconsax"
                                         data-icon="security-user"></i>Privacy</button>
                             </li>
                         </ul>
                         <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
-                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i
-                                    class="iconsax me-1" data-icon="logout-1"></i> Logout </a></div>
+                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
+                                    data-icon="logout-1"></i> Logout </a></div>
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-8">
@@ -221,9 +219,10 @@
 
 
                                                     {{-- <li>
-      <h6>Address:</h6>
-      <p>26, Starts Hollow Colony Denver, Colorado, United States 80014</p>
-      </li> --}}
+                                                        <h6>Address:</h6>
+                                                        <p>26, Starts Hollow Colony Denver, Colorado, United States 80014
+                                                        </p>
+                                                    </li> --}}
                                                 </ul>
                                                 <div class="sidebar-title">
                                                     <div class="loader-line"></div>
@@ -256,8 +255,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="notifications" role="tabpanel"
-                            aria-labelledby="notifications-tab">
+                        <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
                             <div class="dashboard-right-box">
                                 <div class="notification-tab">
                                     <div class="sidebar-title">
@@ -265,49 +263,53 @@
                                         <h4>Thông báo</h4>
                                     </div>
                                     @php
-function getStatusLabel($status) {
-    return match ($status) {
-        'pending' => '🕐 Chờ xác nhận',
-        'confirmed' => '✅ Đã xác nhận',
-        'shipping' => '🚚 Đang giao hàng',
-        'completed' => '🎉 Đã hoàn tất',
-        'cancelled' => '❌ Đã huỷ',
-        default => ucfirst($status),
-    };
-}
-@endphp
+                                        function getStatusLabel($status)
+                                        {
+                                            return match ($status) {
+                                                'pending' => '🕐 Chờ xác nhận',
+                                                'confirmed' => '✅ Đã xác nhận',
+                                                'shipping' => '🚚 Đang giao hàng',
+                                                'completed' => '🎉 Đã hoàn tất',
+                                                'cancelled' => '❌ Đã huỷ',
+                                                default => ucfirst($status),
+                                            };
+                                        }
+                                    @endphp
 
                                     <ul class="notification-body">
-    @forelse ($notifications as $notification)
-        <li>
-            <div class="user-img">
-@php
+                                        @forelse ($notifications as $notification)
+                                            <li>
+                                                <div class="user-img">
+                                                    @php
 
-    $item = \App\Models\OrderItem::where('order_id', $notification->data['order_id'])->first();
-    $image = $item?->image_url ?? asset('assets/client/images/default.png');
-@endphp
+                                                        $item = \App\Models\OrderItem::where('order_id', $notification->data['order_id'])->first();
+                                                        $image = $item?->image_url ?? asset('assets/client/images/default.png');
+                                                    @endphp
 
-<img src="{{ $image }}" alt="Đơn hàng" width="50">
-            </div>
-            <div class="user-contant">
-                <h6>
-                    Đơn hàng #{{ $notification->data['order_code'] ?? 'N/A' }} -
-                    {{ getStatusLabel($notification->data['status'] ?? '') }}
-                    <span>{{ $notification->created_at->format('H:i d/m') }}</span>
-                </h6>
-                <p>
-                    Trạng thái đơn hàng đã được cập nhật thành
-                    <strong>{{ getStatusLabel($notification->data['status'] ?? '') }}</strong>.
-                    @if(($notification->data['status'] ?? '') === 'cancelled' && !empty($notification->data['cancel_reason_by_admin']))
-                        <br><span>Lý do: {{ $notification->data['cancel_reason_by_admin'] }}</span>
-                    @endif
-                </p>
-            </div>
-        </li>
-    @empty
-        <li><p class="text-center">Không có thông báo nào.</p></li>
-    @endforelse
-</ul>
+                                                    <img src="{{ $image }}" alt="Đơn hàng" width="50">
+                                                </div>
+                                                <div class="user-contant">
+                                                    <h6>
+                                                        Đơn hàng #{{ $notification->data['order_code'] ?? 'N/A' }} -
+                                                        {{ getStatusLabel($notification->data['status'] ?? '') }}
+                                                        <span>{{ $notification->created_at->format('H:i d/m') }}</span>
+                                                    </h6>
+                                                    <p>
+                                                        Trạng thái đơn hàng đã được cập nhật thành
+                                                        <strong>{{ getStatusLabel($notification->data['status'] ?? '') }}</strong>.
+                                                        @if(($notification->data['status'] ?? '') === 'cancelled' && !empty($notification->data['cancel_reason_by_admin']))
+                                                            <br><span>Lý do:
+                                                                {{ $notification->data['cancel_reason_by_admin'] }}</span>
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        @empty
+                                            <li>
+                                                <p class="text-center">Không có thông báo nào.</p>
+                                            </li>
+                                        @endforelse
+                                    </ul>
 
                                 </div>
                             </div>
@@ -331,8 +333,7 @@ function getStatusLabel($status) {
                                                             <a class="label-2 wishlist-icon delete-button delete-wishlist"
                                                                 href="javascript:;" data-id="{{ $product->id }}"
                                                                 title="Remove from Wishlist">
-                                                                <i class="iconsax" data-icon="trash"
-                                                                    aria-hidden="true"></i>
+                                                                <i class="iconsax" data-icon="trash" aria-hidden="true"></i>
                                                             </a>
                                                             <form id="remove-wishlist-{{ $product->id }}"
                                                                 action="{{ route('client.account.wishlist.remove', $product->id) }}"
@@ -342,12 +343,12 @@ function getStatusLabel($status) {
                                                             </form>
                                                         </div>
                                                         <div class="product-image">
-                                                            <a class="pro-first" href="#">
+                                                            <a class="pro-first" href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}"
                                                                     alt="{{ $product->name }}">
                                                             </a>
-                                                            <a class="pro-sec" href="#">
+                                                            <a class="pro-sec" href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}"
                                                                     alt="{{ $product->name }}">
@@ -362,19 +363,74 @@ function getStatusLabel($status) {
                                                                     data-icon="eye"></i></a>
                                                         </div>
                                                     </div>
+                                                    @php
+                                                    // Lấy đánh giá
+                                                    $reviews = App\Models\Review::where('product_id', $product->id)
+                                                        ->where('approved', true)
+                                                        ->with('user')
+                                                        ->latest()
+                                                        ->get();
+
+                                                    $rating_summary = [
+                                                        'avg_rating' => null,
+                                                        'total_rating' => count($reviews),
+                                                        '5_star_percent' => 0,
+                                                        '4_star_percent' => 0,
+                                                        '3_star_percent' => 0,
+                                                        '2_star_percent' => 0,
+                                                        '1_star_percent' => 0,
+                                                    ];
+
+                                                    if ($rating_summary['total_rating'] > 0) {
+                                                        $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
+
+                                                        foreach ($reviews as $review) {
+                                                            switch ($review->rating) {
+                                                                case '1':
+                                                                    $star_1++;
+                                                                    break;
+                                                                case '2':
+                                                                    $star_2++;
+                                                                    break;
+                                                                case '3':
+                                                                    $star_3++;
+                                                                    break;
+                                                                case '4':
+                                                                    $star_4++;
+                                                                    break;
+                                                                case '5':
+                                                                    $star_5++;
+                                                                    break;
+                                                            }
+                                                        }
+
+                                                        $total = $rating_summary['total_rating'];
+                                                        $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+                                                        $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+                                                        $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+                                                        $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+                                                        $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+                                                        $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
+                                                    }
+                                                    @endphp
                                                     <div class="product-detail">
                                                         <ul class="rating">
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                                            <li><i class="fa-regular fa-star"></i></li>
-                                                            <li>4.3</li>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                @if ($rating_summary['avg_rating']>= $i)
+                                                                    <li><i class="fa-solid fa-star"></i></li>
+                                                                @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
+                                                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                                                @else
+                                                                    <li><i class="fa-regular fa-star"></i></li>
+                                                                @endif
+                                                            @endfor
+                                                            <li>{{ $rating_summary['avg_rating'] }}</li>
                                                         </ul>
-                                                        <a href="#">
+                                                       
+                                                        <a href="{{ route('client.products.show', $product->slug) }}">
                                                             <h6>{{ $product->name }}</h6>
                                                         </a>
-                                                        <p>${{ number_format($product->price, 2) }}</p>
+                                                        <p>{{ number_format($product->sale_price, 2) }} đ</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -412,42 +468,44 @@ function getStatusLabel($status) {
                                                             </div>
 
                                                             <div class="order-detail">
-    {{-- Tiêu đề trạng thái bằng tiếng Việt --}}
-    <h5 class="mb-0">
-        @php
-            $statusText = match ($order->status) {
-                'refunded' => 'Đã hoàn tiền',
-                'cancelled' => 'Đã hủy',
-                'pending' => 'Chờ xác nhận',
-                'confirmed' => 'Đã xác nhận',
-                'shipping' => 'Đang giao hàng',
-                'completed' => 'Đã hoàn tất',
-                default => 'Không rõ trạng thái',
-            };
-        @endphp
-        {{ $statusText }}
-    </h5>
+                                                                {{-- Tiêu đề trạng thái bằng tiếng Việt --}}
+                                                                <h5 class="mb-0">
+                                                                    @php
+                                                                        $statusText = match ($order->status) {
+                                                                            'refunded' => 'Đã hoàn tiền',
+                                                                            'cancelled' => 'Đã hủy',
+                                                                            'pending' => 'Chờ xác nhận',
+                                                                            'confirmed' => 'Đã xác nhận',
+                                                                            'shipping' => 'Đang giao hàng',
+                                                                            'completed' => 'Đã hoàn tất',
+                                                                            default => 'Không rõ trạng thái',
+                                                                        };
+                                                                    @endphp
+                                                                    {{ $statusText }}
+                                                                </h5>
 
-    {{-- Ngày đặt hàng --}}
-    <p class="mb-0 text-muted" style="font-size: 0.875rem;">
-        vào ngày {{ optional($order->ordered_at)->format('d/m/Y') }}
-    </p>
+                                                                {{-- Ngày đặt hàng --}}
+                                                                <p class="mb-0 text-muted" style="font-size: 0.875rem;">
+                                                                    vào ngày {{ optional($order->ordered_at)->format('d/m/Y') }}
+                                                                </p>
 
-    {{-- Thông báo hoàn tiền --}}
-    @if ($order->status === 'cancelled')
-        <h6>
-            <b>Hoàn tiền đang xử lý:</b>
-            {{ number_format($order->refund_amount, 0, ',', '.') }}₫ vào ngày 
-            {{ optional($order->refunded_at)->format('d/m/Y') }}.
-        </h6>
-    @elseif($order->status === 'refunded')
-        <p>
-            Số tiền hoàn <b>{{ number_format($order->refund_amount, 0, ',', '.') }}₫</b> 
-            đã được hoàn thành thành công vào ngày 
-            {{ optional($order->refunded_at)->format('d/m/Y') }}.
-        </p>
-    @endif
-</div>
+                                                                {{-- Thông báo hoàn tiền --}}
+                                                                @if ($order->status === 'cancelled')
+                                                                    <h6>
+                                                                        <b>Hoàn tiền đang xử lý:</b>
+                                                                        {{ number_format($order->refund_amount, 0, ',', '.') }}₫ vào
+                                                                        ngày
+                                                                        {{ optional($order->refunded_at)->format('d/m/Y') }}.
+                                                                    </h6>
+                                                                @elseif($order->status === 'refunded')
+                                                                    <p>
+                                                                        Số tiền hoàn
+                                                                        <b>{{ number_format($order->refund_amount, 0, ',', '.') }}₫</b>
+                                                                        đã được hoàn thành thành công vào ngày
+                                                                        {{ optional($order->refunded_at)->format('d/m/Y') }}.
+                                                                    </p>
+                                                                @endif
+                                                            </div>
 
                                                         </div>
 
@@ -466,8 +524,7 @@ function getStatusLabel($status) {
                                                             @if (in_array($order->status, ['pending', 'confirmed']))
                                                                 @if ($order->status === 'pending')
                                                                     {{-- Hủy trực tiếp --}}
-                                                                    <button class="btn btn-outline-danger btn-sm"
-                                                                        data-bs-toggle="modal"
+                                                                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                                                         data-bs-target="#cancelModal-{{ $order->id }}">
                                                                         Hủy đơn hàng
                                                                     </button>
@@ -481,8 +538,7 @@ function getStatusLabel($status) {
                                                                         </button>
                                                                     @else
                                                                         {{-- Đã gửi yêu cầu hủy --}}
-                                                                        <button class="btn btn-outline-secondary btn-sm"
-                                                                            disabled>
+                                                                        <button class="btn btn-outline-secondary btn-sm" disabled>
                                                                             Đang chờ duyệt
                                                                         </button>
                                                                     @endif
@@ -490,8 +546,8 @@ function getStatusLabel($status) {
 
 
                                                                 <!-- Modal -->
-                                                                <div class="modal fade"
-                                                                    id="cancelModal-{{ $order->id }}" tabindex="-1">
+                                                                <div class="modal fade" id="cancelModal-{{ $order->id }}"
+                                                                    tabindex="-1">
                                                                     <div class="modal-dialog modal-dialog-centered"
                                                                         style="max-width: 500px;">
                                                                         <div class="modal-content rounded-4 shadow">
@@ -510,8 +566,7 @@ function getStatusLabel($status) {
                                                                                 @method('PATCH')
                                                                                 <div class="modal-body pt-0">
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
+                                                                                        <input class="form-check-input" type="radio"
                                                                                             name="cancel_reason"
                                                                                             value="Tôi không còn nhu cầu"
                                                                                             id="r1-{{ $order->id }}">
@@ -520,8 +575,7 @@ function getStatusLabel($status) {
                                                                                             Tôi không còn nhu cầu</label>
                                                                                     </div>
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
+                                                                                        <input class="form-check-input" type="radio"
                                                                                             name="cancel_reason"
                                                                                             value="Đặt nhầm sản phẩm"
                                                                                             id="r2-{{ $order->id }}">
@@ -530,8 +584,7 @@ function getStatusLabel($status) {
                                                                                             Đặt nhầm sản phẩm</label>
                                                                                     </div>
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
+                                                                                        <input class="form-check-input" type="radio"
                                                                                             name="cancel_reason"
                                                                                             value="Đặt nhầm địa chỉ"
                                                                                             id="r4-{{ $order->id }}">
@@ -540,8 +593,7 @@ function getStatusLabel($status) {
                                                                                             Đặt nhầm địa chỉ</label>
                                                                                     </div>
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
+                                                                                        <input class="form-check-input" type="radio"
                                                                                             name="cancel_reason"
                                                                                             value="Thay đổi phương thức thanh toán"
                                                                                             id="r5-{{ $order->id }}">
@@ -551,8 +603,7 @@ function getStatusLabel($status) {
                                                                                             toán</label>
                                                                                     </div>
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
+                                                                                        <input class="form-check-input" type="radio"
                                                                                             name="cancel_reason"
                                                                                             value="Tìm được giá tốt hơn"
                                                                                             id="r6-{{ $order->id }}">
@@ -561,10 +612,8 @@ function getStatusLabel($status) {
                                                                                             Tìm được giá tốt hơn</label>
                                                                                     </div>
                                                                                     <div class="form-check my-2">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
-                                                                                            name="cancel_reason"
-                                                                                            value="Khác"
+                                                                                        <input class="form-check-input" type="radio"
+                                                                                            name="cancel_reason" value="Khác"
                                                                                             id="reasonOther-{{ $order->id }}">
                                                                                         <label class="form-check-label"
                                                                                             for="reasonOther-{{ $order->id }}">✏️
@@ -573,7 +622,9 @@ function getStatusLabel($status) {
 
                                                                                     <div id="customReasonWrapper-{{ $order->id }}"
                                                                                         class="d-none">
-                                                                                        <textarea name="cancel_reason_other" id="customReason-{{ $order->id }}" class="form-control mt-2" rows="3"
+                                                                                        <textarea name="cancel_reason_other"
+                                                                                            id="customReason-{{ $order->id }}"
+                                                                                            class="form-control mt-2" rows="3"
                                                                                             placeholder="Nhập lý do khác (nếu có)..."></textarea>
                                                                                         <div id="errorText-{{ $order->id }}"
                                                                                             class="text-danger mt-1 d-none">
@@ -584,11 +635,10 @@ function getStatusLabel($status) {
 
                                                                                 </div>
                                                                                 <div class="modal-footer border-top-0">
-                                                                                    <button type="button"
-                                                                                        class="btn btn-secondary"
+                                                                                    <button type="button" class="btn btn-secondary"
                                                                                         data-bs-dismiss="modal">Đóng</button>
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-danger">Xác nhận
+                                                                                    <button type="submit" class="btn btn-danger">Xác
+                                                                                        nhận
                                                                                         hủy</button>
                                                                                 </div>
                                                                             </form>
@@ -601,7 +651,8 @@ function getStatusLabel($status) {
 
                                                             {{-- Theo dõi đơn hàng --}}
                                                             @if ($order->status === 'shipping')
-                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}"
+                                                                    class="btn btn-outline-primary btn-sm">
                                                                     🚚 Theo dõi đơn hàng
                                                                 </a>
                                                             @endif
@@ -612,10 +663,11 @@ function getStatusLabel($status) {
 
                                                             {{-- Mua lại (nếu đã hoàn thành) --}}
                                                             @if (in_array($order->status, ['completed', 'cancelled']))
-    <button class="btn btn-danger btn-sm fw-bold" onclick="reorderToCart({{ $order->id }})">
-        Mua Lại
-    </button>
-@endif
+                                                                <button class="btn btn-danger btn-sm fw-bold"
+                                                                    onclick="reorderToCart({{ $order->id }})">
+                                                                    Mua Lại
+                                                                </button>
+                                                            @endif
 
                                                             @if (($order->status === 'cancelled' || $order->cancel_request) && $order->cancel_reason)
                                                                 <a href="{{ route('admin.orders.show', $order->id) }}"
@@ -633,41 +685,48 @@ function getStatusLabel($status) {
 
 
                                                     @foreach ($order->orderItems as $item)
-    <div class="product-order-detail">
-        <div class="product-box position-relative d-flex align-items-start">
-            {{-- Ảnh sản phẩm --}}
-            <img src="{{ asset('storage/' . $item->product->image) }}"
-                 alt="{{ $item->product_name }}"
-                 style="max-width: 150px;">
+                                                        <div class="product-order-detail">
+                                                            <div class="product-box position-relative d-flex align-items-start">
+                                                                {{-- Ảnh sản phẩm --}}
+                                                                <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                    alt="{{ $item->product_name }}" style="max-width: 150px;">
 
-            {{-- Nội dung --}}
-            <div class="order-wrap">
-                <h5>{{ $item->product_name }}</h5>
-                <p>{{ $item->product->description ?? 'Không có mô tả' }}</p>
-                <ul style="list-style: none; padding-left: 0;">
-                    <li><p>Giá :</p> <span>{{ number_format($item->price, 0, ',', '.') }}₫</span></li>
+                                                                {{-- Nội dung --}}
+                                                                <div class="order-wrap">
+                                                                    <h5>{{ $item->product_name }}</h5>
+                                                                    <p>{{ $item->product->description ?? 'Không có mô tả' }}</p>
+                                                                    <ul style="list-style: none; padding-left: 0;">
+                                                                        <li>
+                                                                            <p>Giá :</p>
+                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+                                                                        </li>
 
-@php
-    $variantValues = json_decode($item->variant_values ?? '{}', true);
-@endphp
+                                                                        @php
+                                                                            $variantValues = json_decode($item->variant_values ?? '{}', true);
+                                                                        @endphp
 
-@if (!empty($variantValues))
-    @foreach ($variantValues as $key => $value)
-        <li><p>{{ ucfirst($key) }} :</p> <span>{{ $value }}</span></li>
-    @endforeach
-@endif
+                                                                        @if (!empty($variantValues))
+                                                                            @foreach ($variantValues as $key => $value)
+                                                                                <li>
+                                                                                    <p>{{ ucfirst($key) }} :</p> <span>{{ $value }}</span>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        @endif
 
 
-                    <li><p>Mã đơn hàng :</p> <span>{{ $item->order->order_code ?? '---' }}</span></li>
-                </ul>
-            </div>
+                                                                        <li>
+                                                                            <p>Mã đơn hàng :</p>
+                                                                            <span>{{ $item->order->order_code ?? '---' }}</span>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
 
-            {{-- Link ẩn phủ toàn bộ box --}}
-            <a href="{{ route('client.orders.tracking.show', $order->id) }}"
-               class="stretched-link"></a>
-        </div>
-    </div>
-@endforeach
+                                                                {{-- Link ẩn phủ toàn bộ box --}}
+                                                                <a href="{{ route('client.orders.tracking.show', $order->id) }}"
+                                                                    class="stretched-link"></a>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
 
 
                                                     <div class="return-box">
@@ -681,9 +740,10 @@ function getStatusLabel($status) {
                                                                     <i class="fa-regular fa-star"></i>
                                                                 </li>
                                                             </ul>
-                                                            <a href="{{ route('client.products.show', $item->product->slug) }}#review">
-    <span>Viết đánh giá</span>
-</a>
+                                                            <a
+                                                                href="{{ route('client.products.show', $item->product->slug) }}#review">
+                                                                <span>Viết đánh giá</span>
+                                                            </a>
                                                         </div>
                                                         <h6>* Exchange/Return window closed on 20 Mar</h6>
                                                     </div>
@@ -868,8 +928,8 @@ function getStatusLabel($status) {
                                         <h4>My Address Details</h4>
                                     </div>
                                     <div class="d-flex justify-content-end mb-3">
-                                        <button class="btn add-address" data-bs-toggle="modal"
-                                            data-bs-target="#add-address" title="Thêm địa chỉ" tabindex="0">+ Thêm Địa
+                                        <button class="btn add-address" data-bs-toggle="modal" data-bs-target="#add-address"
+                                            title="Thêm địa chỉ" tabindex="0">+ Thêm Địa
                                             Chỉ</button>
                                     </div>
 
@@ -880,16 +940,14 @@ function getStatusLabel($status) {
                                                     <label for="address-{{ $address->id }}">
                                                         <span class="delivery-address-box">
                                                             <span class="form-check">
-                                                                <input class="custom-radio"
-                                                                    id="address-{{ $address->id }}" type="radio"
-                                                                    {{ $address->is_default ? 'checked' : '' }}
+                                                                <input class="custom-radio" id="address-{{ $address->id }}"
+                                                                    type="radio" {{ $address->is_default ? 'checked' : '' }}
                                                                     name="default_address"
                                                                     onchange="document.getElementById('set-default-{{ $address->id }}').submit();" />
                                                             </span>
                                                             <span class="address-detail">
                                                                 <span class="address">
-                                                                    <span
-                                                                        class="address-title">{{ $address->title }}</span>
+                                                                    <span class="address-title">{{ $address->title }}</span>
                                                                 </span>
                                                                 <span class="address">
                                                                     <span class="address-home">
@@ -910,12 +968,10 @@ function getStatusLabel($status) {
                                                                         <span class="address-tag">Điện thoại
                                                                             :</span>{{ $address->phone }}</span>
                                                                 </span></span></span><span class="buttons"> <a
-                                                                class="btn btn_black sm" href="#"
-                                                                data-bs-toggle="modal"
+                                                                class="btn btn_black sm" href="#" data-bs-toggle="modal"
                                                                 data-bs-target="#editAddressModal-{{ $address->id }}"
                                                                 title="Quick View" tabindex="0">Sửa
-                                                            </a><a class="btn btn_outline sm" href="#"
-                                                                data-bs-toggle="modal"
+                                                            </a><a class="btn btn_outline sm" href="#" data-bs-toggle="modal"
                                                                 data-bs-target="#deleteAddressModal-{{ $address->id }}"
                                                                 title="Quick View" tabindex="0">Xóa
                                                             </a></span></label>
@@ -929,8 +985,8 @@ function getStatusLabel($status) {
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h4>Sửa địa chỉ</h4>
-                                                            <button class="btn-close" type="button"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <button class="btn-close" type="button" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body pt-0">
                                                             <form
@@ -942,16 +998,12 @@ function getStatusLabel($status) {
                                                                 <div class="col-12">
                                                                     <label style="font-weight: 600; color: #000;">Loại địa
                                                                         chỉ</label>
-                                                                    <select class="form-control form-select"
-                                                                        name="title">
-                                                                        <option value="Nhà riêng"
-                                                                            {{ old('title', $address->title) == 'Nhà riêng' ? 'selected' : '' }}>
+                                                                    <select class="form-control form-select" name="title">
+                                                                        <option value="Nhà riêng" {{ old('title', $address->title) == 'Nhà riêng' ? 'selected' : '' }}>
                                                                             Nhà riêng</option>
-                                                                        <option value="Công ty"
-                                                                            {{ old('title', $address->title) == 'Công ty' ? 'selected' : '' }}>
+                                                                        <option value="Công ty" {{ old('title', $address->title) == 'Công ty' ? 'selected' : '' }}>
                                                                             Công ty</option>
-                                                                        <option value="Khác"
-                                                                            {{ old('title', $address->title) == 'Khác' ? 'selected' : '' }}>
+                                                                        <option value="Khác" {{ old('title', $address->title) == 'Khác' ? 'selected' : '' }}>
                                                                             Khác
                                                                         </option>
                                                                     </select>
@@ -963,13 +1015,11 @@ function getStatusLabel($status) {
                                                                 <div class="col-6">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Điện Thoại</label>
-                                                                        <input class="form-control" type="text"
-                                                                            name="phone"
+                                                                        <input class="form-control" type="text" name="phone"
                                                                             value="{{ old('phone', $address->phone) }}"
                                                                             placeholder="Nhập số điện thoại">
                                                                         @error('phone')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -977,12 +1027,10 @@ function getStatusLabel($status) {
                                                                 <div class="col-6">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Mã Bưu chính</label>
-                                                                        <input class="form-control" name="pincode"
-                                                                            type="text"
+                                                                        <input class="form-control" name="pincode" type="text"
                                                                             value="{{ old('pincode', $address->pincode) }}">
                                                                         @error('pincode')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -990,12 +1038,10 @@ function getStatusLabel($status) {
                                                                 <div class="col-6">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Quốc gia</label>
-                                                                        <input class="form-control" type="text"
-                                                                            name="country"
+                                                                        <input class="form-control" type="text" name="country"
                                                                             value="{{ old('country', $address->country) }}">
                                                                         @error('country')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -1003,12 +1049,10 @@ function getStatusLabel($status) {
                                                                 <div class="col-6">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Tỉnh/Thành Phố</label>
-                                                                        <input class="form-control" name="state"
-                                                                            type="text"
+                                                                        <input class="form-control" name="state" type="text"
                                                                             value="{{ old('state', $address->state) }}">
                                                                         @error('state')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -1016,12 +1060,10 @@ function getStatusLabel($status) {
                                                                 <div class="col-6">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Quận/Huyện</label>
-                                                                        <input class="form-control" name="city"
-                                                                            type="text"
+                                                                        <input class="form-control" name="city" type="text"
                                                                             value="{{ old('city', $address->city) }}">
                                                                         @error('city')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -1029,10 +1071,11 @@ function getStatusLabel($status) {
                                                                 <div class="col-12">
                                                                     <div class="from-group">
                                                                         <label class="form-label">Địa chỉ</label>
-                                                                        <textarea class="form-control" name="address" cols="30" rows="4" placeholder="Nhập địa chỉ">{{ old('address', $address->address) }}</textarea>
+                                                                        <textarea class="form-control" name="address" cols="30"
+                                                                            rows="4"
+                                                                            placeholder="Nhập địa chỉ">{{ old('address', $address->address) }}</textarea>
                                                                         @error('address')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
@@ -1046,8 +1089,8 @@ function getStatusLabel($status) {
                                             </div>
                                             {{-- Delete Modal --}}
                                             <div class="modal theme-modal confirmation-modal"
-                                                id="deleteAddressModal-{{ $address->id }}" tabindex="-1"
-                                                role="dialog" aria-modal="true">
+                                                id="deleteAddressModal-{{ $address->id }}" tabindex="-1" role="dialog"
+                                                aria-modal="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-body">
@@ -1062,11 +1105,10 @@ function getStatusLabel($status) {
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <div class="submit-button">
-                                                                    <button class="btn" type="button"
-                                                                        data-bs-dismiss="modal"
+                                                                    <button class="btn" type="button" data-bs-dismiss="modal"
                                                                         aria-label="Close">Hủy</button>
-                                                                    <button class="btn" type="submit"
-                                                                        data-bs-dismiss="modal" aria-label="Close">Đồng
+                                                                    <button class="btn" type="submit" data-bs-dismiss="modal"
+                                                                        aria-label="Close">Đồng
                                                                         ý</button>
                                                                 </div>
                                                             </form>
@@ -1109,8 +1151,7 @@ function getStatusLabel($status) {
                                                         <p>Only users you choose can access</p>
                                                     </div>
                                                     <label class="switch">
-                                                        <input type="checkbox" checked=""><span
-                                                            class="slider round"></span>
+                                                        <input type="checkbox" checked=""><span class="slider round"></span>
                                                     </label>
                                                 </li>
                                                 <li>
@@ -1127,15 +1168,14 @@ function getStatusLabel($status) {
                                             </ul><span class="short-title">Users</span>
                                             <ul class="privacy-items">
                                                 <li>
-                                                    <div class="privacy-icon"> <i class="iconsax"
-                                                            data-icon="package"></i></div>
+                                                    <div class="privacy-icon"> <i class="iconsax" data-icon="package"></i>
+                                                    </div>
                                                     <div class="privacy-contant">
                                                         <h6>Users in the users table </h6>
                                                         <p>Only users in the users table can sign in </p>
                                                     </div>
                                                     <label class="switch">
-                                                        <input type="checkbox" checked=""><span
-                                                            class="slider round"></span>
+                                                        <input type="checkbox" checked=""><span class="slider round"></span>
                                                     </label>
                                                 </li>
                                                 <li>
@@ -1150,15 +1190,14 @@ function getStatusLabel($status) {
                                                     </label>
                                                 </li>
                                                 <li>
-                                                    <div class="privacy-icon"> <i class="iconsax"
-                                                            data-icon="add-layer"></i></div>
+                                                    <div class="privacy-icon"> <i class="iconsax" data-icon="add-layer"></i>
+                                                    </div>
                                                     <div class="privacy-contant">
                                                         <h6>anyone form domain(s)</h6>
                                                         <p>only users with your email domain </p>
                                                     </div>
                                                     <label class="switch">
-                                                        <input type="checkbox" checked=""><span
-                                                            class="slider round"></span>
+                                                        <input type="checkbox" checked=""><span class="slider round"></span>
                                                     </label>
                                                 </li>
                                                 <li>
@@ -1234,8 +1273,7 @@ function getStatusLabel($status) {
     </div>
     {{-- END Edit Email Doashboar --}}
     {{-- EDIT PASSWORD START --}}
-    <div class="reviews-modal modal theme-modal fade" id="edit-password" tabindex="-1" role="dialog"
-        aria-modal="true">
+    <div class="reviews-modal modal theme-modal fade" id="edit-password" tabindex="-1" role="dialog" aria-modal="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1263,8 +1301,8 @@ function getStatusLabel($status) {
                                 <div class="form-group ">
                                     <label class="form-label">Mật khẩu mới</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" name="new_password"
-                                            id="new_password" placeholder="Nhập mật khẩu mới">
+                                        <input type="password" class="form-control" name="new_password" id="new_password"
+                                            placeholder="Nhập mật khẩu mới">
                                         <span class="input-group-text toggle-password" toggle="#new_password">
                                             <i class="fa fa-eye"></i>
                                         </span>
@@ -1279,8 +1317,7 @@ function getStatusLabel($status) {
                                     <div class="input-group">
                                         <input type="password" class="form-control" name="new_password_confirmation"
                                             id="new_password_confirmation" placeholder="Nhập lại mật khẩu mới">
-                                        <span class="input-group-text toggle-password"
-                                            toggle="#new_password_confirmation">
+                                        <span class="input-group-text toggle-password" toggle="#new_password_confirmation">
                                             <i class="fa fa-eye"></i>
                                         </span>
                                     </div>
@@ -1351,8 +1388,8 @@ function getStatusLabel($status) {
 
                         <div class="col-6">
                             <label class="form-label">Điện thoại</label>
-                            <input class="form-control @error('phone') is-invalid @enderror" type="text"
-                                name="phone" value="{{ old('phone') }}">
+                            <input class="form-control @error('phone') is-invalid @enderror" type="text" name="phone"
+                                value="{{ old('phone') }}">
                             @error('phone')
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
@@ -1373,8 +1410,7 @@ function getStatusLabel($status) {
                             <select class="form-select" name="province_id" id="province-select" required>
                                 <option value="">-- Chọn tỉnh --</option>
                                 @foreach ($provinces as $province)
-                                    <option value="{{ $province->id }}"
-                                        {{ old('province_id') == $province->id ? 'selected' : '' }}>
+                                    <option value="{{ $province->id }}" {{ old('province_id') == $province->id ? 'selected' : '' }}>
                                         {{ $province->name }}
                                     </option>
                                 @endforeach
@@ -1406,7 +1442,8 @@ function getStatusLabel($status) {
 
                         <div class="col-12">
                             <label class="form-label">Địa chỉ chi tiết</label>
-                            <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address') }}</textarea>
+                            <textarea class="form-control @error('address') is-invalid @enderror" name="address"
+                                rows="3">{{ old('address') }}</textarea>
                             @error('address')
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
@@ -1447,8 +1484,7 @@ function getStatusLabel($status) {
                             <div class="col-6">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input class="form-control" type="text" name="email"
-                                        value="{{ $user->email ?? '' }}">
+                                    <input class="form-control" type="text" name="email" value="{{ $user->email ?? '' }}">
                                     <div class="text-danger error-email"></div>
                                 </div>
                             </div>
@@ -1457,8 +1493,7 @@ function getStatusLabel($status) {
                         <div class="col-6">
                             <div class="from-group">
                                 <label class="form-label">Số điện thoại</label>
-                                <input class="form-control" type="text" name="phone"
-                                    value="{{ $user->phone ?? '' }}">
+                                <input class="form-control" type="text" name="phone" value="{{ $user->phone ?? '' }}">
                                 <div class="text-danger error-phone"></div>
                             </div>
                         </div>
@@ -1466,7 +1501,8 @@ function getStatusLabel($status) {
                         <div class="col-12">
                             <div class="from-group">
                                 <label class="form-label">Địa chỉ</label>
-                                <textarea class="form-control" name="address" cols="30" rows="3">{{ $user->address ?? '' }}</textarea>
+                                <textarea class="form-control" name="address" cols="30"
+                                    rows="3">{{ $user->address ?? '' }}</textarea>
                                 <div class="text-danger error-address"></div>
                             </div>
                         </div>
@@ -1484,7 +1520,7 @@ function getStatusLabel($status) {
     {{-- Tự động mở lại modal nếu có lỗi --}}
     @if ($errors->any())
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 var modal = new bootstrap.Modal(document.getElementById('add-address'));
                 modal.show();
             });
@@ -1542,12 +1578,12 @@ function getStatusLabel($status) {
 @endsection
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const provinceSelect = document.getElementById('province-select');
             const districtSelect = document.getElementById('district-select');
             const wardSelect = document.getElementById('ward-select');
 
-            provinceSelect.addEventListener('change', function() {
+            provinceSelect.addEventListener('change', function () {
                 const provinceId = this.value;
                 districtSelect.innerHTML = '<option value="">-- Đang tải huyện --</option>';
                 wardSelect.innerHTML = '<option value="">-- Chọn xã --</option>';
@@ -1565,7 +1601,7 @@ function getStatusLabel($status) {
                     });
             });
 
-            districtSelect.addEventListener('change', function() {
+            districtSelect.addEventListener('change', function () {
                 const districtId = this.value;
                 wardSelect.innerHTML = '<option value="">-- Đang tải xã --</option>';
 
@@ -1589,10 +1625,10 @@ function getStatusLabel($status) {
     <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('update-profile-form');
 
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault(); // Ngăn reload
 
                 const formData = new FormData(form);
@@ -1602,13 +1638,13 @@ function getStatusLabel($status) {
                 form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
 
                 fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: formData
-                    })
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    },
+                    body: formData
+                })
 
                     .catch(error => {
                         console.error('Lỗi:', error);
@@ -1618,9 +1654,9 @@ function getStatusLabel($status) {
     </script>
     {{-- EYE --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.toggle-password').forEach(el => {
-                el.addEventListener('click', function() {
+                el.addEventListener('click', function () {
                     const input = document.querySelector(this.getAttribute('toggle'));
                     const icon = this.querySelector('i');
                     if (input.type === 'password') {
@@ -1640,9 +1676,9 @@ function getStatusLabel($status) {
     {{-- AJAX UPDATE EMAIL --}}
     {{-- EDIT PASSWORD --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('change-password-form');
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 const formData = new FormData(form);
@@ -1650,13 +1686,13 @@ function getStatusLabel($status) {
                 form.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
 
                 fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': form.querySelector('[name="_token"]').value
-                        },
-                        body: formData
-                    })
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': form.querySelector('[name="_token"]').value
+                    },
+                    body: formData
+                })
                     .then(async response => {
                         const data = await response.json();
 
@@ -1693,12 +1729,12 @@ function getStatusLabel($status) {
     {{-- END EDIT PASSWORD --}}
     {{-- AJAX UPDATE PROFILE --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('update-profile-form');
 
             if (!form) return;
 
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 const formData = new FormData(form);
@@ -1708,17 +1744,20 @@ function getStatusLabel($status) {
                 form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
 
                 fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: formData
-                    })
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    },
+                    body: formData
+                })
                     .then(async response => {
                         const data = await response.json();
 
                         if (response.ok && data.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('edit-box'));
+                            if (modal) modal.hide();
+
                             Swal.fire({
                                 icon: 'success',
                                 title: '🎉 Cập nhật thành công!',
@@ -1752,12 +1791,12 @@ function getStatusLabel($status) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        $('#province-select').on('change', function() {
+        $('#province-select').on('change', function () {
             const provinceId = $(this).val();
             $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
             $('#ward-select').html('<option value="">-- Chọn xã --</option>');
             if (provinceId) {
-                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                $.get(`/api/districts?province_id=${provinceId}`, function (data) {
                     let html = '<option value="">-- Chọn huyện --</option>';
                     data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
                     $('#district-select').html(html);
@@ -1765,11 +1804,11 @@ function getStatusLabel($status) {
             }
         });
 
-        $('#district-select').on('change', function() {
+        $('#district-select').on('change', function () {
             const districtId = $(this).val();
             $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
             if (districtId) {
-                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                $.get(`/api/wards?district_id=${districtId}`, function (data) {
                     let html = '<option value="">-- Chọn xã --</option>';
                     data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
                     $('#ward-select').html(html);
@@ -1780,12 +1819,12 @@ function getStatusLabel($status) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        $('#province-select').on('change', function() {
+        $('#province-select').on('change', function () {
             const provinceId = $(this).val();
             $('#district-select').html('<option value="">-- Đang tải huyện --</option>');
             $('#ward-select').html('<option value="">-- Chọn xã --</option>');
             if (provinceId) {
-                $.get(`/api/districts?province_id=${provinceId}`, function(data) {
+                $.get(`/api/districts?province_id=${provinceId}`, function (data) {
                     let html = '<option value="">-- Chọn huyện --</option>';
                     data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
                     $('#district-select').html(html);
@@ -1793,11 +1832,11 @@ function getStatusLabel($status) {
             }
         });
 
-        $('#district-select').on('change', function() {
+        $('#district-select').on('change', function () {
             const districtId = $(this).val();
             $('#ward-select').html('<option value="">-- Đang tải xã --</option>');
             if (districtId) {
-                $.get(`/api/wards?district_id=${districtId}`, function(data) {
+                $.get(`/api/wards?district_id=${districtId}`, function (data) {
                     let html = '<option value="">-- Chọn xã --</option>';
                     data.forEach(i => html += `<option value="${i.id}">${i.name}</option>`);
                     $('#ward-select').html(html);
@@ -1807,21 +1846,21 @@ function getStatusLabel($status) {
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // ✅ Thêm vào wishlist
             document.querySelectorAll('.add-to-wishlist').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const productId = this.getAttribute('data-id');
                     const icon = this.querySelector('i');
 
                     fetch(`/account/wishlist/add/${productId}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content'),
-                                'Accept': 'application/json'
-                            }
-                        })
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
@@ -1857,7 +1896,7 @@ function getStatusLabel($status) {
 
             // ✅ Xác nhận xoá khỏi wishlist
             document.querySelectorAll('.delete-wishlist').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const productId = this.getAttribute('data-id');
 
                     Swal.fire({
@@ -1886,7 +1925,7 @@ function getStatusLabel($status) {
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                    success ') }}',
+                                                                                            success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });
@@ -1921,38 +1960,38 @@ function getStatusLabel($status) {
     </script>
 
 
-<script>
-function reorderToCart(orderId) {
-    fetch(`/orders/${orderId}/reorder-data`)
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) {
-                alert("Không thể mua lại đơn hàng.");
-                return;
-            }
+    <script>
+        function reorderToCart(orderId) {
+            fetch(`/orders/${orderId}/reorder-data`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert("Không thể mua lại đơn hàng.");
+                        return;
+                    }
 
-            const currentUser = localStorage.getItem('currentUser') || 'guest';
-            const cartKey = `cartItems_${currentUser}`;
-            let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+                    const currentUser = localStorage.getItem('currentUser') || 'guest';
+                    const cartKey = `cartItems_${currentUser}`;
+                    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-            data.items.forEach(item => {
-                const existing = cart.find(ci => ci.variant_id == item.variant_id);
-                if (existing) {
-                    existing.quantity += item.quantity;
-                } else {
-                    cart.push(item);
-                }
-            });
+                    data.items.forEach(item => {
+                        const existing = cart.find(ci => ci.variant_id == item.variant_id);
+                        if (existing) {
+                            existing.quantity += item.quantity;
+                        } else {
+                            cart.push(item);
+                        }
+                    });
 
-            localStorage.setItem(cartKey, JSON.stringify(cart));
-            window.location.href = '/cart'; // ✅ Chuyển đến giỏ hàng
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Lỗi khi mua lại đơn hàng.");
-        });
-}
-</script>
+                    localStorage.setItem(cartKey, JSON.stringify(cart));
+                    window.location.href = '/cart'; // ✅ Chuyển đến giỏ hàng
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Lỗi khi mua lại đơn hàng.");
+                });
+        }
+    </script>
 
 
 @endsection
