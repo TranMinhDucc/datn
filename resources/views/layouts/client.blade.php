@@ -17,8 +17,11 @@
     <!-- Thêm trong <head> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Thêm trước </body> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper CSS (phải trong <head>) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Swiper JS (phải nằm TRƯỚC khi bạn gọi new Swiper()) -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
@@ -83,9 +86,6 @@
         }
     </style>
     @yield('style')
-
-
-
     @if (Auth::check())
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
@@ -98,8 +98,7 @@
         localStorage.setItem('currentUser', 'guest');
     @endauth
 </script>
-{{--
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const swiper = new Swiper('.main-images', {
             loop: true,
@@ -626,18 +625,14 @@
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
-
-                    toastr.options.onclick = function() {
-
-                        toastr.options.onclick = function() {
-
-                            if (notification.url) {
-                                window.location.href = notification.url;
-                            }
-                        };
-                        toastr.info("Bạn có một thông báo mới");
-                    });
-            @endif
+                toastr.options.onclick = function() {
+                    if (notification.url) {
+                        window.location.href = notification.url;
+                    }
+                };
+                toastr.info("Bạn có một thông báo mới");
+            });
+    @endif
 </script>
 <script>
     function updateCartBadge() {
@@ -659,8 +654,6 @@
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
-
-
 @if (Auth::check() && $unreadNotifications->count())
     <script>
         const unreadNotifications = @json($unreadNotifications);
@@ -689,5 +682,6 @@
     </script>
 @endif
 
+<!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
 </html>

@@ -14,6 +14,9 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ProductVariantOption;
 use App\Models\AttributeValue;
+use Illuminate\Support\Facades\DB;
+
+use App\Models\SearchHistory;
 
 class ProductController extends Controller
 {
@@ -216,10 +219,16 @@ class ProductController extends Controller
             $regex = '[[:<:]]' . $keyword . '[[:>:]]';
             $query->whereRaw("CONCAT(' ', LOWER(name), ' ') LIKE ?", ['% ' . strtolower($keyword) . ' %']);
         }
-
+        // Ghi lại lịch sử tìm kiếm
+        SearchHistory::updateOrCreate(
+            ['keyword' => $keyword],
+            ['count' => DB::raw('count + 1')]
+        );
         $products = $query->latest()->paginate(8)->withQueryString();
 
-        return view('client.products.search', compact('products', 'keyword'));
+        $recommendedProducts = $this->getRecommendedProducts();
+
+        return view('client.products.search', compact('products', 'keyword', 'recommendedProducts'));
     }
     public function filter(Request $request)
     {
@@ -394,5 +403,21 @@ class ProductController extends Controller
             ->inRandomOrder()
             ->take($limit)
             ->get();
+    }
+    public function suggest(Request $request)
+    {
+        $keyword = strtolower(trim($request->input('keyword')));
+
+        if (!$keyword || strlen($keyword) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::where('is_active', 1)
+            ->whereRaw("LOWER(name) LIKE ?", ["%$keyword%"])
+            ->select('id', 'name', 'slug', 'image', 'sale_price', 'base_price')
+            ->limit(6)
+            ->get();
+
+        return response()->json($products);
     }
 }
