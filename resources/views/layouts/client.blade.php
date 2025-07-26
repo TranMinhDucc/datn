@@ -17,11 +17,8 @@
     <!-- Thêm trong <head> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Thêm trước </body> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper CSS (phải trong <head>) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Swiper JS (phải nằm TRƯỚC khi bạn gọi new Swiper()) -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
@@ -90,14 +87,13 @@
 
 
     @if (Auth::check())
-
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
 
 <script>
     @auth
-        localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
+    localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
     @else
         localStorage.setItem('currentUser', 'guest');
     @endauth
@@ -125,39 +121,39 @@
 
 <script>
     @auth
-                const userId = '{{ auth()->user()->id }}';
-        const guestKey = 'cartItems_guest';
-        const userKey = `cartItems_${userId}`;
+    const userId = '{{ auth()->user()->id }}';
+    const guestKey = 'cartItems_guest';
+    const userKey = `cartItems_${userId}`;
 
-        const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
-        const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
+    const guestCart = JSON.parse(localStorage.getItem(guestKey)) || [];
+    const userCart = JSON.parse(localStorage.getItem(userKey)) || [];
 
-        // Hàm merge
-        function mergeCarts(userCart, guestCart) {
-            guestCart.forEach(gItem => {
-                const index = userCart.findIndex(
-                    uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
-                );
+    // Hàm merge
+    function mergeCarts(userCart, guestCart) {
+        guestCart.forEach(gItem => {
+            const index = userCart.findIndex(
+                uItem => uItem.id === gItem.id && uItem.size === gItem.size && uItem.color === gItem.color
+            );
 
-                if (index !== -1) {
-                    userCart[index].quantity += gItem.quantity;
-                } else {
-                    userCart.push(gItem);
-                }
-            });
+            if (index !== -1) {
+                userCart[index].quantity += gItem.quantity;
+            } else {
+                userCart.push(gItem);
+            }
+        });
 
-            return userCart;
-        }
+        return userCart;
+    }
 
-        const mergedCart = mergeCarts(userCart, guestCart);
+    const mergedCart = mergeCarts(userCart, guestCart);
 
-        localStorage.setItem(userKey, JSON.stringify(mergedCart));
-        localStorage.removeItem(guestKey); // xoá cart guest
-        localStorage.setItem('currentUser', userId); // cập nhật currentUser
+    localStorage.setItem(userKey, JSON.stringify(mergedCart));
+    localStorage.removeItem(guestKey); // xoá cart guest
+    localStorage.setItem('currentUser', userId); // cập nhật currentUser
     @endauth
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const slides = document.querySelectorAll('.fade-slide');
         let currentIndex = 0;
 
@@ -263,9 +259,11 @@
                                     </div>
                                     <h6 class="product-title">Quantity</h6>
                                     <div class="quantity">
-                                        <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="minus" type="button"><i
+                                                class="fa-solid fa-minus"></i></button>
                                         <input type="number" value="1" min="1" max="20">
-                                        <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="plus" type="button"><i
+                                                class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                                 <div class="product-buttons"><a class="btn btn-solid" href="cart.html">Add to
@@ -323,17 +321,20 @@
                 </div>
                 <h4>Popular Searches</h4>
                 <ul class="rapid-search">
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Women</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Women</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Jeans
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Jeans
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>Blazer Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Men</a></li>
-                    <li> <a href="collection-left-sidebar.html"><i class="iconsax" data-icon="search-normal-2"></i>Shoes
+                    <li> <a href="collection-left-sidebar.html"><i class="iconsax"
+                                data-icon="search-normal-2"></i>Shoes
                             Men</a></li>
                     <li> <a href="collection-left-sidebar.html"><i class="iconsax"
                                 data-icon="search-normal-2"></i>T-Shirts Women</a></li>
@@ -441,7 +442,8 @@
         </script>
     @endif
 
-    <div id="toast-container" style="
+    <div id="toast-container"
+        style="
     position: fixed;
     top: 20px;
     right: 20px;
@@ -556,7 +558,7 @@
     // ================================
     // 3. DOMContentLoaded: GÁN SỰ KIỆN
     // ================================
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         renderCartItems();
 
         // Bấm nút thêm vào giỏ hàng
@@ -564,8 +566,8 @@
 
         // Xử lý chọn size
         const sizeItems = document.querySelectorAll('.size-box ul li');
-        sizeItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        sizeItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 sizeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -573,8 +575,8 @@
 
         // Xử lý chọn màu
         const colorItems = document.querySelectorAll('.color-variant li');
-        colorItems.forEach(function (item) {
-            item.addEventListener('click', function () {
+        colorItems.forEach(function(item) {
+            item.addEventListener('click', function() {
                 colorItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -582,22 +584,22 @@
     });
 
     // Reload lại nếu quay lại bằng Back/Forward
-    window.addEventListener('pageshow', function (event) {
+    window.addEventListener('pageshow', function(event) {
         if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type ===
-            "back_forward")) {
+                "back_forward")) {
             window.location.reload();
         }
     });
 
     // Cho phép gọi từ ngoài bằng sự kiện tùy chỉnh
-    document.addEventListener('cartUpdated', function () {
+    document.addEventListener('cartUpdated', function() {
         renderCartItems();
     });
 </script>
 
 
 <script>
-    document.addEventListener('cartUpdated', function () {
+    document.addEventListener('cartUpdated', function() {
         if (typeof renderCartItems === 'function') {
             renderCartItems();
         }
@@ -625,17 +627,17 @@
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
 
-                toastr.options.onclick = function () {
+                    toastr.options.onclick = function() {
 
-                    toastr.options.onclick = function () {
+                        toastr.options.onclick = function() {
 
-                        if (notification.url) {
-                            window.location.href = notification.url;
-                        }
-                    };
-                    toastr.info("Bạn có một thông báo mới");
-                });
-    @endif
+                            if (notification.url) {
+                                window.location.href = notification.url;
+                            }
+                        };
+                        toastr.info("Bạn có một thông báo mới");
+                    });
+            @endif
 </script>
 <script>
     function updateCartBadge() {
@@ -660,7 +662,6 @@
 
 
 @if (Auth::check() && $unreadNotifications->count())
-
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
@@ -676,7 +677,7 @@
                 "progressBar": true,
                 "timeOut": "8000",
                 "extendedTimeOut": "1000",
-                "onclick": function () {
+                "onclick": function() {
                     if (data.url) {
                         window.location.href = data.url;
                     }

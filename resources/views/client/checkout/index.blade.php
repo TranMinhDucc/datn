@@ -523,7 +523,7 @@
             const selectedShippingAddress = document.querySelector('input[name="shipping_address_id"]:checked')
                 ?.value;
             const selectedPaymentMethodId = document.querySelector('input[name="payment_method_id"]:checked')
-            ?.value;
+                ?.value;
 
             const productCoupon = JSON.parse(sessionStorage.getItem('productCoupon') || '{}');
             const productCouponId = productCoupon.id || null;
