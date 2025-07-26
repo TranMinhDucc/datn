@@ -30,46 +30,63 @@
                         <p class="pb-0">Let's Get In Touch<span></span></p>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="location"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="phone-calling"></i></div>
                         <div class="contact-box">
-                            <h6>Contact Number</h6>
-                            <p>+91 123 - 456 - 7890</p>
+
+                            <h6>Số điện thoại liên lạc</h6>
+                            <p>{{ $settings['hotline'] ?? 'Chưa cài đặt' }}</p>
+
+
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="phone-calling"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="mail"></i></i></div>
                         <div class="contact-box">
-                            <h6>Email Address</h6>
-                            <p>katie098@gmail.com</p>
+
+                            <h6>Địa chỉ email</h6>
+                            <p>{{ $settings['email'] ?? 'Chưa cài đặt' }}</p>
+
+                           
+
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="mail"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="map-1"></i></div>
                         <div class="contact-box">
-                            <h6>Other Address</h6>
-                            <p>ABC Complex, New York USA 123456</p>
+
+                            <h6>Cửa hàng </h6>
+                            <p>{{ $settings['title'] ?? 'Chưa cài đặt' }}</p>
+
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-3 col-sm-6">
                     <div class="address-items">
-                        <div class="icon-box"> <i class="iconsax" data-icon="map-1"></i></div>
+                        <div class="icon-box"><i class="iconsax" data-icon="location"></i></div>
                         <div class="contact-box">
-                            <h6>Bournemouth Office</h6>
-                            <p>Visitación de la Encina 22</p>
+
+                            <h6>Văn phòng</h6>
+                            <p>{{ $settings['address'] ?? 'Chưa cài đặt' }}</p>
+
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </section>
+
 
 <section class="section-b-space pt-0">
     <div class="custom-container container">
