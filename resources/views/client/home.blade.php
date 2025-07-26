@@ -305,16 +305,21 @@
                                             <div class="col-xxl-3 col-md-4 col-6">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-                                                        @if ($product->label && is_object($product->label))
-                                                            <div class="label-block">
-                                                                <div class="label-item-wrapper"
-                                                                    style="display:inline-block;max-width:60px;margin-right:10px">
-                                                                    <img style="width:100%"
-                                                                        class="{{ $product->label->position }}"
-                                                                        src="{{ $product->label->image }}" alt="label">
-                                                                </div>
-                                                            </div>
-                                                        @endif
+@if ($product->labels && $product->labels->count())
+    <div class="label-block">
+        @foreach ($product->labels as $product_label)
+            <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+                <img style="width:100%" class="{{ $product_label->position }}" src="{{ asset('storage/' . $product_label->image) }}" alt="label">
+            </div>
+        @endforeach
+    </div>
+@elseif ($product->label && is_object($product->label))
+    <div class="label-block">
+        <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+            <img style="width:100%" class="{{ $product->label->position }}" src="{{ $product->label->image }}" alt="label">
+        </div>
+    </div>
+@endif
 
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">

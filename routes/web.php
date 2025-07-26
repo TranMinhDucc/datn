@@ -49,6 +49,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+
 use App\Http\Controllers\Admin\PaymentBankController;
 use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\ProductLabelController;
@@ -56,17 +57,13 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\VariantAttributeController;
 use App\Http\Controllers\Admin\SearchController;
-use App\Http\Controllers\Admin\EmailCampaignController;
-use App\Http\Controllers\Admin\ShippingFeeController;
-use App\Http\Controllers\Admin\ShippingMethodController;
-use App\Http\Controllers\Admin\ShippingZoneController;
+
 use App\Http\Controllers\Admin\BlogCommentController;
 use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
-use App\Http\Controllers\Admin\ShopSettingController;
-use App\Http\Controllers\Admin\WishlistController;
+
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 

@@ -9,19 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('shipping_zones', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+   public function up()
+{
+    Schema::table('banners', function (Blueprint $table) {
+        $table->string('new_column')->nullable();
+    });
+}
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('shipping_zones');
+        Schema::table('banners', function (Blueprint $table) {
+            //
+        });
     }
 };

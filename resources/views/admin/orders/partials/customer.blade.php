@@ -9,15 +9,15 @@
             <tbody class="fw-semibold text-gray-600">
                 <tr>
                     <td class="text-muted">Tên</td>
-                    <td class="fw-bold text-end">{{ \$order->user->fullname }}</td>
+                    <td class="fw-bold text-end">{{ $order->user->fullname }}</td>
                 </tr>
                 <tr>
                     <td class="text-muted">Email</td>
-                    <td class="fw-bold text-end">{{ \$order->user->email }}</td>
+                    <td class="fw-bold text-end">{{ $order->user->email }}</td>
                 </tr>
                 <tr>
                     <td class="text-muted">Số điện thoại</td>
-                    <td class="fw-bold text-end">{{ \$order->user->phone ?? '—' }}</td>
+                    <td class="fw-bold text-end">{{ $order->user->phone ?? '—' }}</td>
                 </tr>
             </tbody>
         </table>

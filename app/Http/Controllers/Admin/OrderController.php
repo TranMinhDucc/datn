@@ -18,12 +18,46 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $orders = Order::with(['user', 'shippingOrder'])->orderBy('id', 'desc')->paginate(10);
-        return view('admin.orders.index', compact('orders'));
+  public function index(Request $request)
+{
+    $searchOrders = Order::query()->with(['user', 'shippingOrder']);
+
+    if ($request->filled('order_code')) {
+        $searchOrders->where('order_code', 'like', '%' . $request->order_code . '%');
     }
 
+   if ($request->filled('status')) {
+    $searchOrders->where('status', $request->status);
+}
+    if ($request->filled('user_id')) {
+        $searchOrders->where('user_id', $request->user_id);
+    }
+
+    if ($request->filled('user_name')) {
+        $searchOrders->whereHas('user', function ($query) use ($request) {
+            $query->where('name', 'like', '%' . $request->user_name . '%');
+        });
+    }
+
+    if ($request->filled('status')) {
+        $searchOrders->where('status', $request->status);
+    }
+
+    if ($request->filled('from_date') && $request->filled('to_date')) {
+        $searchOrders->whereBetween('created_at', [
+            $request->from_date . ' 00:00:00',
+            $request->to_date . ' 23:59:59'
+        ]);
+    } elseif ($request->filled('from_date')) {
+        $searchOrders->whereDate('created_at', '>=', $request->from_date);
+    } elseif ($request->filled('to_date')) {
+        $searchOrders->whereDate('created_at', '<=', $request->to_date);
+    }
+
+    $orders = $searchOrders->latest()->paginate(10);
+
+    return view('admin.orders.index', compact('orders'));
+}
 
 
     /**
@@ -104,8 +138,8 @@ class OrderController extends Controller
             'Content-Type' => 'application/json',
             'Token' => config('services.ghn.token'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail', [
-            'order_code' => $shippingOrder->shipping_code,
-        ]);
+                    'order_code' => $shippingOrder->shipping_code,
+                ]);
 
         $currentStatus = $statusResponse->json('data.status') ?? 'unknown';
         Log::info("📦 Trạng thái GHN hiện tại của {$shippingOrder->shipping_code} là: $currentStatus");
@@ -122,8 +156,8 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'ShopId' => config('services.ghn.shop_id'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/storing', [
-            'order_codes' => [$shippingOrder->shipping_code]
-        ]);
+                    'order_codes' => [$shippingOrder->shipping_code]
+                ]);
 
         $responseData = $response->json();
         Log::info('🔁 GHN Retry Shipping response', $responseData);
@@ -170,8 +204,8 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'ShopId' => config('services.ghn.shop_id'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/cancel', [
-            'order_codes' => [$shippingOrder->shipping_code]
-        ]);
+                    'order_codes' => [$shippingOrder->shipping_code]
+                ]);
 
         $data = $response->json('data')[0] ?? [];
         $result = $data['result'] ?? false;
@@ -273,7 +307,7 @@ class OrderController extends Controller
         // Ghi lại phản hồi đầy đủ từ GHN
         Log::info('GHN Response Raw', [
             'status' => $response->status(),
-            'body'   => $response->body(),
+            'body' => $response->body(),
         ]);
 
         // Nếu thành công
@@ -319,13 +353,15 @@ class OrderController extends Controller
 
             $weight = $variant?->weight ?? $product?->weight ?? 100;
             $length = $variant?->length ?? $product?->length ?? 10;
-            $width  = $variant?->width ?? $product?->width ?? 10;
+            $width = $variant?->width ?? $product?->width ?? 10;
             $height = $variant?->height ?? $product?->height ?? 10;
 
             $totalWeight += $weight * $item->quantity;
 
-            if ($length > $maxLength) $maxLength = $length;
-            if ($width > $maxWidth) $maxWidth = $width;
+            if ($length > $maxLength)
+                $maxLength = $length;
+            if ($width > $maxWidth)
+                $maxWidth = $width;
 
             $totalHeight += $height * $item->quantity;
         }
@@ -353,10 +389,10 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', [
-            'shop_id' => (int) config('services.ghn.shop_id'),
-            'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
-            'to_district'   => (int)$toDistrictId,
-        ]);
+                    'shop_id' => (int) config('services.ghn.shop_id'),
+                    'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
+                    'to_district' => (int) $toDistrictId,
+                ]);
 
         $serviceId = data_get($availableServices->json(), 'data.0.service_id');
 
@@ -365,24 +401,24 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'GHN không trả về service_id hợp lệ.');
         }
         $data = [
-            'from_name'           => $shop->shop_name,
-            'from_phone'          => $shop->shop_phone,
-            'from_address'        => $shop->address,
-            'from_ward_name'      => optional($shop->ward)->name,
-            'from_district_name'  => optional($shop->district)->name,
-            'from_province_name'  => optional($shop->province)->name,
-            'payment_type_id'     => 1,
-            'note'                => 'Giao hàng cho khách',
-            'required_note'       => 'KHONGCHOXEMHANG',
-            'to_name'             => $order->address->full_name,
-            'to_phone'            => $order->address->phone,
-            'to_address'          => $order->address->address,
-            'to_district_id'      => $toDistrictId,
-            'to_ward_code'        => (string)$toWardCode,
-            'weight'              => $totalWeight ?: 100,
-            'length'              => $maxLength ?: 10,
-            'width'               => $maxWidth ?: 10,
-            'height'              => $totalHeight ?: 10,
+            'from_name' => $shop->shop_name,
+            'from_phone' => $shop->shop_phone,
+            'from_address' => $shop->address,
+            'from_ward_name' => optional($shop->ward)->name,
+            'from_district_name' => optional($shop->district)->name,
+            'from_province_name' => optional($shop->province)->name,
+            'payment_type_id' => 1,
+            'note' => 'Giao hàng cho khách',
+            'required_note' => 'KHONGCHOXEMHANG',
+            'to_name' => $order->address->full_name,
+            'to_phone' => $order->address->phone,
+            'to_address' => $order->address->address,
+            'to_district_id' => $toDistrictId,
+            'to_ward_code' => (string) $toWardCode,
+            'weight' => $totalWeight ?: 100,
+            'length' => $maxLength ?: 10,
+            'width' => $maxWidth ?: 10,
+            'height' => $totalHeight ?: 10,
             'service_id' => $serviceId,
             'items' => $order->items->map(function ($item) {
                 $variant = $item->productVariant;

@@ -343,12 +343,12 @@
                                                             </form>
                                                         </div>
                                                         <div class="product-image">
-                                                            <a class="pro-first" href="#">
+                                                            <a class="pro-first" href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}"
                                                                     alt="{{ $product->name }}">
                                                             </a>
-                                                            <a class="pro-sec" href="#">
+                                                            <a class="pro-sec" href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image ?? 'assets/client/images/no-image.png') }}"
                                                                     alt="{{ $product->name }}">
@@ -363,19 +363,74 @@
                                                                     data-icon="eye"></i></a>
                                                         </div>
                                                     </div>
+                                                    @php
+                                                    // Lấy đánh giá
+                                                    $reviews = App\Models\Review::where('product_id', $product->id)
+                                                        ->where('approved', true)
+                                                        ->with('user')
+                                                        ->latest()
+                                                        ->get();
+
+                                                    $rating_summary = [
+                                                        'avg_rating' => null,
+                                                        'total_rating' => count($reviews),
+                                                        '5_star_percent' => 0,
+                                                        '4_star_percent' => 0,
+                                                        '3_star_percent' => 0,
+                                                        '2_star_percent' => 0,
+                                                        '1_star_percent' => 0,
+                                                    ];
+
+                                                    if ($rating_summary['total_rating'] > 0) {
+                                                        $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
+
+                                                        foreach ($reviews as $review) {
+                                                            switch ($review->rating) {
+                                                                case '1':
+                                                                    $star_1++;
+                                                                    break;
+                                                                case '2':
+                                                                    $star_2++;
+                                                                    break;
+                                                                case '3':
+                                                                    $star_3++;
+                                                                    break;
+                                                                case '4':
+                                                                    $star_4++;
+                                                                    break;
+                                                                case '5':
+                                                                    $star_5++;
+                                                                    break;
+                                                            }
+                                                        }
+
+                                                        $total = $rating_summary['total_rating'];
+                                                        $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+                                                        $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+                                                        $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+                                                        $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+                                                        $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+                                                        $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
+                                                    }
+                                                    @endphp
                                                     <div class="product-detail">
                                                         <ul class="rating">
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star"></i></li>
-                                                            <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                                            <li><i class="fa-regular fa-star"></i></li>
-                                                            <li>4.3</li>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                @if ($rating_summary['avg_rating']>= $i)
+                                                                    <li><i class="fa-solid fa-star"></i></li>
+                                                                @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
+                                                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                                                @else
+                                                                    <li><i class="fa-regular fa-star"></i></li>
+                                                                @endif
+                                                            @endfor
+                                                            <li>{{ $rating_summary['avg_rating'] }}</li>
                                                         </ul>
-                                                        <a href="#">
+                                                       
+                                                        <a href="{{ route('client.products.show', $product->slug) }}">
                                                             <h6>{{ $product->name }}</h6>
                                                         </a>
-                                                        <p>${{ number_format($product->price, 2) }}</p>
+                                                        <p>{{ number_format($product->sale_price, 2) }} đ</p>
                                                     </div>
                                                 </div>
                                             </div>
