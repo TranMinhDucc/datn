@@ -265,7 +265,6 @@ class CheckoutController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Phương thức không hỗ trợ.'], 400);
     }
-
     private function initMomoPayment(Request $request)
     {
         $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
@@ -276,9 +275,9 @@ class CheckoutController extends Controller
         $orderId = 'ORDER' . time() . rand(1000, 9999);
         $redirectUrl = route('client.checkout.payment-callback');
         $ipnUrl = route('client.checkout.payment-callback');
-        $amount = (int) ($request->total_amount ?? $request->shipping_fee + $request->tax_amount + $request->discount_amount); // hoặc tính lại từ cart
+        $amount = (int) ($request->total_amount ?? $request->shipping_fee + $request->tax_amount + $request->discount_amount);
         $requestId = time() . "";
-        $requestType = "payWithATM";
+        $requestType = "captureWallet"; // ✅ Đổi sang QR MoMo
         $extraData = "";
 
         $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType";
@@ -311,7 +310,6 @@ class CheckoutController extends Controller
 
         return $jsonResult['payUrl'];
     }
-
     private function initVnpayPayment(Request $request)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";

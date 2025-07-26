@@ -27,9 +27,11 @@
         <div class="col-12">
             <div class="main-menu">
                 <a class="brand-logo" href="{{ url('/') }}">
-                    <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}" alt="logo">
+                    <img class="img-fluid for-light" src="{{ asset('storage/' . $settings['logo_light']) }}"
+                        alt="logo">
 
-                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}" alt="logo">
+                    <img class="img-fluid for-dark" src="{{ asset('storage/' . $settings['logo_dark']) }}"
+                        alt="logo">
 
                 </a>
                 @include('layouts.partials.client.navbar')
@@ -54,22 +56,22 @@
                             <div class="onhover-show-div user">
                                 <ul>
                                     @auth
-                                    @if (Auth::user()->role === 'admin')
-                                    <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                                    @endif
-                                    <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
-                                    <li>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="btn btn-link text-start p-0"
-                                                style="color: #000; text-decoration: none;">
-                                                Đăng xuất
-                                            </button>
-                                        </form>
-                                    </li>
+                                        @if (Auth::user()->role === 'admin')
+                                            <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+                                        @endif
+                                        <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-link text-start p-0"
+                                                    style="color: #000; text-decoration: none;">
+                                                    Đăng xuất
+                                                </button>
+                                            </form>
+                                        </li>
                                     @else
-                                    <li><a href="{{ route('login') }}">Đăng nhập</a></li>
-                                    <li><a href="{{ route('register') }}">Đăng ký</a></li>
+                                        <li><a href="{{ route('login') }}">Đăng nhập</a></li>
+                                        <li><a href="{{ route('register') }}">Đăng ký</a></li>
                                     @endauth
                                 </ul>
                             </div>

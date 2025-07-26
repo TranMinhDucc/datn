@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BadWordController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\AccountController;
@@ -63,7 +64,7 @@ use App\Http\Controllers\Admin\CKEditorController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
-
+use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -187,6 +188,12 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     // routes/web.php
+    Route::get('/orders/{order}/return-form', [ClientOrderController::class, 'showReturnForm'])
+        ->name('orders.return_form');
+
+    // Xử lý POST gửi lý do
+    Route::post('/orders/{order}/return-request', [ClientOrderController::class, 'returnRequest'])
+        ->name('orders.return_request');
 
     Route::get('/account/notifications', function () {
         $notifications = auth()->user()->notifications()->paginate(10);
@@ -296,7 +303,7 @@ Route::prefix('admin')
         // Route::resource('roles', RoleController::class)->names('admin.roles');
 
 
-        Route::resource('wishlists', \App\Http\Controllers\Admin\WishlistController::class);
+        Route::resource('wishlists', WishlistController::class);
 
         Route::resource('coupons', CouponController::class);
         // Marketing
@@ -312,7 +319,7 @@ Route::prefix('admin')
 
         Route::resource('product-labels', ProductLabelController::class);
 
-        Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
+        Route::resource('badwords', BadWordController::class);
 
 
         Route::resource('product-labels', ProductLabelController::class);
@@ -375,6 +382,9 @@ Route::prefix('admin')
         Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::post('/orders/{order}/approve-return', [OrderController::class, 'approveReturn'])->name('orders.approve_return');
+        Route::post('/orders/{order}/reject-return', [OrderController::class, 'rejectReturn'])->name('orders.reject_return');
+
         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
         Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
         //Inventory

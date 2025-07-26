@@ -80,21 +80,47 @@ class OrderController extends Controller
     }
 
     public function reorderData(Order $order)
-{
-    $items = $order->orderItems->map(function ($item) {
-        return [
-            'id' => $item->product_id,
-            'variant_id' => $item->product_variant_id,
-            'name' => $item->product_name,
-            'sku' => $item->sku ?? '',
-            'brand' => $item->product->brand->name ?? 'Unknown', // Thêm brand từ product
-            'image' => $item->image_url ?? '',
-            'price' => floatval($item->price),
-            'quantity' => intval($item->quantity),
-            'attributes' => json_decode($item->variant_values ?? '{}', true),
-        ];
-    });
+    {
+        $items = $order->orderItems->map(function ($item) {
+            return [
+                'id' => $item->product_id,
+                'variant_id' => $item->product_variant_id,
+                'name' => $item->product_name,
+                'sku' => $item->sku ?? '',
+                'brand' => $item->product->brand->name ?? 'Unknown', // Thêm brand từ product
+                'image' => $item->image_url ?? '',
+                'price' => floatval($item->price),
+                'quantity' => intval($item->quantity),
+                'attributes' => json_decode($item->variant_values ?? '{}', true),
+            ];
+        });
 
-    return response()->json(['success' => true, 'items' => $items]);
-}
+        return response()->json(['success' => true, 'items' => $items]);
+    }
+    public function showReturnForm(Order $order)
+    {
+        if ($order->user_id !== auth()->id() || $order->status !== 'completed' || !$order->delivered_at || now()->diffInDays($order->delivered_at) > 3) {
+            return redirect()->route('client.account.dashboard')->with('error', 'Không thể yêu cầu đổi trả đơn hàng này.');
+        }
+
+        return view('client.account.return-form', compact('order')); // ✅ đúng đường dẫn Blade
+    }
+
+    public function returnRequest(Request $request, Order $order)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:1000',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $imagePath = $request->file('image')?->store('returns', 'public');
+
+        $order->update([
+            'return_reason' => $request->reason,
+            'return_image' => $imagePath,
+            'return_requested_at' => now(),
+        ]);
+
+        return redirect()->route('client.account.dashboard')->with('success', 'Đã gửi yêu cầu khiếu nại thành công.');
+    }
 }

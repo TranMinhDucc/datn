@@ -42,6 +42,38 @@
                         {{-- <a href="" class="btn btn-success btn-sm">Edit Order</a> --}}
 
                         <a href="add-order.html" class="btn btn-primary btn-sm">Edit Order</a>
+                        @if ($order->status !== 'cancelled')
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light-primary fw-bold dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ ucfirst($order->status) }}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach ([
+            'pending' => '🕐 Chờ xác nhận',
+            'confirmed' => '✅ Đã xác nhận',
+            'shipping' => '🚚 Đang giao',
+            'completed' => '🎉 Đã hoàn tất',
+            'cancelled' => '❌ Đã hủy',
+        ] as $status => $label)
+                                        <li>
+                                            <form method="POST"
+                                                action="{{ route('admin.orders.updateStatus', $order->id) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="status" value="{{ $status }}">
+                                                <button type="submit" class="dropdown-item">{{ $label }}</button>
+                                            </form>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @else
+                            <span class="badge bg-danger fw-bold">
+                                {{ ucfirst($order->status) }} – Đơn hàng đã bị huỷ
+                            </span>
+                        @endif
+
                         @php
                             $latestLog = $order->shippingLogs->sortByDesc('created_at')->first();
                         @endphp
@@ -78,7 +110,7 @@
                 </div>
                 <!--begin::Order summary-->
                 <div
-                    class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 mb-10 ">
+                    class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 ">
                     <div class="d-flex flex-column pe-0 pe-sm-10">
                         <span>
                             <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên kết:
@@ -98,6 +130,49 @@
                     </button>
                     <!--end::Close-->
                 </div>
+                @if ($order->return_reason)
+                    <div class="alert alert-warning d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa-solid fa-rotate-left fs-2x text-warning"></i>
+                            <h4 class="mb-0">Yêu cầu khiếu nại của đơn hàng</h4>
+                        </div>
+
+                        <div><strong>Lý do:</strong> {{ $order->return_reason }}</div>
+
+                        @if ($order->return_image)
+                            <div>
+                                <strong>Ảnh đính kèm:</strong><br>
+                                <img src="{{ asset('storage/' . $order->return_image) }}" alt="Ảnh khiếu nại"
+                                    style="max-width: 300px;" class="img-thumbnail">
+                            </div>
+                        @endif
+
+                        @if (is_null($order->refunded_at))
+                            <div class="d-flex gap-2">
+                                <!-- Duyệt yêu cầu -->
+                                {{-- <form action="{{ route('admin.orders.approve_return', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">
+                                        ✅ Chấp nhận hoàn hàng
+                                    </button>
+                                </form> --}}
+
+                                <!-- Từ chối yêu cầu -->
+                                {{-- <form action="{{ route('admin.orders.reject_return', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger">
+                                        ❌ Từ chối yêu cầu
+                                    </button>
+                                </form> --}}
+                            </div>
+                        @else
+                            <div class="badge bg-success fs-6">
+                                Đã xử lý hoàn hàng vào {{ $order->refunded_at->format('d/m/Y H:i') }}
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
                 <div class="d-flex flex-column flex-xl-row gap-7 gap-lg-10">
                     <!--begin::Order details-->
 
@@ -181,7 +256,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <i class="fa-solid fa-circle-user fs-6 me-2 text-gray-400"><span
                                                             class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i> Customer
+                                                            class="path3"></span></i> Khách hàng
                                                 </div>
                                             </td>
 
@@ -297,19 +372,37 @@
                                         <tr>
                                             <td class="text-muted">
                                                 <div class="d-flex align-items-center">
-                                                    <i class="ki-duotone ki-discount fs-2 me-2"><span
-                                                            class="path1"></span><span class="path2"></span></i> Reward
-                                                    Points
+                                                    <i class="fa-solid fa-file-invoice text-gray-500 fs-6 me-2"><span
+                                                            class="path1"></span><span class="path2"></span></i> Thanh
+                                                    toán
 
 
                                                     <span class="ms-1" data-bs-toggle="tooltip"
-                                                        title="Reward value earned by customer when purchasing this order">
+                                                        title="Khách hàng đã thanh toán hay chưa">
                                                         <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                                 class="path1"></span><span class="path2"></span><span
                                                                 class="path3"></span></i></span>
                                                 </div>
                                             </td>
-                                            <td class="fw-bold text-end">600</td>
+                                            <td class="fw-bold text-end">
+                                                @switch($order->payment_status)
+                                                    @case('unpaid')
+                                                        <span class="badge badge-light-warning">Chưa thanh toán</span>
+                                                    @break
+
+                                                    @case('paid')
+                                                        <span class="badge badge-light-success">Đã thanh toán</span>
+                                                    @break
+
+                                                    @case('refunded')
+                                                        <span class="badge badge-light-danger">Đã hoàn tiền</span>
+                                                    @break
+
+                                                    @default
+                                                        <span class="badge badge-light">Không xác định</span>
+                                                @endswitch
+                                            </td>
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -650,29 +743,7 @@
                 </div>
                 <!--end::Tab content-->
             </div>
-            <div class="mb-4">
-                <h2>📝 Trạng thái đơn hàng:</h2>
-                <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}"
-                    id="status-form-{{ $order->id }}">
-                    @csrf
-                    @method('PUT')
 
-                    <select name="status" class="form-select fw-semibold" onchange="handleStatusSelect(this)">
-                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>🕐 Chờ xác nhận
-                        </option>
-                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>✅ Đã xác nhận
-                        </option>
-                        <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>🚚 Đang giao
-                        </option>
-                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>🎉 Đã hoàn tất
-                        </option>
-                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>❌ Đã huỷ</option>
-                    </select>
-
-                    <!-- Input ẩn để lưu lý do huỷ -->
-                    <input type="hidden" name="cancel_reason_by_admin" id="cancel-reason-admin">
-                </form>
-            </div>
 
             <!--end::Order details page-->
         </div>

@@ -103,13 +103,26 @@ class OrderController extends Controller
         ]);
 
         $order->status = $validated['status'];
+
+        // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
+        if ($validated['status'] === 'completed' && !$order->delivered_at) {
+            $order->delivered_at = now();
+        }
+
         $order->save();
 
         // Gửi notification realtime tới user
-        $order->user->notify(new OrderStatusNotification($order->id, $order->status, $order, $request->cancel_reason, $request->image));
+        $order->user->notify(new OrderStatusNotification(
+            $order->id,
+            $order->status,
+            $order,
+            $request->cancel_reason,
+            $request->image
+        ));
 
         return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
+
 
     public function cancel()
     {
