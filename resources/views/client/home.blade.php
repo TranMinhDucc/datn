@@ -19,12 +19,27 @@
         display: none;
     }
 
-    .fade-slide.active {
-        opacity: 1;
-        z-index: 1;
-        position: relative;
-        display: block;
-    }
+
+.fade-slide.active {
+    opacity: 1;
+    z-index: 1;
+    position: relative;
+    display: block;
+}
+.section-t-space {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.fashion-images {
+    margin-bottom: 0; /* giảm khoảng cách với phần tiếp theo */
+}
+
+.swiper-wrapper {
+    height: auto !important;
+}
+
+
 </style>
 @section('content')
     {{-- <section class="section-space home-section-4">
@@ -76,7 +91,7 @@
 </div>
 </div>
 </section> --}}
-    <section class="section-space home-section-4">
+    {{-- <section class="section-space home-section-4">
         <div class="custom-container container">
             <div class="row">
                 <div class="col-12">
@@ -151,7 +166,7 @@
             </div>
         </div>
 
-    </section>  
+    </section>   --}}
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -165,14 +180,17 @@
                                     $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
                                     $remainingWords = implode(' ', array_slice($titleWords, 7));
                                 @endphp
+
                                 <h3>{{ $firstFiveWords }}</h3>
                                 <h2>{{ $remainingWords }}</h2>
                                 <h6>{{ strip_tags($banner->description) }}</h6>
                             </div>
+
                             <!-- Product 1 -->
                             <div class="product-1">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_1_name }}</h6>
                                         <h5>${{ number_format($banner->sub_image_1_price, 0) }}
@@ -182,16 +200,19 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Product 2 -->
                             <div class="product-2">
                                 <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}"
+                                        alt="">
                                     <div class="product-details">
                                         <h6>{{ $banner->sub_image_2_name }}</h6>
                                         <span>${{ number_format($banner->sub_image_2_price, 0) }}</span>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Main Image -->
                             <div class="home-images">
                                 <div class="main-images"></div>
