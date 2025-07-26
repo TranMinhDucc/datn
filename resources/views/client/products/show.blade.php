@@ -73,7 +73,7 @@
                         @endphp
                         <script>
                             const isInDiscountTime = @json($isInDiscountTime);
-                            const saleTimes = @json($product -> sale_times);
+                            const saleTimes = @json($product->sale_times);
                         </script>
                         <h3>{{ $product->name }}</h3>
                         <p id="main-price">{{ number_format($finalPrice) }} đ
@@ -176,6 +176,7 @@
                                 data-quantity="1">
                                 Buy Now
                             </a>
+
                         </div>
                     </div>
                     <div class="buy-box">
@@ -631,91 +632,73 @@
                 </div>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
+    </div>
+</section>
+<section class="section-b-space pt-0">
+    <div class="custom-container container product-contain">
+        <div class="title text-start">
+            <h3>Related Products</h3>
+            <svg>
+                <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
 
-   
-    </section>
-    <section class="section-b-space pt-0">
-        <div class="custom-container container product-contain">
-            <div class="title text-start">
-                <h3>Related Products</h3>
-                <svg>
-                    <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
-
-                </svg>
-            </div>
-            <div class="swiper special-offer-slide-2">
-                <div class="swiper-wrapper ratio1_3">
-                    @foreach ($product->related_products as $value)
-                        <div class="swiper-slide">
-                            <div class="product-box-3">
-                                <div class="img-wrapper">
-                                    <div class="label-block"><span class="lable-1">NEW</span><a
-                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                                class="iconsax" data-icon="heart" aria-hidden="true"
-                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
-                                    <div class="product-image"><a class="pro-first"
-                                            href="{{ route('client.products.show', $value->slug) }}"> <img class="bg-img"
-                                                src="{{ asset('storage/' . $value->image) }}"
-                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
-                                            href="{{ route('client.products.show', $value->slug) }}"> <img class="bg-img"
-                                                src="{{ asset('storage/' . $value->image) }}"
-                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
-                                            href="product.html"> <img class="bg-img"
-                                                src="{{ asset('storage/' . $value->image) }}"
-                                                alt="Áo phông cucci LV collab"></a></div>
-                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                                data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                                data-bs-title="Add to cart"> </i></a><a href="compare.html"
-                                            tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                                aria-hidden="true" data-bs-toggle="tooltip"
-                                                data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                                data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                                data-bs-title="Quick View"></i></a></div>
-                                    <div class="countdown">
-                                        <ul class="clockdiv2">
-                                            <li>
-                                                <div class="timer">
-                                                    <div class="days"></div>
-                                                </div><span class="title">Days</span>
-                                            </li>
-                                            <li class="dot"> <span>:</span></li>
-                                            <li>
-                                                <div class="timer">
-                                                    <div class="hours"></div>
-                                                </div><span class="title">Hours</span>
-                                            </li>
-                                            <li class="dot"> <span>:</span></li>
-                                            <li>
-                                                <div class="timer">
-                                                    <div class="minutes"></div>
-                                                </div><span class="title">Min</span>
-                                            </li>
-                                            <li class="dot"> <span>:</span></li>
-                                            <li>
-                                                <div class="timer">
-                                                    <div class="seconds"></div>
-                                                </div><span class="title">Sec</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="product-detail">
-                                    <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li>{{ $value->rating_avg ?? 0 }}</li>
-                                    </ul><a href="{{ route('client.products.show', $value->slug) }}">
-                                        <h6>{{ $value->name }}</h6>
-                                    </a>
-                                    <p>${{ number_format($value->sale_price, 2) }}
-                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
-                                    </p>
-                                </div>
+            </svg>
+        </div>
+        <div class="swiper special-offer-slide-2">
+            <div class="swiper-wrapper ratio1_3">
+                @foreach ($product->related_products as $value)
+                <div class="swiper-slide">
+                    <div class="product-box-3">
+                        <div class="img-wrapper">
+                            <div class="label-block"><span class="lable-1">NEW</span><a
+                                    class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                        class="iconsax" data-icon="heart" aria-hidden="true"
+                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
+                            <div class="product-image"><a class="pro-first"
+                                    href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                        src="{{ asset('storage/' . $value->image) }}"
+                                        alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                    href="product.html"> <img class="bg-img"
+                                        src="{{ asset('storage/' . $value->image) }}"
+                                        alt="Áo phông cucci LV collab"></a></div>
+                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
+                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Add to cart"> </i></a><a href="compare.html"
+                                    tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                        aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                        data-bs-title="Quick View"></i></a></div>
+                            <div class="countdown">
+                                <ul class="clockdiv2">
+                                    <li>
+                                        <div class="timer">
+                                            <div class="days"></div>
+                                        </div><span class="title">Days</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="hours"></div>
+                                        </div><span class="title">Hours</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="minutes"></div>
+                                        </div><span class="title">Min</span>
+                                    </li>
+                                    <li class="dot"> <span>:</span></li>
+                                    <li>
+                                        <div class="timer">
+                                            <div class="seconds"></div>
+                                        </div><span class="title">Sec</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div class="product-detail">
@@ -906,15 +889,24 @@
 
         const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
         if (matched) {
-            document.getElementById('variant-quantity').textContent = matched.quantity;
-            document.getElementById('variant-info').style.display = 'block';
+            const quantity = matched.quantity;
 
+            const qtyEl = document.getElementById('variant-quantity');
+            if (quantity <= 0) {
+                qtyEl.textContent = 'Hết hàng';
+                qtyEl.style.color = 'red';
+            } else {
+                qtyEl.textContent = quantity;
+                qtyEl.style.color = '';
+            }
+
+            document.getElementById('variant-info').style.display = 'block';
             const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
             document.getElementById('main-price').textContent = formattedPrice;
-        } else {
-            document.getElementById('variant-info').style.display = 'none';
-            document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
         }
+
+
+
     }
 
     // Bắt sự kiện click vào mỗi lựa chọn
@@ -976,27 +968,6 @@
             $hours.text(String(t.hours).padStart(2, '0'));
             $minutes.text(String(t.minutes).padStart(2, '0'));
             $seconds.text(String(t.seconds).padStart(2, '0'));
-
-            const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
-            if (matched) {
-    const quantity = matched.quantity;
-
-    const qtyEl = document.getElementById('variant-quantity');
-    if (quantity <= 0) {
-        qtyEl.textContent = 'Hết hàng';
-        qtyEl.style.color = 'red';
-    } else {
-        qtyEl.textContent = quantity;
-        qtyEl.style.color = '';
-    }
-
-    document.getElementById('variant-info').style.display = 'block';
-    const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-    document.getElementById('main-price').textContent = formattedPrice;
-}
-
-
-            
         }
         updateClock();
         const interval = setInterval(function() {
@@ -1064,12 +1035,12 @@
                 '#28a745';
 
             toast.innerHTML = `
-                <div class="icon">
-                    <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-                    <span>${message}</span>
-                </div>
-                <button class="close-btn">&times;</button>
-                `;
+    <div class="icon">
+        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+        <span>${message}</span>
+    </div>
+    <button class="close-btn">&times;</button>
+    `;
 
             container.appendChild(toast);
 
@@ -1140,22 +1111,22 @@
                 // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
                 const variantId = getSelectedVariantId(selectedAttributes);
 
-                    let price = parseFloat(this.dataset.price);
-                    let originalPrice = parseFloat(this.dataset.originalPrice);
-let matchedVariant = null;
+                let price = parseFloat(this.dataset.price);
+                let originalPrice = parseFloat(this.dataset.originalPrice);
+                let matchedVariant = null;
 
-if (variantId) {
-    matchedVariant = window.variantData.find(v => v.id === variantId);
-    if (matchedVariant) {
-        if (matchedVariant.quantity <= 0) {
-            showToast('Sản phẩm đã hết hàng', 'warning');
-            return;
-        }
+                if (variantId) {
+                    matchedVariant = window.variantData.find(v => v.id === variantId);
+                    if (matchedVariant) {
+                        if (matchedVariant.quantity <= 0) {
+                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            return;
+                        }
 
-        price = matchedVariant.price;
-        originalPrice = matchedVariant.original_price || originalPrice;
-    }
-}
+                        price = matchedVariant.price;
+                        originalPrice = matchedVariant.original_price || originalPrice;
+                    }
+                }
 
 
 
@@ -1184,6 +1155,8 @@ if (variantId) {
 
                 localStorage.setItem(cartKey, JSON.stringify(cartItems));
                 document.dispatchEvent(new Event('cartUpdated'));
+                updateCartBadge(); // ← Thêm dòng này
+
 
                 const offcanvasEl = document.getElementById('offcanvasRight');
                 if (offcanvasEl) {
@@ -1192,6 +1165,7 @@ if (variantId) {
                 }
             });
         });
+        //Buy now
         const buyNowButtons = document.querySelectorAll('.buy-now-btn');
 
         buyNowButtons.forEach(function(btn) {
@@ -1208,7 +1182,6 @@ if (variantId) {
                 const cartKey = `cartItems_${currentUser}`;
                 const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-                // Lấy selected attributes
                 const selectedAttributes = {};
                 let valid = true;
                 const missingAttrs = [];
@@ -1231,19 +1204,22 @@ if (variantId) {
                     });
                     return;
                 }
-                // Lấy variantId nếu có
-                const variantId = getSelectedVariantId(selectedAttributes);
 
+                const variantId = getSelectedVariantId(selectedAttributes);
                 let price = parseFloat(btn.dataset.productPrice);
 
                 if (variantId) {
                     const matchedVariant = window.variantData.find(v => v.id === variantId);
                     if (matchedVariant) {
+                        // ✅ Kiểm tra tồn kho
+                        if (matchedVariant.quantity <= 0) {
+                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            return;
+                        }
                         price = matchedVariant.price;
                     }
                 }
 
-                // Xóa toàn bộ giỏ trước khi thêm mới 1 sản phẩm (Buy Now chỉ mua 1 sản phẩm)
                 const newCart = [{
                     id,
                     variant_id: variantId,
@@ -1257,8 +1233,6 @@ if (variantId) {
 
                 localStorage.setItem(cartKey, JSON.stringify(newCart));
                 document.dispatchEvent(new Event('cartUpdated'));
-
-                // Chuyển đến trang giỏ hàng
                 window.location.href = "{{ route('client.cart.index') }}";
             });
         });
@@ -1266,5 +1240,7 @@ if (variantId) {
     });
 </script>
 
-@endsection
 
+
+
+@endsection
