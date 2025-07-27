@@ -241,16 +241,19 @@
     </div>
     </div>
     </div> --}}
-        <div class="container-fluid fashion-images">
+       <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
-                            <div class="fashion-box mb-2">
-                                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
-                                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
-                                    <img class="img-fluid rounded-circle category-circle-img"
-                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                            <div class="fashion-box ">
+                                <a href="{{ route('client.category.show', $category->id) }}">
+                                  <img 
+    class="img-fluid rounded-circle category-circle-img" 
+    src="{{ asset('storage/' . $category->image) }}" 
+    alt="{{ $category->name }}" 
+    style="width: 180px; height: 180px; object-fit: cover;"
+>
                                 </a>
                             </div>
                             <h5>{{ $category->name }}</h5>
