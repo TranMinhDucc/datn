@@ -240,175 +240,8 @@ class CheckoutController extends Controller
             ]);
         }
     }
-    // ========== THANH TOÁN ONLINE HEHE =============
-    public function initiatePayment(Request $request)
-    {
-        $paymentMethod = \App\Models\PaymentMethod::find($request->payment_method_id);
-        if (!$paymentMethod) {
-            return response()->json(['success' => false, 'message' => 'Phương thức thanh toán không hợp lệ.'], 400);
-        }
-
-        if ($paymentMethod->code === 'momo') {
-            $payUrl = $this->initMomoPayment($request);
-            if ($payUrl) {
-                return response()->json(['url' => $payUrl]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Lỗi khởi tạo thanh toán MoMo.'], 500);
-            }
-        } elseif ($paymentMethod->code === 'vnpay') {
-            $payUrl = $this->initVnpayPayment($request);
-            if ($payUrl) {
-                return response()->json(['url' => $payUrl]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Lỗi khởi tạo thanh toán VNPAY.'], 500);
-            }
-        }
-        return response()->json(['success' => false, 'message' => 'Phương thức không hỗ trợ.'], 400);
-    }
-    private function initMomoPayment(Request $request)
-    {
-        $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-        $partnerCode = env('MOMO_PARTNER_CODE', 'MOMOBKUN20180529');
-        $accessKey = env('MOMO_ACCESS_KEY', 'klm05TvNBzhg7h7j');
-        $secretKey = env('MOMO_SECRET_KEY', 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa');
-        $orderInfo = "Thanh toán đơn hàng tại website";
-        $orderId = 'ORDER' . time() . rand(1000, 9999);
-        $redirectUrl = route('client.checkout.payment-callback');
-        $ipnUrl = route('client.checkout.payment-callback');
-        $amount = (int) ($request->total_amount ?? $request->shipping_fee + $request->tax_amount + $request->discount_amount);
-        $requestId = time() . "";
-        $requestType = "captureWallet"; // ✅ Đổi sang QR MoMo
-        $extraData = "";
-
-        $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType";
-        $signature = hash_hmac("sha256", $rawHash, $secretKey);
-
-        $data = [
-            'partnerCode' => $partnerCode,
-            'partnerName' => "Test",
-            "storeId" => "MomoTestStore",
-            'requestId' => $requestId,
-            'amount' => $amount,
-            'orderId' => $orderId,
-            'orderInfo' => $orderInfo,
-            'redirectUrl' => $redirectUrl,
-            'ipnUrl' => $ipnUrl,
-            'lang' => 'vi',
-            'extraData' => $extraData,
-            'requestType' => $requestType,
-            'signature' => $signature
-        ];
-
-        $result = $this->execPostRequest($endpoint, json_encode($data));
-        $jsonResult = json_decode($result, true);
-
-        if (!isset($jsonResult['payUrl'])) {
-            return null;
-        }
-
-        session()->put("pending_order_$orderId", $request->all());
-
-        return $jsonResult['payUrl'];
-    }
-    private function initVnpayPayment(Request $request)
-    {
-        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = route('client.checkout.payment-callback');
-        $vnp_TmnCode = env('VNPAY_TMNCODE', 'CW3MWMKN');
-        $vnp_HashSecret = env('VNPAY_HASHSECRET', '2EQ9DCNFBR3H0GRQ4RCVHYTO1VZYXFLZ');
-        $vnp_Locale = 'vn';
-        $vnp_TxnRef = 'ORDER' . time() . rand(1000, 9999);
-        $vnp_Amount = (int) ($request->total_amount ?? $request->shipping_fee + $request->tax_amount + $request->discount_amount) * 100;
-        $vnp_IpAddr = request()->ip();
-        $vnp_OrderInfo = "Thanh toán đơn hàng tại website";
-        $vnp_OrderType = "billpayment";
-
-        $inputData = [
-            "vnp_Version" => "2.1.0",
-            "vnp_TmnCode" => $vnp_TmnCode,
-            "vnp_Amount" => $vnp_Amount,
-            "vnp_Command" => "pay",
-            "vnp_CreateDate" => date('YmdHis'),
-            "vnp_CurrCode" => "VND",
-            "vnp_IpAddr" => $vnp_IpAddr,
-            "vnp_Locale" => $vnp_Locale,
-            "vnp_OrderInfo" => $vnp_OrderInfo,
-            "vnp_OrderType" => $vnp_OrderType,
-            "vnp_ReturnUrl" => $vnp_Returnurl,
-            "vnp_TxnRef" => $vnp_TxnRef
-        ];
-
-        ksort($inputData);
-        $query = "";
-        $hashdata = "";
-        $i = 0;
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-            } else {
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
-                $i = 1;
-            }
-            $query .= urlencode($key) . "=" . urlencode($value) . '&';
-        }
-        $vnp_Url = $vnp_Url . "?" . $query;
-        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-
-        session()->put("pending_order_$vnp_TxnRef", $request->all());
-
-        return $vnp_Url;
-    }
-
-    private function execPostRequest($url, $data)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data)
-        ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return $result;
-    }
-
-    public function paymentCallback(Request $request)
-    {
-        $orderId = $request->query('orderId') ?: $request->query('vnp_TxnRef');
-        if (!$orderId) {
-            return redirect()->route('client.home')->with('error', 'Không tìm thấy đơn hàng.');
-        }
-
-        $orderData = session()->pull("pending_order_$orderId");
-        if (!$orderData) {
-            return redirect()->route('client.home')->with('error', 'Không tìm thấy thông tin đơn hàng.');
-        }
-
-        $isSuccess = false;
-        if ($request->has('resultCode')) { // MoMo
-            $isSuccess = $request->query('resultCode') == 0;
-        } elseif ($request->has('vnp_TransactionStatus')) { // VNPAY
-            $isSuccess = $request->query('vnp_TransactionStatus') == '00';
-        }
-
-        if ($isSuccess) {
-            $orderRequest = new Request($orderData);
-            $orderRequest->merge(['is_paid' => 1, 'payment_status' => 'paid']);
-            $this->placeOrder($orderRequest);
-            return redirect()->route('client.client.checkout.success');
-        } else {
-            return redirect()->route('client.home')->with('error', 'Thanh toán thất bại hoặc bị hủy.');
-        }
-    }
-
     public function placeOrder(Request $request)
     {
-
         try {
             DB::beginTransaction(); // 🟢 BẮT ĐẦU TRANSACTION
             Log::info('📥 Dữ liệu nhận:', $request->all());
@@ -418,45 +251,35 @@ class CheckoutController extends Controller
             }
 
             $user = auth()->user();
-            if (!$user)
-                return response()->json(['success' => false, 'message' => 'Bạn chưa đăng nhập.'], 401);
+            if (!$user) return response()->json(['success' => false, 'message' => 'Bạn chưa đăng nhập.'], 401);
 
-            $cartItems = $request->cartItems;
+            $cartItems         = $request->cartItems;
             $shippingAddressId = $request->shipping_address_id;
-            $paymentMethodId = $request->payment_method_id;
-            $couponId = $request->coupon_id;
-            $shippingCouponId = $request->shipping_coupon_id;
-            $discountAmount = floatval($request->discount_amount);
-            $shippingFee = floatval($request->shipping_fee);
-            $taxAmount = floatval($request->tax_amount);
+            $paymentMethodId   = $request->payment_method_id;
+            $couponId          = $request->coupon_id;
+            $shippingCouponId  = $request->shipping_coupon_id;
+            $discountAmount    = floatval($request->discount_amount);
+            $shippingFee       = floatval($request->shipping_fee);
+            $taxAmount         = floatval($request->tax_amount);
 
             $subtotal = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
             $totalAmount = max(0, $subtotal + $shippingFee - $discountAmount + $taxAmount);
 
             $paymentMethod = \App\Models\PaymentMethod::find($paymentMethodId);
-            if (!$paymentMethod)
-                return response()->json(['success' => false, 'message' => 'Phương thức thanh toán không hợp lệ.'], 400);
+            if (!$paymentMethod) return response()->json(['success' => false, 'message' => 'Phương thức thanh toán không hợp lệ.'], 400);
 
             $isPaid = 0;
             $paymentStatus = 'unpaid';
             if ($paymentMethod->code === 'wallet') {
-                if ($user->balance < $totalAmount)
-                    return response()->json(['success' => false, 'message' => 'Số dư ví không đủ để thanh toán.'], 400);
+                if ($user->balance < $totalAmount) return response()->json(['success' => false, 'message' => 'Số dư ví không đủ để thanh toán.'], 400);
                 $user->decrement('balance', $totalAmount);
                 $isPaid = 1;
                 $paymentStatus = 'paid';
             }
 
-            if ($paymentMethod->code == 'momo' || $paymentMethod->code == 'vnpay') {
-
-                $paymentStatus = 'paid';
-            }
-
-
             if ($couponId) {
                 $coupon = \App\Models\Coupon::find($couponId);
-                if (!$coupon)
-                    return response()->json(['success' => false, 'message' => 'Mã giảm giá không tồn tại.'], 400);
+                if (!$coupon) return response()->json(['success' => false, 'message' => 'Mã giảm giá không tồn tại.'], 400);
 
                 $userUsed = DB::table('coupon_user')->where('coupon_id', $couponId)->where('user_id', $user->id)->count();
                 if ($coupon->per_user_limit > 0 && $userUsed >= $coupon->per_user_limit) {
@@ -465,23 +288,23 @@ class CheckoutController extends Controller
             }
 
             $order = Order::create([
-                'order_code' => 'ORD' . now()->timestamp,
-                'user_id' => $user->id,
-                'address_id' => $shippingAddressId,
-                'payment_method_id' => $paymentMethodId,
-                'coupon_code' => $couponId ? optional($coupon)->code : null,
-                'coupon_id' => $couponId,
+                'order_code'         => 'ORD' . now()->timestamp,
+                'user_id'            => $user->id,
+                'address_id'         => $shippingAddressId,
+                'payment_method_id'  => $paymentMethodId,
+                'coupon_code'        => $couponId ? optional($coupon)->code : null,
+                'coupon_id'          => $couponId,
                 'shipping_coupon_id' => $shippingCouponId,
-                'discount_amount' => $discountAmount,
-                'tax_amount' => $taxAmount,
-                'shipping_fee' => $shippingFee,
-                'subtotal' => $subtotal,
-                'total_amount' => $totalAmount,
-                'is_paid' => $isPaid,
-                'payment_status' => $paymentStatus,
-                'status' => 'pending',
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
+                'discount_amount'    => $discountAmount,
+                'tax_amount'         => $taxAmount,
+                'shipping_fee'       => $shippingFee,
+                'subtotal'           => $subtotal,
+                'total_amount'       => $totalAmount,
+                'is_paid'            => $isPaid,
+                'payment_status'     => $paymentStatus,
+                'status'             => 'pending',
+                'ip_address'         => request()->ip(),
+                'user_agent'         => request()->userAgent(),
             ]);
 
             if (!$order || !$order->id) {
@@ -537,35 +360,35 @@ class CheckoutController extends Controller
                 // ✅ THÔNG TIN ĐƠN HÀNG CHI TIẾT
                 $weight = $variant?->weight ?? $product?->weight ?? 0;
                 $length = $variant?->length ?? $product?->length ?? 0;
-                $width = $variant?->width ?? $product?->width ?? 0;
+                $width  = $variant?->width  ?? $product?->width  ?? 0;
                 $height = $variant?->height ?? $product?->height ?? 0;
 
                 $totalWeight += $weight * $item['quantity'];
                 $maxLength = max($maxLength, $length);
-                $maxWidth = max($maxWidth, $width);
+                $maxWidth  = max($maxWidth, $width);
                 $totalHeight += $height * $item['quantity'];
 
                 $order->orderItems()->create([
-                    'product_id' => $product->id,
+                    'product_id'         => $product->id,
                     'product_variant_id' => $variant?->id,
-                    'product_name' => $item['name'],
-                    'sku' => $item['sku'] ?? '',
-                    'image_url' => $item['image'] ?? '',
-                    'variant_values' => json_encode($item['attributes'] ?? []),
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'],
-                    'total_price' => $item['price'] * $item['quantity'],
-                    'weight' => $weight,
-                    'length' => $length,
-                    'width' => $width,
-                    'height' => $height,
+                    'product_name'       => $item['name'],
+                    'sku'                => $item['sku'] ?? '',
+                    'image_url'          => $item['image'] ?? '',
+                    'variant_values'     => json_encode($item['attributes'] ?? []),
+                    'price'              => $item['price'],
+                    'quantity'           => $item['quantity'],
+                    'total_price'        => $item['price'] * $item['quantity'],
+                    'weight'             => $weight,
+                    'length'             => $length,
+                    'width'              => $width,
+                    'height'             => $height,
                 ]);
             }
 
             $order->update([
                 'total_weight' => $totalWeight,
-                'max_length' => $maxLength,
-                'max_width' => $maxWidth,
+                'max_length'   => $maxLength,
+                'max_width'    => $maxWidth,
                 'total_height' => $totalHeight,
             ]);
 
@@ -573,8 +396,8 @@ class CheckoutController extends Controller
 
             if ($couponId) {
                 DB::table('coupon_user')->insertOrIgnore([
-                    'coupon_id' => $couponId,
-                    'user_id' => $user->id,
+                    'coupon_id'  => $couponId,
+                    'user_id'    => $user->id,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -583,8 +406,8 @@ class CheckoutController extends Controller
 
             if ($shippingCouponId) {
                 DB::table('coupon_user')->insertOrIgnore([
-                    'coupon_id' => $shippingCouponId,
-                    'user_id' => $user->id,
+                    'coupon_id'  => $shippingCouponId,
+                    'user_id'    => $user->id,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -595,8 +418,8 @@ class CheckoutController extends Controller
             DB::commit(); // ✅ KẾT THÚC TRANSACTION
 
             return response()->json([
-                'success' => true,
-                'message' => 'Đặt hàng thành công!',
+                'success'  => true,
+                'message'  => 'Đặt hàng thành công!',
                 'order_id' => $order->id,
             ]);
         } catch (\Throwable $e) {
