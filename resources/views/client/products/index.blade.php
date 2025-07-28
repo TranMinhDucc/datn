@@ -651,7 +651,7 @@
     <section class="section-b-space pt-0">
         <div class="custom-container container product-contain">
             <div class="title text-start">
-                <h3>Related Products</h3>
+                <h3>Sản phẩm liên quan</h3>
                 <svg>
                     <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
 
@@ -944,53 +944,57 @@
             </div>
         </div>
     </section>
-     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog" aria-modal="true">
-      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4>Write A Review</h4>
-            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body pt-0">
-            <div class="row g-3">
-              <div class="col-12"> 
-                <div class="reviews-product"> 
-                  <div> <img src="../assets/images/modal/1.jpg" alt="">
-                    <div> 
-                      <h5>Denim Skirts Corset Blazer</h5>
-                      <p>$20.00 
-                        <del>$35.00</del>
-                      </p>
+    <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Write A Review</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="reviews-product">
+                                <div> <img src="../assets/images/modal/1.jpg" alt="">
+                                    <div>
+                                        <h5>Denim Skirts Corset Blazer</h5>
+                                        <p>$20.00
+                                            <del>$35.00</del>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="customer-rating">
+                                <label class="form-label">Review Content :</label>
+                                <ul class="rating p-0 mb">
+                                    <li><i class="fa-solid fa-star"></i></li>
+                                    <li><i class="fa-solid fa-star"></i></li>
+                                    <li><i class="fa-solid fa-star"></i></li>
+                                    <li><i class="fa-solid fa-star"></i></li>
+                                    <li><i class="fa-regular fa-star"> </i></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="from-group">
+                                <label class="form-label">Review Content :</label>
+                                <textarea class="form-control" id="comment" cols="30" rows="4"
+                                    placeholder="Write your comments here..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-button-group">
+                            <button class="btn btn-cancel" type="submit" data-bs-dismiss="modal"
+                                aria-label="Close">Cancel</button>
+                            <button class="btn btn-submit" type="submit" data-bs-dismiss="modal"
+                                aria-label="Close">Submit</button>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-12"> 
-                <div class="customer-rating">
-                  <label class="form-label">Review Content :</label>
-                  <ul class="rating p-0 mb">
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-solid fa-star"></i></li>
-                    <li><i class="fa-regular fa-star">           </i></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-12">    
-                <div class="from-group"> 
-                  <label class="form-label">Review Content :</label>
-                  <textarea class="form-control" id="comment" cols="30" rows="4" placeholder="Write your comments here..."></textarea>
-                </div>
-              </div>
-              <div class="modal-button-group">
-                <button class="btn btn-cancel" type="submit" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-submit" type="submit" data-bs-dismiss="modal" aria-label="Close">Submit</button>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 @endsection
 @section('js')

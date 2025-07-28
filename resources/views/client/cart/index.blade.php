@@ -429,6 +429,35 @@
     <script src="{{ asset('assets/client/js/cart.js') }}"></script>
 
     <script>
+        function showToast(message, type = 'error') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            toast.className = 'toast-box';
+            toast.style.background =
+                type === 'error' ? '#dc3545' :
+                type === 'warning' ? '#ffc107' :
+                type === 'info' ? '#17a2b8' :
+                '#28a745';
+
+            toast.innerHTML = `
+        <div class="icon">
+            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+            <span>${message}</span>
+        </div>
+        <button class="close-btn">&times;</button>
+    `;
+
+            container.appendChild(toast);
+
+            toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
+
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.5s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000 + container.children.length * 500);
+        }
         let currentUser = localStorage.getItem('currentUser') || 'guest';
         let cartKey = `cartItems_${currentUser}`;
         let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
@@ -511,11 +540,11 @@
     <div><a href="product.html"><h5 class="mb-1">${item.name}</h5></a>
     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-0" > $ {
+    return ` <p class = "mb-0">${
                             key.charAt(0).toUpperCase() + key.slice(1)
-                        }: < span > $ {
+                        }:<span>${
                             value
-                        } < /span></p >
+                        } </span></p>
                         `;
     }).join('')}</div></div></td>
     <td>${item.price.toLocaleString('vi-VN')}<span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span></td>
@@ -695,8 +724,16 @@
                 document.querySelectorAll('.plus').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const i = this.dataset.index;
-                        cartItems[i].quantity += 1;
-                        saveAndRender();
+                        const currentQty = cartItems[i].quantity;
+                        const maxQty = cartItems[i].max_quantity || 99;
+
+                        if (currentQty < maxQty) {
+                            cartItems[i].quantity += 1;
+                            saveAndRender();
+                        } else {
+                            showToast(`Chỉ còn ${maxQty} sản phẩm trong kho`, 'warning');
+                        }
+
                     });
                 });
                 document.querySelectorAll('.minus').forEach(btn => {
@@ -712,19 +749,23 @@
                     input.addEventListener('change', function() {
                         const i = this.dataset.index;
                         const value = parseInt(this.value);
-                        if (value > 0) {
+                        const maxQty = cartItems[i].max_quantity || 99;
+
+                        if (value > maxQty) {
+                            showToast(`Chỉ còn ${maxQty} sản phẩm trong kho`, 'warning');
+                            this.value = maxQty;
+                            cartItems[i].quantity = maxQty;
+                        } else if (value > 0) {
                             cartItems[i].quantity = value;
-                            saveAndRender();
+                        } else {
+                            this.value = 1;
+                            cartItems[i].quantity = 1;
                         }
-                    });
-                });
-                document.querySelectorAll('.deleteButton').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const i = this.dataset.index;
-                        cartItems.splice(i, 1);
                         saveAndRender();
                     });
+
                 });
+
             }
 
             function updateCartTitle() {
@@ -757,12 +798,7 @@
     ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
     <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-1" > $ {
-                        key
-                    }: < span > $ {
-                        value
-                    } < /span></p > `;
-    }).join('')}
+    return `<p class = "mb-1"> ${key}:<span> ${value}</span></p>`;}).join('')}
     <div class="btn-containter">
     <div class="btn-control">
     <button class="btn-control__remove" data-key="${key}">−</button>

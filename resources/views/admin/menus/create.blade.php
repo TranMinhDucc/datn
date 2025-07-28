@@ -23,7 +23,6 @@
             <option value="">-- Chọn kiểu hiển thị --</option>
             <option value="header" @selected(old('position') == 'header')>Header</option>
             <option value="footer" @selected(old('position') == 'footer')>Footer</option>
-            <option value="sidebar" @selected(old('position') == 'sidebar')>Sidebar</option>
         </select>
     </div>
 

@@ -18,46 +18,46 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-  public function index(Request $request)
-{
-    $searchOrders = Order::query()->with(['user', 'shippingOrder']);
+    public function index(Request $request)
+    {
+        $searchOrders = Order::query()->with(['user', 'shippingOrder']);
 
-    if ($request->filled('order_code')) {
-        $searchOrders->where('order_code', 'like', '%' . $request->order_code . '%');
+        if ($request->filled('order_code')) {
+            $searchOrders->where('order_code', 'like', '%' . $request->order_code . '%');
+        }
+
+        if ($request->filled('status')) {
+            $searchOrders->where('status', $request->status);
+        }
+        if ($request->filled('user_id')) {
+            $searchOrders->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('user_name')) {
+            $searchOrders->whereHas('user', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->user_name . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $searchOrders->where('status', $request->status);
+        }
+
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $searchOrders->whereBetween('created_at', [
+                $request->from_date . ' 00:00:00',
+                $request->to_date . ' 23:59:59'
+            ]);
+        } elseif ($request->filled('from_date')) {
+            $searchOrders->whereDate('created_at', '>=', $request->from_date);
+        } elseif ($request->filled('to_date')) {
+            $searchOrders->whereDate('created_at', '<=', $request->to_date);
+        }
+
+        $orders = $searchOrders->latest()->paginate(10);
+
+        return view('admin.orders.index', compact('orders'));
     }
-
-   if ($request->filled('status')) {
-    $searchOrders->where('status', $request->status);
-}
-    if ($request->filled('user_id')) {
-        $searchOrders->where('user_id', $request->user_id);
-    }
-
-    if ($request->filled('user_name')) {
-        $searchOrders->whereHas('user', function ($query) use ($request) {
-            $query->where('name', 'like', '%' . $request->user_name . '%');
-        });
-    }
-
-    if ($request->filled('status')) {
-        $searchOrders->where('status', $request->status);
-    }
-
-    if ($request->filled('from_date') && $request->filled('to_date')) {
-        $searchOrders->whereBetween('created_at', [
-            $request->from_date . ' 00:00:00',
-            $request->to_date . ' 23:59:59'
-        ]);
-    } elseif ($request->filled('from_date')) {
-        $searchOrders->whereDate('created_at', '>=', $request->from_date);
-    } elseif ($request->filled('to_date')) {
-        $searchOrders->whereDate('created_at', '<=', $request->to_date);
-    }
-
-    $orders = $searchOrders->latest()->paginate(10);
-
-    return view('admin.orders.index', compact('orders'));
-}
 
 
     /**
@@ -103,13 +103,26 @@ class OrderController extends Controller
         ]);
 
         $order->status = $validated['status'];
+
+        // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
+        if ($validated['status'] === 'completed' && !$order->delivered_at) {
+            $order->delivered_at = now();
+        }
+
         $order->save();
 
         // Gửi notification realtime tới user
-        $order->user->notify(new OrderStatusNotification($order->id, $order->status, $order, $request->cancel_reason, $request->image));
+        $order->user->notify(new OrderStatusNotification(
+            $order->id,
+            $order->status,
+            $order,
+            $request->cancel_reason,
+            $request->image
+        ));
 
         return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
+
 
     public function cancel()
     {
@@ -121,6 +134,11 @@ class OrderController extends Controller
     }
     public function retryShipping($orderId)
     {
+        $order = Order::findOrFail($orderId);
+        if ($order->status === 'cancelled') {
+            return back()->with('error', '❌ Đơn hàng đã bị huỷ, không thể thao tác.');
+        }
+
         Log::info('📦 retryShipping called with order id: ' . $orderId);
 
         // Tìm đơn GHN trong bảng shipping_orders
@@ -130,7 +148,7 @@ class OrderController extends Controller
             ->first();
 
         if (!$shippingOrder || !$shippingOrder->shipping_code) {
-            return back()->with('error', '❌ Không tìm thấy mã GHN cho đơn hàng.');
+            return back()->with('error', '❌ Không tìm thấy mã GHN cho đơn hàng hoặc bạn chưa tạo vận đơn.');
         }
 
         // Gọi API GHN để lấy trạng thái hiện tại
@@ -138,8 +156,8 @@ class OrderController extends Controller
             'Content-Type' => 'application/json',
             'Token' => config('services.ghn.token'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail', [
-                    'order_code' => $shippingOrder->shipping_code,
-                ]);
+            'order_code' => $shippingOrder->shipping_code,
+        ]);
 
         $currentStatus = $statusResponse->json('data.status') ?? 'unknown';
         Log::info("📦 Trạng thái GHN hiện tại của {$shippingOrder->shipping_code} là: $currentStatus");
@@ -147,7 +165,8 @@ class OrderController extends Controller
         // ✅ Chỉ cho phép retry nếu trạng thái là waiting_to_return hoặc delivery_fail
         $allowedStatuses = ['waiting_to_return', 'delivery_fail'];
         if (!in_array($currentStatus, $allowedStatuses)) {
-            return back()->with('error', "⚠️ Không thể giao lại đơn hàng vì trạng thái hiện tại là: $currentStatus.");
+            $viStatus = $this->mapGhnStatus($currentStatus);
+            return back()->with('error', "⚠️ Không thể giao lại đơn hàng vì trạng thái hiện tại là $viStatus.");
         }
 
         // Gọi API GHN để chuyển trạng thái đơn hàng sang "storing"
@@ -156,8 +175,8 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'ShopId' => config('services.ghn.shop_id'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/storing', [
-                    'order_codes' => [$shippingOrder->shipping_code]
-                ]);
+            'order_codes' => [$shippingOrder->shipping_code]
+        ]);
 
         $responseData = $response->json();
         Log::info('🔁 GHN Retry Shipping response', $responseData);
@@ -188,6 +207,11 @@ class OrderController extends Controller
     }
     public function cancelShippingOrder($orderId)
     {
+        $order = Order::findOrFail($orderId);
+        if ($order->status === 'cancelled') {
+            return back()->with('error', '❌ Đơn hàng đã bị huỷ, không thể thao tác.');
+        }
+
         Log::info('🛑 Bắt đầu huỷ đơn GHN cho order_id: ' . $orderId);
 
         $shippingOrder = ShippingOrder::where('order_id', $orderId)
@@ -196,7 +220,7 @@ class OrderController extends Controller
             ->first();
 
         if (!$shippingOrder || !$shippingOrder->shipping_code) {
-            return back()->with('error', '❌ Không tìm thấy mã GHN.');
+            return back()->with('error', '❌ Không tìm thấy mã GHN hoặc bạn chưa tạo vận đơn.');
         }
 
         $response = Http::withHeaders([
@@ -204,8 +228,8 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'ShopId' => config('services.ghn.shop_id'),
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/cancel', [
-                    'order_codes' => [$shippingOrder->shipping_code]
-                ]);
+            'order_codes' => [$shippingOrder->shipping_code]
+        ]);
 
         $data = $response->json('data')[0] ?? [];
         $result = $data['result'] ?? false;
@@ -330,7 +354,11 @@ class OrderController extends Controller
 
     public function confirmGHN($id, Request $request, GhnService $service)
     {
+
         $order = Order::with('items.productVariant.product', 'user', 'address')->findOrFail($id);
+        if ($order->status === 'cancelled') {
+            return redirect()->back()->with('error', '❌ Đơn hàng này đã bị huỷ, không thể thao tác.');
+        }
 
         if ($order->status !== 'pending') {
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
@@ -389,10 +417,10 @@ class OrderController extends Controller
             'Token' => config('services.ghn.token'),
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', [
-                    'shop_id' => (int) config('services.ghn.shop_id'),
-                    'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
-                    'to_district' => (int) $toDistrictId,
-                ]);
+            'shop_id' => (int) config('services.ghn.shop_id'),
+            'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
+            'to_district' => (int) $toDistrictId,
+        ]);
 
         $serviceId = data_get($availableServices->json(), 'data.0.service_id');
 
@@ -459,5 +487,32 @@ class OrderController extends Controller
         }
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
+    }
+    private function mapGhnStatus($status)
+    {
+        return [
+            'ready_to_pick' => 'Mới tạo đơn hàng',
+            'picking' => 'Nhân viên đang lấy hàng',
+            'cancel' => 'Đã hủy đơn hàng',
+            'money_collect_picking' => 'Đang thu tiền người gửi',
+            'picked' => 'Nhân viên đã lấy hàng',
+            'storing' => 'Hàng đang nằm ở kho',
+            'transporting' => 'Đang luân chuyển hàng',
+            'sorting' => 'Đang phân loại hàng hóa',
+            'delivering' => 'Nhân viên đang giao cho người nhận',
+            'money_collect_delivering' => 'Nhân viên đang thu tiền người nhận',
+            'delivered' => 'Nhân viên đã giao hàng thành công',
+            'delivery_fail' => 'Nhân viên giao hàng thất bại',
+            'waiting_to_return' => 'Đang đợi trả hàng về cho người gửi',
+            'return' => 'Trả hàng',
+            'return_transporting' => 'Đang luân chuyển hàng trả',
+            'return_sorting' => 'Đang phân loại hàng trả',
+            'returning' => 'Nhân viên đang đi trả hàng',
+            'return_fail' => 'Nhân viên trả hàng thất bại',
+            'returned' => 'Nhân viên trả hàng thành công',
+            'exception' => 'Đơn hàng ngoại lệ không nằm trong quy trình',
+            'damage' => 'Hàng bị hư hỏng',
+            'lost' => 'Hàng bị mất',
+        ][$status] ?? $status; // fallback nếu không khớp trạng thái
     }
 }

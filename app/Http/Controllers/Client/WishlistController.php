@@ -19,7 +19,7 @@ class WishlistController extends Controller
             ->latest()
             ->get();
 
-        return view('client.account.wishlist', compact('wishlists'));
+        return view('client.wishlist.index', compact('wishlists'));
     }
 
     // Thêm sản phẩm vào wishlist

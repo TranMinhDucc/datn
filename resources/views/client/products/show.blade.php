@@ -98,7 +98,9 @@
                                     </li>
                                     <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
+                                
                                 <p>{{$product->description}}</p>
+
                             </div>
                             <div class="buy-box border-buttom">
                                 <ul>
@@ -192,6 +194,7 @@
                     </div>
                     <div class="sale-box">
 
+
                                 <div class="countdown"
                                     data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
                                     data-endtime="{{ optional($product->ends_at ? \Carbon\Carbon::parse($product->ends_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}">
@@ -226,8 +229,8 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="dz-info">
+                            </div> --}}
+                            {{-- <div class="dz-info">
                                 <ul>
                                     <li>
                                         <div class="d-flex align-items-center gap-2">
@@ -258,7 +261,7 @@
                                         </div>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> --}}
                             <div class="share-option">
                                 <h5>Secure Checkout</h5><img class="img-fluid"
                                     src="{{ asset('assets/client/images/other-img/secure_payments.png') }}"
@@ -302,54 +305,31 @@
                                 aria-labelledby="Description-tab" tabindex="0">
                                 <div class="row gy-4">
                                     <div class="col-12">
-                                        <p class="paragraphs">Experience the perfect blend of comfort and style with our
-                                            Summer Breeze Cotton Dress. Crafted from 100% premium cotton, this dress offers
-                                            a soft and breathable feel, making it ideal for warm weather. The lightweight
-                                            fabric ensures you stay cool and comfortable throughout the day.</p>
-                                        <p class="paragraphs">Perfect for casual outings, beach trips, or summer parties.
-                                            Pair it with sandals for a relaxed look or dress it up with heels and
-                                            accessories for a more polished ensemble.</p>
+                                        {!! $product->detailed_description !!}
                                     </div>
                                     <div class="col-12">
-                                        <div class="row gy-4">
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                                <div class="general-summery">
-                                                    <h5>Product Specifications</h5>
-                                                    <ul>
-                                                        <li>100% Premium Cotton</li>
-                                                        <li>A-line silhouette with a flattering fit</li>
-                                                        <li>Knee-length for versatile styling</li>
-                                                        <li>V-neck for a touch of elegance</li>
-                                                        <li>Short sleeves for a casual look</li>
-                                                        <li>Available in solid colors and floral prints</li>
-                                                    </ul>
-                                                </div>
+
+                                        @if ($groupedDetails->isNotEmpty())
+                                            <div class="row gy-4">
+                                                @foreach ($groupedDetails as $groupName => $items)
+                                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                        <div class="general-summery">
+                                                            <h5>{{ $groupName }}</h5>
+                                                            <ul>
+                                                                @foreach ($items as $item)
+                                                                    <li>{{ $item->label }}{{ $item->value ? ': ' . $item->value : '' }}
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                                <div class="general-summery">
-                                                    <h5>Washing Instructions</h5>
-                                                    <ul>
-                                                        <li>Use cold water for washing</li>
-                                                        <li>Use a low heat setting for drying.</li>
-                                                        <li>Avoid using bleach on this fabric.</li>
-                                                        <li>Use a low heat setting when ironing.</li>
-                                                        <li>Do not take this item to a dry cleaner.</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                                <div class="general-summery">
-                                                    <h5>Size & Fit</h5>
-                                                    <ul>
-                                                        <li>The model (height 5'8) is wearing a size S</li>
-                                                        <li>Measurements taken from size Small</li>
-                                                        <li>Chest: 30"</li>
-                                                        <li>Length: 20"</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @else
+                                            <p><strong>Không có số liệu kĩ thuật.</strong></p>
+                                        @endif
                                     </div>
+
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="specification-tab-pane" role="tabpanel"
@@ -630,97 +610,94 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
-    </div>
-    </div>
-    </div>
-</section>
-<section class="section-b-space pt-0">
-    <div class="custom-container container product-contain">
-        <div class="title text-start">
-            <h3>Related Products</h3>
-            <svg>
-                <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
+    </section>
+    <section class="section-b-space pt-0">
+        <div class="custom-container container product-contain">
+            <div class="title text-start">
+                <h3>Sản phẩm liên quan</h3>
+                <svg>
+                    <use href="{{ asset('assets/svg/icon-sprite.svg#main-line') }}"></use>
 
-            </svg>
-        </div>
-        <div class="swiper special-offer-slide-2">
-            <div class="swiper-wrapper ratio1_3">
-                @foreach ($product->related_products as $value)
-                <div class="swiper-slide">
-                    <div class="product-box-3">
-                        <div class="img-wrapper">
-                            <div class="label-block"><span class="lable-1">NEW</span><a
-                                    class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
-                                        class="iconsax" data-icon="heart" aria-hidden="true"
-                                        data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
-                            <div class="product-image"><a class="pro-first"
-                                    href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
-                                        src="{{ asset('storage/' . $value->image) }}"
-                                        alt="Áo phông cucci LV collab"></a><a class="pro-sec"
-                                    href="product.html"> <img class="bg-img"
-                                        src="{{ asset('storage/' . $value->image) }}"
-                                        alt="Áo phông cucci LV collab"></a></div>
-                            <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
-                                        data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Add to cart"> </i></a><a href="compare.html"
-                                    tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
-                                        aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
-                                    data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
-                                        data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
-                                        data-bs-title="Quick View"></i></a></div>
-                            <div class="countdown">
-                                <ul class="clockdiv2">
-                                    <li>
-                                        <div class="timer">
-                                            <div class="days"></div>
-                                        </div><span class="title">Days</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="hours"></div>
-                                        </div><span class="title">Hours</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="minutes"></div>
-                                        </div><span class="title">Min</span>
-                                    </li>
-                                    <li class="dot"> <span>:</span></li>
-                                    <li>
-                                        <div class="timer">
-                                            <div class="seconds"></div>
-                                        </div><span class="title">Sec</span>
-                                    </li>
-                                </ul>
+                </svg>
+            </div>
+            <div class="swiper special-offer-slide-2">
+                <div class="swiper-wrapper ratio1_3">
+                    @foreach ($product->related_products as $value)
+                        <div class="swiper-slide">
+                            <div class="product-box-3">
+                                <div class="img-wrapper">
+                                    <div class="label-block"><span class="lable-1">NEW</span><a
+                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                                class="iconsax" data-icon="heart" aria-hidden="true"
+                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
+                                    <div class="product-image"><a class="pro-first"
+                                            href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a><a class="pro-sec"
+                                            href="product.html"> <img class="bg-img"
+                                                src="{{ asset('storage/' . $value->image) }}"
+                                                alt="Áo phông cucci LV collab"></a></div>
+                                    <div class="cart-info-icon"> <a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#addtocart" tabindex="0"><i class="iconsax"
+                                                data-icon="basket-2" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Add to cart"> </i></a><a href="compare.html"
+                                            tabindex="0"><i class="iconsax" data-icon="arrow-up-down"
+                                                aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Compare"></i></a><a href="#" data-bs-toggle="modal"
+                                            data-bs-target="#quick-view" tabindex="0"><i class="iconsax"
+                                                data-icon="eye" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Quick View"></i></a></div>
+                                    <div class="countdown">
+                                        <ul class="clockdiv2">
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="days"></div>
+                                                </div><span class="title">Days</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="hours"></div>
+                                                </div><span class="title">Hours</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="minutes"></div>
+                                                </div><span class="title">Min</span>
+                                            </li>
+                                            <li class="dot"> <span>:</span></li>
+                                            <li>
+                                                <div class="timer">
+                                                    <div class="seconds"></div>
+                                                </div><span class="title">Sec</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-detail">
+                                    <ul class="rating">
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li>{{ $value->rating_avg ?? 0 }}</li>
+                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                        <h6>{{ $value->name }}</h6>
+                                    </a>
+                                    <p>${{ number_format($value->sale_price, 2) }}
+                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                        <div class="product-detail">
-                            <ul class="rating">
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li><i class="fa-solid fa-star"></i></li>
-                                <li>{{ $value->rating_avg ?? 0 }}</li>
-                            </ul><a href="{{ route('client.products.show', $value->id) }}">
-                                <h6>{{ $value->name }}</h6>
-                            </a>
-                            <p>${{ number_format($value->sale_price, 2) }}
-                                <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
-                            </p>
-                        </div>
+                    @endforeach
                 </div>
             </div>
-            @endforeach
-        </div>
-        </div>
         </div>
     </section>
     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
@@ -903,10 +880,8 @@
             document.getElementById('variant-info').style.display = 'block';
             const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
             document.getElementById('main-price').textContent = formattedPrice;
+
         }
-
-
-
     }
 
         // Bắt sự kiện click vào mỗi lựa chọn
@@ -968,27 +943,6 @@
                 $hours.text(String(t.hours).padStart(2, '0'));
                 $minutes.text(String(t.minutes).padStart(2, '0'));
                 $seconds.text(String(t.seconds).padStart(2, '0'));
-
-                const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
-                if (matched) {
-                    const quantity = matched.quantity;
-
-                    const qtyEl = document.getElementById('variant-quantity');
-                    if (quantity <= 0) {
-                        qtyEl.textContent = 'Hết hàng';
-                        qtyEl.style.color = 'red';
-                    } else {
-                        qtyEl.textContent = quantity;
-                        qtyEl.style.color = '';
-                    }
-
-                    document.getElementById('variant-info').style.display = 'block';
-                    const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-                    document.getElementById('main-price').textContent = formattedPrice;
-                }
-
-
-
             }
             updateClock();
             const interval = setInterval(function() {
@@ -1056,6 +1010,7 @@
                     '#28a745';
 
             toast.innerHTML = `
+
     <div class="icon">
         <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
         <span>${message}</span>
@@ -1149,8 +1104,16 @@
                     }
                 }
 
+                    if (matchedVariant.quantity <= 0) {
+                        showToast('Sản phẩm đã hết hàng', 'warning');
+                        return;
+                    }
 
+                    const variantId = matchedVariant.id;
+                    const price = matchedVariant.price;
+                    const originalPrice = matchedVariant.original_price || price;
 
+                    // ✅ Kiểm tra tồn kho trước khi cộng dồn vào giỏ
                     const index = cartItems.findIndex(item =>
                         item.id === id &&
                         ((variantId && item.variant_id === variantId) ||
@@ -1158,6 +1121,16 @@
                                 .stringify(selectedAttributes)))
                     );
 
+                    const existingQty = index !== -1 ? cartItems[index].quantity : 0;
+                    const totalQty = existingQty + quantity;
+
+                    if (totalQty > matchedVariant.quantity) {
+                        showToast(`Chỉ còn ${matchedVariant.quantity} sản phẩm trong kho`,
+                            'warning');
+                        return;
+                    }
+
+                    // ✅ Được phép thêm sản phẩm
                     if (index !== -1) {
                         cartItems[index].quantity += quantity;
                     } else {
@@ -1170,14 +1143,15 @@
                             image,
                             quantity,
                             brand,
-                            attributes: selectedAttributes
+                            attributes: selectedAttributes,
+                            max_quantity: matchedVariant.quantity
                         });
                     }
+
 
                 localStorage.setItem(cartKey, JSON.stringify(cartItems));
                 document.dispatchEvent(new Event('cartUpdated'));
                 updateCartBadge(); // ← Thêm dòng này
-
 
                 const offcanvasEl = document.getElementById('offcanvasRight');
                 if (offcanvasEl) {
@@ -1197,7 +1171,7 @@
                     const name = btn.dataset.productName;
                     const image = btn.dataset.productImage;
                     const quantity = parseInt(document.querySelector('.quantity input')?.value ||
-                    1);
+                        1);
                     const brand = btn.dataset.productBrand || 'Unknown';
 
                     const currentUser = localStorage.getItem('currentUser') || 'guest';
@@ -1264,8 +1238,10 @@
                     window.location.href = "{{ route('client.cart.index') }}";
                 });
             });
-
         });
     </script>
+
+
+
 
 @endsection

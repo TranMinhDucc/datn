@@ -241,16 +241,19 @@
     </div>
     </div>
     </div> --}}
-        <div class="container-fluid fashion-images">
+       <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
-                            <div class="fashion-box mb-2">
-                                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
-                                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
-                                    <img class="img-fluid rounded-circle category-circle-img"
-                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                            <div class="fashion-box ">
+                                <a href="{{ route('client.category.show', $category->id) }}">
+                                  <img 
+    class="img-fluid rounded-circle category-circle-img" 
+    src="{{ asset('storage/' . $category->image) }}" 
+    alt="{{ $category->name }}" 
+    style="width: 180px; height: 180px; object-fit: cover;"
+>
                                 </a>
                             </div>
                             <h5>{{ $category->name }}</h5>
@@ -264,7 +267,7 @@
     <section class="section-t-space">
         <div class="custom-container container product-contain">
             <div class="title">
-                <h3>Fashikart specials </h3>
+                <h3>Sản phẩm nổi bật</h3>
                 <svg>
                     <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#main-line"></use>
                 </svg>
@@ -276,19 +279,19 @@
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#features-products"
                                     role="tab" aria-controls="features-products" aria-selected="true">
-                                    <h6>Featured Products</h6>
+                                    <h6>Sản phẩm nổi bật</h6>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" data-bs-toggle="tab" data-bs-target="#latest-products" role="tab"
                                     aria-controls="latest-products" aria-selected="false">
-                                    <h6>Latest Products</h6>
+                                    <h6>Sản phẩm mới nhất</h6>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" data-bs-toggle="tab" data-bs-target="#seller-products" role="tab"
                                     aria-controls="seller-products" aria-selected="false">
-                                    <h6>Best Seller Products </h6>
+                                    <h6>Sản phẩm bán chạy nhất</h6>
                                 </a>
                             </li>
                         </ul>
@@ -305,21 +308,28 @@
                                             <div class="col-xxl-3 col-md-4 col-6">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-@if ($product->labels && $product->labels->count())
-    <div class="label-block">
-        @foreach ($product->labels as $product_label)
-            <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
-                <img style="width:100%" class="{{ $product_label->position }}" src="{{ asset('storage/' . $product_label->image) }}" alt="label">
-            </div>
-        @endforeach
-    </div>
-@elseif ($product->label && is_object($product->label))
-    <div class="label-block">
-        <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
-            <img style="width:100%" class="{{ $product->label->position }}" src="{{ $product->label->image }}" alt="label">
-        </div>
-    </div>
-@endif
+                                                        @if ($product->labels && $product->labels->count())
+                                                            <div class="label-block">
+                                                                @foreach ($product->labels as $product_label)
+                                                                    <div class="label-item-wrapper"
+                                                                        style="display:inline-block;max-width:60px;margin-right:10px">
+                                                                        <img style="width:100%"
+                                                                            class="{{ $product_label->position }}"
+                                                                            src="{{ asset('storage/' . $product_label->image) }}"
+                                                                            alt="label">
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @elseif ($product->label && is_object($product->label))
+                                                            <div class="label-block">
+                                                                <div class="label-item-wrapper"
+                                                                    style="display:inline-block;max-width:60px;margin-right:10px">
+                                                                    <img style="width:100%"
+                                                                        class="{{ $product->label->position }}"
+                                                                        src="{{ $product->label->image }}" alt="label">
+                                                                </div>
+                                                            </div>
+                                                        @endif
 
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
