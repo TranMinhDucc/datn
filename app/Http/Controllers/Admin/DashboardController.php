@@ -19,13 +19,31 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
         $startOfWeek = Carbon::now()->startOfWeek();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        // if ($request->filled('filterDatetime')) {
+        //     $startOfMonth = Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->startOfMonth();
+        //     $endOfMonth =  Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->endOfMonth();
+        // } else {
+        //     $startOfMonth = Carbon::now()->startOfMonth();
+        //     $endOfMonth = Carbon::now()->endOfMonth();
+        // }
+
+        $userFilterRange = null;
+        $ordersFilterRange = null;
+        $revenueFilterRange = null;
+        $paidFilterRange = null;
 
         if ($request->filled('filterDatetime')) {
-            $startOfMonth = Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->startOfMonth();
-            $endOfMonth =  Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->endOfMonth();
-        } else {
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $endOfMonth = Carbon::now()->endOfMonth();
+            $filterDatetime = explode('-', $request->input('filterDatetime'));
+            $startFilterRange = Carbon::createFromFormat('d/m/Y', trim($filterDatetime[0]))->startOfDay();
+            $endFilterRange = Carbon::createFromFormat('d/m/Y', trim($filterDatetime[1]))->endOfDay();
+
+            $userFilterRange = User::whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
+            $ordersFilterRange = Order::whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
+            $revenueFilterRange = Order::whereBetween('created_at', [$startFilterRange, $endFilterRange])->sum('subtotal');
+            $paidFilterRange = Order::where('is_paid', true)->whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
         }
 
         // Thành viên
@@ -134,6 +152,11 @@ class DashboardController extends Controller
             'paidMonth',
             'paidWeek',
             'paidToday',
+            // loc theo timerange
+            'userFilterRange',
+            'ordersFilterRange',
+            'revenueFilterRange',
+            'paidFilterRange',
             // dữ liệu biểu đồ
             'chartLabels',
             'chartRevenue',
