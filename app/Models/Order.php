@@ -34,14 +34,17 @@ class Order extends Model
         'note',
         'ip_address',
         'user_agent',
+        'return_reason',
+        'return_image',
+        'refunded_at',
     ];
 
-    
-    
+
+
     public function user()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     public function items()
     {
         return $this->hasMany(OrderItem::class);

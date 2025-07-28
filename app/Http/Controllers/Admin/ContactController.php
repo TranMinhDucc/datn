@@ -8,18 +8,17 @@ use App\Mail\ContactReplyMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Request;
+use App\Models\Setting;
 
 class ContactController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
-    public function index()
+     */public function index()
     {
-        $contacts = Contact::latest()->paginate(10);
-        return view('admin.contacts.index', compact('contacts'));
+        $settings = Setting::all()->keyBy('name'); // key: 'email', 'hotline', 'address',...
+        return view('admin.pages.contact', compact('settings'));
     }
-
     public function show($id)
     {
         $contact = Contact::findOrFail($id);

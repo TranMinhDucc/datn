@@ -234,7 +234,7 @@ class ProductController extends Controller
     {
         $query = Product::with(['brand', 'images', 'variants.options.attribute', 'variants.options.value'])
             ->where('is_active', 1);
-
+        $keyword = $request->input('keyword');
         // 🔍 Từ khóa
         if ($request->filled('keyword')) {
             $keyword = strtolower(trim($request->input('keyword')));
@@ -253,7 +253,13 @@ class ProductController extends Controller
                 // Bạn có thể thêm các điều kiện khác ở đây nếu cần
             });
         }
-
+        // Ghi lại từ khóa tìm kiếm
+        if ($keyword) {
+            SearchHistory::updateOrCreate(
+                ['keyword' => $keyword],
+                ['count' => DB::raw('count + 1')]
+            );
+        }
         // 💰 Giá
         if ($request->filled('min_price') && $request->filled('max_price')) {
             $minPrice = floatval($request->input('min_price'));
@@ -397,6 +403,7 @@ class ProductController extends Controller
             'wishlistProductIds',
         ));
     }
+
     private function getRecommendedProducts($limit = 6)
     {
         return Product::where('is_active', 1)
