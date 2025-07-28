@@ -19,15 +19,29 @@
         display: none;
     }
 
+
     .fade-slide.active {
         opacity: 1;
         z-index: 1;
         position: relative;
         display: block;
     }
+
+    .section-t-space {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .fashion-images {
+        margin-bottom: 0;
+        /* giảm khoảng cách với phần tiếp theo */
+    }
+
+    .swiper-wrapper {
+        height: auto !important;
+    }
 </style>
 @section('content')
-
     {{-- <section class="section-space home-section-4">
 <div class="home-content">
             <div class="row">
@@ -77,7 +91,7 @@
 </div>
 </div>
 </section> --}}
-    <section class="section-space home-section-4">
+    {{-- <section class="section-space home-section-4">
         <div class="custom-container container">
             <div class="row">
                 <div class="col-12">
@@ -117,7 +131,8 @@
                                 <div>
                                     <h6>Pursesess</h6>
                                     <h5>Best Women Bag</h5>
-                                </div><span>$65</span>
+                                </div>
+                                <span>$65</span>
                             </div>
                         </div>
                     </div>
@@ -141,14 +156,17 @@
                             <h4 class="animation-text">Collection</h4>
                         </div>
                     </div>
-                    <div class="shape-images"> <img class="img-1 img-fluid"
+                    <div class="shape-images"> 
+                        <img class="img-1 img-fluid"
                             src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
                             class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
-                            alt=""></div>
+                            alt="">
+                        </div>
                 </div>
             </div>
         </div>
-    </section> --}}
+
+    </section>   --}}
     <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
@@ -229,7 +247,8 @@
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
                             <div class="fashion-box mb-2">
-                                <a href="{{ route('client.category.show', $category->id) }}">
+                                {{-- Chuyển sang filter và truyền danh mục dạng query param --}}
+                                <a href="{{ route('client.products.filterSidebar') }}?category[]={{ $category->id }}">
                                     <img class="img-fluid rounded-circle category-circle-img"
                                         src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
                                 </a>
@@ -254,21 +273,24 @@
                 <div class="col-12">
                     <div class="theme-tab-1">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item" role="presentation"><a class="nav-link active" data-bs-toggle="tab"
-                                    data-bs-target="#features-products" role="tab" aria-controls="features-products"
-                                    aria-selected="true">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#features-products"
+                                    role="tab" aria-controls="features-products" aria-selected="true">
                                     <h6>Featured Products</h6>
-                                </a></li>
-                            <li class="nav-item" role="presentation"><a class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#latest-products" role="tab" aria-controls="latest-products"
-                                    aria-selected="false">
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#latest-products" role="tab"
+                                    aria-controls="latest-products" aria-selected="false">
                                     <h6>Latest Products</h6>
-                                </a></li>
-                            <li class="nav-item" role="presentation"><a class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#seller-products" role="tab" aria-controls="seller-products"
-                                    aria-selected="false">
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#seller-products" role="tab"
+                                    aria-controls="seller-products" aria-selected="false">
                                     <h6>Best Seller Products </h6>
-                                </a></li>
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
@@ -283,17 +305,19 @@
                                             <div class="col-xxl-3 col-md-4 col-6">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-                                                       @if ($product->labels && $product->labels->count())
+@if ($product->labels && $product->labels->count())
     <div class="label-block">
         @foreach ($product->labels as $product_label)
-            <div class="label-item-wrapper"
-                style="display:inline-block;max-width:60px;margin-right:10px">
-                <img style="width:100%"
-                    class="{{ $product_label->position }}"
-                    src="{{ asset('storage/' . $product_label->image) }}"
-                    alt="label">
+            <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+                <img style="width:100%" class="{{ $product_label->position }}" src="{{ asset('storage/' . $product_label->image) }}" alt="label">
             </div>
         @endforeach
+    </div>
+@elseif ($product->label && is_object($product->label))
+    <div class="label-block">
+        <div class="label-item-wrapper" style="display:inline-block;max-width:60px;margin-right:10px">
+            <img style="width:100%" class="{{ $product->label->position }}" src="{{ $product->label->image }}" alt="label">
+        </div>
     </div>
 @endif
 
@@ -309,11 +333,14 @@
                                                                     data-bs-title="Add to Wishlist"></i>
                                                             </a>
                                                         </div>
-                                                        <div class="product-image"><a class="pro-first"
+                                                        <div class="product-image">
+                                                            <a class="pro-first"
                                                                 href="{{ route('client.products.show', $product->slug) }}">
                                                                 <img class="bg-img"
                                                                     src="{{ asset('storage/' . $product->image) }}"
-                                                                    alt="{{ $product->name }}"></a></div>
+                                                                    alt="{{ $product->name }}">
+                                                            </a>
+                                                        </div>
 
                                                         <div class="countdown" style="bottom: 5px;"
                                                             data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"

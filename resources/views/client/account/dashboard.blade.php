@@ -73,6 +73,7 @@
                                     data-bs-target="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true"><i
                                         class="iconsax" data-icon="home-1"></i>
                                     Bảng Điều Khiển</button>
+                                    </button>
                             </li>
                             <li>
                                 <button class="nav-link" id="notifications-tab" data-bs-toggle="pill"
@@ -105,8 +106,9 @@
                             <li>
                                 <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy"
                                     role="tab" aria-controls="privacy" aria-selected="false"> <i class="iconsax"
+
                                         data-icon="security-user"></i>Quyền riêng tư</button>
-                            </li>
+                                                              </li>
                         </ul>
                         <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
                                 data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
@@ -1758,6 +1760,9 @@
                         const data = await response.json();
 
                         if (response.ok && data.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('edit-box'));
+                            if (modal) modal.hide();
+
                             Swal.fire({
                                 icon: 'success',
                                 title: '🎉 Cập nhật thành công!',
