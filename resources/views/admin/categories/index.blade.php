@@ -189,10 +189,10 @@
                                     <tr>
                                         <th class="min-w-50px">STT</th>
                                         <th class="min-w-80px">Ảnh</th>
-                                        <th class="min-w-160px">Tên danh mục</th>
-                                        <th class="min-w-140px">Danh mục cha</th>
-                                        <th class="min-w-180px">Mô tả</th>
-                                        <th class="min-w-100px text-end">Hành động</th>
+                                        <th class="min-w-100px">Tên danh mục</th>
+                                        <th class="min-w-100px">Danh mục cha</th>
+                                        <th class="min-w-100px">Mô tả</th>
+                                        <th class="min-w-20px ">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -269,7 +269,7 @@
                                                 echo '<td>' . ($category->description ?? 'Không có mô tả') . '</td>';
 
                                                 // Hành động
-                                                echo '<td class="text-end">
+                                                echo '<td class="">
                                         <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
                                             data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                             Hành động
