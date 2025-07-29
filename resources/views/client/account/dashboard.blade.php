@@ -8,12 +8,12 @@
             <div class="custom-container container">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
-                        <h4>Dashboard</h4>
+                        <h4>Bảng Điều Khiển</h4>
                     </div>
                     <div class="col-sm-6">
                         <ul class="breadcrumb float-end">
-                            <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
-                            <li class="breadcrumb-item active"> <a href="#">Dashboard</a></li>
+                            <li class="breadcrumb-item"> <a href="{{route('client.home')}}">Trang Chủ </a></li>
+                            <li class="breadcrumb-item active"> <a href="#">Bảng Điều Khiển</a></li>
                         </ul>
                     </div>
                 </div>
@@ -61,8 +61,8 @@
                                     <h4>{{ $user['fullname'] }}</h4>
                                     <h6>{{ $user['email'] }}</h6>
                                     <span data-bs-toggle="modal" data-bs-target="#edit-box" title="Quick View"
-                                        tabindex="0">Edit
-                                        Profile</span>
+                                        tabindex="0">Chỉnh Sửa Hồ Sơ
+                                    </span>
                                 </div>
                             </div>
 
@@ -71,48 +71,49 @@
                             aria-orientation="vertical">
                             <li>
                                 <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill"
-                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard"
-                                    aria-selected="true"><i class="iconsax" data-icon="home-1"></i>
-                                    Dashboard</button>
+                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true"><i
+                                        class="iconsax" data-icon="home-1"></i>
+                                    Bảng Điều Khiển</button>
+                                    </button>
                             </li>
                             <li>
                                 <button class="nav-link" id="notifications-tab" data-bs-toggle="pill"
                                     data-bs-target="#notifications" role="tab" aria-controls="notifications"
-                                    aria-selected="false"><i class="iconsax" data-icon="lamp-2"></i>Notifications </button>
+                                    aria-selected="false"><i class="iconsax" data-icon="lamp-2"></i>Thông Báo</button>
                             </li>
                             <li>
                                 <button class="nav-link" id="order-tab" data-bs-toggle="pill" data-bs-target="#order"
                                     role="tab" aria-controls="order" aria-selected="false"><i class="iconsax"
                                         data-icon="receipt-square"></i>
-                                    Order</button>
+                                    Đơn Hàng</button>
                             </li>
                             <li>
                                 <button class="nav-link" id="wishlist-tab" data-bs-toggle="pill" data-bs-target="#wishlist"
                                     role="tab" aria-controls="wishlist" aria-selected="false"> <i class="iconsax"
-                                        data-icon="heart"></i>Wishlist
+                                        data-icon="heart"></i>Danh Sách Yêu Thích
                                 </button>
                             </li>
                             <li>
                                 <button class="nav-link" id="saved-card-tab" data-bs-toggle="pill"
                                     data-bs-target="#saved-card" role="tab" aria-controls="saved-card"
-                                    aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Saved
-                                    Card</button>
+                                    aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Thẻ
+                                    Đã Lưu </button>
                             </li>
                             <li>
                                 <button class="nav-link" id="address-tab" data-bs-toggle="pill" data-bs-target="#address"
                                     role="tab" aria-controls="address" aria-selected="false"><i class="iconsax"
-                                        data-icon="cue-cards"></i>Address</button>
+                                        data-icon="cue-cards"></i>Địa Chỉ</button>
                             </li>
                             <li>
-                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill"
-                                    data-bs-target="#privacy" role="tab" aria-controls="privacy"
-                                    aria-selected="false"> <i class="iconsax"
-                                        data-icon="security-user"></i>Privacy</button>
-                            </li>
+                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy"
+                                    role="tab" aria-controls="privacy" aria-selected="false"> <i class="iconsax"
+
+                                        data-icon="security-user"></i>Quyền riêng tư</button>
+                                                              </li>
                         </ul>
                         <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
-                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i
-                                    class="iconsax me-1" data-icon="logout-1"></i> Logout </a></div>
+                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
+                                    data-icon="logout-1"></i> Đăng Xuất </a></div>
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-8">
@@ -129,13 +130,14 @@
                                     </div>
                                     <div class="dashboard-user-name">
                                         <h6>Xin chào, <b>{{ $user['fullname'] }}</b></h6>
-                                        <p>My dashboard provides a comprehensive overview of key metrics and data relevant
-                                            to your operations.
-                                            It offers real-time insights into performance, including sales figures, website
-                                            traffic, customer
-                                            engagement, and more. With customizable widgets and intuitive visualizations, it
-                                            facilitates quick
-                                            decision-making and allows you to track progress towards your goals effectively.
+                                        <p>Bảng điều khiển của tôi cung cấp cái nhìn tổng quan toàn diện về các chỉ số và dữ
+                                            liệu quan trọng liên quan đến hoạt động của bạn.
+                                            Nó mang đến thông tin chi tiết theo thời gian thực về hiệu suất, bao gồm số liệu
+                                            bán hàng, lưu lượng truy cập website, mức độ tương tác của khách hàng và nhiều
+                                            hơn nữa.
+                                            Với các widget có thể tùy chỉnh và hình ảnh trực quan dễ hiểu, bảng điều khiển
+                                            giúp bạn đưa ra quyết định nhanh chóng và theo dõi hiệu quả tiến độ đạt được các
+                                            mục tiêu của mình.
                                         </p>
                                     </div>
                                     <div class="total-box">
@@ -381,7 +383,6 @@
                                                             ->with('user')
                                                             ->latest()
                                                             ->get();
-
                                                         $rating_summary = [
                                                             'avg_rating' => null,
                                                             'total_rating' => count($reviews),
@@ -391,7 +392,6 @@
                                                             '2_star_percent' => 0,
                                                             '1_star_percent' => 0,
                                                         ];
-
                                                         if ($rating_summary['total_rating'] > 0) {
                                                             $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
 
@@ -416,28 +416,13 @@
                                                             }
 
                                                             $total = $rating_summary['total_rating'];
-                                                            $rating_summary['1_star_percent'] = round(
-                                                                ($star_1 / $total) * 100,
-                                                            );
-                                                            $rating_summary['2_star_percent'] = round(
-                                                                ($star_2 / $total) * 100,
-                                                            );
-                                                            $rating_summary['3_star_percent'] = round(
-                                                                ($star_3 / $total) * 100,
-                                                            );
-                                                            $rating_summary['4_star_percent'] = round(
-                                                                ($star_4 / $total) * 100,
-                                                            );
-                                                            $rating_summary['5_star_percent'] = round(
-                                                                ($star_5 / $total) * 100,
-                                                            );
-                                                            $rating_summary['avg_rating'] =
-                                                                ($star_5 * 5 +
-                                                                    $star_4 * 4 +
-                                                                    $star_3 * 3 +
-                                                                    $star_2 * 2 +
-                                                                    $star_1) /
-                                                                $total;
+
+                                                            $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+                                                            $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+                                                            $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+                                                            $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+                                                            $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+                                                            $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
                                                         }
                                                     @endphp
                                                     <div class="product-detail">
@@ -457,7 +442,7 @@
                                                         <a href="{{ route('client.products.show', $product->slug) }}">
                                                             <h6>{{ $product->name }}</h6>
                                                         </a>
-                                                        <p>{{ number_format($product->sale_price, 2) }} đ</p>
+                                                        <p>{{ number_format($product->sale_price, 0, ',', '.') }} đ</p>
                                                     </div>
                                                 </div>
                                             </div>
