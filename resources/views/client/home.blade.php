@@ -40,6 +40,27 @@
     .swiper-wrapper {
         height: auto !important;
     }
+    .small-product-img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+}
+
+.product-2 .product {
+    max-width: 250px;
+}
+.custom-product-img {
+    width: 103px;
+    height: 104px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
 </style>
 @section('content')
     {{-- <section class="section-space home-section-4">
@@ -91,51 +112,89 @@
 </div>
 </div>
 </section> --}}
-    {{-- <section class="section-space home-section-4">
+    <section class="section-space home-section-4"> 
         <div class="custom-container container">
             <div class="row">
                 <div class="col-12">
                     <div class="home-content">
-                        <p>Create Your Style<span></span></p>
-                        <h2>New Style For</h2>
-                        <h1>Spring & Summer</h1>
-                        <h6>Amet minim mollit non deserunt dolor do amet sint. </h6><a class="btn btn_outline"
-                            href="collection-left-sidebar.html">Shop Now
-                            <svg>
-                                <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use>
-                            </svg></a>
+                        <p>Tạo phong cách của bạn
+<span></span></p>
+                        <h2>Phong cách mới cho</h2>
+                        <h1>Xuân & Hè</h1>
+                        <h6>Thời trang có thể phai mờ, nhưng phong cách thì vĩnh cửu</h6><a class="btn btn_outline"
+   href="{{ route('client.category.index') }}">Shop Now
+   <svg>
+     <use href="{{ asset('assets/svg/icon-sprite.svg#arrow') }}"></use>
+   </svg>
+</a>
+
                     </div>
-                    <div class="product-1">
-                        <div class="product"> <img class="img-fluid"
-                                src="{{ asset('assets/client/images/layout-4/p-1.jpg') }}" alt="">
-                            <div class="product-details">
-                                <h6>Black Women Top</h6>
-                                <p>Women's Style</p>
-                                <ul class="rating">
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star"></i></li>
-                                    <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                    <li><i class="fa-regular fa-star"></i></li>
-                                </ul>
-                                <h5>$48
-                                    <del>$68 </del><span>-40%</span>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-2">
-                        <div class="product"><img class="img-fluid"
-                                src="{{ asset('assets/client/images/layout-4/p-2.png') }}" alt="">
-                            <div class="product-details">
-                                <div>
-                                    <h6>Pursesess</h6>
-                                    <h5>Best Women Bag</h5>
-                                </div>
-                                <span>$65</span>
-                            </div>
-                        </div>
-                    </div>
+   <div class="product-1">
+    @if(isset($latestProducts[0]))
+        @php $latest = $latestProducts[0]; @endphp
+                <a href="{{ route('client.products.show', $latest->slug) }}" style="display: block; text-decoration: none; color: inherit;">
+
+        <div class="product text-center">
+            <img class="img-fluid custom-product-img"
+                src="{{ asset('storage/' . $latest->image) }}"
+                alt="{{ $latest->name }}">
+
+            <div class="product-details">
+                <h6>{{ $latest->name }}</h6>
+                <p>{{ $latest->category->name ?? 'Uncategorized' }}</p>
+                <ul class="rating">
+                    @php
+                        $avgRating = round($latest->reviews->avg('rating') ?? 0, 1);
+                        $fullStars = floor($avgRating);
+                        $halfStar = $avgRating - $fullStars >= 0.5;
+                    @endphp
+                    @for($i = 0; $i < $fullStars; $i++)
+                        <li><i class="fa-solid fa-star"></i></li>
+                    @endfor
+                    @if($halfStar)
+                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                    @endif
+                    @for($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
+                        <li><i class="fa-regular fa-star"></i></li>
+                    @endfor
+                </ul>
+                <h5>
+                    ${{ number_format($latest->sale_price ?? $latest->price, 2) }}
+                    @if($latest->sale_price && $latest->price > 0)
+                        <del>${{ number_format($latest->price, 2) }}</del>
+                        <span>
+                            -{{ round(100 - ($latest->sale_price / $latest->price * 100)) }}%
+                        </span>
+                    @endif
+                </h5>
+            </div>
+        </div>
+                </a>
+    @endif
+</div>
+
+
+<div class="product-2">
+    @if(isset($bestSellerProducts[0]))
+        @php $top = $bestSellerProducts[0]; @endphp
+            <a href="{{ route('client.products.show', $top->slug) }}" style="display: block;">
+
+        <div class="product">
+            <img class="img-fluid"
+                src="{{ asset('storage/' . $top->image) }}"
+                alt="{{ $top->name }}">
+            <div class="product-details">
+                <div>
+                    <h6>{{ $top->category->name ?? 'Category' }}</h6>
+                    <h5>{{ $top->name }}</h5>
+                </div>
+                <span>${{ number_format($top->sale_price ?? $top->price, 2) }}</span>
+            </div>
+        </div>
+            </a>
+    @endif
+</div>
+
                     <div class="home-images">
                         <div class="main-images"></div>
                         <img class="img-fluid" src="{{ asset('assets/client/images/layout-4/1.png') }}" alt="">
@@ -166,8 +225,8 @@
             </div>
         </div>
 
-    </section>   --}}
-    <div class="slideshow-container">
+    </section>  
+    {{-- <div class="slideshow-container">
         @foreach ($banners as $index => $banner)
             <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
                 <div class="custom-container container">
@@ -223,7 +282,7 @@
                 </div>
             </section>
         @endforeach
-    </div>
+    </div> --}}
 
     <section class="section-t-space">
 
@@ -775,7 +834,7 @@
     <section class="section-t-space">
         <div class="custom-container container">
             <div class="title">
-                <h3>Latest Blog</h3>
+                <h3>Blog Mới Nhất</h3>
                 <svg>
                     <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#main-line"></use>
                 </svg>
@@ -792,7 +851,7 @@
                             </div>
                             <div class="blog-txt">
                                 <p>
-                                    By: {{ $blog->author->username ?? 'Admin' }} /
+                                    Tác giả: {{ $blog->author->username ?? 'Admin' }} /
                                     {{ $blog->published_at->format('d M Y') }}
                                 </p>
                                 <a href="{{ route('client.blog.show', $blog->slug) }}">
@@ -802,7 +861,7 @@
                                 <div class="link-hover-anim underline">
                                     <a class="btn btn_underline link-strong link-strong-unhovered"
                                         href="{{ route('client.blog.show', $blog->slug) }}">
-                                        Read More
+                                        Đọc thêm
                                         <svg>
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
@@ -811,7 +870,7 @@
                                     </a>
                                     <a class="btn btn_underline link-strong link-strong-hovered"
                                         href="{{ route('client.blog.show', $blog->slug) }}">
-                                        Read More
+                                        Đọc thêm
                                         <svg>
                                             <use
                                                 href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">

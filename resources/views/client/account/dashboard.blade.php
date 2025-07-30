@@ -534,16 +534,23 @@
 
 
                                                             <!-- Modal -->
-                                                            @if (
-                                                                $order->status === 'completed' &&
-                                                                    $order->delivered_at &&
-                                                                    now()->diffInDays($order->delivered_at) <= 3 &&
-                                                                    is_null($order->return_requested_at))
-                                                                <a href="{{ route('client.account.orders.return_form', $order->id) }}"
-                                                                    class="btn btn-danger">
-                                                                    Hoàn / Đổi hàng
-                                                                </a>
+                                                            @if ($order->status === 'completed' && $order->delivered_at && now()->diffInDays($order->delivered_at) <= 3)
+                                                                @if ($order->returnRequests->isEmpty())
+                                                                    {{-- Nếu chưa gửi khiếu nại → hiện nút Gửi --}}
+                                                                    <a href="{{ route('client.account.return_requests.create', $order->id) }}"
+                                                                        class="btn btn-danger">
+                                                                        Hoàn / Đổi hàng
+                                                                    </a>
+                                                                @else
+                                                                    {{-- Nếu đã gửi → hiện nút Xem --}}
+                                                                    <a href="{{ route('client.account.return_requests.index') }}"
+                                                                        class="btn btn-outline-primary">
+                                                                        📝 Đã gửi khiếu nại – Xem lại
+                                                                    </a>
+                                                                @endif
                                                             @endif
+
+
 
                                                             @if (in_array($order->status, ['pending', 'confirmed']))
                                                                 @if ($order->status === 'pending')
@@ -1997,7 +2004,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                                                                                                                                                                                                                            success ') }}',
+                                                                                                                                                                                                                                                                                                                                            success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });

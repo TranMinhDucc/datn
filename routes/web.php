@@ -70,6 +70,7 @@ use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Controllers\Admin\WishlistController;
+use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -185,6 +186,14 @@ Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account
         Route::delete('/delete/{id}', [ShippingAddressController::class, 'destroy'])->name('destroy');
         Route::post('/set-default/{id}', [ShippingAddressController::class, 'setDefault'])->name('setDefault');
     });
+    // Khiếu nại / hoàn hàng
+    Route::prefix('return-requests')->name('return_requests.')->group(function () {
+        Route::get('/', [ReturnRequestController::class, 'index'])->name('index'); // Danh sách khiếu nại
+        Route::get('/create/{order}', [ReturnRequestController::class, 'create'])->name('create'); // Form gửi
+        Route::get('/{return_request}', [ReturnRequestController::class, 'show'])->name('show');
+        Route::post('/store/{order}', [ReturnRequestController::class, 'store'])->name('store'); // Gửi khiếu nại
+    });
+
     Route::prefix('wishlist')->name('wishlist.')->group(function () {
         Route::get('/', action: [ClientWishlistController::class, 'index'])->name('index');
         Route::post('/add/{productId}', [ClientWishlistController::class, 'add'])->name('add');
@@ -259,7 +268,8 @@ Route::prefix('admin')
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
         Route::resource('contacts', ContactController::class);
-
+        //Categories
+        Route::post('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
         Route::resource('categories', CategoryController::class);
         //Products
         Route::get('products/trash', [ProductController::class, 'trash'])->name('products.trash');

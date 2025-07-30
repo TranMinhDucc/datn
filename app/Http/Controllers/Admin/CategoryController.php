@@ -12,8 +12,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-         $categories = Category::all();
-    return view('admin.categories.index', compact('categories'));
+        $categories = Category::withTrashed()->get();
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create()
@@ -75,17 +75,36 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         // Xóa ảnh khỏi thư mục storage nếu có
-        if ($category->image && Storage::disk('public')->exists($category->image)) {
-            Storage::disk('public')->delete($category->image);
-        }
+        // if ($category->image && Storage::disk('public')->exists($category->image)) {
+        //     Storage::disk('public')->delete($category->image);
+        // }
 
         // Xóa record danh mục
         $category->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục và ảnh.');
+        return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục thành công.');
     }
     public function show(Category $category)
     {
         return view('admin.categories.show', compact('category'));
     }
+    public function restore($id)
+    {
+        $category = Category::withTrashed()->findOrFail($id);
+
+        // Khôi phục record
+        $category->restore();
+
+        return redirect()->route('admin.categories.index')->with('success', 'Đã khôi phục danh mục.');
+    }
+    // public function search(Request $request)
+    // {
+    //     $keyword = $request->input('keyword');
+
+    //     $categories = Category::withTrashed()
+    //         ->where('name', 'like', "%{$keyword}%")
+    //         ->get();
+
+    //     return response()->json($categories);
+    // }
 }

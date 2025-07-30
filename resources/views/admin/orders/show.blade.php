@@ -149,21 +149,6 @@
 
                         @if (is_null($order->refunded_at))
                             <div class="d-flex gap-2">
-                                <!-- Duyệt yêu cầu -->
-                                {{-- <form action="{{ route('admin.orders.approve_return', $order->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success">
-                                        ✅ Chấp nhận hoàn hàng
-                                    </button>
-                                </form> --}}
-
-                                <!-- Từ chối yêu cầu -->
-                                {{-- <form action="{{ route('admin.orders.reject_return', $order->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">
-                                        ❌ Từ chối yêu cầu
-                                    </button>
-                                </form> --}}
                             </div>
                         @else
                             <div class="badge bg-success fs-6">
