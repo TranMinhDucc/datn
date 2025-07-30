@@ -208,6 +208,23 @@
                             <tbody>
                                 @php
                                 $stt = 1;
+                        <!--begin::Table-->
+                        <div style="overflow-x: auto;">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1300px;"
+                                id="kt_ecommerce_categories_table">
+                                <thead>
+                                    <tr>
+                                        <th class="min-w-50px">STT</th>
+                                        <th class="min-w-80px">Ảnh</th>
+                                        <th class="min-w-100px">Tên danh mục</th>
+                                        <th class="min-w-100px">Danh mục cha</th>
+                                        <th class="min-w-100px">Mô tả</th>
+                                        <th class="min-w-20px ">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $stt = 1;
 
                                 function renderRows(
                                 $categories,
@@ -287,6 +304,11 @@
                                         echo '</td>';
                                     // Hành động
                                     echo '<td class="text-end">
+                                                // Mô tả
+                                                echo '<td>' . ($category->description ?? 'Không có mô tả') . '</td>';
+
+                                                // Hành động
+                                                echo '<td class="">
                                         <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center"
                                             data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                             Hành động

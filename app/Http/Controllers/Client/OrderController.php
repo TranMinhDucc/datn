@@ -106,21 +106,6 @@ class OrderController extends Controller
         return view('client.account.return-form', compact('order')); // ✅ đúng đường dẫn Blade
     }
 
-    public function returnRequest(Request $request, Order $order)
-    {
-        $request->validate([
-            'reason' => 'required|string|max:1000',
-            'image' => 'nullable|image|max:2048',
-        ]);
+    
 
-        $imagePath = $request->file('image')?->store('returns', 'public');
-
-        $order->update([
-            'return_reason' => $request->reason,
-            'return_image' => $imagePath,
-            'return_requested_at' => now(),
-        ]);
-
-        return redirect()->route('client.account.dashboard')->with('success', 'Đã gửi yêu cầu khiếu nại thành công.');
-    }
 }
