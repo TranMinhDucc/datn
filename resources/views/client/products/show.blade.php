@@ -66,39 +66,41 @@
                                 $start = \Carbon\Carbon::parse($product->starts_at);
                                 $end = \Carbon\Carbon::parse($product->ends_at);
 
-                                $isInDiscountTime = $now->between($start, $end);
-                                $finalPrice = $isInDiscountTime
-                                    ? $product->base_price * (1 - $product->sale_times / 100)
-                                    : $product->sale_price;
-                            @endphp
-                            <script>
-                                const isInDiscountTime = @json($isInDiscountTime);
-                                const saleTimes = @json($product->sale_times);
-                            </script>
-                            <h3>{{ $product->name }}</h3>
-                            <p id="main-price">{{ number_format($finalPrice) }} đ
-                                <del>{{ number_format($product->base_price) }} đ</del>
-                                @if ($isInDiscountTime)
-                                    <span>-{{ $product->sale_times }}%</span>
-                                @endif
-                            </p>
-                            <p></p>
-                            <div class="rating">
-                                <ul class="rating">
-                                    <li>
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            @if ($rating_summary['avg_rating'] >= $i)
-                                                <i class="fa-solid fa-star"></i>
-                                            @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
-                                                <i class="fa-solid fa-star-half-stroke"></i>
-                                            @else
-                                                <i class="fa-regular fa-star"></i>
-                                            @endif
+                        $isInDiscountTime = $now->between($start, $end);
+                        $finalPrice = $isInDiscountTime
+                        ? $product->base_price * (1 - $product->sale_times / 100)
+                        : $product->sale_price;
+                        @endphp
+                        <script>
+                            const isInDiscountTime = @json($isInDiscountTime);
+                            const saleTimes = @json($product->sale_times);
+                        </script>
+                        <h3>{{ $product->name }}</h3>
+                        <p id="main-price">{{ number_format($finalPrice) }} đ
+                            <del>{{ number_format($product->base_price) }} đ</del>
+                            @if ($isInDiscountTime)
+                            <span>-{{ $product->sale_times }}%</span>
+                            @endif
+                        </p>
+                        <p></p>
+                        <div class="rating">
+                            <ul class="rating">
+                                <li>
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($rating_summary['avg_rating']>= $i)
+                                        <i class="fa-solid fa-star"></i>
+                                        @elseif ($rating_summary['avg_rating'] >= $i - 0.5)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                        @else
+                                        <i class="fa-regular fa-star"></i>
+                                        @endif
                                         @endfor
                                     </li>
                                     <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-                                <p>{!! $product->description !!}</p>
+                                
+                                <p>{{$product->description}}</p>
+
                             </div>
                             <div class="buy-box border-buttom">
                                 <ul>
@@ -164,31 +166,34 @@
                                         Add To Cart
                                     </a>
 
-                                    <a href="#" class="btn btn_outline sm buy-now-btn"
-                                        data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}"
-                                        data-product-price="{{ $product->sale_price }}"
-                                        data-product-image="{{ asset('storage/' . $product->image) }}"
-                                        data-product-brand="{{ $product->brand->name ?? 'Unknown' }}"
-                                        data-max-quantity="{{ $product->stock_quantity }}"
-                                        data-variant-id="{{ $selectedVariant->id ?? '' }}" {{-- nếu có variant --}}
-                                        data-quantity="1">
-                                        Buy Now
-                                    </a>
+                            <a href="#"
+                                class="btn btn_outline sm buy-now-btn"
+                                data-product-id="{{ $product->id }}"
+                                data-product-name="{{ $product->name }}"
+                                data-product-price="{{ $product->sale_price }}"
+                                data-product-image="{{ asset('storage/' . $product->image) }}"
+                                data-product-brand="{{ $product->brand->name ?? 'Unknown' }}"
+                                data-max-quantity="{{ $product->stock_quantity }}"
+                                data-variant-id="{{ $selectedVariant->id ?? '' }}" {{-- nếu có variant --}}
+                                data-quantity="1">
+                                Buy Now
+                            </a>
 
-                                </div>
-                            </div>
-                            <div class="buy-box">
-                                <ul>
-                                    <li> <a href="wishlist.html"> <i class="fa-regular fa-heart me-2"></i>Add To
-                                            Wishlist</a></li>
-                                    <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
-                                            Compare</a></li>
-                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
-                                            title="Quick View" tabindex="0"><i
-                                                class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
-                                </ul>
-                            </div>
-                            {{-- <div class="sale-box">
+                        </div>
+                    </div>
+                    <div class="buy-box">
+                        <ul>
+                            <li> <a href="wishlist.html"> <i class="fa-regular fa-heart me-2"></i>Add To
+                                    Wishlist</a></li>
+                            <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
+                                    Compare</a></li>
+                            <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
+                                    title="Quick View" tabindex="0"><i
+                                        class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
+                        </ul>
+                    </div>
+                    <div class="sale-box">
+
 
                                 <div class="countdown"
                                     data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
@@ -597,18 +602,15 @@
 
                                                                 {{-- <a href="#"> <span> <i class="iconsax" data-icon="undo"></i>
                                                                         Replay</span></a> --}}
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
+                            </li>
+                            @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -862,27 +864,25 @@
                 return;
             }
 
-            const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
-            if (matched) {
-                const quantity = matched.quantity;
+        const matched = allVariants.find(v => attributesMatch(selected, v.attributes));
+        if (matched) {
+            const quantity = matched.quantity;
 
-                const qtyEl = document.getElementById('variant-quantity');
-                if (quantity <= 0) {
-                    qtyEl.textContent = 'Hết hàng';
-                    qtyEl.style.color = 'red';
-                } else {
-                    qtyEl.textContent = quantity;
-                    qtyEl.style.color = '';
-                }
-
-                document.getElementById('variant-info').style.display = 'block';
-                const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
-                document.getElementById('main-price').textContent = formattedPrice;
+            const qtyEl = document.getElementById('variant-quantity');
+            if (quantity <= 0) {
+                qtyEl.textContent = 'Hết hàng';
+                qtyEl.style.color = 'red';
+            } else {
+                qtyEl.textContent = quantity;
+                qtyEl.style.color = '';
             }
 
-
+            document.getElementById('variant-info').style.display = 'block';
+            const formattedPrice = new Intl.NumberFormat().format(Math.round(matched.price)) + ' đ';
+            document.getElementById('main-price').textContent = formattedPrice;
 
         }
+    }
 
         // Bắt sự kiện click vào mỗi lựa chọn
         document.querySelectorAll('.variant-item').forEach(item => {
@@ -1009,7 +1009,8 @@
                     type === 'info' ? '#17a2b8' :
                     '#28a745';
 
-                toast.innerHTML = `
+            toast.innerHTML = `
+
     <div class="icon">
         <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
         <span>${message}</span>
@@ -1084,20 +1085,24 @@
                     }
 
                     // 🟢 Đặt đúng chỗ: lấy variantId TRƯỚC khi xử lý giá
-                    // 🟢 Đặt đúng chỗ: lấy matchedVariant TRƯỚC khi xử lý giỏ hàng
-                    let matchedVariant = window.variantData.find(v =>
-                        Object.entries(selectedAttributes).every(([key, val]) => {
-                            const matchedKey = Object.keys(v.attributes).find(k =>
-                                normalize(k) === normalize(key));
-                            return matchedKey && normalize(v.attributes[matchedKey]) ===
-                                normalize(val);
-                        })
-                    );
+                    const variantId = getSelectedVariantId(selectedAttributes);
 
-                    if (!matchedVariant) {
-                        showToast('Không tìm thấy biến thể phù hợp', 'error');
-                        return;
+                let price = parseFloat(this.dataset.price);
+                let originalPrice = parseFloat(this.dataset.originalPrice);
+                let matchedVariant = null;
+
+                if (variantId) {
+                    matchedVariant = window.variantData.find(v => v.id === variantId);
+                    if (matchedVariant) {
+                        if (matchedVariant.quantity <= 0) {
+                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            return;
+                        }
+
+                        price = matchedVariant.price;
+                        originalPrice = matchedVariant.original_price || originalPrice;
                     }
+                }
 
                     if (matchedVariant.quantity <= 0) {
                         showToast('Sản phẩm đã hết hàng', 'warning');
@@ -1143,19 +1148,20 @@
                         });
                     }
 
-                    localStorage.setItem(cartKey, JSON.stringify(cartItems));
-                    document.dispatchEvent(new Event('cartUpdated'));
-                    updateCartBadge(); // ← Thêm dòng này
 
+                localStorage.setItem(cartKey, JSON.stringify(cartItems));
+                document.dispatchEvent(new Event('cartUpdated'));
+                updateCartBadge(); // ← Thêm dòng này
 
-                    const offcanvasEl = document.getElementById('offcanvasRight');
-                    if (offcanvasEl) {
-                        const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
-                        bsOffcanvas.show();
-                    }
-                });
+                const offcanvasEl = document.getElementById('offcanvasRight');
+                if (offcanvasEl) {
+                    const bsOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
+                    bsOffcanvas.show();
+                }
             });
-            const buyNowButtons = document.querySelectorAll('.buy-now-btn');
+        });
+        //Buy now
+        const buyNowButtons = document.querySelectorAll('.buy-now-btn');
 
             buyNowButtons.forEach(function(btn) {
                 btn.addEventListener('click', function(e) {
@@ -1201,12 +1207,17 @@
 
                     let price = parseFloat(btn.dataset.productPrice);
 
-                    if (variantId) {
-                        const matchedVariant = window.variantData.find(v => v.id === variantId);
-                        if (matchedVariant) {
-                            price = matchedVariant.price;
+                if (variantId) {
+                    const matchedVariant = window.variantData.find(v => v.id === variantId);
+                    if (matchedVariant) {
+                        // ✅ Kiểm tra tồn kho
+                        if (matchedVariant.quantity <= 0) {
+                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            return;
                         }
+                        price = matchedVariant.price;
                     }
+                }
 
                     // Xóa toàn bộ giỏ trước khi thêm mới 1 sản phẩm (Buy Now chỉ mua 1 sản phẩm)
                     const newCart = [{
