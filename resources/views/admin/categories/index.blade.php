@@ -314,6 +314,8 @@
                                             </div>
                                             <div class="menu-item px-3">
                                                 <form class="delete-category-form" action="' . route('admin.categories.destroy', $category) . '" method="POST" data-category-name="' . e($category->name) . '">
+                                                    ' . csrf_field() . '
+                                                    ' . method_field('DELETE') . '
                                                     <button type="submit" class="menu-link px-3">Xóa</button>
                                                 </form>
                                             </div>';
@@ -376,28 +378,28 @@
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.delete-category-form').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // chặn submit mặc định
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.delete-category-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // chặn submit mặc định
 
-            const categoryName = form.dataset.categoryName || 'danh mục này';
+                const categoryName = form.dataset.categoryName || 'danh mục này';
 
-            Swal.fire({
-                title: 'Bạn chắc chắn?',
-                text: `Xoá danh mục ${categoryName}? Nếu có sản phẩm đang hoạt động thuộc danh mục, tất cả sẽ bị ẩn.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Xoá',
-                cancelButtonText: 'Huỷ',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // tiếp tục submit nếu người dùng xác nhận
-                }
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: `Xoá danh mục ${categoryName}? Nếu có sản phẩm đang hoạt động thuộc danh mục, tất cả sẽ bị ẩn.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xoá',
+                    cancelButtonText: 'Huỷ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // tiếp tục submit nếu người dùng xác nhận
+                    }
+                });
             });
         });
     });
-});
-</script>  
+</script>
 @endsection
