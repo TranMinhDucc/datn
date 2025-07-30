@@ -329,7 +329,15 @@
                                 {{-- Danh mục --}}
                                 <td class="text-center">
                                     <a href="#" class="btn btn-info btn-sm">
-                                        {{ $product->category->name ?? 'Chưa phân loại' }}
+                                        @if ($product->category)
+                                        @if ($product->category->deleted_at)
+                                        {{ $product->category->name }} (Đã xoá)
+                                        @else
+                                        {{ $product->category->name }}
+                                        @endif
+                                        @else
+                                        Chưa phân loại
+                                        @endif
 
                                         {{-- <span class="badge bg-light-info text-dark">
                                                     {{ $product->category->name ?? 'Chưa phân loại' }}

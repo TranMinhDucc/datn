@@ -78,6 +78,19 @@ class CategoryController extends Controller
         // if ($category->image && Storage::disk('public')->exists($category->image)) {
         //     Storage::disk('public')->delete($category->image);
         // }
+        // Ẩn tất cả sản phẩm thuộc danh mục này
+        $category->products()->update(['is_active' => 0]);
+
+        // Lấy tất cả danh mục con
+        $children = Category::where('parent_id', $category->id)->get();
+
+        foreach ($children as $child) {
+            // Ẩn sản phẩm của danh mục con
+            $child->products()->update(['is_active' => 0]);
+
+            // Xoá mềm danh mục con
+            $child->delete();
+        }
 
         // Xóa record danh mục
         $category->delete();
@@ -92,8 +105,18 @@ class CategoryController extends Controller
     {
         $category = Category::withTrashed()->findOrFail($id);
 
+        // Kiểm tra nếu có parent_id và parent đã bị xoá thì không cho khôi phục
+        if ($category->parent_id) {
+            $parent = Category::withTrashed()->find($category->parent_id);
+
+            if ($parent && $parent->trashed()) {
+                return redirect()->route('admin.categories.index')->with('error', 'Không thể khôi phục danh mục vì danh mục cha đã bị xoá.');
+            }
+        }
         // Khôi phục record
         $category->restore();
+
+        $category->products()->update(['is_active' => 1]);  // Khôi phục sản phẩm liên quan
 
         return redirect()->route('admin.categories.index')->with('success', 'Đã khôi phục danh mục.');
     }
