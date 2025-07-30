@@ -179,8 +179,12 @@
                             </div>
                             <div class="buy-box">
                                 <ul>
-                                    <li> <a href="wishlist.html"> <i class="fa-regular fa-heart me-2"></i>Add To
-                                            Wishlist</a></li>
+                                    <li> 
+                                        <a class="add-to-wishlist" href="javascript:;" data-id="{{ $product->id }}">
+                                            <i class="fa-regular fa-heart me-2"></i>
+                                            Yêu thích
+                                        </a>
+                                    </li>
                                     <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
                                             Compare</a></li>
                                     <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
@@ -628,7 +632,7 @@
                             <div class="product-box-3">
                                 <div class="img-wrapper">
                                     <div class="label-block"><span class="lable-1">NEW</span><a
-                                            class="label-2 wishlist-icon" href="javascript:void(0)" tabindex="0"><i
+                                            class="label-2 wishlist-icon add-to-wishlist" data-id="{{ $value->id }}" href="javascript:void(0)" tabindex="0"><i
                                                 class="iconsax" data-icon="heart" aria-hidden="true"
                                                 data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
                                     <div class="product-image"><a class="pro-first"
@@ -1225,6 +1229,44 @@
 
                     // Chuyển đến trang giỏ hàng
                     window.location.href = "{{ route('client.cart.index') }}";
+                });
+            });
+
+            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.dataset.id;
+
+                    fetch(`/account/wishlist/add/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status == 'ok') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: data.message,
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: data.message
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Lỗi:', err);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Đã có lỗi xảy ra'
+                            });
+                        });
                 });
             });
         });

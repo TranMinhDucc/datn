@@ -362,6 +362,124 @@
         </form>
     </div>
 
+    <div class="container py-2">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="min-height: 50px">
+                        <h5 class="mb-0">SẢN PHẨM BÁN CHẠY NHẤT</h5>
+                        <div>
+                            {{-- <select name="monthOrderRevenueChart" class="form-select form-select-sm"
+                                onchange="this.form.submit()">
+                                @for ($m = 1; $m <= 12; $m++)
+                                    <option value="{{ $m }}" {{ (int) request('monthOrderRevenueChart', now()->month) === $m ? 'selected' : '' }}>
+                                        Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}
+                                    </option>
+                                @endfor
+                            </select> --}}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <!--begin::Table-->
+                            <table class="table table-row-dashed align-middle gs-0 gy-4 my-0">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">                                    
+                                        <th class="p-0 w-75px pb-1">Sản phẩm</th>
+                                        <th class="ps-0 min-w-140px"></th>
+                                        <th class="min-w-140px p-0 text-end">Đơn giá</th>                                     
+                                        <th class="p-0 min-w-140px text-end">Số lượng</th>
+                                    </tr>
+                                </thead>
+                                <!--end::Table head-->
+
+                                <!--begin::Table body-->
+                                <tbody>
+                                    @if (isset($bestSellingProducts))
+                                        @foreach ($bestSellingProducts as $product)
+                                            <tr>
+                                                <td>                                    
+                                                    <img src="{{ asset('storage/' . $product->image) }}" style="width:75px;height:75px;object-fit:cover" alt=""/>                             
+                                                </td>
+                                                <td class="ps-0">
+                                                    <a href="{{ route('client.products.show', $product->slug) }}" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">{{ $product->name }}</a>
+                                                    <span class="text-gray-500 fw-semibold fs-7 d-block text-start ps-0">{{ $product->name }}</span>
+                                                </td>
+                                                <td class="text-end">                                            
+                                                    <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ $product->sale_price }}</span>
+                                                </td>    
+                                                <td class="text-end">                                            
+                                                    <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ $product->total_sold }}</span>
+                                                </td>                                       
+                                            </tr>  
+                                        @endforeach    
+                                    @endif
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                </div>
+            </div>
+             <div class="col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="min-height: 50px">
+                        <h5 class="mb-0">DANH MỤC BÁN CHẠY NHẤT</h5>
+                        <div>
+                            {{-- <select name="monthOrderRevenueChart" class="form-select form-select-sm"
+                                onchange="this.form.submit()">
+                                @for ($m = 1; $m <= 12; $m++)
+                                    <option value="{{ $m }}" {{ (int) request('monthOrderRevenueChart', now()->month) === $m ? 'selected' : '' }}>
+                                        Tháng {{ str_pad($m, 2, '0', STR_PAD_LEFT) }}
+                                    </option>
+                                @endfor
+                            </select> --}}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <!--begin::Table-->
+                            <table class="table table-row-dashed align-middle gs-0 gy-4 my-0">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">    
+                                        <th class="p-0 w-75px pb-1">Danh mục</th>                                
+                                        <th class="ps-0 min-w-140px"></th>
+                                        <th class="p-0 min-w-140px text-end">Số lượng bán</th>
+                                    </tr>
+                                </thead>
+                                <!--end::Table head-->
+
+                                <!--begin::Table body-->
+                                <tbody>
+                                    @if (isset($bestSellingCategories))
+                                        @foreach ($bestSellingCategories as $category)
+                                            <tr>
+                                                <td>                                    
+                                                    <img src="{{ asset('storage/' . $category->image) }}" style="width:75px;height:75px;object-fit:cover" alt=""/>                             
+                                                </td>
+                                                <td class="ps-0">
+                                                    <a href="javascript:;" class="text-gray-800 fw-bold text-hover-primary mb-1 fs-6 text-start pe-0">{{ $category->name }}</a>
+                                                </td>
+                                                <td class="text-end">                                            
+                                                    <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end">{{ $category->total_sold }}</span>
+                                                </td>                                      
+                                            </tr>  
+                                        @endforeach    
+                                    @endif
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('js')

@@ -135,6 +135,23 @@ class DashboardController extends Controller
             $chartStatusCounts[] = $orderStatuses[$key] ?? 0;
         }
 
+        // sản phẩm và danh mục bán chạy nhất
+        $bestSellingProducts = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
+            ->select('products.*', OrderItem::raw('SUM(order_items.quantity) as total_sold'))
+            ->groupBy('order_items.product_id', 'products.id', 'products.name' /* thêm các cột cần select nếu bạn dùng PostgreSQL */)
+            ->orderByDesc('total_sold')
+            ->limit(10)
+            ->get();
+
+        $bestSellingCategories = DB::table('order_items')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('categories as c', 'products.category_id', '=', 'c.id')
+            ->select('c.id', 'c.name', 'c.image', DB::raw('SUM(order_items.quantity) as total_sold'))
+            ->groupBy('c.id', 'c.name')
+            ->orderByDesc('total_sold')
+            ->limit(10)
+            ->get();
+
         return view('admin.dashboard', compact(
             'usersAll',
             'usersMonth',
@@ -162,7 +179,10 @@ class DashboardController extends Controller
             'chartRevenue',
             'chartTax',
             'chartStatusLabels',
-            'chartStatusCounts'
+            'chartStatusCounts',
+            // bán chạy nhất
+            'bestSellingProducts',
+            'bestSellingCategories',
         ));
 
     }

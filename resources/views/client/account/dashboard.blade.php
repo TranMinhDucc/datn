@@ -287,12 +287,12 @@
                                                 <div class="user-img">
                                                     @php
 
-                                                        $item = \App\Models\OrderItem::where(
+                                                        $order_item = \App\Models\OrderItem::where(
                                                             'order_id',
                                                             $notification->data['order_id'],
                                                         )->first();
                                                         $image =
-                                                            $item?->image_url ??
+                                                            $order_item?->image_url ??
                                                             asset('assets/client/images/default.png');
                                                     @endphp
 
@@ -332,9 +332,9 @@
                                         <h4>Wishlist</h4>
                                     </div>
                                     <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
-                                        @forelse ($wishlists as $item)
+                                        @forelse ($wishlists as $wishlist)
                                             @php
-                                                $product = $item->product;
+                                                $product = $wishlist->product;
                                             @endphp
                                             <div class="col">
                                                 <div class="product-box-3 product-wishlist">
@@ -717,14 +717,14 @@
                                                     </div>
 
 
-                                                    @foreach ($order->orderItems as $item)
+                                                    @foreach ($order->orderItems as $orderItem)
                                                         <div class="product-order-detail">
                                                             <div
                                                                 class="product-box position-relative d-flex align-items-start">
                                                                 {{-- Ảnh sản phẩm --}}
-                                                                @if ($item->product)
-                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                                        alt="{{ $item->product_name }}"
+                                                                @if ($orderItem->product)
+                                                                    <img src="{{ asset('storage/' . $orderItem->product->image) }}"
+                                                                        alt="{{ $orderItem->product_name }}"
                                                                         style="max-width: 150px;">
                                                                 @else
                                                                     <img src="{{ asset('images/default.png') }}"
@@ -733,18 +733,18 @@
 
                                                                 {{-- Nội dung --}}
                                                                 <div class="order-wrap">
-                                                                    <h5>{{ $item->product_name }}</h5>
-                                                                    <p>{{ $item->product->description ?? 'Không có mô tả' }}
+                                                                    <h5>{{ $orderItem->product_name }}</h5>
+                                                                    <p>{{ $orderItem->product->description ?? 'Không có mô tả' }}
                                                                     </p>
                                                                     <ul style="list-style: none; padding-left: 0;">
                                                                         <li>
                                                                             <p>Giá :</p>
-                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
+                                                                            <span>{{ number_format($orderItem->price, 0, ',', '.') }}₫</span>
                                                                         </li>
 
                                                                         @php
                                                                             $variantValues = json_decode(
-                                                                                $item->variant_values ?? '{}',
+                                                                                $orderItem->variant_values ?? '{}',
                                                                                 true,
                                                                             );
                                                                         @endphp
@@ -761,7 +761,7 @@
 
                                                                         <li>
                                                                             <p>Mã đơn hàng :</p>
-                                                                            <span>{{ $item->order->order_code ?? '---' }}</span>
+                                                                            <span>{{ $orderItem->order->order_code ?? '---' }}</span>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
@@ -771,30 +771,28 @@
                                                                     class="stretched-link"></a>
                                                             </div>
                                                         </div>
-                                                    @endforeach
-
-
-                                                    <div class="return-box">
-                                                        <div class="review-box">
-                                                            <ul class="rating">
-                                                                <li>
-                                                                    <i class="fa-solid fa-star"></i>
-                                                                    <i class="fa-solid fa-star"></i>
-                                                                    <i class="fa-solid fa-star"></i>
-                                                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                                                    <i class="fa-regular fa-star"></i>
-                                                                </li>
-                                                            </ul>
-                                                            @if ($item->product)
-                                                                <a
-                                                                    href="{{ route('client.products.show', $item->product->slug) }}#review">
-                                                                    <span>Viết đánh giá</span>
-                                                                </a>
-                                                            @endif
-
+                                                        <div class="return-box">
+                                                            <div class="review-box">
+                                                                <ul class="rating">
+                                                                    <li>
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                        <i class="fa-solid fa-star"></i>
+                                                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                                                        <i class="fa-regular fa-star"></i>
+                                                                    </li>
+                                                                </ul>
+                                                                @if ($orderItem->product)
+                                                                    <a
+                                                                        href="{{ route('client.products.show', $orderItem->product->slug) }}#review">
+                                                                        <span>Viết đánh giá</span>
+                                                                    </a>
+                                                                @endif
+    
+                                                            </div>
+                                                            <h6>* Exchange/Return window closed on 20 Mar</h6>
                                                         </div>
-                                                        <h6>* Exchange/Return window closed on 20 Mar</h6>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
 
 

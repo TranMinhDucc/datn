@@ -12,14 +12,15 @@
                         Danh sách đánh giá
                     </h1>
                 </div>
-                <a href="{{ route('admin.badwords.index') }}" class="btn btn-danger">
-    Quản lý từ khóa cấm
-</a>
+  <div class="d-flex align-items-center gap-1 gap-lg-2">
+    <a href="{{ route('admin.badwords.index') }}" class="btn btn-danger">
+        Quản lý từ khóa cấm
+    </a>
+    <a href="{{ route('admin.reviews.create') }}" class="btn btn-primary">
+        Thêm đánh giá mới
+    </a>
+</div>
 
-                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="{{ route('admin.reviews.create') }}" class="btn btn-primary">
-                        Thêm đánh giá mới
-                    </a>
                 </div>
             </div>
         </div>
