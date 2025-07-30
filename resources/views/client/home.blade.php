@@ -851,8 +851,8 @@
                             </div>
                             <div class="blog-txt">
                                 <p>
-                                    Tác giả: {{ $blog->author->username ?? 'Admin' }} /
-                                    {{ $blog->published_at->format('d M Y') }}
+                                    Tác giả: {{ $blog->author->username ?? 'Admin' }} -
+                                    {{ $blog->published_at->format('d/m/Y') }}
                                 </p>
                                 <a href="{{ route('client.blog.show', $blog->slug) }}">
                                     <h5>{{ Str::limit($blog->title, 60) }}</h5>

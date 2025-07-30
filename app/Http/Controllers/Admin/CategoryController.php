@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withTrashed()->get();
+        $categories = Category::withTrashed()->orderBy('created_at', 'desc')->get();
         return view('admin.categories.index', compact('categories'));
     }
 
