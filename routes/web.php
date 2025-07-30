@@ -259,7 +259,8 @@ Route::prefix('admin')
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
         Route::resource('contacts', ContactController::class);
-
+        //Categories
+        Route::post('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
         Route::resource('categories', CategoryController::class);
         //Products
         Route::get('products/trash', [ProductController::class, 'trash'])->name('products.trash');
