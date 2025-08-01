@@ -63,7 +63,7 @@
                 <!--end::Toolbar container-->
             </div>
             <!--end::Toolbar-->
-
+            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary btn-sm">Tạo đơn hàng đổi</a>
             <!--begin::Content-->
             <div id="kt_app_content" class="app-content  flex-column-fluid ">
 

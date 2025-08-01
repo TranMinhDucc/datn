@@ -80,40 +80,39 @@
 
                                                 </div>
                                             </td>
-                                            <td class="text-end">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-light btn-active-light-primary"
-                                                        data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                        Actions <i class="fa fa-chevron-down ms-1"></i>
-                                                    </button>
-                                                    <div class="menu menu-sub menu-sub-dropdown w-125px"
-                                                        data-kt-menu="true">
-                                                        <div class="menu-item px-3">
-                                                            <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                                class="menu-link px-3">Edit</a>
-                                                        </div>
-                                                        <div class="menu-item px-3">
-                                                            <form action="{{ route('admin.banners.destroy', $banner->id) }}"
-                                                                method="POST"
-                                                                onsubmit="return confirm('Delete this banner?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                                                                        <div class="menu-item px-3">
+                              <td class="text-end">
+    <div class="dropdown">
+        <button class="btn btn-sm btn-light btn-active-light-primary"
+            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+            Actions <i class="fa fa-chevron-down ms-1"></i>
+        </button>
+        <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
+            <!-- Edit -->
+            <div class="menu-item px-3">
+                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="menu-link px-3">Edit</a>
+            </div>
 
-                                                                <button type="submit"
-                                                                    class="menu-link px-3 btn btn-link p-0 text-start">Delete</button>
-                                                            </form>
-                                                        </div>  
-                                                        </div>
-                                                        <div class="menu-item px-3">
-                                                            <div class="menu-item px-3">
-                                                                <a href="{{ route('admin.banners.show', $banner->id) }}"
-                                                                    class="menu-link px-3">Show</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
+            <!-- Show -->
+            <div class="menu-item px-3">
+                <a href="{{ route('admin.banners.show', $banner->id) }}" class="menu-link px-3">Show</a>
+            </div>
+
+            <!-- Delete -->
+            <div class="menu-item px-3">
+                <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này không?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="menu-link px-3 text-primary w-100" style="background: none; border: none;">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</td>
+
+
                                         </tr>
                                     @endforeach
                                 </tbody>

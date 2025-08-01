@@ -82,4 +82,21 @@ class Order extends Model
     {
         return $this->hasOne(ShippingOrder::class);
     }
+    public function originalOrder()
+    {
+        return $this->belongsTo(Order::class, 'exchanged_from_order_id');
+    }
+
+    public function exchangeOrders()
+    {
+        return $this->hasMany(Order::class, 'exchanged_from_order_id');
+    }
+    public function returnRequest()
+    {
+        return $this->hasOne(ReturnRequest::class, 'order_id');
+    }
+    public function returnRequests()
+    {
+        return $this->hasMany(ReturnRequest::class, 'order_id');
+    }
 }

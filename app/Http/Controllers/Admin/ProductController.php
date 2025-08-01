@@ -182,6 +182,12 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+        $productCheck = Product::with('category')->findOrFail($id);
+        // Kiểm tra nếu danh mục đã bị xoá mềm
+        if ($productCheck->category && $productCheck->category->trashed()) {
+            return redirect()->route('admin.products.index')
+                ->with('error', 'Danh mục của sản phẩm đã bị xoá. Không thể chỉnh sửa sản phẩm này.');
+        }
         $product = Product::with('variants')->findOrFail($id);
         $details = ProductDetail::where('product_id', $id)->get();
         $variants = $product->variants;
@@ -457,7 +463,7 @@ class ProductController extends Controller
                 'stock_quantity' => $request->stock_quantity,
                 'description' => $request->description,
                 'detailed_description' => $request->detailed_description,
-                'is_active' => $request->has('is_active'),
+                'is_active' => $request->is_active,
                 'starts_at' => $request->starts_at,
                 'ends_at' => $request->ends_at,
                 'sale_times' => $request->sale_times,
@@ -641,5 +647,24 @@ class ProductController extends Controller
         $product->forceDelete();
 
         return redirect()->route('admin.products.trash')->with('success', 'Xóa vĩnh viễn sản phẩm.');
+    }
+    public function getVariants(Request $request)
+    {
+        $productId = $request->query('product_id');
+
+        $variants = ProductVariant::where('product_id', $productId)
+            ->with('options')
+            ->get()
+            ->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'name' => $variant->name,
+                    'sku' => $variant->sku,
+                    'price' => $variant->price,
+                    'options' => $variant->options->pluck('value')->toArray(),
+                ];
+            });
+
+        return response()->json(['variants' => $variants]);
     }
 }

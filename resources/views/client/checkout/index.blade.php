@@ -544,9 +544,6 @@
         const actualShipping = Math.max(0, shippingFee - shippingDiscount);
         const subtotalAfterDiscount = Math.max(0, subtotal - discount);
 
-        const selectedPaymentMethodEl = document.querySelector('input[name="payment_method_id"]:checked');
-        const selectedPaymentMethodCode = selectedPaymentMethodEl?.dataset.code;
-
         const taxEl = document.getElementById('tax-value');
         const vatRate = parseFloat(taxEl?.dataset.vat || 0);
         const taxAmount = Math.round((subtotalAfterDiscount + actualShipping) * vatRate / 100);
