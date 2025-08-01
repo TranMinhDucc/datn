@@ -14,6 +14,11 @@ class Order extends Model
         'order_code',
         'address_id',
         'payment_method_id',
+        // 'payment_method_code',   // ✅ THÊM
+        'payment_method',        // ✅ THÊM
+        'payment_reference',
+        'momo_trans_id',         // ✅ THÊM
+        'momo_order_id',         // ✅ THÊM
         'coupon_code',
         'coupon_id',
         'shipping_coupon_id',
@@ -25,7 +30,6 @@ class Order extends Model
         'status',
         'is_paid',
         'payment_status',
-        'payment_reference',
         'shipping_method',
         'shipping_tracking_code',
         'expected_delivery_date',
@@ -37,7 +41,9 @@ class Order extends Model
         'return_reason',
         'return_image',
         'refunded_at',
+        'paid_at',
     ];
+
 
 
 
