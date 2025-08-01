@@ -642,4 +642,23 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.trash')->with('success', 'Xóa vĩnh viễn sản phẩm.');
     }
+    public function getVariants(Request $request)
+    {
+        $productId = $request->query('product_id');
+
+        $variants = ProductVariant::where('product_id', $productId)
+            ->with('options')
+            ->get()
+            ->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'name' => $variant->name,
+                    'sku' => $variant->sku,
+                    'price' => $variant->price,
+                    'options' => $variant->options->pluck('value')->toArray(),
+                ];
+            });
+
+        return response()->json(['variants' => $variants]);
+    }
 }

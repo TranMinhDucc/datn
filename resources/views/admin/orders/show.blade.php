@@ -37,11 +37,12 @@
                     <a href="listing.html" class="btn btn-icon btn-light btn-active-secondary btn-sm ms-auto me-lg-n7">
                         <i class="fa-solid fa-arrow-left fs-2"></i> </a>
                     <!--end::Button-->
-
                     <div class="d-flex gap-2">
                         {{-- <a href="" class="btn btn-success btn-sm">Edit Order</a> --}}
 
-                        <a href="add-order.html" class="btn btn-primary btn-sm">Edit Order</a>
+
+
+
                         @if ($order->status !== 'cancelled')
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-light-primary fw-bold dropdown-toggle" type="button"
@@ -109,6 +110,22 @@
 
                 </div>
                 <!--begin::Order summary-->
+                <!-- Modal for creating exchange order -->
+                <div class="modal fade" id="exchangeOrderModal" tabindex="-1" aria-labelledby="exchangeOrderModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            @if ($returnRequests->count() > 0)
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exchangeOrderModal">
+                                    🔄 Tạo đơn đổi hàng
+                                </button>
+                            @else
+                                <span class="text-muted">Không có yêu cầu đổi hàng</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
                 <div
                     class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 ">
                     <div class="d-flex flex-column pe-0 pe-sm-10">
@@ -399,6 +416,50 @@
                     <!--end::Documents-->
                 </div>
                 <!--end::Order summary-->
+                @if ($returnRequests->count())
+                    @foreach ($returnRequests as $request)
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                Yêu cầu đổi hàng #{{ $request->id }} – Trạng thái: {{ $request->status }}
+                            </div>
+                            <div class="card-body">
+                                <ul>
+                                    @foreach ($request->items as $item)
+                                        @php
+                                            $variant = $item->orderItem->productVariant ?? null;
+                                            $variantAttributes = '';
+
+                                            if ($variant && $variant->options && $variant->options->count()) {
+                                                $attributes = $variant->options
+                                                    ->map(function ($opt) {
+                                                        return optional($opt->attribute)->name .
+                                                            ': ' .
+                                                            optional($opt->value)->value;
+                                                    })
+                                                    ->toArray();
+                                                $variantAttributes = ' – ' . implode(', ', $attributes);
+                                            }
+                                        @endphp
+
+                                        <li>
+                                            {{ $item->orderItem->product_name }}{!! $variantAttributes !!} – SL:
+                                            {{ $item->quantity }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <a href="{{ route('admin.return-requests.exchange.form', $request->id) }}"
+                                    class="btn btn-primary btn-sm">
+                                    Xử lý đổi hàng
+                                </a>
+
+
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    {{-- <p class="text-muted">Không có yêu cầu đổi hàng nào.</p> --}}
+                @endif
 
                 <!--begin::Tab content-->
                 <div class="tab-content">
@@ -755,39 +816,4 @@
         </div>
     </div>
 
-    <script>
-        let selectedStatus = '';
-
-        function handleStatusSelect(select) {
-            const value = select.value;
-            selectedStatus = value;
-
-            if (value === 'cancelled') {
-                // Mở modal nhập lý do huỷ
-                const modal = new bootstrap.Modal(document.getElementById('cancelReasonModal'));
-                modal.show();
-            } else if (value !== '') {
-                // Submit ngay nếu không phải huỷ
-                document.getElementById('status-form-{{ $order->id }}').submit();
-            }
-        }
-
-        function submitCancelOrder() {
-            const reason = document.getElementById('cancelReasonInput').value;
-            if (!reason.trim()) {
-                alert("Vui lòng nhập lý do huỷ đơn.");
-                return;
-            }
-
-            document.getElementById('cancel-reason-admin').value = reason;
-            document.getElementById('status-form-{{ $order->id }}').submit();
-        }
-
-        // Nếu đóng modal thì reset trạng thái select về giá trị ban đầu
-        const modalEl = document.getElementById('cancelReasonModal');
-        modalEl.addEventListener('hidden.bs.modal', function() {
-            const select = document.querySelector('select[name="status"]');
-            select.value = "{{ $order->status }}";
-        });
-    </script>
 @endsection

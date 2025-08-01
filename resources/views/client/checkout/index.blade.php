@@ -109,9 +109,9 @@
                                         <p>Phí vận chuyển</p>
                                         <span>
                                             {{ $shippingFee > 0 ? number_format($shippingFee) . ' ₫' : 'Chọn địa chỉ để tính phí' }}
-                                        </span>
+                                </span>
 
-                                    </li> --}}
+                                </li> --}}
                                     <li>
                                         <p>Phí vận chuyển:</p>
                                         <span class="shipping-fee-amount ">
@@ -276,6 +276,11 @@
         // Khởi tạo sessionStorage với giá trị mặc định 0, sẽ được cập nhật sau
         sessionStorage.setItem('originalShippingFee', 0);
     </script>
+
+    <script>
+        const momoPaymentUrl = "{{ route('client.checkout.init-momo') }}";
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const currentUser = localStorage.getItem('currentUser') || 'guest';
@@ -517,13 +522,14 @@
         document.querySelector('.order-button button').addEventListener('click', function(e) {
             e.preventDefault();
 
+
             const currentUser = localStorage.getItem('currentUser') || 'guest';
             const cartItems = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`)) || [];
 
             const selectedShippingAddress = document.querySelector('input[name="shipping_address_id"]:checked')
                 ?.value;
             const selectedPaymentMethodId = document.querySelector('input[name="payment_method_id"]:checked')
-            ?.value;
+                ?.value;
 
             const productCoupon = JSON.parse(sessionStorage.getItem('productCoupon') || '{}');
             const productCouponId = productCoupon.id || null;
@@ -537,6 +543,9 @@
             const shippingDiscount = parseFloat(sessionStorage.getItem('shippingDiscountAmount')) || 0;
             const actualShipping = Math.max(0, shippingFee - shippingDiscount);
             const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+            const selectedPaymentMethodEl = document.querySelector('input[name="payment_method_id"]:checked');
+            const selectedPaymentMethodCode = selectedPaymentMethodEl?.dataset.code;
 
             const taxEl = document.getElementById('tax-value');
             const vatRate = parseFloat(taxEl?.dataset.vat || 0);
@@ -553,6 +562,18 @@
                 tax_amount: taxAmount
             };
 
+            let momoOrderId = null;
+            if (selectedPaymentMethodCode === 'momo_qr') {
+                momoOrderId = localStorage.getItem('momo_order_id');
+                if (!momoOrderId) {
+                    momoOrderId = 'ORDER' + Date.now() + Math.floor(Math.random() * 10000);
+                    localStorage.setItem('momo_order_id', momoOrderId);
+                }
+            }
+            if (momoOrderId) {
+                dataToSend.order_id = momoOrderId;
+            }
+
             console.log("📦 Dữ liệu gửi đi:", dataToSend);
 
             fetch(placeOrderUrl, {
@@ -566,21 +587,30 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
-                        localStorage.removeItem(`cartItems_${currentUser}`);
+                    console.log('📥 Phản hồi từ server:', data);
 
-                        // ✅ CHỈ XÓA KHI ĐẶT HÀNG THÀNH CÔNG
+                    if (data.success) {
+                        // ✅ Xóa giỏ hàng và session/coupon
+                        localStorage.removeItem(`cartItems_${currentUser}`);
+                        localStorage.removeItem('momo_order_id');
                         sessionStorage.removeItem('shippingCoupon');
                         sessionStorage.removeItem('productCoupon');
 
-                        window.location.href = '/order-success';
+                        if (data.redirect_to_momo && data.payUrl) {
+                            console.log('🔁 Chuyển hướng đến MoMo:', data.payUrl);
+                            window.location.href = data.payUrl;
+                        } else {
+                            console.log('✅ Đặt hàng thành công, không dùng MoMo');
+                            window.location.href = '/order-success';
+                        }
                     } else {
-                        alert('❌ ' + data.message);
+                        alert('❌ Đặt hàng thất bại: ' + (data.message || 'Đã xảy ra lỗi.'));
                     }
                 })
-                .catch(err => {
-                    console.error('❌ Lỗi fetch:', err);
-                    alert('Lỗi khi gửi đơn hàng');
+
+                .catch(error => {
+                    console.error('❌ Lỗi kết nối đến server:', error);
+                    alert('❌ Không thể kết nối đến server. Vui lòng thử lại.');
                 });
 
             sessionStorage.removeItem('shippingCoupon');
