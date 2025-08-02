@@ -22,8 +22,16 @@ class ReturnRequestItem extends Model
     }
 
     // Mỗi item liên kết với một sản phẩm trong đơn hàng
+    // public function orderItem()
+    // {
+    //     return $this->belongsTo(OrderItem::class);
+    // }
     public function orderItem()
     {
-        return $this->belongsTo(OrderItem::class);
+        return $this->belongsTo(OrderItem::class, 'order_item_id');
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

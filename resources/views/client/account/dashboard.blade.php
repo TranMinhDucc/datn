@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ul class="breadcrumb float-end">
-                            <li class="breadcrumb-item"> <a href="{{route('client.home')}}">Trang Chủ </a></li>
+                            <li class="breadcrumb-item"> <a href="{{ route('client.home') }}">Trang Chủ </a></li>
                             <li class="breadcrumb-item active"> <a href="#">Bảng Điều Khiển</a></li>
                         </ul>
                     </div>
@@ -71,10 +71,10 @@
                             aria-orientation="vertical">
                             <li>
                                 <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill"
-                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true"><i
-                                        class="iconsax" data-icon="home-1"></i>
+                                    data-bs-target="#dashboard" role="tab" aria-controls="dashboard"
+                                    aria-selected="true"><i class="iconsax" data-icon="home-1"></i>
                                     Bảng Điều Khiển</button>
-                                    </button>
+                                </button>
                             </li>
                             <li>
                                 <button class="nav-link" id="notifications-tab" data-bs-toggle="pill"
@@ -105,15 +105,15 @@
                                         data-icon="cue-cards"></i>Địa Chỉ</button>
                             </li>
                             <li>
-                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy"
-                                    role="tab" aria-controls="privacy" aria-selected="false"> <i class="iconsax"
-
-                                        data-icon="security-user"></i>Quyền riêng tư</button>
-                                                              </li>
+                                <button class="nav-link" id="privacy-tab" data-bs-toggle="pill"
+                                    data-bs-target="#privacy" role="tab" aria-controls="privacy"
+                                    aria-selected="false"> <i class="iconsax" data-icon="security-user"></i>Quyền riêng
+                                    tư</button>
+                            </li>
                         </ul>
                         <div class="logout-button"> <a class="btn btn_black sm" data-bs-toggle="modal"
-                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i class="iconsax me-1"
-                                    data-icon="logout-1"></i> Đăng Xuất </a></div>
+                                data-bs-target="#Confirmation-modal" title="Quick View" tabindex="0"><i
+                                    class="iconsax me-1" data-icon="logout-1"></i> Đăng Xuất </a></div>
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-8">
@@ -417,12 +417,28 @@
 
                                                             $total = $rating_summary['total_rating'];
 
-                                                            $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
-                                                            $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
-                                                            $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
-                                                            $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
-                                                            $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
-                                                            $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
+                                                            $rating_summary['1_star_percent'] = round(
+                                                                ($star_1 / $total) * 100,
+                                                            );
+                                                            $rating_summary['2_star_percent'] = round(
+                                                                ($star_2 / $total) * 100,
+                                                            );
+                                                            $rating_summary['3_star_percent'] = round(
+                                                                ($star_3 / $total) * 100,
+                                                            );
+                                                            $rating_summary['4_star_percent'] = round(
+                                                                ($star_4 / $total) * 100,
+                                                            );
+                                                            $rating_summary['5_star_percent'] = round(
+                                                                ($star_5 / $total) * 100,
+                                                            );
+                                                            $rating_summary['avg_rating'] =
+                                                                ($star_5 * 5 +
+                                                                    $star_4 * 4 +
+                                                                    $star_3 * 3 +
+                                                                    $star_2 * 2 +
+                                                                    $star_1) /
+                                                                $total;
                                                         }
                                                     @endphp
                                                     <div class="product-detail">
@@ -778,26 +794,25 @@
                                                                     class="stretched-link"></a>
                                                             </div>
                                                         </div>
-                                                        <div class="return-box">
-                                                            <div class="review-box">
-                                                                <ul class="rating">
-                                                                    <li>
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                        <i class="fa-solid fa-star"></i>
-                                                                        <i class="fa-solid fa-star-half-stroke"></i>
-                                                                        <i class="fa-regular fa-star"></i>
-                                                                    </li>
-                                                                </ul>
-                                                                @if ($orderItem->product)
-                                                                    <a
-                                                                        href="{{ route('client.products.show', $orderItem->product->slug) }}#review">
-                                                                        <span>Viết đánh giá</span>
-                                                                    </a>
-                                                                @endif
-    
-                                                            </div>
-                                                            <h6>* Exchange/Return window closed on 20 Mar</h6>
+<div class="return-box">
+    <div class="review-box">
+        <ul class="rating">
+            <li>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star-half-stroke"></i>
+                <i class="fa-regular fa-star"></i>
+            </li>
+        </ul>
+        @if ($orderItem->product)
+            <a href="{{ route('client.products.show', $orderItem->product->slug) }}#review">
+                <span>Viết đánh giá</span>
+            </a>
+        @endif
+    </div>
+    <h6>* Exchange/Return window closed on 20 Mar</h6>
+</div>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -1595,7 +1610,69 @@
         </div>
     </div>
     {{-- END Edit Email Doashboar --}}
-
+    <div class="reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Write A Review</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="reviews-product">
+                                <div> <img src="../assets/images/notification/1.jpg" alt="">
+                                    <div>
+                                        <h5>Denim Skirts Corset Blazer</h5>
+                                        <p>$20.00
+                                            <del>$35.00</del>
+                                        </p>
+                                        <ul class="rating p-0 mb">
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-solid fa-star"></i></li>
+                                            <li><i class="fa-regular fa-star"> </i></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="from-group">
+                                <label class="form-label">Name</label>
+                                <input class="form-control" type="text" name="review[author]"
+                                    placeholder="Enter your name.">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="from-group">
+                                <label class="form-label" for="exampleInputEmail1">Email address</label>
+                                <input class="form-control" id="exampleInputEmail1" type="email"
+                                    placeholder="john.smith@example.com">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="from-group">
+                                <label class="form-label">Review Title</label>
+                                <input class="form-control" type="text" name="review[author]"
+                                    placeholder="Look great">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="from-group">
+                                <label class="form-label">Review Content</label>
+                                <textarea class="form-control" cols="30" rows="5" placeholder="Write your comments here..."></textarea>
+                            </div>
+                        </div>
+                        <button class="btn btn-submit" type="submit" data-bs-dismiss="modal"
+                            aria-label="Close">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- Tự động mở lại modal nếu có lỗi --}}
     @if ($errors->any())
         <script>
@@ -2004,7 +2081,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                                                                                                                                                                                                                                            success ') }}',
+                                                                                                                                                                                                                                                                                                                                                                                                            success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });

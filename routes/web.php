@@ -71,6 +71,7 @@ use App\Http\Controllers\Admin\ShippingZoneController;
 use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Client\ReturnRequestController;
+use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -135,19 +136,12 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
-    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('client.checkout.success');
-
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
         Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
         Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
     });
-
-    // Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-    //     Route::get('/', 'index')->name('index');
-    // });
-
-
 
     Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -168,8 +162,6 @@ Route::prefix('/')->name('client.')->group(function () {
 //     Route::patch('/{id}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
 // });
 Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
-
-
 Route::middleware(['auth', 'verified'])->prefix('account')->name('client.account.')->group(function () {
     Route::get('/wallet', [HomeController::class, 'wallet'])->name('wallet');
     Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
@@ -264,7 +256,18 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        // 1. Mở giao diện tạo đơn hàng từ yêu cầu đổi
+        // GET – mở form tạo đơn hàng đổi
+        Route::get('return-requests/{id}/exchange-form', [AdminReturnRequestController::class, 'showExchangeForm'])
+            ->name('return-requests.exchange.form');
 
+        // POST – submit form tạo đơn hàng đổi
+        Route::post('return-requests/{id}/exchange', [AdminReturnRequestController::class, 'createExchangeOrder'])
+            ->name('return-requests.exchange.create');
+
+        // Tuỳ chọn: xử lý nhanh (nếu có)
+        Route::post('return-requests/{id}/handle', [AdminReturnRequestController::class, 'handleExchange'])
+            ->name('return-requests.handle');
         Route::resource('banners', BannerController::class);
         Route::post('banners/{id}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
         Route::resource('contacts', ContactController::class);
@@ -293,11 +296,6 @@ Route::prefix('admin')
 
         Route::get('shopSettings', [ShopSettingController::class, 'edit'])->name('shopSettings.edit');
         Route::post('shopSettings', [ShopSettingController::class, 'update'])->name('shopSettings.update');
-        // System Settings
-        // Route::get('/settings/language', [SettingController::class, 'language'])->name('admin.settings.language');
-        // Route::get('/settings/currency', [SettingController::class, 'currency'])->name('admin.settings.currency');
-        // Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
-        // Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::get('/users/{id}/balance-log', [UserController::class, 'balanceLog'])->name('users.balance-log');
         Route::get('/users/{username}/activity-log', [UserController::class, 'activityLog'])->name('users.activity-log');
         Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
@@ -307,36 +305,19 @@ Route::prefix('admin')
 
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
-
-        Route::resource('badwords', \App\Http\Controllers\Admin\BadWordController::class);
-
-
-
+        Route::resource('badwords', BadWordController::class);
         Route::resource('product-labels', ProductLabelController::class);
-
-        Route::resource('shipping-addresses', \App\Http\Controllers\Admin\ShippingAddressController::class);
+        Route::resource('shipping-addresses', ShippingAddressController::class);
         // Route::resource('roles', RoleController::class)->names('admin.roles');
-
-
         Route::resource('wishlists', WishlistController::class);
-
         Route::resource('coupons', CouponController::class);
         // Marketing
-
-
         Route::get('/email-recipients', [EmailCampaignController::class, 'getRecipients'])->name('email_campaigns.recipients');
         Route::resource('email_campaigns', EmailCampaignController::class);
-
-
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
-
-
         Route::resource('product-labels', ProductLabelController::class);
-
         Route::resource('badwords', BadWordController::class);
-
-
         Route::resource('product-labels', ProductLabelController::class);
         // GHN
         Route::post('/orders/{order}/confirm-ghn', [OrderController::class, 'confirmGHN'])->name('orders.confirm-ghn');
@@ -391,15 +372,16 @@ Route::prefix('admin')
         Route::get('/{id}/edit', [BankController::class, 'edit'])->name('edit');
         Route::put('/{id}', [BankController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankController::class, 'destroy'])->name('destroy');
-
+        // Orders
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
         Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // Sửa từ /orders/create thành /orders
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::post('/orders/{order}/approve-return', [OrderController::class, 'approveReturn'])->name('orders.approve_return');
         Route::post('/orders/{order}/reject-return', [OrderController::class, 'rejectReturn'])->name('orders.reject_return');
-
         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
         Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
         //Inventory
@@ -455,6 +437,9 @@ Route::get('/cron/sync-ghn-orders', function () {
     ]);
 });
 
-Route::post('/checkout/initiate-payment', [\App\Http\Controllers\Client\CheckoutController::class, 'initiatePayment'])->name('client.checkout.initiate-payment');
-Route::get('/checkout/payment-callback', [\App\Http\Controllers\Client\CheckoutController::class, 'paymentCallback'])->name('client.checkout.payment-callback');
-Route::get('/order-invoices/{id}', [OrderController::class, 'invoice'])->name('orders.invoice');
+// ✅ Đặt hàng (tạo đơn và gọi MoMo nếu cần)
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('client.checkout.place-order');
+Route::post('/checkout/init-momo', [CheckoutController::class, 'initMomoPayment'])->name('client.checkout.init-momo');
+Route::match(['GET', 'POST'], '/checkout/momo/callback', [CheckoutController::class, 'handleMomoCallback'])->name('client.checkout.payment-callback');
+Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRedirect'])
+    ->name('client.checkout.momo-redirect');

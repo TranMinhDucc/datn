@@ -32,4 +32,8 @@ class ReturnRequest extends Model
     {
         return $this->hasMany(ReturnRequestItem::class);
     }
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
 }

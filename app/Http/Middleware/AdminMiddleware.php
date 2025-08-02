@@ -10,7 +10,6 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        // Nếu chưa đăng nhập hoặc không phải admin thì redirect
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             abort(404);
         }
