@@ -460,6 +460,49 @@
                 @else
                     {{-- <p class="text-muted">Không có yêu cầu đổi hàng nào.</p> --}}
                 @endif
+                {{-- <h5 class="mt-4">Lịch sử đổi/trả hàng</h5>
+
+                @if ($returnRequests->isEmpty())
+                    <p>Chưa có yêu cầu đổi/trả nào cho đơn hàng này.</p>
+                @else
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Loại</th>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Lý do</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($returnRequests as $request)
+                                @foreach ($request->items as $item)
+                                    <tr>
+                                        <td>#{{ $request->id }}</td>
+                                        <td>{{ $request->type ?? 'exchange' }}</td>
+                                        <td>
+                                            {{ $item->orderItem->product->name }}
+                                            @if ($item->orderItem->productVariant)
+                                                - {{ $item->orderItem->productVariant->variant_name }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->reason }}</td>
+                                        <td>{{ ucfirst($request->status) }}</td>
+                                        <td>{{ $request->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <a href="" class="btn btn-sm btn-primary">Xem</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif --}}
 
                 <!--begin::Tab content-->
                 <div class="tab-content">
