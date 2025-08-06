@@ -61,4 +61,52 @@ class InventoryService
             }
         });
     }
+    public function reserveStock(int $variantId, int $quantity): void
+    {
+        DB::transaction(function () use ($variantId, $quantity) {
+            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+
+            $available = $variant->quantity - $variant->reserved_quantity;
+
+            if ($available < $quantity) {
+                throw new \Exception("Không đủ hàng để giữ chỗ.");
+            }
+
+            $variant->reserved_quantity += $quantity;
+            $variant->save();
+        });
+    }
+    public function confirmReservedStock(int $variantId, int $quantity, int $userId): void
+    {
+        DB::transaction(function () use ($variantId, $quantity, $userId) {
+            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+
+            if ($variant->reserved_quantity < $quantity) {
+                throw new \Exception("Số lượng giữ chỗ không đủ để xác nhận.");
+            }
+
+            // Trừ tồn kho thực
+            $this->adjustStockGeneral(
+                'variant',
+                $variantId,
+                $quantity,
+                'export',
+                'Xác nhận đơn hàng',
+                $userId
+            );
+
+            // Giảm giữ chỗ
+            $variant->reserved_quantity -= $quantity;
+            $variant->save();
+        });
+    }
+    public function releaseReservedStock(int $variantId, int $quantity): void
+    {
+        DB::transaction(function () use ($variantId, $quantity) {
+            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+
+            $variant->reserved_quantity = max(0, $variant->reserved_quantity - $quantity);
+            $variant->save();
+        });
+    }
 }

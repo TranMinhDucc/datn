@@ -15,6 +15,7 @@ use App\Models\Setting;
 use App\Models\ShippingFee;
 use App\Models\User;
 use App\Services\Shipping\GhnService;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +26,14 @@ use Illuminate\Support\Facades\Http;
 class CheckoutController extends Controller
 {
     protected $ghnService;
+    protected $inventoryService;
 
-    public function __construct(GhnService $ghnService)
+    public function __construct(GhnService $ghnService, InventoryService $inventoryService)
     {
         $this->ghnService = $ghnService;
+        $this->inventoryService = $inventoryService;
     }
+
     public function index()
     {
         $user = auth()->user();
@@ -636,17 +640,33 @@ class CheckoutController extends Controller
                     return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm.'], 400);
                 }
 
-                // ✅ KIỂM TRA VÀ TRỪ TỒN KHO
-                $stock = $variant?->stock_quantity ?? $product->stock_quantity;
-                if ($stock < $item['quantity']) {
-                    DB::rollBack();
-                    return response()->json(['success' => false, 'message' => 'Sản phẩm "' . $product->name . '" không đủ tồn kho.'], 400);
-                }
-
                 if ($variant) {
-                    $variant->decrement('quantity', $item['quantity']);
+                    $available = $variant->quantity - $variant->reserved_quantity;
+
+                    if ($available < $item['quantity']) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Sản phẩm "' . $product->name . '" không đủ tồn kho để giữ chỗ.',
+                        ], 400);
+                    }
+
+                    // ✅ Giữ chỗ thay vì trừ thật
+                    $this->$inventoryService->reserveStock($variant->id, $item['quantity']);
                 } else {
-                    $product->decrement('stock_quantity', $item['quantity']);
+                    $available = $product->stock_quantity;
+
+                    if ($available < $item['quantity']) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Sản phẩm "' . $product->name . '" không đủ tồn kho để giữ chỗ.',
+                        ], 400);
+                    }
+
+                    // Nếu bạn muốn hỗ trợ giữ chỗ cho product gốc (không phải variant),
+                    // thì bạn cần viết thêm reserve cho Product trong InventoryService.
+                    // Còn nếu chỉ dùng Variant thì nên ép buộc sản phẩm phải có Variant.
                 }
 
                 // ✅ THÔNG TIN ĐƠN HÀNG CHI TIẾT
