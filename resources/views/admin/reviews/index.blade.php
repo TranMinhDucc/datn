@@ -13,8 +13,8 @@
                     </h1>
                 </div>
                 <a href="{{ route('admin.badwords.index') }}" class="btn btn-danger">
-    Quản lý từ khóa cấm
-</a>
+                    Quản lý từ khóa cấm
+                </a>
 
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <a href="{{ route('admin.reviews.create') }}" class="btn btn-primary">
@@ -32,16 +32,15 @@
                 <div class="card card-flush">
                     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                         <div class="card-title">
-    <form method="GET" action="{{ route('admin.search') }}">
-        <input type="hidden" name="module" value="reviews">
-        <div class="d-flex align-items-center position-relative my-1">
-            <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-            <input type="text" name="keyword" value="{{ request('keyword') }}"
-                   class="form-control form-control-solid w-250px ps-12"
-                   placeholder="Tìm đánh giá" />
-        </div>
-    </form>
-</div>
+                            <form method="GET" action="{{ route('admin.search') }}">
+                                <input type="hidden" name="module" value="reviews">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                                    <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                        class="form-control form-control-solid w-250px ps-12" placeholder="Tìm đánh giá" />
+                                </div>
+                            </form>
+                        </div>
 
                     </div>
 
@@ -61,7 +60,7 @@
                                 </tr>
                             </thead>
                             <tbody class="fw-semibold text-gray-600">
-                                @foreach($reviews as $index => $review)
+                                @foreach ($reviews as $index => $review)
                                     <tr>
                                         {{-- Tính STT dựa trên paginate --}}
                                         <td>{{ ($reviews->currentPage() - 1) * $reviews->perPage() + $index + 1 }}</td>
@@ -75,26 +74,26 @@
                                                 {{ $review->verified_purchase ? 'Đã xác minh' : 'Chưa xác minh' }}
                                             </span>
                                         </td>
-                                      <td>
-    @php
-        $comment = strtolower($review->comment ?? '');
-        $isViolated = false;
-        foreach ($badwords as $word) {
-            if (str_contains($comment, strtolower($word))) {
-                $isViolated = true;
-                break;
-            }
-        }
-    @endphp
+                                        <td>
+                                            @php
+                                                $comment = strtolower($review->comment ?? '');
+                                                $isViolated = false;
+                                                foreach ($badwords as $word) {
+                                                    if (str_contains($comment, strtolower($word))) {
+                                                        $isViolated = true;
+                                                        break;
+                                                    }
+                                                }
+                                            @endphp
 
-    @if ($isViolated)
-        <span class="badge bg-danger">Vi phạm</span>
-    @elseif ($review->approved)
-        <span class="badge bg-primary">Hiển thị công khai</span>
-    @else
-        <span class="badge bg-warning text-dark">Chờ kiểm duyệt</span>
-    @endif
-</td>
+                                            @if ($isViolated)
+                                                <span class="badge bg-danger">Vi phạm</span>
+                                            @elseif ($review->approved)
+                                                <span class="badge bg-primary">Hiển thị công khai</span>
+                                            @else
+                                                <span class="badge bg-warning text-dark">Chờ kiểm duyệt</span>
+                                            @endif
+                                        </td>
 
 
                                         <td>{{ $review->created_at->format('d/m/Y H:i') }}</td>
@@ -136,11 +135,11 @@
                         </table>
 
                         {{-- Pagination links --}}
-                       <div class="d-flex justify-content-end mt-4">
-  {{ $reviews->appends(request()->query())->links('pagination::bootstrap-5') }}
+                        <div class="d-flex justify-content-end mt-4">
+                            {{ $reviews->appends(request()->query())->links('pagination::bootstrap-5') }}
 
-</div>
-{{-- end pagination  --}}
+                        </div>
+                        {{-- end pagination  --}}
                     </div>
                 </div>
 

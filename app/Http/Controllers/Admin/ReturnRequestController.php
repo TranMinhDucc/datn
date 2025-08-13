@@ -98,12 +98,16 @@ class ReturnRequestController extends Controller
         $addresses = $user ? $user->shippingAddresses : collect();
         $paymentMethods = PaymentMethod::all();
         $shippingMethods = ShippingMethod::all();
-
+        $selectedAddressId =
+            optional($returnRequest->order)->address_id
+            ?? optional($addresses->firstWhere('is_default', 1))->id
+            ?? optional($addresses->first())->id;
         return view('admin.return_requests.exchange_create', [
             'returnRequest' => $returnRequest,
             'user' => $user,
             'users' => $users,
             'addresses' => $addresses,
+            'selectedAddressId' => $selectedAddressId,
             'products' => $products,
             'productVariants' => $productVariants,
             'paymentMethods' => $paymentMethods,
@@ -167,8 +171,9 @@ class ReturnRequestController extends Controller
         }
 
         $returnRequest->status = 'exchanged';
-        $returnRequest->order_id = $order->id;
+        $returnRequest->exchange_order_id = $order->id;
         $returnRequest->save();
+
 
         return redirect()->route('admin.orders.show', $order->id)
             ->with('success', 'Đơn hàng đổi đã được tạo thành công.');
