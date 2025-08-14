@@ -452,3 +452,7 @@ Route::post('/checkout/init-momo', [CheckoutController::class, 'initMomoPayment'
 Route::match(['GET', 'POST'], '/checkout/momo/callback', [CheckoutController::class, 'handleMomoCallback'])->name('client.checkout.payment-callback');
 Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRedirect'])
     ->name('client.checkout.momo-redirect');
+
+
+    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
+    ->name('client.orders.invoice');

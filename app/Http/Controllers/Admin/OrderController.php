@@ -21,6 +21,19 @@ use Illuminate\Support\Facades\Log;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
 
+
+use App\Mail\{
+    OrderConfirmedMail,
+    OrderPaidMail,
+    OrderShippingMail,
+    OrderCompletedMail,
+    OrderCancelledMail,
+    OrderReturnedMail,
+    OrderRefundedMail
+};
+use Illuminate\Support\Facades\Mail;
+
+
 class OrderController extends Controller
 {
     /**
@@ -214,31 +227,67 @@ class OrderController extends Controller
 
 
     public function updateStatus(Request $request, Order $order)
-    {
-        $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
-        ]);
+{
+    $validated = $request->validate([
+        'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
+    ]);
 
-        $order->status = $validated['status'];
+    $order->status = $validated['status'];
+    $order->is_paid = $request->is_paid ?? $order->is_paid;
+    $order->payment_status = $request->payment_status ?? $order->payment_status;
 
-        // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
-        if ($validated['status'] === 'completed' && !$order->delivered_at) {
-            $order->delivered_at = now();
-        }
-
-        $order->save();
-
-        // Gửi notification realtime tới user
-        $order->user->notify(new OrderStatusNotification(
-            $order->id,
-            $order->status,
-            $order,
-            $request->cancel_reason,
-            $request->image
-        ));
-
-        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+    // Cập nhật thời gian giao hàng nếu cần
+    if ($validated['status'] === 'completed' && !$order->delivered_at) {
+        $order->delivered_at = now();
     }
+
+    $order->save();
+
+    // ✅ Gửi email theo trạng thái
+    $email = $order->user->email;
+
+    switch ($order->status) {
+        case 'confirmed':
+            Mail::to($email)->send(new OrderConfirmedMail($order));
+            if ($order->is_paid) {
+                Mail::to($email)->send(new OrderPaidMail($order));
+            }
+            break;
+
+        case 'shipping':
+            Mail::to($email)->send(new OrderShippingMail($order));
+            break;
+
+        case 'completed':
+            Mail::to($email)->send(new OrderCompletedMail($order));
+            break;
+
+        case 'cancelled':
+            Mail::to($email)->send(new OrderCancelledMail($order));
+            break;
+
+        case 'returning':
+        case 'returned':
+            Mail::to($email)->send(new OrderReturnedMail($order));
+            break;
+    }
+
+    if ($order->payment_status === 'refunded') {
+        Mail::to($email)->send(new OrderRefundedMail($order));
+    }
+
+    // ✅ Gửi notification realtime tới user
+    $order->user->notify(new OrderStatusNotification(
+        $order->id,
+        $order->status,
+        $order,
+        $request->cancel_reason,
+        $request->image
+    ));
+
+    return back()->with('success', 'Cập nhật trạng thái & gửi email + notification thành công!');
+}
+
 
 
     public function cancel()
