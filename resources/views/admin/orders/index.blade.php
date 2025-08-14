@@ -63,8 +63,6 @@
                 <!--end::Toolbar container-->
             </div>
             <!--end::Toolbar-->
-            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary btn-sm">Tạo đơn hàng đổi</a>
-            <!--begin::Content-->
             <div id="kt_app_content" class="app-content  flex-column-fluid ">
 
 
@@ -410,7 +408,7 @@
 
                                 </table>
                             </div>
-                            {{-- {{ $orders->links('pagination::bootstrap-5') }} --}}
+                            {{ $orders->links('pagination::bootstrap-5') }}
                             <!--end::Table-->
                         </div>
                         <!--end::Card body-->
@@ -431,16 +429,13 @@
                     order: [
                         [1, 'desc']
                     ],
-                    // language: {
-                    //     search: "Tìm kiếm:",
-                    //     // lengthMenu: "Hiển thị _MENU_ mục",
-                    //     info: "Hiển thị _START_ đến _END_ trong _TOTAL_ mục",
-                    //     paginate: {
-                    //         previous: "Trước",
-                    //         next: "Tiếp"
-                    //     },
-                    //     zeroRecords: "Không tìm thấy kết quả phù hợp",
-                    // }
+                    paging: false, // ❌ Tắt phân trang
+                    info: false, // ❌ Tắt dòng "Showing x to y..."
+                    lengthChange: false, // ❌ Tắt dropdown chọn số dòng
+                    language: {
+                        search: "Tìm kiếm:",
+                        zeroRecords: "Không tìm thấy kết quả phù hợp",
+                    }
                 });
 
                 // 🔍 Tìm kiếm theo từ khoá
@@ -448,17 +443,15 @@
                     table.search(this.value).draw();
                 });
 
-                // ✅ Lọc theo Trạng thái (label tiếng Việt)
+                // ✅ Lọc theo Trạng thái
                 $('[data-kt-ecommerce-order-filter="status"]').on('change', function() {
                     let selected = $(this).val();
                     if (selected === 'Tất cả' || selected === '') {
                         table.column(5).search('').draw(); // Cột Trạng thái
                     } else {
-                        // Tìm theo nội dung text trong badge
                         table.column(5).search(selected, true, false).draw();
                     }
                 });
             });
         </script>
-
     @endsection

@@ -19,16 +19,13 @@ class ReturnRequestController extends Controller
     {
         $returnRequest = ReturnRequest::with(['items.orderItem'])->findOrFail($id);
 
-        // Kiểm tra trạng thái đã xử lý chưa
+        // Chặn nếu yêu cầu đã xử lý
         if ($returnRequest->status !== 'pending') {
             return redirect()->back()->with('error', 'Yêu cầu đổi hàng đã được xử lý trước đó.');
         }
 
-        // TODO: Thêm logic tạo đơn hàng đổi mới (nếu cần) dựa trên $returnRequest->items
-
         try {
-            // Cập nhật trạng thái
-            $returnRequest->status = 'exchanged'; // ✔ Đảm bảo là chuỗi
+            $returnRequest->status = 'exchanged';
             $returnRequest->save();
 
             return redirect()->route('admin.orders.show', $returnRequest->order_id)
@@ -37,19 +34,22 @@ class ReturnRequestController extends Controller
             return redirect()->back()->with('error', 'Có lỗi khi xử lý: ' . $e->getMessage());
         }
     }
+
     public function showExchangeOrderForm($id)
     {
-        $returnRequest = ReturnRequest::with('items.orderItem.product.variants')->findOrFail($id);
+        $returnRequest = ReturnRequest::with('items.orderItem.product.variants', 'order')->findOrFail($id);
 
-        // Dữ liệu user và shipping address từ đơn gốc
+        // Nếu đơn hàng gốc là đơn đổi → không cho đổi tiếp
+        if ($returnRequest->order && $returnRequest->order->is_exchange) {
+            return redirect()->back()->with('error', 'Không thể tiếp tục đổi hàng cho đơn hàng đã được đổi.');
+        }
+
         $user = $returnRequest->order->user ?? null;
         $addresses = $user ? $user->shippingAddresses : [];
 
-        // Dữ liệu các sản phẩm có thể chọn
         $products = Product::with('variants')->get();
-
-        // Map biến thể theo ID để đổ ra js
         $productVariants = [];
+
         foreach ($products as $product) {
             $productVariants[$product->id] = $product->variants->map(function ($v) {
                 return [
@@ -62,7 +62,7 @@ class ReturnRequestController extends Controller
 
         return view('admin.return_requests.exchange_create_order', [
             'returnRequest' => $returnRequest,
-            'users' => [$user], // Chỉ 1 user của đơn gốc
+            'users' => [$user],
             'paymentMethods' => PaymentMethod::all(),
             'shippingMethods' => ShippingMethod::all(),
             'products' => $products,
@@ -70,6 +70,7 @@ class ReturnRequestController extends Controller
             'addresses' => $addresses,
         ]);
     }
+
     public function showExchangeForm($id)
     {
         $returnRequest = ReturnRequest::with([
@@ -78,16 +79,19 @@ class ReturnRequestController extends Controller
             'order.user.shippingAddresses.province',
             'order.user.shippingAddresses.district',
             'order.user.shippingAddresses.ward',
+            'order'
         ])->findOrFail($id);
 
-        $user = $returnRequest->order->user;
+        if ($returnRequest->order && $returnRequest->order->is_exchange) {
+            return redirect()->back()->with('error', 'Không thể đổi đơn hàng đã là đơn đổi.');
+        }
 
+        $user = $returnRequest->order->user;
         $users = User::all();
         $products = Product::with('variants')->get();
-
         $productVariants = [];
+
         foreach ($products as $product) {
-            // dd($product);
             $productVariants[$product->id] = $product->variants;
         }
 
@@ -107,13 +111,19 @@ class ReturnRequestController extends Controller
         ]);
     }
 
-
-
-
-
     public function createExchangeOrder(Request $request, $id)
     {
-        $returnRequest = ReturnRequest::findOrFail($id);
+        $returnRequest = ReturnRequest::with('order')->findOrFail($id);
+
+        // Kiểm tra nếu đơn gốc đã là đơn đổi
+        if ($returnRequest->order && $returnRequest->order->is_exchange) {
+            return redirect()->back()->with('error', 'Không thể tiếp tục đổi đơn hàng đã là đơn đổi.');
+        }
+
+        // Kiểm tra nếu yêu cầu đã có đơn hàng đổi
+        if ($returnRequest->status !== 'pending') {
+            return redirect()->back()->with('error', 'Yêu cầu đổi hàng này đã được xử lý.');
+        }
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -138,7 +148,7 @@ class ReturnRequestController extends Controller
         $order->save();
 
         foreach ($request->input('items') as $item) {
-            $product = Product::findOrFail($item['product_id']); // Lấy tên sản phẩm
+            $product = Product::findOrFail($item['product_id']);
             $variant = isset($item['variant_id']) ? ProductVariant::find($item['variant_id']) : null;
 
             $order->orderItems()->create([
@@ -152,16 +162,15 @@ class ReturnRequestController extends Controller
                 'price' => $variant?->price ?? $product->price ?? 0,
                 'discount' => 0,
                 'tax_amount' => 0,
-                'total_price' => 0, // tổng tiền dòng này, có thể = quantity * price nếu cần
+                'total_price' => 0,
             ]);
         }
 
-
-        $returnRequest->status = 'pending';
+        $returnRequest->status = 'exchanged';
         $returnRequest->order_id = $order->id;
         $returnRequest->save();
 
         return redirect()->route('admin.orders.show', $order->id)
-            ->with('success', 'Đơn hàng đổi đã được tạo.');
+            ->with('success', 'Đơn hàng đổi đã được tạo thành công.');
     }
 }
