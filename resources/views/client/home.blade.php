@@ -1163,7 +1163,7 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if (data.success) {
+                            if (data.status == 'ok') {
                                 Swal.fire({
                                     icon: 'success',
                                     title: data.message,
