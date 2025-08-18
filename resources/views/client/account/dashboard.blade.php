@@ -287,12 +287,12 @@
                                                 <div class="user-img">
                                                     @php
 
-                                                        $order_item = \App\Models\OrderItem::where(
+                                                        $item = \App\Models\OrderItem::where(
                                                             'order_id',
                                                             $notification->data['order_id'],
                                                         )->first();
                                                         $image =
-                                                            $order_item?->image_url ??
+                                                            $item?->image_url ??
                                                             asset('assets/client/images/default.png');
                                                     @endphp
 
@@ -332,9 +332,9 @@
                                         <h4>Wishlist</h4>
                                     </div>
                                     <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
-                                        @forelse ($wishlists as $wishlist)
+                                        @forelse ($wishlists as $item)
                                             @php
-                                                $product = $wishlist->product;
+                                                $product = $item->product;
                                             @endphp
                                             <div class="col">
                                                 <div class="product-box-3 product-wishlist">
@@ -500,17 +500,29 @@
                                                                 <h5 class="mb-0">
                                                                     @php
                                                                         $statusText = match ($order->status) {
-                                                                            'refunded' => 'Đã hoàn tiền',
-                                                                            'cancelled' => 'Đã hủy',
                                                                             'pending' => 'Chờ xác nhận',
                                                                             'confirmed' => 'Đã xác nhận',
+                                                                            'processing' => 'Đang xử lý',
+                                                                            'ready_for_dispatch'
+                                                                                => 'Sẵn sàng giao hàng',
                                                                             'shipping' => 'Đang giao hàng',
+                                                                            'delivery_failed' => 'Giao hàng thất bại',
+                                                                            'delivered' => 'Đã giao hàng',
                                                                             'completed' => 'Đã hoàn tất',
+                                                                            'cancelled' => 'Đã hủy',
+                                                                            'return_requested' => 'Yêu cầu trả hàng',
+                                                                            'returning' => 'Đang trả hàng',
+                                                                            'returned' => 'Đã trả hàng',
+                                                                            'exchange_requested' => 'Yêu cầu đổi hàng',
+                                                                            'exchanged' => 'Đã đổi hàng',
+                                                                            'refund_processing' => 'Đang hoàn tiền',
+                                                                            'refunded' => 'Đã hoàn tiền',
                                                                             default => 'Không rõ trạng thái',
                                                                         };
                                                                     @endphp
                                                                     {{ $statusText }}
                                                                 </h5>
+
 
                                                                 {{-- Ngày đặt hàng --}}
                                                                 <p class="mb-0 text-muted" style="font-size: 0.875rem;">
@@ -550,7 +562,13 @@
 
 
                                                             <!-- Modal -->
-                                                            @if ($order->status === 'completed' && $order->delivered_at && now()->diffInDays($order->delivered_at) <= 3)
+                                                            @if (
+                                                                $order->status === 'completed' &&
+                                                                    $order->delivered_at &&
+                                                                    now()->diffInDays($order->delivered_at) <= 3 &&
+                                                                    $order->is_exchange == 0)
+                                                                {{-- chỉ cho phép đơn gốc --}}
+
                                                                 @if ($order->returnRequests->isEmpty())
                                                                     {{-- Nếu chưa gửi khiếu nại → hiện nút Gửi --}}
                                                                     <a href="{{ route('client.account.return_requests.create', $order->id) }}"
@@ -565,6 +583,7 @@
                                                                     </a>
                                                                 @endif
                                                             @endif
+
 
 
 
@@ -740,14 +759,14 @@
                                                     </div>
 
 
-                                                    @foreach ($order->orderItems as $orderItem)
+                                                    @foreach ($order->orderItems as $item)
                                                         <div class="product-order-detail">
                                                             <div
                                                                 class="product-box position-relative d-flex align-items-start">
                                                                 {{-- Ảnh sản phẩm --}}
-                                                                @if ($orderItem->product)
-                                                                    <img src="{{ asset('storage/' . $orderItem->product->image) }}"
-                                                                        alt="{{ $orderItem->product_name }}"
+                                                                @if ($item->product)
+                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                        alt="{{ $item->product_name }}"
                                                                         style="max-width: 150px;">
                                                                 @else
                                                                     <img src="{{ asset('images/default.png') }}"
@@ -756,18 +775,18 @@
 
                                                                 {{-- Nội dung --}}
                                                                 <div class="order-wrap">
-                                                                    <h5>{{ $orderItem->product_name }}</h5>
-                                                                    <p>{{ $orderItem->product->description ?? 'Không có mô tả' }}
+                                                                    <h5>{{ $item->product_name }}</h5>
+                                                                    <p>{{ $item->product->description ?? 'Không có mô tả' }}
                                                                     </p>
                                                                     <ul style="list-style: none; padding-left: 0;">
                                                                         <li>
                                                                             <p>Giá :</p>
-                                                                            <span>{{ number_format($orderItem->price, 0, ',', '.') }}₫</span>
+                                                                            <span>{{ number_format($item->price, 0, ',', '.') }}₫</span>
                                                                         </li>
 
                                                                         @php
                                                                             $variantValues = json_decode(
-                                                                                $orderItem->variant_values ?? '{}',
+                                                                                $item->variant_values ?? '{}',
                                                                                 true,
                                                                             );
                                                                         @endphp
@@ -784,7 +803,7 @@
 
                                                                         <li>
                                                                             <p>Mã đơn hàng :</p>
-                                                                            <span>{{ $orderItem->order->order_code ?? '---' }}</span>
+                                                                            <span>{{ $item->order->order_code ?? '---' }}</span>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
@@ -794,27 +813,31 @@
                                                                     class="stretched-link"></a>
                                                             </div>
                                                         </div>
-<div class="return-box">
-    <div class="review-box">
-        <ul class="rating">
-            <li>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star"></i>
-                <i class="fa-solid fa-star-half-stroke"></i>
-                <i class="fa-regular fa-star"></i>
-            </li>
-        </ul>
-        @if ($orderItem->product)
-            <a href="{{ route('client.products.show', $orderItem->product->slug) }}#review">
-                <span>Viết đánh giá</span>
-            </a>
-        @endif
-    </div>
-    <h6>* Exchange/Return window closed on 20 Mar</h6>
-</div>
-                                                        </div>
                                                     @endforeach
+
+
+                                                    <div class="return-box">
+                                                        <div class="review-box">
+                                                            <ul class="rating">
+                                                                <li>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star"></i>
+                                                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                                                    <i class="fa-regular fa-star"></i>
+                                                                </li>
+                                                            </ul>
+                                                            <span data-bs-toggle="modal" data-bs-target="#Reviews-modal"
+                                                                title="Quick View" tabindex="0">Viết đánh giá</span>
+                                                            {{-- @if ($item->product)
+                                                                <a
+                                                                    href="{{ route('client.products.show', $item->product->slug) }}#review">
+                                                                    <span>Viết đánh giá</span>
+                                                                </a>
+                                                            @endif --}}
+                                                        </div>
+                                                        <h6>* Exchange/Return window closed on 20 Mar</h6>
+                                                    </div>
                                                 </div>
 
 
@@ -2081,7 +2104,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                                                                                                                                                                                                                                                                                                            success ') }}',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            success ') }}',
                 showConfirmButton: false,
                 timer: 1200
             });

@@ -240,16 +240,20 @@ class OrderController extends Controller
 
         // chỉ các trạng thái hợp lệ kế tiếp
         $availableStatuses = $this->availableNext($order->status);
-        // 1) Nếu bạn có cột exchange_order_id trong return_requests:
+
+        // Lấy danh sách yêu cầu đổi hàng có đơn hàng đổi mới
         $exchangesByRR = $order->returnRequests()
             ->whereNotNull('exchange_order_id')
+            ->with(['exchangeOrder' => function ($query) {
+                $query->select('id', 'order_code', 'status', 'created_at');
+            }])
             ->get(['id', 'exchange_order_id']);
 
-        // 2) Dò đơn đổi (đơn con) dựa vào original_order_id
-        $exchangeOrders = Order::query()
-            ->where('original_order_id', $order->id)
-            ->where('order_type', 'exchange')
-            ->get(['id', 'order_code', 'status', 'created_at']);
+        // Danh sách đơn hàng đổi mới (lấy từ exchange_order_id trong return_requests)
+        $exchangeOrders = Order::whereIn(
+            'id',
+            $exchangesByRR->pluck('exchange_order_id')->toArray()
+        )->get(['id', 'order_code', 'status', 'created_at']);
 
         return view('admin.orders.show', [
             'order'             => $order,
@@ -263,32 +267,8 @@ class OrderController extends Controller
     }
 
 
-    // public function updateStatus(Request $request, Order $order)
-    // {
-    //     $validated = $request->validate([
-    //         'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
-    //     ]);
 
-    //     $order->status = $validated['status'];
 
-    //     // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
-    //     if ($validated['status'] === 'completed' && !$order->delivered_at) {
-    //         $order->delivered_at = now();
-    //     }
-
-    //     $order->save();
-
-    //     // Gửi notification realtime tới user
-    //     $order->user->notify(new OrderStatusNotification(
-    //         $order->id,
-    //         $order->status,
-    //         $order,
-    //         $request->cancel_reason,
-    //         $request->image
-    //     ));
-
-    //     return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
-    // }
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([

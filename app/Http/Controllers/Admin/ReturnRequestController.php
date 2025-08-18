@@ -119,12 +119,12 @@ class ReturnRequestController extends Controller
     {
         $returnRequest = ReturnRequest::with('order')->findOrFail($id);
 
-        // Kiểm tra nếu đơn gốc đã là đơn đổi
+        // Chặn nếu đơn gốc là đơn đổi
         if ($returnRequest->order && $returnRequest->order->is_exchange) {
             return redirect()->back()->with('error', 'Không thể tiếp tục đổi đơn hàng đã là đơn đổi.');
         }
 
-        // Kiểm tra nếu yêu cầu đã có đơn hàng đổi
+        // Chặn nếu yêu cầu đã xử lý
         if ($returnRequest->status !== 'pending') {
             return redirect()->back()->with('error', 'Yêu cầu đổi hàng này đã được xử lý.');
         }
@@ -151,10 +151,35 @@ class ReturnRequestController extends Controller
         $order->is_exchange = true;
         $order->save();
 
+        $subtotal = 0;
+
         foreach ($request->input('items') as $item) {
             $product = Product::findOrFail($item['product_id']);
             $variant = isset($item['variant_id']) ? ProductVariant::find($item['variant_id']) : null;
 
+            // Lấy giá sản phẩm
+            $price = $variant?->price ?? $product->sale_price ?? $product->price ?? 0;
+            $lineTotal = $price * $item['quantity'];
+            $subtotal += $lineTotal;
+
+            // Trừ tồn kho
+            if ($variant) {
+                // Sản phẩm có biến thể
+                if ($variant->quantity < $item['quantity']) {
+                    return redirect()->back()->with('error', "Biến thể {$variant->variant_name} không đủ tồn kho.");
+                }
+                $variant->quantity -= $item['quantity'];
+                $variant->save();
+            } else {
+                // Sản phẩm không có biến thể
+                if ($product->stock_quantity < $item['quantity']) {
+                    return redirect()->back()->with('error', "Sản phẩm {$product->name} không đủ tồn kho.");
+                }
+                $product->stock_quantity -= $item['quantity'];
+                $product->save();
+            }
+
+            // Thêm vào order_items
             $order->orderItems()->create([
                 'order_id' => $order->id,
                 'product_id' => $product->id,
@@ -163,19 +188,24 @@ class ReturnRequestController extends Controller
                 'product_name' => $product->name,
                 'variant_name' => $variant?->variant_name ?? null,
                 'sku' => $variant?->sku ?? $product->sku ?? null,
-                'price' => $variant?->price ?? $product->price ?? 0,
+                'price' => $price,
                 'discount' => 0,
                 'tax_amount' => 0,
-                'total_price' => 0,
+                'total_price' => $lineTotal,
             ]);
         }
 
+        // Cập nhật tổng tiền
+        $order->subtotal = $subtotal;
+        $order->total_amount = $subtotal + $order->shipping_fee;
+        $order->save();
+
+        // Cập nhật yêu cầu đổi
         $returnRequest->status = 'exchanged';
         $returnRequest->exchange_order_id = $order->id;
         $returnRequest->save();
 
-
         return redirect()->route('admin.orders.show', $order->id)
-            ->with('success', 'Đơn hàng đổi đã được tạo thành công.');
+            ->with('success', 'Đơn hàng đổi đã được tạo thành công và đã trừ tồn kho.');
     }
 }

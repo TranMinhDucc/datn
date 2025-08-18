@@ -13,10 +13,18 @@
                     <strong>Loại: </strong> {{ $req->type === 'return' ? 'Hoàn hàng' : 'Đổi hàng' }} <br>
                     <strong>Ngày gửi: </strong> {{ $req->created_at->format('d/m/Y') }} <br>
                     <strong>Trạng thái: </strong>
+                    @php
+                        $statusText = [
+                            'pending' => 'Đang chờ xử lý',
+                            'approved' => 'Đã chấp nhận',
+                            'rejected' => 'Đã từ chối',
+                            'exchanged' => 'Đã đổi hàng',
+                        ];
+                    @endphp
                     <span
                         class="badge 
-                        {{ $req->status === 'pending' ? 'bg-warning' : ($req->status === 'approved' ? 'bg-success' : 'bg-danger') }}">
-                        {{ ucfirst($req->status) }}
+                {{ $req->status === 'pending' ? 'bg-warning' : ($req->status === 'approved' ? 'bg-success' : 'bg-danger') }}">
+                        {{ $statusText[$req->status] ?? $req->status }}
                     </span>
 
                     <div class="mt-3 text-end">
@@ -30,6 +38,7 @@
         @empty
             <p>Không có yêu cầu nào.</p>
         @endforelse
+
 
         {{ $requests->links() }}
     </div>
