@@ -175,24 +175,32 @@
                                         Buy Now
                                     </a>
 
-                                </div>
-                            </div>
-                            <div class="buy-box">
-                                <ul>
-                                    <li> 
-                                        <a class="add-to-wishlist" href="javascript:;" data-id="{{ $product->id }}">
-                                            <i class="fa-regular fa-heart me-2"></i>
-                                            Yêu thích
-                                        </a>
-                                    </li>
-                                    <li> <a href="compare.html"> <i class="fa-solid fa-arrows-rotate me-2"></i>Add To
-                                            Compare</a></li>
-                                    <li> <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
-                                            title="Quick View" tabindex="0"><i
-                                                class="fa-solid fa-share-nodes me-2"></i>Share</a></li>
-                                </ul>
-                            </div>
-                            <div class="sale-box">
+</div>
+</div>
+<div class="buy-box">
+    <ul>
+        <li> 
+            <a class="add-to-wishlist" href="javascript:;" data-id="{{ $product->id }}">
+                <i class="fa-regular fa-heart me-2"></i>
+                Yêu thích
+            </a>
+        </li>
+        <li>
+            <a href="compare.html">
+                <i class="fa-solid fa-arrows-rotate me-2"></i>
+                Add To Compare
+            </a>
+        </li>
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
+                title="Quick View" tabindex="0">
+                <i class="fa-solid fa-share-nodes me-2"></i>
+                Share
+            </a>
+        </li>
+    </ul>
+</div>
+{{-- <div class="sale-box"> --}}
 
                                 <div class="countdown"
                                     data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
@@ -1322,39 +1330,41 @@
                 btn.addEventListener('click', function() {
                     const productId = this.dataset.id;
 
-                    fetch(`/account/wishlist/add/${productId}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content'),
-                                'Accept': 'application/json'
-                            }
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status == 'ok') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: data.message,
-                                    timer: 1000,
-                                    showConfirmButton: false
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: data.message
-                                });
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Lỗi:', err);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Đã có lỗi xảy ra'
-                            });
-                        });
+        fetch(`/account/wishlist/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status == 'ok') {
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    timer: 1000,
+                    showConfirmButton: false
                 });
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: data.message
+                });
+            }
+        })
+        .catch(err => {
+            console.error('Lỗi:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Đã có lỗi xảy ra'
             });
+<<<<<<< HEAD
+=======
+        });
+    });
+});
+>>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
         });
     </script>
 

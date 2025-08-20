@@ -121,6 +121,7 @@
                     <!-- End Pagination -->
                 </div>
             </div>
+            <!--end::Card-->
         </div>
     </div>
 </div>

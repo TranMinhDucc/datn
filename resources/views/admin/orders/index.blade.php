@@ -100,19 +100,30 @@
                                 <div class="w-100 mw-150px">
                                     <!--begin::Select2-->
                                     <select class="form-select form-select-solid" data-control="select2"
-                                        data-hide-search="true" data-placeholder="Status"
+                                        data-hide-search="true" data-placeholder="Trạng thái"
                                         data-kt-ecommerce-order-filter="status">
                                         <option></option>
-                                        <option value="Tất cả">Trạng thái</option>
-                                        <option value="Đã hủy">Đã hủy</option>
-                                        <option value="Hoàn thành">Hoàn thành</option>
-                                        <option value="Đã xác nhận">Đã xác nhận</option>
+                                        <option value="Tất cả">Tất cả trạng thái</option>
+
+                                        {{-- Các trạng thái cơ bản --}}
                                         <option value="Đang chờ xác nhận">Đang chờ xác nhận</option>
-                                        <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+                                        <option value="Đã xác nhận">Đã xác nhận</option>
+                                        <option value="Đang xử lý">Đang xử lý</option>
+                                        <option value="Sẵn sàng giao hàng">Sẵn sàng giao hàng</option>
                                         <option value="Đang giao hàng">Đang giao hàng</option>
+                                        <option value="Đã giao hàng">Đã giao hàng</option>
+                                        <option value="Hoàn thành">Hoàn thành</option>
+                                        <option value="Đã hủy">Đã hủy</option>
+                                        <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+
+                                        {{-- Các trạng thái mở rộng theo GHN --}}
+                                        <option value="Giao hàng thất bại">Giao hàng thất bại</option>
+                                        <option value="Đang trả hàng">Đang trả hàng</option>
+                                        <option value="Đã trả hàng">Đã trả hàng</option>
                                     </select>
                                     <!--end::Select2-->
                                 </div>
+
 
                                 <!--begin::Add product-->
                                 <a href="{{ route('admin.orders.cancel') }}" class="btn btn-warning">
@@ -196,24 +207,64 @@
                                                                 'color' => 'primary',
                                                                 'icon' => 'ki-check-square',
                                                             ],
+                                                            'processing' => [
+                                                                'label' => 'Đang xử lý',
+                                                                'color' => 'warning',
+                                                                'icon' => 'ki-settings',
+                                                            ],
+                                                            'ready_for_dispatch' => [
+                                                                'label' => 'Sẵn sàng giao hàng',
+                                                                'color' => 'info',
+                                                                'icon' => 'ki-truck',
+                                                            ],
                                                             'shipping' => [
                                                                 'label' => 'Đang giao hàng',
                                                                 'color' => 'info',
-                                                                'icon' => 'ki-settings',
+                                                                'icon' => 'ki-truck',
+                                                            ],
+                                                            'delivered' => [
+                                                                'label' => 'Đã giao hàng',
+                                                                'color' => 'success',
+                                                                'icon' => 'ki-check-circle',
                                                             ],
                                                             'completed' => [
                                                                 'label' => 'Hoàn thành',
                                                                 'color' => 'success',
-                                                                'icon' => 'ki-check-circle',
+                                                                'icon' => 'ki-badge',
                                                             ],
                                                             'cancelled' => [
                                                                 'label' => 'Đã hủy',
                                                                 'color' => 'danger',
                                                                 'icon' => 'ki-cross-circle',
                                                             ],
+                                                            'delivery_failed' => [
+                                                                'label' => 'Giao hàng thất bại',
+                                                                'color' => 'danger',
+                                                                'icon' => 'ki-close-circle',
+                                                            ],
+                                                            'returning' => [
+                                                                'label' => 'Đang trả hàng',
+                                                                'color' => 'warning',
+                                                                'icon' => 'ki-undo',
+                                                            ],
+                                                            'returned' => [
+                                                                'label' => 'Đã trả hàng',
+                                                                'color' => 'secondary',
+                                                                'icon' => 'ki-rotate-cw',
+                                                            ],
                                                             'refunded' => [
                                                                 'label' => 'Đã hoàn tiền',
                                                                 'color' => 'secondary',
+                                                                'icon' => 'ki-undo',
+                                                            ],
+                                                            'exchange_requested' => [
+                                                                'label' => 'Yêu cầu đổi hàng',
+                                                                'color' => 'warning',
+                                                                'icon' => 'ki-refresh',
+                                                            ],
+                                                            'return_requested' => [
+                                                                'label' => 'Yêu cầu trả hàng',
+                                                                'color' => 'warning',
                                                                 'icon' => 'ki-undo',
                                                             ],
                                                         ];
@@ -231,6 +282,7 @@
                                                         <i class="ki-duotone {{ $orderStatus['icon'] }} fs-6 me-1"></i>
                                                         {{ $orderStatus['label'] }}
                                                     </span>
+
                                                 </td>
 
                                                 {{-- <td class="text-center">
@@ -426,9 +478,9 @@
         <script>
             $(document).ready(function() {
                 const table = $('#kt_ecommerce_sales_table').DataTable({
-                    order: [
-                        [1, 'desc']
-                    ],
+                    // order: [
+                    //     [4, 'desc']
+                    // ],
                     paging: false, // ❌ Tắt phân trang
                     info: false, // ❌ Tắt dòng "Showing x to y..."
                     lengthChange: false, // ❌ Tắt dropdown chọn số dòng

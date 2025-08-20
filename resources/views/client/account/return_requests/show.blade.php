@@ -13,14 +13,27 @@
                 <p><strong>Lý do:</strong> {{ $returnRequest->reason }}</p>
                 <p><strong>Ngày gửi:</strong> {{ $returnRequest->created_at->format('d/m/Y H:i') }}</p>
                 <p><strong>Trạng thái:</strong>
-                    <span
-                        class="badge 
-                    {{ $returnRequest->status === 'pending' ? 'bg-warning' : ($returnRequest->status === 'approved' ? 'bg-success' : 'bg-danger') }}">
-                        {{ ucfirst($returnRequest->status) }}
+                    @php
+                        $statusText = [
+                            'pending' => 'Đang chờ xử lý',
+                            'approved' => 'Đã chấp nhận',
+                            'rejected' => 'Đã từ chối',
+                            'exchanged' => 'Đã đổi hàng',
+                        ];
+                        $statusClass = [
+                            'pending' => 'bg-warning',
+                            'approved' => 'bg-success',
+                            'rejected' => 'bg-danger',
+                            'exchanged' => 'bg-info',
+                        ];
+                    @endphp
+                    <span class="badge {{ $statusClass[$returnRequest->status] ?? 'bg-secondary' }}">
+                        {{ $statusText[$returnRequest->status] ?? $returnRequest->status }}
                     </span>
                 </p>
             </div>
         </div>
+
 
         <h5 class="fw-semibold">📋 Danh sách sản phẩm:</h5>
         <ul class="list-group mb-4">

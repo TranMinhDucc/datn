@@ -285,12 +285,12 @@
                                                 <div class="user-img">
                                                     @php
 
-                                                        $order_item = \App\Models\OrderItem::where(
+                                                        $item = \App\Models\OrderItem::where(
                                                             'order_id',
                                                             $notification->data['order_id'],
                                                         )->first();
                                                         $image =
-                                                            $order_item?->image_url ??
+                                                            $item?->image_url ??
                                                             asset('assets/client/images/default.png');
                                                     @endphp
 
@@ -330,9 +330,9 @@
                                         <h4>Wishlist</h4>
                                     </div>
                                     <div class="row-cols-md-3 row-cols-2 grid-section view-option row gy-4 g-xl-4">
-                                        @forelse ($wishlists as $wishlist)
+                                        @forelse ($wishlists as $item)
                                             @php
-                                                $product = $wishlist->product;
+                                                $product = $item->product;
                                             @endphp
                                             <div class="col">
                                                 <div class="product-box-3 product-wishlist">
@@ -2218,7 +2218,11 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
+<<<<<<< HEAD
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     success ') }}',
+=======
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            success ') }}',
+>>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
                 showConfirmButton: false,
                 timer: 1200
             });

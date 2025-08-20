@@ -11,6 +11,7 @@ use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ReturnRequestItem;
+use App\Models\ShippingLog;
 use App\Models\ShippingMethod;
 use App\Models\ShippingOrder;
 use App\Models\ShopSetting;
@@ -20,12 +21,20 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private function allStatuses(): array
+    {
+        return array_keys($this->statusLabels);
+    }
+
+    private function availableNext(string $current): array
+    {
+        return $this->allowedTransitions[$current] ?? [];
+    }
+
     public function index(Request $request)
     {
         $searchOrders = Order::query()->with(['user', 'shippingOrder']);
@@ -62,7 +71,8 @@ class OrderController extends Controller
             $searchOrders->whereDate('created_at', '<=', $request->to_date);
         }
 
-        $orders = $searchOrders->latest()->paginate(10);
+        $orders = $searchOrders->orderBy('id', 'desc')->paginate(10);
+
 
         return view('admin.orders.index', compact('orders'));
     }
@@ -181,6 +191,36 @@ class OrderController extends Controller
      * Display the specified resource.
      */
 
+    // public function show($id)
+    // {
+    //     $order = Order::with([
+    //         'user',
+    //         'shippingLogs',
+    //         'orderItems.product',
+    //         'paymentMethod',
+    //         'shippingAddress.province',
+    //         'shippingAddress.district',
+    //         'shippingAddress.ward',
+    //         // Load các yêu cầu đổi/trả hàng và item liên quan
+    //         'returnRequests.items.orderItem.product',
+    //         'returnRequests.items.orderItem.productVariant',
+    //     ])->findOrFail($id);
+
+    //     // Lấy tất cả yêu cầu đổi/trả (nếu có)
+    //     $returnRequests = $order->returnRequests ?? collect();
+
+    //     // Lấy danh sách tất cả sản phẩm (để hiển thị/thêm đơn mới)
+    //     $products = Product::where('is_active', 1)
+    //         ->with('variants')
+    //         ->get();
+
+    //     return view('admin.orders.show', [
+    //         'order' => $order,
+    //         'returnRequests' => $returnRequests,
+    //         'products' => $products,
+    //     ]);
+    // }
+
     public function show($id)
     {
         $order = Order::with([
@@ -191,56 +231,89 @@ class OrderController extends Controller
             'shippingAddress.province',
             'shippingAddress.district',
             'shippingAddress.ward',
-            // Load các yêu cầu đổi/trả hàng và item liên quan
             'returnRequests.items.orderItem.product',
             'returnRequests.items.orderItem.productVariant',
         ])->findOrFail($id);
 
-        // Lấy tất cả yêu cầu đổi/trả (nếu có)
         $returnRequests = $order->returnRequests ?? collect();
+        $products = Product::where('is_active', 1)->with('variants')->get();
 
-        // Lấy danh sách tất cả sản phẩm (để hiển thị/thêm đơn mới)
-        $products = Product::where('is_active', 1)
-            ->with('variants')
-            ->get();
+        // chỉ các trạng thái hợp lệ kế tiếp
+        $availableStatuses = $this->availableNext($order->status);
+
+        // Lấy danh sách yêu cầu đổi hàng có đơn hàng đổi mới
+        $exchangesByRR = $order->returnRequests()
+            ->whereNotNull('exchange_order_id')
+            ->with(['exchangeOrder' => function ($query) {
+                $query->select('id', 'order_code', 'status', 'created_at');
+            }])
+            ->get(['id', 'exchange_order_id']);
+
+        // Danh sách đơn hàng đổi mới (lấy từ exchange_order_id trong return_requests)
+        $exchangeOrders = Order::whereIn(
+            'id',
+            $exchangesByRR->pluck('exchange_order_id')->toArray()
+        )->get(['id', 'order_code', 'status', 'created_at']);
 
         return view('admin.orders.show', [
-            'order' => $order,
-            'returnRequests' => $returnRequests,
-            'products' => $products,
+            'order'             => $order,
+            'returnRequests'    => $returnRequests,
+            'products'          => $products,
+            'statusLabels'      => $this->statusLabels,
+            'availableStatuses' => $availableStatuses,
+            'exchangesByRR'     => $exchangesByRR,
+            'exchangeOrders'    => $exchangeOrders,
         ]);
     }
+
 
 
 
     public function updateStatus(Request $request, Order $order)
     {
-        $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
+        $request->validate([
+            'status' => ['required', Rule::in(array_keys($this->statusLabels))],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $order->status = $validated['status'];
+        $to = $request->input('status'); // <-- lấy string thuần
+        $allowed = $this->allowedTransitions[$order->status] ?? [];
 
-        // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
-        if ($validated['status'] === 'completed' && !$order->delivered_at) {
-            $order->delivered_at = now();
+        if (!in_array($to, $allowed, true)) {
+            return back()->withErrors([
+                'status' => "Không thể chuyển từ {$order->status} → {$to}. Cho phép: " . implode(', ', $allowed)
+            ]);
         }
 
-        $order->save();
+        $old = $order->status;
 
-        // Gửi notification realtime tới user
+        if ($to === 'delivered' && !$order->delivered_at)  $order->delivered_at  = now();
+        if ($to === 'completed' && !$order->completed_at)  $order->completed_at  = now();
+        if ($to === 'cancelled' && !$order->cancelled_at)  $order->cancelled_at  = now();
+
+        $order->status = $to;
+        $order->save();
+        $shippingOrder = ShippingOrder::where('order_id', $order->id)->latest()->first();
+        ShippingLog::create([
+            'order_id' => $order->id,
+            'provider' => $shippingOrder->shipping_partner ?? 'manual',
+            'tracking_code' => $shippingOrder->shipping_code ?? null,
+            'status' => $to,
+            'description' => $this->getManualStatusDescription($to), // ← dùng hàm mô tả theo status
+            'created_at' => now(),
+            'updated_at' => now(),
+            'received_at' => now(),
+        ]);
+
         $order->user->notify(new OrderStatusNotification(
             $order->id,
             $order->status,
             $order,
-            $request->cancel_reason,
-            $request->image
+            $request->input('reason')
         ));
 
-        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+        return back()->with('success', "Đã chuyển {$old} → {$to}.");
     }
-
-
     public function cancel()
     {
         $orders = Order::where('cancel_request', true)
@@ -280,11 +353,13 @@ class OrderController extends Controller
         Log::info("📦 Trạng thái GHN hiện tại của {$shippingOrder->shipping_code} là: $currentStatus");
 
         // ✅ Chỉ cho phép retry nếu trạng thái là waiting_to_return hoặc delivery_fail
-        $allowedStatuses = ['waiting_to_return', 'delivery_fail'];
-        if (!in_array($currentStatus, $allowedStatuses)) {
-            $viStatus = $this->mapGhnStatus($currentStatus);
-            return back()->with('error', "⚠️ Không thể giao lại đơn hàng vì trạng thái hiện tại là $viStatus.");
+        if ($currentStatus !== 'waiting_to_return') {
+            $viStatus = $this->mapGhnStatus($currentStatus); // ví dụ: 'Giao hàng thất bại'
+
+            return back()->with('error', "⚠️ Đơn hàng đang ở trạng thái \"$viStatus\". Bạn cần chờ GHN chuyển sang trạng thái \"Đang đợi trả hàng\" (waiting_to_return) mới có thể giao lại.");
         }
+
+
 
         // Gọi API GHN để chuyển trạng thái đơn hàng sang "storing"
         $response = Http::withHeaders([
@@ -480,6 +555,15 @@ class OrderController extends Controller
         if ($order->status !== 'pending') {
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
         }
+        $pmName = strtolower(trim(($order->paymentMethod->code ?? '') . ' ' . ($order->paymentMethod->name ?? '')));
+        $isCOD = str_contains($pmName, 'cod') || str_contains($pmName, 'cash on delivery') || str_contains($pmName, 'khi nhận');
+        $isPrepaid = !$isCOD || ($order->payment_status === 'paid'); // nếu không phải COD hoặc đã paid trước đó
+
+        // GHN chỉ quyết định có THU TIỀN hay không dựa vào cod_amount
+        $codAmount = $isPrepaid ? 0 : (int) round($order->total_amount);
+
+        // Ai trả phí ship: 1=Shop, 2=Người nhận (tuỳ chính sách bạn)
+        $paymentTypeId = 1;
 
         $totalWeight = 0;
         $maxLength = 0;
@@ -565,6 +649,8 @@ class OrderController extends Controller
             'width' => $maxWidth ?: 10,
             'height' => $totalHeight ?: 10,
             'service_id' => $serviceId,
+            'cod_amount'         => $codAmount,                                      // ⬅️ quan trọng
+            'content'            => $isPrepaid ? 'Hàng đã thanh toán trước' : 'Thu COD khi giao',
             'items' => $order->items->map(function ($item) {
                 $variant = $item->productVariant;
                 $product = $variant?->product ?? $item->product;
@@ -715,5 +801,67 @@ class OrderController extends Controller
             // Xử lý lỗi
             throw new \Exception('Lỗi tạo đơn GHN: ' . $response->body());
         }
+    }
+    private array $statusLabels = [
+        'pending'            => '🕐 Chờ xác nhận',
+        'confirmed'          => '✅ Đã xác nhận',
+        'processing'         => '📦 Đang chuẩn bị hàng',
+        'ready_for_dispatch' => '📮 Chờ bàn giao vận chuyển',
+        'shipping'           => '🚚 Đang giao',
+        'delivery_failed'    => '⚠️ Giao thất bại – chờ xử lý',
+        'delivered'          => '📬 Đã giao',
+        'completed'          => '🎉 Hoàn tất',
+        'cancelled'          => '❌ Đã hủy',
+        'return_requested'   => '↩️ Yêu cầu trả hàng',
+        'returning'          => '📦 Đang trả hàng về',
+        'returned'           => '✅ Đã nhận hàng trả',
+        'exchange_requested' => '🔁 Yêu cầu đổi hàng',
+        'exchanged'          => '✅ Đã đổi xong',
+        'refund_processing'  => '💳 Đang hoàn tiền',
+        'refunded'           => '✅ Đã hoàn tiền',
+    ];
+
+    // 2) Ma trận chuyển trạng thái (tối thiểu, bạn có thể nới thêm)
+    private array $allowedTransitions = [
+        'pending'            => ['confirmed', 'cancelled'],
+        'confirmed'          => ['processing', 'cancelled'],
+        'processing'         => ['ready_for_dispatch', 'shipping', 'cancelled'],
+        'ready_for_dispatch' => ['shipping'],
+        'shipping'           => ['delivered', 'delivery_failed'],
+        'delivery_failed'    => ['shipping', 'cancelled'],
+        'delivered'          => ['completed', 'return_requested', 'exchange_requested'],
+        'completed'          => ['return_requested', 'exchange_requested'], // cho phép hậu mãi sau hoàn tất
+        'cancelled'          => [],
+
+        // after-sale
+        'return_requested'   => ['returning', 'refund_processing'],
+        'returning'          => ['returned'],
+        'returned'           => ['refund_processing'],    // sau khi nhận hàng trả, mới hoàn tiền
+        'refund_processing'  => ['refunded'],
+        'refunded'           => [],
+
+        'exchange_requested' => ['exchanged'],
+        'exchanged'          => [],
+    ];
+    private function getManualStatusDescription(string $status): string
+    {
+        return [
+            'pending'            => 'Đơn hàng đang chờ xác nhận.',
+            'confirmed'          => 'Đơn hàng đã được xác nhận.',
+            'processing'         => 'Đơn hàng đang được chuẩn bị.',
+            'ready_for_dispatch' => 'Đơn hàng đã sẵn sàng bàn giao cho đơn vị vận chuyển.',
+            'shipping'           => 'Đơn hàng đang được giao cho khách.',
+            'delivery_failed'    => 'Đơn hàng giao thất bại – đang chờ xử lý.',
+            'delivered'          => 'Đơn hàng đã được giao thành công.',
+            'completed'          => 'Đơn hàng đã hoàn tất.',
+            'cancelled'          => 'Đơn hàng bị huỷ bởi admin.',
+            'return_requested'   => 'Khách hàng yêu cầu trả hàng.',
+            'returning'          => 'Đơn hàng đang được trả về.',
+            'returned'           => 'Đã nhận được hàng trả từ khách hàng.',
+            'refund_processing'  => 'Đơn hàng đang được xử lý hoàn tiền.',
+            'refunded'           => 'Đơn hàng đã được hoàn tiền.',
+            'exchange_requested' => 'Khách hàng yêu cầu đổi hàng.',
+            'exchanged'          => 'Đã hoàn tất việc đổi hàng.',
+        ][$status] ?? 'Cập nhật trạng thái thủ công.';
     }
 }

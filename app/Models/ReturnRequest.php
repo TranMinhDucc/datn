@@ -11,6 +11,7 @@ class ReturnRequest extends Model
 
     protected $fillable = [
         'order_id',
+        'exchange_order_id',
         'reason',
         'attachments',
         'type',
@@ -32,8 +33,20 @@ class ReturnRequest extends Model
     {
         return $this->hasMany(ReturnRequestItem::class);
     }
+    public function orderItem()
+    {
+        return $this->belongsTo(OrderItem::class, 'order_item_id');
+    }
     public function variant()
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+    public function originalOrder()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
+    public function exchangeOrder()
+    {
+        return $this->belongsTo(Order::class, 'exchange_order_id');
     }
 }

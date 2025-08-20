@@ -148,7 +148,7 @@
                             $.each(variants, function(i, variant) {
                                 variantSelect.append('<option value="' + variant.id + '">' + variant
                                     .variant_name + ' (Giá: ' + variant.price + ' VNĐ)</option>'
-                                    );
+                                );
                             });
                             variantSelect.val(variants[0].id);
                         } else {

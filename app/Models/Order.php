@@ -14,11 +14,10 @@ class Order extends Model
         'order_code',
         'address_id',
         'payment_method_id',
-        // 'payment_method_code',   // ✅ THÊM
-        'payment_method',        // ✅ THÊM
+        'payment_method',
         'payment_reference',
-        'momo_trans_id',         // ✅ THÊM
-        'momo_order_id',         // ✅ THÊM
+        'momo_trans_id',
+        'momo_order_id',
         'coupon_code',
         'coupon_id',
         'shipping_coupon_id',
@@ -43,9 +42,6 @@ class Order extends Model
         'refunded_at',
         'paid_at',
     ];
-
-
-
 
     public function user()
     {

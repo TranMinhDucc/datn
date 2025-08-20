@@ -6,13 +6,35 @@
     <div id="kt_app_content" class="app-content  flex-column-fluid ">
 
 
+
+
+
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
+
             <!--begin::Order details page-->
             <!--begin::Xác nhận đơn hàng-->
 
             <!--end::Xác nhận đơn hàng-->
+            {{-- Banner theo từng yêu cầu đổi có link tới đơn đổi đã tạo --}}
+            @if (!empty($exchangesByRR) && $exchangesByRR->count())
+                @foreach ($exchangesByRR as $rrx)
+                    <div class="alert alert-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <i class="fa-solid fa-rotate me-2"></i>
+                            Đã tạo <strong>đơn đổi #{{ $rrx->exchange_order_id }}</strong>
+                            từ yêu cầu đổi <strong>#RR{{ $rrx->id }}</strong>.
+                            <a class="fw-semibold text-primary"
+                                href="{{ route('admin.orders.show', $rrx->exchange_order_id) }}">
+                                Xem đơn đổi
+                            </a>
+                        </div>
+                        <span class="badge badge-light-primary">Exchange</span>
+                    </div>
+                @endforeach
+            @endif
             <div class="d-flex flex-column gap-7 gap-lg-10">
+
                 <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
                     <!--begin:::Tabs-->
                     <ul
@@ -37,43 +59,100 @@
                     <a href="listing.html" class="btn btn-icon btn-light btn-active-secondary btn-sm ms-auto me-lg-n7">
                         <i class="fa-solid fa-arrow-left fs-2"></i> </a>
                     <!--end::Button-->
+                    {{-- NÚT TRẠNG THÁI (chỉ thay block dropdown cũ bằng block này) --}}
                     <div class="d-flex gap-2">
-                        {{-- <a href="" class="btn btn-success btn-sm">Edit Order</a> --}}
 
+                        @php
+                            // Nếu controller đã truyền, dùng trực tiếp; nếu chưa thì dùng fallback 5 trạng thái cơ bản
+                            $statusLabels = $statusLabels ?? [
+                                'pending' => '🕐 Chờ xác nhận',
+                                'confirmed' => '✅ Đã xác nhận',
+                                'processing' => '📦 Đang chuẩn bị hàng',
+                                'ready_for_dispatch' => '📮 Chờ bàn giao VC',
+                                'shipping' => '🚚 Đang giao',
+                                'delivery_failed' => '⚠️ Giao thất bại',
+                                'delivered' => '📬 Đã giao',
+                                'completed' => '🎉 Hoàn tất',
+                                'cancelled' => '❌ Đã hủy',
+                                'return_requested' => '↩️ Yêu cầu trả hàng',
+                                'returning' => '📦 Đang trả hàng về',
+                                'returned' => '✅ Đã nhận hàng trả',
+                                'exchange_requested' => '🔁 Yêu cầu đổi hàng',
+                                'exchanged' => '✅ Đã đổi xong',
+                                'refund_processing' => '💳 Đang hoàn tiền',
+                                'refunded' => '✅ Đã hoàn tiền',
+                            ];
 
+                            // Danh sách trạng thái kế tiếp hợp lệ; nếu chưa có thì cho phép tất cả trừ trạng thái hiện tại
+                            $availableStatuses =
+                                $availableStatuses ?? array_diff(array_keys($statusLabels), [$order->status]);
 
+                            $currentLabel = $statusLabels[$order->status] ?? ucfirst($order->status);
+                        @endphp
 
                         @if ($order->status !== 'cancelled')
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-light-primary fw-bold dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ ucfirst($order->status) }}
+                                    {{ $currentLabel }}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    @foreach ([
-            'pending' => '🕐 Chờ xác nhận',
-            'confirmed' => '✅ Đã xác nhận',
-            'shipping' => '🚚 Đang giao',
-            'completed' => '🎉 Đã hoàn tất',
-            'cancelled' => '❌ Đã hủy',
-        ] as $status => $label)
+                                    @forelse ($availableStatuses as $next)
                                         <li>
                                             <form method="POST"
-                                                action="{{ route('admin.orders.updateStatus', $order->id) }}">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="{{ $status }}">
-                                                <button type="submit" class="dropdown-item">{{ $label }}</button>
+                                                action="{{ route('admin.orders.updateStatus', $order->id) }}"
+                                                class="d-inline js-status-form">
+                                                @csrf @method('PUT')
+                                                <input type="hidden" name="status" value="{{ $next }}">
+                                                <input type="hidden" name="reason" value="">
+                                                @php
+                                                    // Các trạng thái yêu cầu nhập lý do
+                                                    $needReason = in_array(
+                                                        $next,
+                                                        [
+                                                            'cancelled',
+                                                            'delivery_failed',
+                                                            'refund_processing',
+                                                            'refunded',
+                                                        ],
+                                                        true,
+                                                    );
+                                                @endphp
+                                                <button type="submit" class="dropdown-item"
+                                                    data-need-reason="{{ $needReason ? '1' : '0' }}">
+                                                    {{ $statusLabels[$next] ?? ucfirst($next) }}
+                                                </button>
                                             </form>
                                         </li>
-                                    @endforeach
+                                    @empty
+                                        <li><span class="dropdown-item text-muted">Không có trạng thái tiếp theo</span></li>
+                                    @endforelse
                                 </ul>
                             </div>
                         @else
                             <span class="badge bg-danger fw-bold">
-                                {{ ucfirst($order->status) }} – Đơn hàng đã bị huỷ
+                                {{ $currentLabel }} – Đơn hàng đã bị huỷ
                             </span>
                         @endif
+
+                        @push('scripts')
+                            <script>
+                                document.querySelectorAll('.js-status-form button[type="submit"]').forEach(btn => {
+                                    btn.addEventListener('click', function(e) {
+                                        if (this.dataset.needReason === '1') {
+                                            e.preventDefault();
+                                            const form = this.closest('form');
+                                            const label = this.textContent.trim();
+                                            const reason = prompt(`Nhập lý do cho trạng thái: ${label}`);
+                                            if (reason === null) return; // người dùng hủy
+                                            form.querySelector('[name="reason"]').value = reason;
+                                            form.submit();
+                                        }
+                                    });
+                                });
+                            </script>
+                        @endpush
+
 
                         @php
                             $latestLog = $order->shippingLogs->sortByDesc('created_at')->first();
@@ -276,7 +355,7 @@
                                                     <!--end::Avatar-->
 
                                                     <!--begin::Name-->
-                                                    <a href="../customers/details.html"
+                                                    <a href="{{ $order->user ? route('admin.users.edit', $order->user) : '#' }}"
                                                         class="text-gray-600 text-hover-primary">
                                                         {{ $order->user->fullname }} </a>
                                                     <!--end::Name-->
@@ -420,8 +499,15 @@
                     @foreach ($returnRequests as $request)
                         <div class="card mb-3">
                             <div class="card-header">
-                                Yêu cầu đổi hàng #{{ $request->id }} – Trạng thái: {{ $request->status }}
+                                Yêu cầu
+                                @if ($request->type === 'exchange')
+                                    Đổi hàng
+                                @elseif ($request->type === 'return')
+                                    Hoàn hàng
+                                @endif
+                                #{{ $request->id }} – Trạng thái: {{ $request->status }}
                             </div>
+
                             <div class="card-body">
                                 <ul>
                                     @foreach ($request->items as $item)
@@ -431,11 +517,11 @@
 
                                             if ($variant && $variant->options && $variant->options->count()) {
                                                 $attributes = $variant->options
-                                                    ->map(function ($opt) {
-                                                        return optional($opt->attribute)->name .
+                                                    ->map(
+                                                        fn($opt) => optional($opt->attribute)->name .
                                                             ': ' .
-                                                            optional($opt->value)->value;
-                                                    })
+                                                            optional($opt->value)->value,
+                                                    )
                                                     ->toArray();
                                                 $variantAttributes = ' – ' . implode(', ', $attributes);
                                             }
@@ -448,18 +534,46 @@
                                     @endforeach
                                 </ul>
 
-                                <a href="{{ route('admin.return-requests.exchange.form', $request->id) }}"
-                                    class="btn btn-primary btn-sm">
-                                    Xử lý đổi hàng
-                                </a>
-
-
+                                {{-- Các bước xử lý --}}
+                                @if ($request->status === 'pending')
+                                    <form action="{{ route('admin.return-requests.approve', $request->id) }}"
+                                        method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success btn-sm">Duyệt yêu cầu</button>
+                                    </form>
+                                    <form action="{{ route('admin.return-requests.reject', $request->id) }}"
+                                        method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                                    </form>
+                                @elseif ($request->status === 'approved')
+                                    @if ($request->type === 'exchange')
+                                        <a href="{{ route('admin.return-requests.exchange.form', $request->id) }}"
+                                            class="btn btn-primary btn-sm">
+                                            Tạo đơn hàng đổi
+                                        </a>
+                                    @elseif ($request->type === 'return')
+                                        <a href="{{ route('admin.return-requests.refund', $request->id) }}"
+                                            class="btn btn-warning btn-sm">
+                                            Xử lý hoàn tiền
+                                        </a>
+                                    @endif
+                                @elseif ($request->status === 'exchanged' && $request->exchange_order_id)
+                                    <a href="{{ route('admin.orders.show', $request->exchange_order_id) }}"
+                                        class="btn btn-info btn-sm">
+                                        Xem đơn hàng đổi
+                                    </a>
+                                @elseif ($request->status === 'refunded')
+                                    <span class="badge bg-success">Đã hoàn tiền</span>
+                                @elseif ($request->status === 'rejected')
+                                    <span class="badge bg-danger">Bị từ chối</span>
+                                @endif
                             </div>
                         </div>
                     @endforeach
-                @else
-                    {{-- <p class="text-muted">Không có yêu cầu đổi hàng nào.</p> --}}
                 @endif
+
+
                 {{-- <h5 class="mt-4">Lịch sử đổi/trả hàng</h5>
 
                 @if ($returnRequests->isEmpty())
