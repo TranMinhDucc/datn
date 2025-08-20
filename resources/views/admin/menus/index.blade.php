@@ -65,14 +65,32 @@
                                                 echo '<td>'.($menu->created_at ? $menu->created_at->format('Y-m-d H:i') : '').'</td>';
 
                                                 // Action
-                                                echo '<td class="text-end">
-                                                        <a href="'.route('admin.menus.edit', $menu).'" class="btn btn-sm btn-light btn-active-light-primary">Sửa</a>
-                                                        <form action="'.route('admin.menus.destroy', $menu).'" method="POST" style="display:inline" onsubmit="return confirm(\'Bạn chắc chắn muốn xoá?\')">
-                                                            '.csrf_field().method_field('DELETE').'
-                                                            <button class="btn btn-sm btn-danger">Xoá</button>
-                                                        </form>
-                                                    </td>';
-                                            echo '</tr>';
+                                               echo '<td class="text-end">
+    <div class="dropdown">
+        <button class="btn btn-sm btn-light btn-active-light-primary"
+            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+            Actions <i class="fa fa-chevron-down ms-1"></i>
+        </button>
+        <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
+            <!-- Edit -->
+            <div class="menu-item px-3">
+                <a href="'.route('admin.menus.edit', $menu).'" class="menu-link px-3">Sửa</a>
+            </div>
+
+            <!-- Delete -->
+            <div class="menu-item px-3">
+                <form action="'.route('admin.menus.destroy', $menu).'" method="POST"
+                    onsubmit="return confirm(\'Bạn có chắc chắn muốn xóa menu này không?\')">
+                    '.csrf_field().method_field('DELETE').'
+                    <button type="submit" class="menu-link px-3 text-primary w-100" style="background: none; border: none;">
+                        Xoá
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</td>';
+
 
                                             renderMenu($menus, $menu->id, $level+1, $stt);
                                         }

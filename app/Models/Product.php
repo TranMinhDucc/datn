@@ -41,7 +41,7 @@ class Product extends Model
     // Quan hệ với danh mục
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->withTrashed();
     }
     public function label()
     {

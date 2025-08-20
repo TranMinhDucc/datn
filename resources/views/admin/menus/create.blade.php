@@ -59,8 +59,16 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Lưu menu</button>
+<div class="d-flex justify-content-between">
+    <a href="{{ route('admin.menus.index') }}" class="btn btn-secondary btn-sm">
+        ← Quay lại
+    </a>
+    <button type="submit" class="btn btn-primary btn-sm">
+         Lưu menu
+    </button>
+</div>
 </form>
 
+</div>
 </div>
 @endsection
