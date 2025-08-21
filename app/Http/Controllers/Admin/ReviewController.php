@@ -27,32 +27,31 @@ class ReviewController extends Controller
         return view('admin.reviews.create', compact('products', 'users'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'product_id' => 'required|exists:products,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
-            'verified_purchase' => 'required|boolean',
-            'approved' => 'required|boolean', // ✅ Thêm validate approved
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'user_id'           => 'required|exists:users,id',
+        'product_id'        => 'required|exists:products,id',
+        'rating'            => 'required|integer|min:1|max:5',
+        'comment'           => 'required|string|max:1000',
+        'verified_purchase' => 'required|boolean',
+    ], [
+        'user_id.required' => 'Vui lòng chọn người dùng.',
+        'product_id.required' => 'Vui lòng chọn sản phẩm.',
+        'rating.required' => 'Vui lòng chọn số sao.',
+        'comment.required' => 'Vui lòng nhập nội dung đánh giá.',
+        'verified_purchase.required' => 'Vui lòng chọn trạng thái xác minh.',
+    ]);
 
-        $data = $request->only([
-            'user_id',
-            'product_id',
-            'rating',
-            'comment',
-            'verified_purchase',
-            'approved', // ✅ Lấy approved từ form
-        ]);
+    // Set giá trị mặc định cho approved (0 = chưa duyệt)
+    $validated['approved'] = 0;
 
-        $data['created_at'] = now();
+    Review::create($validated);
 
-        Review::create($data);
+    return redirect()->route('admin.reviews.index')
+        ->with('success', 'Thêm đánh giá thành công!');
+}
 
-        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được thêm.');
-    }
 
     public function show(Review $review)
     {
