@@ -860,7 +860,7 @@
                                                                                     class="stretched-link"></a>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="return-box">
+                                                                       <div class="return-box">
                                                                             <div class="review-box">
                                                                                 @php
                                                                                     // Lấy model sản phẩm để tính trung bình sao
@@ -893,7 +893,7 @@
     
                                                                                 @if($order->status == 'completed')
                                                                                     {{-- Nút modal --}}
-                                                                                    <span class="openReviewModal" title="Quick View"
+<span class="openReviewModal" title="Quick View"
                                                                                         tabindex="0"
                                                                                         data-product="{{ $orderItem->product->id }}"
                                                                                         data-product-name="{{ $orderItem->product->name }}"
