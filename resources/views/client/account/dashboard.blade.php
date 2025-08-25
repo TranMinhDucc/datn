@@ -42,13 +42,13 @@
                                         onclick="document.getElementById('avatarInput').click()" style="cursor:pointer;">
                                         <div class="avatar-wrapper">
                                             <img src="{{ $user->avatar_url }} " alt="avatar" class="avatar-img" style="width: 130px;
-                                      height: 130px;
-                                      border-radius: 50%;
-                                      overflow: hidden;
-                                      position: relative;
-                                      margin: auto;
-                                      border: 3px solid #fff;
-                                      box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
+                                                      height: 130px;
+                                                      border-radius: 50%;
+                                                      overflow: hidden;
+                                                      position: relative;
+                                                      margin: auto;
+                                                      border: 3px solid #fff;
+                                                      box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
                                         </div>
 
                                         <div class="camera-icon-overlay d-flex justify-content-center align-items-center">
@@ -544,8 +544,7 @@
                                                         @foreach ($items as $order)
                                                             <div class="order-box">
                                                                 <div
-                                                                    class="order-container d-flex justify-content-between align-items-center"
-                                                                    >
+                                                                    class="order-container d-flex justify-content-between align-items-center">
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="order-icon me-3">
                                                                             <i class="iconsax"
@@ -578,8 +577,19 @@
                                                                                 đặt vào ngày
                                                                                 {{ optional($order->created_at)->format('d/m/Y') }}
                                                                             </p>
-                                                                            <div class="show-more-my-order" data-bs-toggle="collapse" data-bs-target="#myOrder{{$order->id}}">
-                                                                                Xem chi tiết
+                                                                            <div class="show-more-my-order collapsed"
+                                                                                data-bs-toggle="collapse"
+                                                                                data-bs-target="#myOrder{{$order->id}}"
+                                                                                aria-expanded="false" style="cursor:pointer;">
+                                                                                <span class="text-show text-primary">Xem chi
+                                                                                    tiết</span>
+                                                                                <span class="text-hide d-none text-danger">Thu
+                                                                                    gọn</span>
+                                                                            </div>
+
+                                                                            <div class="collapse mt-2" id="myOrder{{$order->id}}">
+                                                                                <!-- Nội dung chi tiết đơn hàng -->
+                                                                                <p>Thông tin đơn hàng #{{$order->id}}</p>
                                                                             </div>
 
                                                                             {{-- Thông báo hoàn tiền --}}
@@ -819,25 +829,26 @@
                                                                                     <img src="{{ asset('images/default.png') }}"
                                                                                         alt="Không có ảnh" style="max-width: 150px;">
                                                                                 @endif
-    
+
                                                                                 {{-- Nội dung --}}
                                                                                 <div class="order-wrap">
                                                                                     <h5>{{ $orderItem->product_name }}</h5>
-                                                                                    <p style="overflow:hidden;width:100%;">{{ $orderItem->product->description ?? 'Không có mô tả' }}
+                                                                                    <p style="overflow:hidden;width:100%;">
+                                                                                        {{ $orderItem->product->description ?? 'Không có mô tả' }}
                                                                                     </p>
                                                                                     <ul style="list-style: none; padding-left: 0;">
                                                                                         <li>
                                                                                             <p>Giá :</p>
                                                                                             <span>{{ number_format($orderItem->price, 0, ',', '.') }}₫</span>
                                                                                         </li>
-    
+
                                                                                         @php
                                                                                             $variantValues = json_decode(
                                                                                                 $orderItem->variant_values ?? '{}',
                                                                                                 true,
                                                                                             );
                                                                                         @endphp
-    
+
                                                                                         @if (!empty($variantValues))
                                                                                             @foreach ($variantValues as $key => $value)
                                                                                                 <li>
@@ -846,54 +857,55 @@
                                                                                                 </li>
                                                                                             @endforeach
                                                                                         @endif
-    
-    
+
+
                                                                                         <li>
                                                                                             <p>Mã đơn hàng :</p>
                                                                                             <span>{{ $orderItem->order->order_code ?? '---' }}</span>
                                                                                         </li>
                                                                                     </ul>
                                                                                 </div>
-    
+
                                                                                 {{-- Link ẩn phủ toàn bộ box --}}
                                                                                 <a href="{{ route('client.orders.tracking.show', $order->id) }}"
                                                                                     class="stretched-link"></a>
                                                                             </div>
                                                                         </div>
-                                                                       <div class="return-box">
+                                                                        <div class="return-box">
                                                                             <div class="review-box">
                                                                                 @php
                                                                                     // Lấy model sản phẩm để tính trung bình sao
                                                                                     $prod = $orderItem->product ?? ($product ?? null);
-    
+
                                                                                     // Trung bình sao (0 → 5), làm tròn 1 chữ số
                                                                                     $avgRating = $prod ? round($prod->reviews()->avg('rating') ?? 0, 1) : 0;
-    
+
                                                                                     $fullStars = floor($avgRating);                 // số sao đầy
                                                                                     $halfStar = ($avgRating - $fullStars) >= 0.5;  // có nửa sao không
                                                                                 @endphp
-    
+
                                                                                 <ul class="rating">
                                                                                     {{-- Sao đầy --}}
                                                                                     @for ($i = 1; $i <= $fullStars; $i++)
                                                                                         <li><i class="fa-solid fa-star"></i></li>
                                                                                     @endfor
-    
+
                                                                                     {{-- Sao nửa --}}
                                                                                     @if ($halfStar)
-                                                                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                                                                        <li><i class="fa-solid fa-star-half-stroke"></i>
+                                                                                        </li>
                                                                                     @endif
-    
+
                                                                                     {{-- Sao rỗng --}}
                                                                                     @for ($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
                                                                                         <li><i class="fa-regular fa-star"></i></li>
                                                                                     @endfor
                                                                                 </ul>
-    
-    
+
+
                                                                                 @if($order->status == 'completed')
                                                                                     {{-- Nút modal --}}
-<span class="openReviewModal" title="Quick View"
+                                                                                    <span class="openReviewModal" title="Quick View"
                                                                                         tabindex="0"
                                                                                         data-product="{{ $orderItem->product->id }}"
                                                                                         data-product-name="{{ $orderItem->product->name }}"
@@ -902,7 +914,7 @@
                                                                                         data-order-item-id="{{ $orderItem->id }}">
                                                                                         Viết đánh giá
                                                                                     </span>
-    
+
                                                                                     {{-- Link dự phòng đến trang sản phẩm --}}
                                                                                     {{-- @if ($orderItem->product)
                                                                                     <a href="{{ route('client.products.show', $orderItem->product->slug) }}#review"
@@ -1735,7 +1747,7 @@
                             <div class="form-group">
                                 <label class="form-label">Nội dung :</label>
                                 <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
-                                    placeholder="Write your comments here..." required></textarea>
+                                    placeholder="Viết bình luận của bạn tại đây..." required></textarea>
                             </div>
                         </div>
 
@@ -2218,14 +2230,14 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-<<<<<<< HEAD
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
-=======
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            success ') }}',
->>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
-                showConfirmButton: false,
+                                <<<<<<< HEAD
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
+                                =======
+                success ') }}',
+                                >>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
+                                        showConfirmButton: false,
                 timer: 1200
-            });
+                                    });
         </script>
     @endif
 
@@ -2289,6 +2301,27 @@
                 });
         }
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.show-more-my-order').forEach(function(toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            let showText = toggleBtn.querySelector('.text-show');
+            let hideText = toggleBtn.querySelector('.text-hide');
 
+            setTimeout(() => {
+                if (toggleBtn.classList.contains('collapsed')) {
+                    // Đang thu gọn -> hiện "Xem chi tiết" màu xanh
+                    showText.classList.remove('d-none');
+                    hideText.classList.add('d-none');
+                } else {
+                    // Đang mở -> hiện "Thu gọn" màu đỏ
+                    showText.classList.add('d-none');
+                    hideText.classList.remove('d-none');
+                }
+            }, 200);
+        });
+    });
+});
+</script>
 
 @endsection
