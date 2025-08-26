@@ -652,7 +652,7 @@ class CheckoutController extends Controller
                     }
 
                     // ✅ Giữ chỗ thay vì trừ thật
-                    $this->$inventoryService->reserveStock($variant->id, $item['quantity']);
+                    $this->inventoryService->reserveStock($variant->id, $item['quantity']);
                 } else {
                     $available = $product->stock_quantity;
 

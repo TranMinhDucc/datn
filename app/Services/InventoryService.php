@@ -79,25 +79,29 @@ class InventoryService
     public function confirmReservedStock(int $variantId, int $quantity, int $userId): void
     {
         DB::transaction(function () use ($variantId, $quantity, $userId) {
-            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+            $variant = ProductVariant::with('product')->lockForUpdate()->findOrFail($variantId);
 
             if ($variant->reserved_quantity < $quantity) {
                 throw new \Exception("Số lượng giữ chỗ không đủ để xác nhận.");
             }
 
             // Trừ tồn kho thực
-            $this->adjustStockGeneral(
-                'variant',
-                $variantId,
-                $quantity,
-                'export',
-                'Xác nhận đơn hàng',
-                $userId
-            );
+            $variant->quantity -= $quantity;
 
             // Giảm giữ chỗ
             $variant->reserved_quantity -= $quantity;
+
             $variant->save();
+
+            // Ghi log giao dịch
+            InventoryTransaction::create([
+                'product_id' => $variant->product_id,
+                'product_variant_id' => $variant->id,
+                'type' => 'export',
+                'quantity' => $quantity,
+                'note' => 'Xác nhận đơn hàng',
+                'created_by' => $userId,
+            ]);
         });
     }
     public function releaseReservedStock(int $variantId, int $quantity): void
