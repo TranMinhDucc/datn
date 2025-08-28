@@ -564,10 +564,10 @@
                                                         <p>{{ $rating_summary['1_star_percent'] }}%</p>
                                                     </li>
                                                 </ul>
-                                                <button class="btn reviews-modal" data-bs-toggle="modal"
+                                                {{-- <button class="btn reviews-modal" data-bs-toggle="modal"
                                                     data-bs-target="#Reviews-modal" title="Quick View"
                                                     tabindex="0">Write a
-                                                    review</button>
+                                                    review</button> --}}
                                             </div>
                                         </div>
                                     </div>

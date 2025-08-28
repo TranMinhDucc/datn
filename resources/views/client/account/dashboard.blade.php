@@ -50,8 +50,7 @@
                                       margin: auto;
                                       border: 3px solid #fff;
                                       box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);">
-                                        </div>
-
+                      </div>
                                         <div class="camera-icon-overlay d-flex justify-content-center align-items-center">
                                             {{-- <i class="fas fa-camera"></i> --}}
                                         </div>
@@ -602,11 +601,19 @@
                                                                                 đặt vào ngày
                                                                                 {{ optional($order->created_at)->format('d/m/Y') }}
                                                                             </p>
-                                                                            <div class="show-more-my-order"
-                                                                                data-bs-toggle="collapse"
-                                                                                data-bs-target="#myOrder{{ $order->id }}">
-                                                                                Xem chi tiết
-                                                                            </div>
+<div class="show-more-my-order collapsed"
+    data-bs-toggle="collapse"
+    data-bs-target="#myOrder{{$order->id}}"
+    aria-expanded="false" style="cursor:pointer;">
+    <span class="text-show text-primary">Xem chi tiết</span>
+    <span class="text-hide d-none text-danger">Thu gọn</span>
+</div>
+
+<div class="collapse mt-2" id="myOrder{{$order->id}}">
+    <!-- Nội dung chi tiết đơn hàng -->
+    <p>Thông tin đơn hàng #{{$order->id}}</p>
+</div>
+
 
                                                                             {{-- Thông báo hoàn tiền --}}
                                                                             @if ($order->status === 'cancelled')
@@ -925,23 +932,15 @@
                                                                             <div class="review-box">
                                                                                 @php
                                                                                     // Lấy model sản phẩm để tính trung bình sao
-                                                                                    $prod =
-                                                                                        $orderItem->product ??
-                                                                                        ($product ?? null);
+
+                                                                                    $prod = $orderItem->product ?? ($product ?? null);
 
                                                                                     // Trung bình sao (0 → 5), làm tròn 1 chữ số
-                                                                                    $avgRating = $prod
-                                                                                        ? round(
-                                                                                            $prod
-                                                                                                ->reviews()
-                                                                                                ->avg('rating') ?? 0,
-                                                                                            1,
-                                                                                        )
-                                                                                        : 0;
+                                                                                    $avgRating = $prod ? round($prod->reviews()->avg('rating') ?? 0, 1) : 0;
 
-                                                                                    $fullStars = floor($avgRating); // số sao đầy
-                                                                                    $halfStar =
-                                                                                        $avgRating - $fullStars >= 0.5; // có nửa sao không
+                                                                                    $fullStars = floor($avgRating);                 // số sao đầy
+                                                                                    $halfStar = ($avgRating - $fullStars) >= 0.5;  // có nửa sao không
+
                                                                                 @endphp
 
                                                                                 <ul class="rating">
@@ -954,9 +953,9 @@
 
                                                                                     {{-- Sao nửa --}}
                                                                                     @if ($halfStar)
-                                                                                        <li><i
-                                                                                                class="fa-solid fa-star-half-stroke"></i>
-                                                                                        </li>
+
+                                                                                        <li><i class="fa-solid fa-star-half-stroke"></i>
+
                                                                                     @endif
 
                                                                                     {{-- Sao rỗng --}}
@@ -968,10 +967,12 @@
                                                                                 </ul>
 
 
-                                                                                @if ($order->status == 'completed')
+
+                                                                                @if($order->status == 'completed')
                                                                                     {{-- Nút modal --}}
-                                                                                    <span class="openReviewModal"
-                                                                                        title="Quick View" tabindex="0"
+                                                                                    <span class="openReviewModal" title="Quick View"
+                                                                                        tabindex="0"
+
                                                                                         data-product="{{ $orderItem->product->id }}"
                                                                                         data-product-name="{{ $orderItem->product->name }}"
                                                                                         data-product-price="{{ $orderItem->price }}"
@@ -1839,7 +1840,7 @@
                             <div class="form-group">
                                 <label class="form-label">Nội dung :</label>
                                 <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
-                                    placeholder="Write your comments here..." required></textarea>
+                                    placeholder="Viết bình luận của bạn tại đây..." required></textarea>
                             </div>
                         </div>
 
@@ -2325,16 +2326,14 @@
                 title: '{{ session('
                                 <<<<<<< HEAD
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     success ') }}',
-                ===
-                ===
-                =
+
+                                =======
                 success ') }}',
-                >>>
-                >>>
-                > 98 c996a41720f9f49ab11f6be11ec37e99ba8541
-                showConfirmButton: false,
+                                >>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
+                                        showConfirmButton: false,
+
                 timer: 1200
-            });
+                                    });
         </script>
     @endif
 
@@ -2398,6 +2397,27 @@
                 });
         }
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.show-more-my-order').forEach(function(toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            let showText = toggleBtn.querySelector('.text-show');
+            let hideText = toggleBtn.querySelector('.text-hide');
 
+            setTimeout(() => {
+                if (toggleBtn.classList.contains('collapsed')) {
+                    // Đang thu gọn -> hiện "Xem chi tiết" màu xanh
+                    showText.classList.remove('d-none');
+                    hideText.classList.add('d-none');
+                } else {
+                    // Đang mở -> hiện "Thu gọn" màu đỏ
+                    showText.classList.add('d-none');
+                    hideText.classList.remove('d-none');
+                }
+            }, 200);
+        });
+    });
+});
+</script>
 
 @endsection
