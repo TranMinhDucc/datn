@@ -11,6 +11,7 @@ class ProductVariant extends Model
         'variant_name',
         'price',
         'quantity',
+        'reserved_quantity',
         'sku',
         'weight',
         'length',
@@ -41,5 +42,9 @@ class ProductVariant extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'product_variant_id');
+    }
+    public function getAvailableQuantityAttribute()
+    {
+        return max(0, $this->quantity - $this->reserved_quantity);
     }
 }

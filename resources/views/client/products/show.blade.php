@@ -1359,12 +1359,9 @@
                 icon: 'error',
                 title: 'Đã có lỗi xảy ra'
             });
-<<<<<<< HEAD
-=======
         });
     });
 });
->>>>>>> 98c996a41720f9f49ab11f6be11ec37e99ba8541
         });
     </script>
 

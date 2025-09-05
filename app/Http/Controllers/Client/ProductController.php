@@ -129,7 +129,7 @@ class ProductController extends Controller
                 'id' => $variant->id,
                 'attributes' => $attributes,
                 'price' => $variant->price,
-                'quantity' => $variant->quantity,
+                'quantity' => $variant->available_quantity, // sử dụng accessor
                 'weight' => $variant->weight,
                 'length' => $variant->length,
                 'width' => $variant->width,
@@ -201,7 +201,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'ok',
                 'price' => $variant->price,
-                'quantity' => $variant->quantity,
+                'quantity' => $variant->available_quantity, // sử dụng accessor    
             ]);
         }
 
