@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
+use App\Services\InventoryService;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller

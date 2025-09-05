@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
+use App\Services\InventoryService;
 
 class OrderController extends Controller
 {
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -73,11 +81,18 @@ class OrderController extends Controller
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id && $item->quantity) {
-                ProductVariant::where('id', $item->product_variant_id)
-                    ->increment('quantity', $item->quantity);
+                if ($order->payment_status === 'paid') {
+                    // ✅ Đơn đã thanh toán → hoàn lại về tồn kho
+                    ProductVariant::where('id', $item->product_variant_id)
+                        ->increment('quantity', $item->quantity);
+                } else {
+                    // ✅ Đơn chưa thanh toán → chỉ giảm giữ chỗ
+                    $this->inventoryService->releaseReservedStock($item->product_variant_id, $item->quantity);
+                }
             }
         }
     }
+
 
     public function reorderData(Order $order)
     {
@@ -105,7 +120,4 @@ class OrderController extends Controller
 
         return view('client.account.return-form', compact('order')); // ✅ đúng đường dẫn Blade
     }
-
-    
-
 }
