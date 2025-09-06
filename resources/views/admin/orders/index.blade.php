@@ -257,6 +257,16 @@
                                                                 'color' => 'secondary',
                                                                 'icon' => 'ki-undo',
                                                             ],
+                                                            'exchange_requested' => [
+                                                                'label' => 'Yêu cầu đổi hàng',
+                                                                'color' => 'warning',
+                                                                'icon' => 'ki-refresh',
+                                                            ],
+                                                            'return_requested' => [
+                                                                'label' => 'Yêu cầu trả hàng',
+                                                                'color' => 'warning',
+                                                                'icon' => 'ki-undo',
+                                                            ],
                                                         ];
 
                                                         $status = $order->status ?? 'pending';

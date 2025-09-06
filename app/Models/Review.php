@@ -13,41 +13,57 @@ class Review extends Model
     protected $fillable = [
         'user_id',
         'product_id',
+        'order_item_id',
         'parent_id',
         'rating',
         'comment',
         'verified_purchase',
-        'approved', // <-- Cho phép cập nhật duyệt/bỏ duyệt
+        'approved', // Cho phép cập nhật duyệt/bỏ duyệt
     ];
 
-    // Quan hệ với User
+    protected $casts = [
+        'verified_purchase' => 'boolean',
+        'approved' => 'boolean',
+        'rating' => 'integer',
+    ];
+
+    /** 
+     * Quan hệ với User
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Quan hệ với Product
+    /**
+     * Quan hệ với Product
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    // Quan hệ phản hồi: Review có thể có nhiều phản hồi
+    /**
+     * Quan hệ phản hồi (replies)
+     */
     public function replies(): HasMany
     {
         return $this->hasMany(Review::class, 'parent_id');
     }
 
-    // Quan hệ với review cha nếu đây là phản hồi
+    /**
+     * Quan hệ với review cha (parent)
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Review::class, 'parent_id');
     }
+
+    /**
+     * Scope chỉ lấy review đã duyệt
+     */
     public function scopeApproved($query)
-{
-    return $query->where('approved', 1);
+    {
+        return $query->where('approved', true);
+    }
 }
-
-}
-
-

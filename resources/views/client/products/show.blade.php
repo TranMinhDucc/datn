@@ -564,16 +564,16 @@
                                                         <p>{{ $rating_summary['1_star_percent'] }}%</p>
                                                     </li>
                                                 </ul>
-                                                <button class="btn reviews-modal" data-bs-toggle="modal"
+                                                {{-- <button class="btn reviews-modal" data-bs-toggle="modal"
                                                     data-bs-target="#Reviews-modal" title="Quick View"
                                                     tabindex="0">Write a
-                                                    review</button>
+                                                    review</button> --}}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="comments-box">
-                                            <h5>Comments </h5>
+                                            <h5>Đánh giá </h5>
                                             <ul class="theme-scrollbar">
                                                 @foreach ($reviews as $review)
                                                     <li style="width:100%">
@@ -602,6 +602,21 @@
                                                                             </li>
                                                                         @endfor
                                                                     </ul>
+                                                                    @if($review->variant_values)
+                                                                        @php
+                                                                        $variant_values = json_decode($review->variant_values);
+                                                                        if (is_string($variant_values)) {
+                                                                            $variant_values = json_decode($variant_values, true);
+                                                                        }
+                                                                        @endphp
+                                                                        @if(is_array($variant_values) && count($variant_values) > 0)
+                                                                            <div>
+                                                                                @foreach ($variant_values as $key => $value)
+                                                                                    <span>{{ ucfirst($key) }}</span>: <span>{{ $value }}</span>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        @endif
+                                                                    @endif
                                                                 </div>
                                                                 @if ($review->approved)
                                                                     <p>{{ $review->comment }}</p>
@@ -715,29 +730,29 @@
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4>Write A Review</h4>
+                    <h4>Viết đánh giá của bạn</h4>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-0">
                     @auth
-                        <form action="{{ route('client.review') }}" method="POST" class="row g-3">
+                        <form id="rating-form" action="{{ route('client.review') }}" method="POST" class="row g-3">
                             @csrf
-                            {{-- <input type="hidden" name="product_id" value="{{ $test_id }}"> --}}
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
                             <input type="hidden" name="rating" id="rating-value" value="0">
 
                             <div class="col-12">
                                 <div class="reviews-product d-flex gap-3">
-                                    <img src="{{ asset('assets/images/modal/1.jpg') }}" alt="" width="80">
+                                    <img src="{{ asset('storage/' . $product->image) }}" alt="" width="80">
                                     <div>
-                                        <h5>Denim Skirts Corset Blazer</h5>
-                                        <p>$20.00 <del>$35.00</del></p>
+                                        <h5>{{ $product->name }}</h5>
+                                        <p>{{ $product->sale_price }}đ <del>{{ $product->base_price }}đ</del></p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="customer-rating">
-                                    <label class="form-label">Rating</label>
+                                    <label class="form-label">Đánh giá</label>
                                     <ul class="rating p-0 mb-0 d-flex" style="list-style: none; cursor: pointer;">
                                         @for ($i = 1; $i <= 5; $i++)
                                             <li class="star" data-value="{{ $i }}">
@@ -750,15 +765,15 @@
 
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label class="form-label">Review Content :</label>
+                                    <label class="form-label">Nội dung :</label>
                                     <textarea name="comment" class="form-control" id="comment" cols="30" rows="4"
                                         placeholder="Write your comments here..." required></textarea>
                                 </div>
                             </div>
 
                             <div class="modal-button-group d-flex gap-2">
-                                <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Cancel</button>
-                                <button class="btn btn-submit" type="submit">Submit</button>
+                                <button class="btn btn-cancel" type="button" data-bs-dismiss="modal">Hủy</button>
+                                <button class="btn btn-submit submit-rating" type="button">Gửi</button>
                             </div>
                         </form>
 
@@ -825,6 +840,7 @@
 @endsection
 @section('js')
     <script src="{{ asset('assets/client/js/grid-option.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -1310,9 +1326,9 @@
                 });
             });
 
-document.querySelectorAll('.add-to-wishlist').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const productId = this.dataset.id;
+            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.dataset.id;
 
         fetch(`/account/wishlist/add/${productId}`, {
             method: 'POST',
@@ -1353,4 +1369,15 @@ document.querySelectorAll('.add-to-wishlist').forEach(btn => {
         updateVariantInfo();
     </script>
 
+    @if (session('warning'))
+        <script>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: '{{ session('warning') }}',
+                confirmButtonText: 'OK',
+                timer: 1200,
+            });
+        </script>
+    @endif
 @endsection

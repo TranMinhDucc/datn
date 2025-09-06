@@ -61,4 +61,56 @@ class InventoryService
             }
         });
     }
+    public function reserveStock(int $variantId, int $quantity): void
+    {
+        DB::transaction(function () use ($variantId, $quantity) {
+            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+
+            $available = $variant->quantity - $variant->reserved_quantity;
+
+            if ($available < $quantity) {
+                throw new \Exception("Không đủ hàng để giữ chỗ.");
+            }
+
+            $variant->reserved_quantity += $quantity;
+            $variant->save();
+        });
+    }
+    public function confirmReservedStock(int $variantId, int $quantity, int $userId): void
+    {
+        DB::transaction(function () use ($variantId, $quantity, $userId) {
+            $variant = ProductVariant::with('product')->lockForUpdate()->findOrFail($variantId);
+
+            if ($variant->reserved_quantity < $quantity) {
+                throw new \Exception("Số lượng giữ chỗ không đủ để xác nhận.");
+            }
+
+            // Trừ tồn kho thực
+            $variant->quantity -= $quantity;
+
+            // Giảm giữ chỗ
+            $variant->reserved_quantity -= $quantity;
+
+            $variant->save();
+
+            // Ghi log giao dịch
+            InventoryTransaction::create([
+                'product_id' => $variant->product_id,
+                'product_variant_id' => $variant->id,
+                'type' => 'export',
+                'quantity' => $quantity,
+                'note' => 'Xác nhận đơn hàng',
+                'created_by' => $userId,
+            ]);
+        });
+    }
+    public function releaseReservedStock(int $variantId, int $quantity): void
+    {
+        DB::transaction(function () use ($variantId, $quantity) {
+            $variant = ProductVariant::lockForUpdate()->findOrFail($variantId);
+
+            $variant->reserved_quantity = max(0, $variant->reserved_quantity - $quantity);
+            $variant->save();
+        });
+    }
 }

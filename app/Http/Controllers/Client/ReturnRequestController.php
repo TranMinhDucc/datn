@@ -140,6 +140,12 @@ class ReturnRequestController extends Controller
                 'quantity' => $item['quantity'],
             ]);
         }
+        // Nếu là đổi hàng thì cập nhật trạng thái đơn hàng
+        if ($request->type === 'exchange') {
+            $order->update(['status' => 'exchange_requested']);
+        } elseif ($request->type === 'return') {
+            $order->update(['status' => 'return_requested']);
+        }
 
         return redirect()->route('client.account.dashboard')
             ->with('success', 'Đã gửi yêu cầu hoàn / đổi hàng thành công.');

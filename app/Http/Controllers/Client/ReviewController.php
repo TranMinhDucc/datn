@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\BadWord;
@@ -16,7 +17,13 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:1000',
             'parent_id' => 'nullable|integer',
+            'order_item_id' => 'nullable|integer',
         ]);
+
+        // kiểm tra xem người dùng đã mua hàng chưa thì mới được đánh giá
+        if (!auth()->user()->hasPurchased($request->product_id)) {
+            return back()->with('warning', 'Bạn cần phải mua sản phẩm trước khi thực hiện đánh giá');
+        }
 
         $comment = $request->comment ?? '';
         $hasBadWords = $this->containsBadWords($comment);
@@ -24,6 +31,7 @@ class ReviewController extends Controller
         Review::create([
             'user_id' => auth()->id(),
             'product_id' => $request->product_id,
+            'order_item_id' => $request->order_item_id,
             'rating' => $request->rating,
             'comment' => $comment,
             'parent_id' => $request->parent_id,

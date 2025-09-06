@@ -12,13 +12,11 @@
             <!--begin::Toolbar container-->
             <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack ">
 
-
-
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Product Form
+                        Thêm sản phẩm
                     </h1>
                     <!--end::Title-->
 
@@ -413,13 +411,13 @@
                                 @error('description')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
-                            {{-- Mô tả chi tiết --}}
+                                {{-- Mô tả chi tiết --}}
                                 <label class="form-label">Mô tả chi tiết</label>
-<textarea name="detailed_description" id="editor" class="form-control" rows="10">{{ old('detailed_description', $product->detailed_description ?? '') }}</textarea>
+                                <textarea name="detailed_description" id="editor" class="form-control" rows="10">{{ old('detailed_description', $product->detailed_description ?? '') }}</textarea>
 
-@error('detailed_description')
-    <div class="text-danger">{{ $message }}</div>
-@enderror
+                                @error('detailed_description')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
 
                                 <label>Ảnh phụ</label>
                                 <input type="file" name="images[]" id="image-input" class="form-control" multiple
@@ -428,12 +426,14 @@
                                 <!-- Thêm header và nút xóa tất cả chi tiết sản phẩm -->
                                 <div id="product-details-header" class="d-flex align-items-center mb-3">
                                     <h5 class="mb-0 me-3">Chi tiết sản phẩm</h5>
-                                    
+
                                 </div>
                                 <div id="product-details-container">
                                     {{-- Nhóm đầu tiên mặc định --}}
                                     <div class="group-wrapper mb-4 position-relative" data-group-index="0">
-                                        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" aria-label="Close"></button>
+                                        <button type="button"
+                                            class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group"
+                                            aria-label="Close"></button>
                                         <div class="mb-2">
                                             <input type="text" name="details[0][group_name]" class="form-control"
                                                 placeholder="Tên nhóm (ví dụ: Cách giặt)">
@@ -441,13 +441,16 @@
                                         <div class="sub-items-wrapper">
                                             <div class="row mb-2 sub-item">
                                                 <div class="col-md-5">
-                                                    <input type="text" name="details[0][items][0][label]" class="form-control" placeholder="Nhãn">
+                                                    <input type="text" name="details[0][items][0][label]"
+                                                        class="form-control" placeholder="Nhãn">
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <input type="text" name="details[0][items][0][value]" class="form-control" placeholder="Giá trị">
+                                                    <input type="text" name="details[0][items][0][value]"
+                                                        class="form-control" placeholder="Giá trị">
                                                 </div>
                                                 <div class="col-md-2 d-flex align-items-center">
-                                                    <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+                                                    <button type="button"
+                                                        class="btn btn-danger btn-sm remove-sub">X</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -457,14 +460,14 @@
                                     </div>
                                 </div>
 
-{{-- Nút thêm nhóm chi tiết mới --}}
-<button type="button" class="btn btn-light-primary btn-sm mt-3" id="add-group">
-    <i class="fas fa-layer-group me-1"></i> Thêm chi tiết
-</button>
+                                {{-- Nút thêm nhóm chi tiết mới --}}
+                                <button type="button" class="btn btn-light-primary btn-sm mt-3" id="add-group">
+                                    <i class="fas fa-layer-group me-1"></i> Thêm chi tiết
+                                </button>
 
 
                             </div>
-                            
+
                         </div>
 
                         <!-- Biến thể -->
@@ -552,13 +555,13 @@
 
 
 
-<script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
-<script>
-    CKEDITOR.replace('editor', {
-filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
-        filebrowserUploadMethod: 'form'
-    });
-</script>
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor', {
+            filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
+            filebrowserUploadMethod: 'form'
+        });
+    </script>
     <script>
         function slugify(str) {
             return str
@@ -975,52 +978,52 @@ filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token
 
 
         // Chi tiết sản phẩm 
-   document.addEventListener('DOMContentLoaded', function () {
-    let groupIndex = 1;
+        document.addEventListener('DOMContentLoaded', function() {
+            let groupIndex = 1;
 
-    document.getElementById('add-group').addEventListener('click', function () {
-        const container = document.getElementById('product-details-container');
+            document.getElementById('add-group').addEventListener('click', function() {
+                const container = document.getElementById('product-details-container');
 
-        // const groupHTML = `
-        //     <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
-        //         <div class="mb-2">
-        //             <input type="text" name="details[${groupIndex}][group_name]" class="form-control"
-        //                 placeholder="Tên nhóm (ví dụ: Kích thước)">
-        //         </div>
+                // const groupHTML = `
+            //     <div class="group-wrapper mb-4" data-group-index="${groupIndex}">
+            //         <div class="mb-2">
+            //             <input type="text" name="details[${groupIndex}][group_name]" class="form-control"
+            //                 placeholder="Tên nhóm (ví dụ: Kích thước)">
+            //         </div>
 
-        //         <div class="sub-items-wrapper">
-        //             <div class="row mb-2 sub-item">
-        //                 <div class="col-md-5">
-        //                     <input type="text" name="details[${groupIndex}][items][0][label]" class="form-control" placeholder="Nhãn">
-        //                 </div>
-        //                 <div class="col-md-5">
-        //                     <input type="text" name="details[${groupIndex}][items][0][value]" class="form-control" placeholder="Giá trị">
-        //                 </div>
-        //                 <div class="col-md-2 d-flex align-items-center">
-        //                     <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
-        //                 </div>
-        //             </div>
-        //         </div>
+            //         <div class="sub-items-wrapper">
+            //             <div class="row mb-2 sub-item">
+            //                 <div class="col-md-5">
+            //                     <input type="text" name="details[${groupIndex}][items][0][label]" class="form-control" placeholder="Nhãn">
+            //                 </div>
+            //                 <div class="col-md-5">
+            //                     <input type="text" name="details[${groupIndex}][items][0][value]" class="form-control" placeholder="Giá trị">
+            //                 </div>
+            //                 <div class="col-md-2 d-flex align-items-center">
+            //                     <button type="button" class="btn btn-danger btn-sm remove-sub">X</button>
+            //                 </div>
+            //             </div>
+            //         </div>
 
-        //         <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
-        //             <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
-        //         </button>
-        //     </div>
-        // `;
+            //         <button type="button" class="btn btn-light-primary btn-sm add-sub-item mt-2">
+            //             <i class="fas fa-plus-circle me-1"></i> Thêm nhãn
+            //         </button>
+            //     </div>
+            // `;
 
-        container.insertAdjacentHTML('beforeend', groupHTML);
-        groupIndex++;
-    });
+                container.insertAdjacentHTML('beforeend', groupHTML);
+                groupIndex++;
+            });
 
-    document.addEventListener('click', function (e) {
-        // Thêm nhãn mới trong nhóm
-        if (e.target.closest('.add-sub-item')) {
-            const groupWrapper = e.target.closest('.group-wrapper');
-            const groupIdx = groupWrapper.dataset.groupIndex;
-            const subItems = groupWrapper.querySelectorAll('.sub-item');
-            const itemIdx = subItems.length;
+            document.addEventListener('click', function(e) {
+                // Thêm nhãn mới trong nhóm
+                if (e.target.closest('.add-sub-item')) {
+                    const groupWrapper = e.target.closest('.group-wrapper');
+                    const groupIdx = groupWrapper.dataset.groupIndex;
+                    const subItems = groupWrapper.querySelectorAll('.sub-item');
+                    const itemIdx = subItems.length;
 
-            const subHTML = `
+                    const subHTML = `
                 <div class="row mb-2 sub-item">
                     <div class="col-md-5">
                         <input type="text" name="details[${groupIdx}][items][${itemIdx}][label]" class="form-control" placeholder="Nhãn">
@@ -1034,29 +1037,30 @@ filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token
                 </div>
             `;
 
-            groupWrapper.querySelector('.sub-items-wrapper').insertAdjacentHTML('beforeend', subHTML);
-        }
-
-        // Xoá nhãn
-        if (e.target.classList.contains('remove-sub')) {
-            e.target.closest('.sub-item').remove();
-        }
-    });
-});
-    document.addEventListener('DOMContentLoaded', function () {
-        // Xoá nhóm chi tiết sản phẩm
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.remove-group')) {
-                const group = e.target.closest('.group-wrapper');
-                if (group) {
-                    group.remove();
+                    groupWrapper.querySelector('.sub-items-wrapper').insertAdjacentHTML('beforeend',
+                        subHTML);
                 }
-            }
+
+                // Xoá nhãn
+                if (e.target.classList.contains('remove-sub')) {
+                    e.target.closest('.sub-item').remove();
+                }
+            });
         });
-    });
-$('#add-group').click(function () {
-    let index = $('.group-wrapper').length;
-    let html = `
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xoá nhóm chi tiết sản phẩm
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-group')) {
+                    const group = e.target.closest('.group-wrapper');
+                    if (group) {
+                        group.remove();
+                    }
+                }
+            });
+        });
+        $('#add-group').click(function() {
+            let index = $('.group-wrapper').length;
+            let html = `
 <div class="group-wrapper position-relative mb-4" data-group-index="${index}">
     <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2 remove-group" style="z-index:10;" aria-label="Close"></button>
     <div class="mb-2">
@@ -1081,25 +1085,25 @@ $('#add-group').click(function () {
 </div>
 `;
 
-    $('#product-details-container').append(html);
-});
-$(document).on('click', '.remove-group', function () {
-    $(this).closest('.group-wrapper').remove();
-});
-    </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const container = document.getElementById('product-details-container');
-
-        // Xóa nhóm chi tiết
-        container.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-group')) {
-                const group = e.target.closest('.group-wrapper');
-                if (group) group.remove();
-            }
+            $('#product-details-container').append(html);
         });
-    });
-</script>
+        $(document).on('click', '.remove-group', function() {
+            $(this).closest('.group-wrapper').remove();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('product-details-container');
+
+            // Xóa nhóm chi tiết
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-group')) {
+                    const group = e.target.closest('.group-wrapper');
+                    if (group) group.remove();
+                }
+            });
+        });
+    </script>
 
 
 

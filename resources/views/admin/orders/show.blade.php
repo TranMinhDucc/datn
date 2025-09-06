@@ -5,49 +5,36 @@
     <!--begin::Content-->
     <div id="kt_app_content" class="app-content  flex-column-fluid ">
 
-        {{-- Banner theo từng yêu cầu đổi có link tới đơn đổi đã tạo --}}
-        @if (!empty($exchangesByRR) && $exchangesByRR->count())
-            @foreach ($exchangesByRR as $rrx)
-                <div class="alert alert-info d-flex align-items-center justify-content-between">
-                    <div>
-                        <i class="fa-solid fa-rotate me-2"></i>
-                        Đã tạo <strong>đơn đổi #{{ $rrx->exchange_order_id }}</strong>
-                        từ yêu cầu đổi <strong>#RR{{ $rrx->id }}</strong>.
-                        <a class="fw-semibold text-primary" href="{{ route('admin.orders.show', $rrx->exchange_order_id) }}">
-                            Xem đơn đổi
-                        </a>
-                    </div>
-                    <span class="badge badge-light-primary">Exchange</span>
-                </div>
-            @endforeach
-        @endif
 
-        {{-- Banner tổng hợp (nếu không có exchange_order_id trên return_requests) – dò theo original_order_id --}}
-        @if (!empty($exchangeOrders) && $exchangeOrders->count())
-            @foreach ($exchangeOrders as $ex)
-                <div class="alert alert-info d-flex align-items-center justify-content-between">
-                    <div>
-                        <i class="fa-solid fa-shuffle me-2"></i>
-                        Đơn hàng này đã tạo đơn đổi
-                        <a class="fw-semibold text-primary" href="{{ route('admin.orders.show', $ex->id) }}">
-                            #{{ $ex->order_code ?? $ex->id }}
-                        </a>
-                        (trạng thái: <strong>{{ $statusLabels[$ex->status] ?? $ex->status }}</strong>)
-                    </div>
-                    <span class="badge badge-light-info">
-                        {{ $ex->created_at?->format('d/m/Y H:i') }}
-                    </span>
-                </div>
-            @endforeach
-        @endif
+
+
 
         <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
+
             <!--begin::Order details page-->
             <!--begin::Xác nhận đơn hàng-->
 
             <!--end::Xác nhận đơn hàng-->
+            {{-- Banner theo từng yêu cầu đổi có link tới đơn đổi đã tạo --}}
+            @if (!empty($exchangesByRR) && $exchangesByRR->count())
+                @foreach ($exchangesByRR as $rrx)
+                    <div class="alert alert-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <i class="fa-solid fa-rotate me-2"></i>
+                            Đã tạo <strong>đơn đổi #{{ $rrx->exchange_order_id }}</strong>
+                            từ yêu cầu đổi <strong>#RR{{ $rrx->id }}</strong>.
+                            <a class="fw-semibold text-primary"
+                                href="{{ route('admin.orders.show', $rrx->exchange_order_id) }}">
+                                Xem đơn đổi
+                            </a>
+                        </div>
+                        <span class="badge badge-light-primary">Exchange</span>
+                    </div>
+                @endforeach
+            @endif
             <div class="d-flex flex-column gap-7 gap-lg-10">
+
                 <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
                     <!--begin:::Tabs-->
                     <ul
@@ -512,8 +499,15 @@
                     @foreach ($returnRequests as $request)
                         <div class="card mb-3">
                             <div class="card-header">
-                                Yêu cầu đổi hàng #{{ $request->id }} – Trạng thái: {{ $request->status }}
+                                Yêu cầu
+                                @if ($request->type === 'exchange')
+                                    Đổi hàng
+                                @elseif ($request->type === 'return')
+                                    Hoàn hàng
+                                @endif
+                                #{{ $request->id }} – Trạng thái: {{ $request->status }}
                             </div>
+
                             <div class="card-body">
                                 <ul>
                                     @foreach ($request->items as $item)
@@ -523,11 +517,11 @@
 
                                             if ($variant && $variant->options && $variant->options->count()) {
                                                 $attributes = $variant->options
-                                                    ->map(function ($opt) {
-                                                        return optional($opt->attribute)->name .
+                                                    ->map(
+                                                        fn($opt) => optional($opt->attribute)->name .
                                                             ': ' .
-                                                            optional($opt->value)->value;
-                                                    })
+                                                            optional($opt->value)->value,
+                                                    )
                                                     ->toArray();
                                                 $variantAttributes = ' – ' . implode(', ', $attributes);
                                             }
@@ -540,18 +534,46 @@
                                     @endforeach
                                 </ul>
 
-                                <a href="{{ route('admin.return-requests.exchange.form', $request->id) }}"
-                                    class="btn btn-primary btn-sm">
-                                    Xử lý đổi hàng
-                                </a>
-
-
+                                {{-- Các bước xử lý --}}
+                                @if ($request->status === 'pending')
+                                    <form action="{{ route('admin.return-requests.approve', $request->id) }}"
+                                        method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success btn-sm">Duyệt yêu cầu</button>
+                                    </form>
+                                    <form action="{{ route('admin.return-requests.reject', $request->id) }}"
+                                        method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                                    </form>
+                                @elseif ($request->status === 'approved')
+                                    @if ($request->type === 'exchange')
+                                        <a href="{{ route('admin.return-requests.exchange.form', $request->id) }}"
+                                            class="btn btn-primary btn-sm">
+                                            Tạo đơn hàng đổi
+                                        </a>
+                                    @elseif ($request->type === 'return')
+                                        <a href="{{ route('admin.return-requests.refund', $request->id) }}"
+                                            class="btn btn-warning btn-sm">
+                                            Xử lý hoàn tiền
+                                        </a>
+                                    @endif
+                                @elseif ($request->status === 'exchanged' && $request->exchange_order_id)
+                                    <a href="{{ route('admin.orders.show', $request->exchange_order_id) }}"
+                                        class="btn btn-info btn-sm">
+                                        Xem đơn hàng đổi
+                                    </a>
+                                @elseif ($request->status === 'refunded')
+                                    <span class="badge bg-success">Đã hoàn tiền</span>
+                                @elseif ($request->status === 'rejected')
+                                    <span class="badge bg-danger">Bị từ chối</span>
+                                @endif
                             </div>
                         </div>
                     @endforeach
-                @else
-                    {{-- <p class="text-muted">Không có yêu cầu đổi hàng nào.</p> --}}
                 @endif
+
+
                 {{-- <h5 class="mt-4">Lịch sử đổi/trả hàng</h5>
 
                 @if ($returnRequests->isEmpty())
