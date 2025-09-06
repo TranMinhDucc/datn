@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderSuccessMail;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -452,6 +454,9 @@ class CheckoutController extends Controller
 
                 session()->put('order_id', $order->id); // ✅ Thêm dòng này
 
+Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMail($order));
+
+
                 return redirect()->route('client.checkout.success')->with('success', 'Thanh toán MoMo thành công!');
             } catch (\Throwable $e) {
                 Log::error('❌ Lỗi tạo đơn hàng sau thanh toán MoMo: ' . $e->getMessage(), [
@@ -728,6 +733,11 @@ class CheckoutController extends Controller
 
             session()->put('order_id', $order->id);
             DB::commit(); // ✅ KẾT THÚC TRANSACTION
+            
+
+            
+Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMail($order));
+
 
             return response()->json([
                 'success'  => true,

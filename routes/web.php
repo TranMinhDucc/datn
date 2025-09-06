@@ -136,7 +136,9 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
-    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+
+
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
         Route::get('/', [ClientOrderController::class, 'index'])->name('index');
         Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
@@ -436,6 +438,13 @@ Route::get('/cron/sync-ghn-orders', function () {
         'message' => 'GHN sync triggered via HTTP.',
     ]);
 });
+// ✅ Đặt hàng (tạo đơn và gọi MoMo nếu cần)
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('client.checkout.place-order');
+Route::post('/checkout/init-momo', [CheckoutController::class, 'initMomoPayment'])->name('client.checkout.init-momo');
+Route::match(['GET', 'POST'], '/checkout/momo/callback', [CheckoutController::class, 'handleMomoCallback'])->name('client.checkout.payment-callback');
+Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRedirect'])
+    ->name('client.checkout.momo-redirect');
+
 
 // ✅ Đặt hàng (tạo đơn và gọi MoMo nếu cần)
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('client.checkout.place-order');
@@ -443,3 +452,7 @@ Route::post('/checkout/init-momo', [CheckoutController::class, 'initMomoPayment'
 Route::match(['GET', 'POST'], '/checkout/momo/callback', [CheckoutController::class, 'handleMomoCallback'])->name('client.checkout.payment-callback');
 Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRedirect'])
     ->name('client.checkout.momo-redirect');
+
+
+    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
+    ->name('client.orders.invoice');

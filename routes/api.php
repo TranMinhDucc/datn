@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Common\GHNShippingController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
@@ -20,3 +21,4 @@ Route::get('/wards', function (Request $request) {
 Route::post('/shipping/ghn-fee', [ShippingController::class, 'getGhnFee']);
 Route::post('/webhook/ghn', [GhnWebhookController::class, 'handle']);
 Route::post('/ghn/shipping-fee', [GHNShippingController::class, 'calculateShippingFee']);
+Route::post('/check-stock', [CartController::class, 'checkStock']);

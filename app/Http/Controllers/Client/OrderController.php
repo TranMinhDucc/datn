@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use App\Services\InventoryService;
 
@@ -60,6 +61,16 @@ class OrderController extends Controller
         }
 
         return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
+    }
+
+    public function downloadInvoice(Order $order)
+    {
+        // load view PDF
+        $pdf = Pdf::loadView('client.orders.invoice', compact('order'))
+            ->setPaper('a4');
+
+        // tải xuống file
+        return $pdf->download('Invoice-' . $order->order_code . '.pdf');
     }
 
 

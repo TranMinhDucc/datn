@@ -44,11 +44,10 @@
                         <img src="{{ $item->image_url }}" alt="" style="width: 60px;">
                         <div>
                           <h5>{{ $item->product_name }}</h5>
-                          <p>SKU: {{ $item->sku }}</p>
-                          @php
-                          $attrs = json_decode($item->variant_values ?? '[]', true);
-                          @endphp
-                          <p>Phân loại: {{ implode(', ', $attrs ?? []) }}</p>
+                          <p>SKU: {{ $item->product_variant->sku ?? $item->product->sku ?? 'Không có SKU' }}</p>
+
+                          <p>Phân loại: {{ $item->product_variant->variant_name ?? 'Không có phân loại' }}</p>
+
 
                         </div>
                       </div>
@@ -152,5 +151,6 @@
         sessionStorage.removeItem('productCoupon');
     });
 </script>
+
 
 @endsection
