@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('momo_trans_id')->nullable()->after('payment_method_id')->unique();
+        Schema::table('products', function (Blueprint $table) {
+            $table->string('size_chart')->nullable()->after('image'); 
+            // after('image') để dễ quản lý (nằm ngay sau cột ảnh chính)
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('momo_trans_id');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('size_chart');
         });
     }
 };
+
