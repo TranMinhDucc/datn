@@ -25,158 +25,263 @@ class ProductController extends Controller
         return view('client.products.index');
     }
 
-    public function show(string $slug)
-    {
+//     public function show(string $slug)
+//     {
 
-        $product = Product::with([
-            'variants.options.attribute',
-            'variants.options.value',
-            'category',
-            'brand',
-            'tags',
-            'images',
-            'productDetails', // thay vì 'details'
-        ])->where('slug', $slug)->firstOrFail();
-        $groupedDetails = $product->productDetails
-            ? collect($product->productDetails)->groupBy('group_name')
-            : collect([]);
+//         $product = Product::with([
+//             'variants.options.attribute',
+//             'variants.options.value',
+//             'category',
+//             'brand',
+//             'tags',
+//             'images',
+//             'productDetails', // thay vì 'details'
+//         ])->where('slug', $slug)->firstOrFail();
+//         $groupedDetails = $product->productDetails
+//             ? collect($product->productDetails)->groupBy('group_name')
+//             : collect([]);
 
-        $productImages = ProductImage::where('product_id', $product->id)
-            ->where('is_thumbnail', false)
-            ->get();
+//         $productImages = ProductImage::where('product_id', $product->id)
+//             ->where('is_thumbnail', false)
+//             ->get();
 
-        // Gom các thuộc tính
-        $attributeGroups = [];
+//         // Gom các thuộc tính
+//         $attributeGroups = [];
 
-        foreach ($product->variants as $variant) {
-            foreach ($variant->options as $option) {
-                $attrName = $option->attribute->name;
-                $value = $option->value->value;
+//         foreach ($product->variants as $variant) {
+//             foreach ($variant->options as $option) {
+//                 $attrName = $option->attribute->name;
+//                 $value = $option->value->value;
 
-                if (!isset($attributeGroups[$attrName])) {
-                    $attributeGroups[$attrName] = [];
-                }
+//                 if (!isset($attributeGroups[$attrName])) {
+//                     $attributeGroups[$attrName] = [];
+//                 }
 
-                if (!in_array($value, $attributeGroups[$attrName])) {
-                    $attributeGroups[$attrName][] = $value;
-                }
+//                 if (!in_array($value, $attributeGroups[$attrName])) {
+//                     $attributeGroups[$attrName][] = $value;
+//                 }
+//             }
+//         }
+
+//         // Lấy đánh giá
+//         $reviews = Review::select('reviews.*', 'order_items.variant_values', 'order_items.price')
+//             ->leftJoin('order_items', 'reviews.order_item_id', '=', 'order_items.id')
+//             ->where('reviews.product_id', $product->id)
+//             ->where('reviews.approved', true)
+//             ->with('user')
+//             ->latest()
+//             ->get();
+
+//         $rating_summary = [
+//             'avg_rating' => null,
+//             'total_rating' => count($reviews),
+//             '5_star_percent' => 0,
+//             '4_star_percent' => 0,
+//             '3_star_percent' => 0,
+//             '2_star_percent' => 0,
+//             '1_star_percent' => 0,
+//         ];
+
+//         if ($rating_summary['total_rating'] > 0) {
+//             $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
+
+//             foreach ($reviews as $review) {
+//                 switch ($review->rating) {
+//                     case '1':
+//                         $star_1++;
+//                         break;
+//                     case '2':
+//                         $star_2++;
+//                         break;
+//                     case '3':
+//                         $star_3++;
+//                         break;
+//                     case '4':
+//                         $star_4++;
+//                         break;
+//                     case '5':
+//                         $star_5++;
+//                         break;
+//                 }
+//             }
+
+//             $total = $rating_summary['total_rating'];
+//             $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+//             $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+//             $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+//             $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+//             $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+//             $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
+//         }
+
+//         // Lấy danh sách biến thể (variants) để truyền sang JavaScript
+// $variants = ProductVariant::where('product_id', $product->id)
+//     ->where('is_active', 1)   // ✅ chỉ lấy variant bật
+//     ->with(['variantOptions.attribute', 'variantOptions.value'])
+//     ->get();
+
+//         $formattedVariants = $variants->map(function ($variant) {
+//             $attributes = [];
+//             foreach ($variant->variantOptions as $option) {
+//                 $attributes[$option->attribute->name] = $option->value->value;
+//             }
+
+//             return [
+//                 'id' => $variant->id,
+//                 'attributes' => $attributes,
+//                 'price' => $variant->price,
+//                 'quantity' => $variant->available_quantity, // sử dụng accessor
+//                 'weight' => $variant->weight,
+//                 'length' => $variant->length,
+//                 'width' => $variant->width,
+//                 'height' => $variant->height,
+//             ];
+//         });
+
+//         // Gom thuộc tính hiển thị
+//         $attributes = [];
+// foreach ($variants as $variant) {
+//     foreach ($variant->variantOptions as $option) {
+//         $attrName = $option->attribute->name;
+//         $value    = $option->value->value;
+
+//         if (!isset($attributes[$attrName])) {
+//             $attributes[$attrName] = [];
+//         }
+
+//         if (!in_array($value, $attributes[$attrName])) {
+//             $attributes[$attrName][] = $value;
+//         }
+//     }
+// }
+
+//         $product->related_products = Product::where('category_id', $product->category_id)
+//             ->where('id', '!=', $product->id)
+//             ->take(4)
+//             ->get();
+//         // Lấy danh sách sản phẩm gợi y
+//         $recommendedProducts = $this->getRecommendedProducts();
+//         return view('client.products.show', compact(
+//             'product',
+//             'attributeGroups',
+//             'productImages',
+//             'reviews',
+//             'rating_summary',
+//             'attributes',
+//             'groupedDetails',
+//             'recommendedProducts',
+//         ))->with('variants', $formattedVariants);
+//     }
+public function show(string $slug)
+{
+    // 1) Load product + VARIANTS ĐANG BẬT
+    $product = Product::with([
+        'variants' => function ($q) {
+            $q->where('is_active', 1)
+              ->with(['options.attribute', 'options.value']);
+        },
+        'category', 'brand', 'tags', 'images', 'productDetails',
+    ])->where('slug', $slug)->firstOrFail();
+
+    // 2) Nhóm chi tiết
+    $groupedDetails = $product->productDetails
+        ? collect($product->productDetails)->groupBy('group_name')
+        : collect([]);
+
+    // 3) Ảnh phụ (nếu bạn có quan hệ images rồi thì có thể filter qua quan hệ)
+    $productImages = ProductImage::where('product_id', $product->id)
+        ->where('is_thumbnail', false)
+        ->get();
+
+    // 4) GOM THUỘC TÍNH từ các variant đã được lọc (is_active=1)
+    $attributeGroups = [];
+    foreach ($product->variants as $variant) {
+        foreach ($variant->options as $option) {
+            $attrName = $option->attribute->name;
+            $val      = $option->value->value;
+
+            $attributeGroups[$attrName] ??= [];
+            if (!in_array($val, $attributeGroups[$attrName], true)) {
+                $attributeGroups[$attrName][] = $val;
             }
         }
-
-        // Lấy đánh giá
-        $reviews = Review::select('reviews.*', 'order_items.variant_values', 'order_items.price')
-            ->leftJoin('order_items', 'reviews.order_item_id', '=', 'order_items.id')
-            ->where('reviews.product_id', $product->id)
-            ->where('reviews.approved', true)
-            ->with('user')
-            ->latest()
-            ->get();
-
-        $rating_summary = [
-            'avg_rating' => null,
-            'total_rating' => count($reviews),
-            '5_star_percent' => 0,
-            '4_star_percent' => 0,
-            '3_star_percent' => 0,
-            '2_star_percent' => 0,
-            '1_star_percent' => 0,
-        ];
-
-        if ($rating_summary['total_rating'] > 0) {
-            $star_5 = $star_4 = $star_3 = $star_2 = $star_1 = 0;
-
-            foreach ($reviews as $review) {
-                switch ($review->rating) {
-                    case '1':
-                        $star_1++;
-                        break;
-                    case '2':
-                        $star_2++;
-                        break;
-                    case '3':
-                        $star_3++;
-                        break;
-                    case '4':
-                        $star_4++;
-                        break;
-                    case '5':
-                        $star_5++;
-                        break;
-                }
-            }
-
-            $total = $rating_summary['total_rating'];
-            $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
-            $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
-            $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
-            $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
-            $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
-            $rating_summary['avg_rating'] = ($star_5 * 5 + $star_4 * 4 + $star_3 * 3 + $star_2 * 2 + $star_1) / $total;
-        }
-
-        // Lấy danh sách biến thể (variants) để truyền sang JavaScript
-        $variants = ProductVariant::where('product_id', $product->id)
-            ->with(['variantOptions.attribute', 'variantOptions.value'])
-            ->get();
-
-        $formattedVariants = $variants->map(function ($variant) {
-            $attributes = [];
-            foreach ($variant->variantOptions as $option) {
-                $attributes[$option->attribute->name] = $option->value->value;
-            }
-
-            return [
-                'id' => $variant->id,
-                'attributes' => $attributes,
-                'price' => $variant->price,
-                'quantity' => $variant->available_quantity, // sử dụng accessor
-                'weight' => $variant->weight,
-                'length' => $variant->length,
-                'width' => $variant->width,
-                'height' => $variant->height,
-            ];
-        });
-
-        // Gom thuộc tính hiển thị
-        $attributes = [];
-
-        foreach ($variants as $variant) {
-            foreach ($variant->variantOptions as $option) {
-                $attrId = $option->attribute->id;
-                $attrName = $option->attribute->name;
-                $value = [
-                    'id' => $option->value->id,
-                    'value' => $option->value->value
-                ];
-
-                if (!isset($attributes[$attrId])) {
-                    $attributes[$attrId] = [
-                        'name' => $attrName,
-                        'values' => []
-                    ];
-                }
-
-                $attributes[$attrId]['values'][$value['id']] = $value['value'];
-            }
-        }
-
-        $product->related_products = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->take(4)
-            ->get();
-        // Lấy danh sách sản phẩm gợi y
-        $recommendedProducts = $this->getRecommendedProducts();
-        return view('client.products.show', compact(
-            'product',
-            'attributeGroups',
-            'productImages',
-            'reviews',
-            'rating_summary',
-            'attributes',
-            'groupedDetails',
-            'recommendedProducts',
-        ))->with('variants', $formattedVariants);
     }
+
+    // 5) Đánh giá (giữ nguyên logic của bạn)
+    $reviews = Review::select('reviews.*', 'order_items.variant_values', 'order_items.price')
+        ->leftJoin('order_items', 'reviews.order_item_id', '=', 'order_items.id')
+        ->where('reviews.product_id', $product->id)
+        ->where('reviews.approved', true)
+        ->with('user')
+        ->latest()
+        ->get();
+
+    $rating_summary = [
+        'avg_rating' => null,
+        'total_rating' => $reviews->count(),
+        '5_star_percent' => 0,
+        '4_star_percent' => 0,
+        '3_star_percent' => 0,
+        '2_star_percent' => 0,
+        '1_star_percent' => 0,
+    ];
+
+    if ($rating_summary['total_rating'] > 0) {
+        $star_1 = $star_2 = $star_3 = $star_4 = $star_5 = 0;
+        foreach ($reviews as $review) {
+            ${"star_{$review->rating}"}++;
+        }
+        $total = $rating_summary['total_rating'];
+        $rating_summary['1_star_percent'] = round($star_1 / $total * 100);
+        $rating_summary['2_star_percent'] = round($star_2 / $total * 100);
+        $rating_summary['3_star_percent'] = round($star_3 / $total * 100);
+        $rating_summary['4_star_percent'] = round($star_4 / $total * 100);
+        $rating_summary['5_star_percent'] = round($star_5 / $total * 100);
+        $rating_summary['avg_rating'] = ($star_5*5 + $star_4*4 + $star_3*3 + $star_2*2 + $star_1) / $total;
+    }
+
+    // 6) Danh sách VARIANTS cho JS (dùng cùng filter is_active=1)
+    $variants = ProductVariant::where('product_id', $product->id)
+        ->where('is_active', 1)
+        ->with(['options.attribute', 'options.value'])
+        ->get();
+
+    $formattedVariants = $variants->map(function ($variant) {
+        $attrs = [];
+        foreach ($variant->options as $opt) {
+            $attrs[$opt->attribute->name] = $opt->value->value;
+        }
+        return [
+            'id'        => $variant->id,
+            'attributes'=> $attrs,
+            'price'     => $variant->price,
+            'quantity'  => $variant->available_quantity, // accessor của bạn
+            'weight'    => $variant->weight,
+            'length'    => $variant->length,
+            'width'     => $variant->width,
+            'height'    => $variant->height,
+        ];
+    });
+
+    // 7) Sản phẩm liên quan + gợi ý
+    $product->related_products = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->take(4)
+        ->get();
+
+    $recommendedProducts = $this->getRecommendedProducts();
+
+    // 8) Trả view (chỉ truyền $attributeGroups cho UI chọn biến thể)
+    return view('client.products.show', compact(
+        'product',
+        'attributeGroups',
+        'productImages',
+        'reviews',
+        'rating_summary',
+        'groupedDetails',
+        'recommendedProducts',
+    ))->with('variants', $formattedVariants);
+}
 
     public function getVariantInfo(Request $request)
     {

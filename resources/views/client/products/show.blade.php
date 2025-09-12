@@ -126,20 +126,20 @@
                     </div> <!-- Đóng thẻ div.mb-2 -->
                     @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
-                                <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
-                                    <h6>{{ ucfirst($groupName) }}</h6>
-                                    <ul class="variant-list d-flex gap-2">
-                                        @foreach ($values as $val)
-                                            <li class="variant-item px-3 py-1 border rounded"
-                                                data-value="{{ $val }}" style="cursor: pointer;">
-                                                {{ $val }}
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="variant-error text-danger small mt-1" style="display: none;"></div>
-                                    <!-- thêm dòng này -->
-                                </div>
-                            @endforeach
+    <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+        <h6>{{ ucfirst($groupName) }}</h6>
+        <ul class="variant-list d-flex gap-2">
+            @foreach ($values as $val)
+                <li class="variant-item px-3 py-1 border rounded"
+                    data-value="{{ $val }}" style="cursor: pointer;">
+                    {{ $val }}
+                </li>
+            @endforeach
+        </ul>
+        <div class="variant-error text-danger small mt-1" style="display:none;"></div>
+    </div>
+@endforeach
+
 
                             <div id="variant-info" class="mt-3" style="display: none;">
                                 {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
