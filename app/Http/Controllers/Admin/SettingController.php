@@ -43,6 +43,11 @@ class SettingController extends Controller
                     'image' => 'nullable|image|max:2048',
                 ];
                 break;
+            case 'products':
+                $validationRules = [
+                    'low_stock_alert' => 'required|integer|min:0',
+                ];
+                break;
         }
 
         $validatedData = $request->validate($validationRules);

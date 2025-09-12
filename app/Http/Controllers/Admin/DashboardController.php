@@ -7,183 +7,243 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 use App\Models\Review;
+use App\Models\Setting;
+use App\Models\TrafficLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use function Psy\debug;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $today = Carbon::today();
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
-
-        // if ($request->filled('filterDatetime')) {
-        //     $startOfMonth = Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->startOfMonth();
-        //     $endOfMonth =  Carbon::createFromFormat('m-Y', $request->input('filterDatetime'))->endOfMonth();
-        // } else {
-        //     $startOfMonth = Carbon::now()->startOfMonth();
-        //     $endOfMonth = Carbon::now()->endOfMonth();
-        // }
-
-        $userFilterRange = null;
-        $ordersFilterRange = null;
-        $revenueFilterRange = null;
-        $paidFilterRange = null;
-
-        if ($request->filled('filterDatetime')) {
-            $filterDatetime = explode('-', $request->input('filterDatetime'));
-            $startFilterRange = Carbon::createFromFormat('d/m/Y', trim($filterDatetime[0]))->startOfDay();
-            $endFilterRange = Carbon::createFromFormat('d/m/Y', trim($filterDatetime[1]))->endOfDay();
-
-            $userFilterRange = User::whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
-            $ordersFilterRange = Order::whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
-            $revenueFilterRange = Order::whereBetween('created_at', [$startFilterRange, $endFilterRange])->sum('subtotal');
-            $paidFilterRange = Order::where('is_paid', true)->whereBetween('created_at', [$startFilterRange, $endFilterRange])->count();
+        // 1. Lấy khoảng ngày lọc
+        $dateRange = $request->get('daterange');
+        if ($dateRange) {
+            [$start, $end] = explode(' - ', $dateRange);
+            $startDate = Carbon::createFromFormat('d/m/Y', trim($start))->startOfDay();
+            $endDate   = Carbon::createFromFormat('d/m/Y', trim($end))->endOfDay();
+        } else {
+            $startDate = now()->subDays(30)->startOfDay();
+            $endDate   = now()->endOfDay();
         }
 
-        // Thành viên
-        $usersAll = User::count();
-        // $usersMonth = User::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
-        $usersMonth = User::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        $usersWeek = User::whereBetween('created_at', [$startOfWeek, now()])->count();
-        $usersToday = User::whereDate('created_at', $today)->count();
+        // 2. Dữ liệu traffic_logs (Referral, Direct, Social)
+        $trafficData = TrafficLog::selectRaw('DATE(created_at) as date, source, COUNT(DISTINCT session_id) as total')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date', 'source')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('source');
 
-        // Đơn hàng đã bán
-        $ordersAll = Order::count();
-        // $ordersMonth = Order::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
-        $ordersMonth = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        $ordersWeek = Order::whereBetween('created_at', [$startOfWeek, now()])->count();
-        $ordersToday = Order::whereDate('created_at', $today)->count();
+        $labels = collect();
+        $referral = collect();
+        $direct = collect();
+        $social = collect();
 
-        // Doanh thu
-        $revenueAll = Order::sum('subtotal');
-        // $revenueMonth = Order::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('subtotal');
-        $revenueMonth = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('subtotal');
-        $revenueWeek = Order::whereBetween('created_at', [$startOfWeek, now()])->sum('subtotal');
-        $revenueToday = Order::whereDate('created_at', $today)->sum('subtotal');
+        $period = new \DatePeriod($startDate, new \DateInterval('P1D'), $endDate->copy()->addDay());
+        foreach ($period as $date) {
+            $day = $date->format('Y-m-d');
+            $labels->push($day);
 
-        // Đơn đã thanh toán (thay cho "lợi nhuận")
-        $paidAll = Order::where('is_paid', true)->count();
-        // $paidMonth = Order::where('is_paid', true)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
-        $paidMonth = Order::where('is_paid', true)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        $paidWeek = Order::where('is_paid', true)->whereBetween('created_at', [$startOfWeek, now()])->count();
-        $paidToday = Order::where('is_paid', true)->whereDate('created_at', $today)->count();
+            // Direct
+            $direct->push(optional($trafficData->get('direct', collect())->firstWhere('date', $day))->total ?? 0);
 
-        // Thêm dữ liệu biểu đồ (orders revenue)
-        $selectedMonth = request('monthOrderRevenueChart', now()->month);
-        $selectedYear = now()->year;
+            // Referral
+            $referral->push(optional($trafficData->get('referral', collect())->firstWhere('date', $day))->total ?? 0);
 
-        $startOfMonth = Carbon::createFromDate($selectedYear, $selectedMonth, 1)->startOfMonth();
-        $endOfMonth = Carbon::createFromDate($selectedYear, $selectedMonth, 1)->endOfMonth();
+            // Social: gom facebook, zalo, tiktok, social
+            $socialCount = 0;
+            foreach (['facebook', 'zalo', 'tiktok', 'social'] as $socialSource) {
+                if (!empty($trafficData[$socialSource])) {
+                    $socialCount += optional($trafficData[$socialSource]->firstWhere('date', $day))->total ?? 0;
+                }
+            }
+            $social->push($socialCount);
+        }
 
-        $ordersThisMonth = Order::select(
-            DB::raw('DATE(created_at) as date'),
-            DB::raw('SUM(subtotal) as revenue'),
-            DB::raw('SUM(tax_amount) as tax') // bạn có thể thay bằng shipping_fee nếu cần
-        )
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+        // 3. Dữ liệu hoạt động người dùng
+        $active = collect();
+        $inactive = collect();
+
+        foreach ($period as $date) {
+            $day = $date->format('Y-m-d');
+
+            // User active: login đúng ngày đó
+            $activeCount = User::whereDate('last_login_at', $day)->count();
+
+            // User inactive: đã tồn tại trước ngày đó nhưng không login ngày đó
+            $inactiveCount = User::whereDate('created_at', '<=', $day)
+                ->where(function ($q) use ($day) {
+                    $q->whereNull('last_login_at')
+                        ->orWhereDate('last_login_at', '<', $day);
+                })
+                ->count();
+
+            $active->push($activeCount);
+            $inactive->push($inactiveCount);
+        }
+
+        // 4. Thống kê người dùng theo ngày đăng ký
+        $onlineData = User::selectRaw('DATE(last_login_at) as date, COUNT(*) as total')
+            ->whereNotNull('last_login_at')
+            ->whereBetween('last_login_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Dữ liệu biểu đồ
-        $chartLabels = [];
-        $chartRevenue = [];
-        $chartTax = [];
+        $userLabels = $onlineData->pluck('date');
+        $userCounts = $onlineData->pluck('total');
 
-        foreach ($ordersThisMonth as $day) {
-            $chartLabels[] = Carbon::parse($day->date)->format('d/m');
-            $chartRevenue[] = $day->revenue;
-            $chartTax[] = $day->tax;
+        // Người dùng hiện tại (online trong 5 phút gần nhất)
+        $currentUsers = User::where('last_login_at', '>=', now()->subMinutes(5))->count();
+
+        // 5. Khách hàng mới trong khoảng thời gian chọn
+        $newCustomers = User::whereBetween('created_at', [$startDate, $endDate])->count();
+
+        // 6. Thống kê khách hàng mới theo ngày
+        $newCustomerData = User::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $newCustomerLabels = $newCustomerData->pluck('date');
+        $newCustomerCounts = $newCustomerData->pluck('total');
+        // 5. Thống kê tổng khách hàng tích lũy theo ngày
+        $totalCustomersData = [];
+        $totalCustomerLabels = [];
+        $totalCustomerCounts = [];
+
+        $period = new \DatePeriod($startDate, new \DateInterval('P1D'), $endDate->copy()->addDay());
+
+        foreach ($period as $date) {
+            $day = $date->format('Y-m-d');
+            $count = User::whereDate('created_at', '<=', $day)->count(); // tổng khách hàng đến ngày đó
+            $totalCustomerLabels[] = $day;
+            $totalCustomerCounts[] = $count;
         }
-
-        // thống kê theo trạng thái đơn hàng (orders status)
-        $selectedMonth = request('monthOrderStatusChart', now()->month);
-        $selectedYear = now()->year;
-
-        $startOfMonth = Carbon::createFromDate($selectedYear, $selectedMonth, 1)->startOfMonth();
-        $endOfMonth = Carbon::createFromDate($selectedYear, $selectedMonth, 1)->endOfMonth();
-
-        $orderStatuses = Order::select('status', DB::raw('COUNT(*) as count'))
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+        // 7. Thống kê đơn hàng theo trạng thái
+        $orderStatusData = Order::select('status', DB::raw('COUNT(*) as total'))
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('status')
-            ->pluck('count', 'status')
+            ->pluck('total', 'status')
             ->toArray();
 
-        // Danh sách trạng thái đầy đủ (để hiển thị đủ dù không có đơn nào)
-        $statusLabels = [
-            'pending' => 'Chờ xác nhận',
-            'confirmed' => 'Đã xác nhận',
-            'shipping' => 'Đang giao',
-            'completed' => 'Hoàn tất',
-            'cancelled' => 'Đã hủy',
-            'returning' => 'Đang hoàn',
-            'returned' => 'Đã hoàn',
+        // Danh sách trạng thái và nhãn hiển thị
+        $orderStatuses = [
+            'pending'            => 'Chờ xử lý',
+            'confirmed'          => 'Đã xác nhận',
+            'processing'         => 'Đang xử lý',
+            'ready_for_dispatch' => 'Sẵn sàng gửi đi',
+            'shipping'           => 'Đang vận chuyển',
+            'delivery_failed'    => 'Giao hàng thất bại',
+            'delivered'          => 'Đã giao hàng',
+            'completed'          => 'Hoàn tất',
+            'cancelled'          => 'Đã hủy',
+            'return_requested'   => 'Yêu cầu trả hàng',
+            'returning'          => 'Đang trả hàng',
+            'returned'           => 'Đã trả hàng',
+            'exchange_requested' => 'Yêu cầu đổi hàng',
+            'exchanged'          => 'Đã đổi hàng',
+            'refund_processing'  => 'Đang hoàn tiền',
+            'refunded'           => 'Đã hoàn tiền',
         ];
 
-        // Ghép dữ liệu đảm bảo không thiếu trạng thái nào
-        $chartStatusLabels = [];
-        $chartStatusCounts = [];
 
-        foreach ($statusLabels as $key => $label) {
-            $chartStatusLabels[] = $label;
-            $chartStatusCounts[] = $orderStatuses[$key] ?? 0;
+        // Tạo labels và counts tương ứng
+        $orderLabels = [];
+        $orderCounts = [];
+        foreach ($orderStatuses as $key => $label) {
+            $orderLabels[] = $label;
+            $orderCounts[] = $orderStatusData[$key] ?? 0;
         }
+        // 8. Doanh thu
+        $revenue = Order::whereIn('status', ['delivered', 'completed'])
+            ->sum('total_amount'); // giả sử cột lưu tổng tiền là total_amount
 
-        // sản phẩm và danh mục bán chạy nhất
-        $bestSellingProducts = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('products.*', OrderItem::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('order_items.product_id', 'products.id', 'products.name' /* thêm các cột cần select nếu bạn dùng PostgreSQL */)
-            ->orderByDesc('total_sold')
-            ->limit(10)
+        // Doanh thu trong khoảng ngày lọc
+        $revenueInRange = Order::whereIn('status', ['delivered', 'completed'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('total_amount');
+        // 8. Đơn hàng mới nhất (kèm sản phẩm)
+        $recentOrders = Order::with(['items' => function ($q) {
+            $q->select('id', 'order_id', 'product_name', 'price', 'quantity', 'total_price', 'image_url');
+        }])
+            ->orderBy('created_at', 'desc')
+            ->take(7)
+            ->get();
+        // 9. Top sản phẩm (best seller theo số lượng bán)
+        $topProducts = OrderItem::select(
+            'product_name',
+            DB::raw('SUM(quantity) as total_sold'),
+            DB::raw('SUM(total_price) as total_revenue'),
+            DB::raw('MAX(image_url) as image_url') // lấy 1 ảnh đại diện
+        )
+            ->groupBy('product_name')
+            ->orderByDesc('total_sold') // best seller theo số lượng
+            ->take(5)
             ->get();
 
-        $bestSellingCategories = DB::table('order_items')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->join('categories as c', 'products.category_id', '=', 'c.id')
-            ->select('c.id', 'c.name', 'c.image', DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('c.id', 'c.name')
-            ->orderByDesc('total_sold')
-            ->limit(10)
-            ->get();
+        // 10. Biến thể tồn kho thấp
+        $lowStockAlert = Setting::where('name', 'low_stock_alert')->value('value') ?? 10;
 
-        return view('admin.dashboard', compact(
-            'usersAll',
-            'usersMonth',
-            'usersWeek',
-            'usersToday',
-            'ordersAll',
-            'ordersMonth',
-            'ordersWeek',
-            'ordersToday',
-            'revenueAll',
-            'revenueMonth',
-            'revenueWeek',
-            'revenueToday',
-            'paidAll',
-            'paidMonth',
-            'paidWeek',
-            'paidToday',
-            // loc theo timerange
-            'userFilterRange',
-            'ordersFilterRange',
-            'revenueFilterRange',
-            'paidFilterRange',
-            // dữ liệu biểu đồ
-            'chartLabels',
-            'chartRevenue',
-            'chartTax',
-            'chartStatusLabels',
-            'chartStatusCounts',
-            // bán chạy nhất
-            'bestSellingProducts',
-            'bestSellingCategories',
-        ));
+        $lowStockVariants = ProductVariant::with('product')
+            ->where('quantity', '<', $lowStockAlert)
+            ->orderBy('quantity', 'asc')
+            ->paginate(5, ['*'], 'low_stock_page');
 
+
+        return view('admin.dashboard', [
+            'labels'       => $labels,
+            'referral'     => $referral,
+            'direct'       => $direct,
+            'social'       => $social,
+            'active'       => $active,
+            'inactive'     => $inactive,
+            'userLabels'   => $userLabels,
+            'userCounts'   => $userCounts,
+            'currentUsers' => $currentUsers,
+            'totalCustomerLabels' => $totalCustomerLabels,
+            'totalCustomerCounts' => $totalCustomerCounts,
+            'newCustomers' => $newCustomers,  // ✅ mới thêm
+            'newCustomers'       => $newCustomers,
+            'newCustomerLabels'  => $newCustomerLabels,
+            'newCustomerCounts'  => $newCustomerCounts,
+            'startDate'    => $startDate,
+            'orderLabels' => $orderLabels,
+            'orderCounts' => $orderCounts,
+            'endDate'      => $endDate,
+            'revenue'         => $revenue,
+            'revenueInRange'  => $revenueInRange,
+            'recentOrders' => $recentOrders,
+            'topProducts'      => $topProducts,
+            'lowStockVariants' => $lowStockVariants,
+
+        ]);
+    }
+
+
+    public function salesReport(Request $request)
+    {
+        // Gom nhóm theo ngày và nguồn truy cập
+        $start = $request->get('start', now()->subDays(30)->toDateString());
+        $end = $request->get('end', now()->toDateString());
+        $data = TrafficLog::select(
+            DB::raw('DATE(visited_at) as date'),
+            DB::raw('source'),
+            DB::raw('COUNT(DISTINCT session_id) as total')
+        )
+            ->whereBetween('visited_at', [$start, $end])
+            ->groupBy('date', 'source')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('date');
+        return response()->json($data);
     }
 }

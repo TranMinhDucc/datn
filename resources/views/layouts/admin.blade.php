@@ -62,29 +62,16 @@
             window.top.location.replace(window.self.location.href);
         }
     </script>
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-
-
-
-
     <!-- Tom Select CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <!-- Tom Select JS -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-
 </head>
 
 <!--end::Head-->
@@ -135,19 +122,19 @@
     <?php
     if (isset($_SESSION['error'])) {
         echo "<script type='text/javascript'>
-                                        toastr.error('" .
+                                                                        toastr.error('" .
             addslashes($_SESSION['error']) .
             "');
-                                    </script>";
+                                                                    </script>";
         unset($_SESSION['error']); // Xóa để không hiển thị lại
     }
     
     if (isset($_SESSION['success'])) {
         echo "<script type='text/javascript'>
-                                        toastr.success('" .
+                                                                        toastr.success('" .
             addslashes($_SESSION['success']) .
             "');
-                                    </script>";
+                                                                    </script>";
         unset($_SESSION['success']); // Xóa để không hiển thị lại
     }
     

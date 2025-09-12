@@ -87,76 +87,154 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name(
 // ========== PUBLIC CLIENT ROUTES ==========
 Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])
     ->name('client.checkout.calculate-shipping-fee');
-Route::prefix('/')->name('client.')->group(function () {
-    Route::controller(HomeController::class)->group(function () {
-        Route::get('/', 'index')->name('home');
-        Route::get('/policy', 'policy')->name('policy');
-        Route::get('/faq', 'faq')->name('faq');
-    });
+// Route::middleware(['web', 'traffic'])->group(function () {
+//     Route::prefix('/')->name('client.')->group(function () {
+//         Route::controller(HomeController::class)->group(function () {
+//             Route::get('/', 'index')->name('home');
+//             Route::get('/policy', 'policy')->name('policy');
+//             Route::get('/faq', 'faq')->name('faq');
+//         });
 
-    Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
+//         Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
 
-    });
+//         });
 
-    Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
+//         Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
 
-    Route::controller(ClientProductController::class)
-        ->prefix('products')
-        ->name('products.')
-        ->group(function () {
+//         Route::controller(ClientProductController::class)
+//             ->prefix('products')
+//             ->name('products.')
+//             ->group(function () {
+//                 Route::get('/', 'index')->name('index');
+//                 Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+//                 Route::get('/search', 'search')->name('search');
+//                 Route::get('/search/suggest', 'suggest')->name('suggest');
+//                 Route::get('{slug}', 'show')->name('show');
+//             });
+//         Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
+
+//         });
+
+//         Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::get('/{blog}', 'show')->name('show');
+//         });
+//         Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
+//         Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+
+//         Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
+//         Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
+
+//         Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::get('/show', 'show')->name('show');
+//         });
+//         Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/place-order', 'placeOrder')->name('place-order');
+//         });
+
+//         Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+
+
+//         Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+//             Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+//             Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+//             Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
+//         });
+
+//         Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//         });
+
+
+//         Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+
+//         // Mua lại đơn hàng    
+//         Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
+//             ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
+//             ->name('orders.reorderData');
+//     });
+// });
+Route::middleware(['web', 'traffic'])->group(function () {
+    Route::prefix('/')->name('client.')->group(function () {
+        // Home
+        Route::controller(HomeController::class)->group(function () {
+            Route::get('/', 'index')->name('home');
+            Route::get('/policy', 'policy')->name('policy');
+            Route::get('/faq', 'faq')->name('faq');
+        });
+
+        // Contact
+        Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+            Route::post('/', 'store')->name('store');
+        });
+
+        // Products
+        Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/filter', 'filter')->name('filterSidebar');
             Route::get('/search', 'search')->name('search');
             Route::get('/search/suggest', 'suggest')->name('suggest');
             Route::get('{slug}', 'show')->name('show');
         });
-    Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
 
+        // Blog
+        Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{blog}', 'show')->name('show');
+        });
+        Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
+        Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+
+        // Category
+        Route::controller(ClientCategoryController::class)->prefix('category')->name('category.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+        });
+
+        // Cart
+        Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/show', 'show')->name('show');
+        });
+
+        // Checkout
+        Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/place-order', 'placeOrder')->name('place-order');
+        });
+        Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+        // Account Orders
+        Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+            Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+            Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+            Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
+        });
+
+        // FAQ
+        Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
+
+        // Review
+        Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+
+        // Reorder
+        Route::get('/orders/{order}/reorder-data', [ClientOrderController::class, 'reorderData'])
+            ->middleware('auth')
+            ->name('orders.reorderData');
     });
-
-    Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{blog}', 'show')->name('show');
-    });
-    Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
-    Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
-
-    Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
-    Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
-
-    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/show', 'show')->name('show');
-    });
-    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/place-order', 'placeOrder')->name('place-order');
-    });
-Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
-
-
-    Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
-        Route::get('/', [ClientOrderController::class, 'index'])->name('index');
-        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
-        Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
-    });
-
-    Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
-
-
-    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
-
-    // Mua lại đơn hàng    
-    Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
-        ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
-        ->name('orders.reorderData');
 });
+Route::get('/admin/sales-report/data', [DashboardController::class, 'salesReport'])
+    ->middleware(['auth', AdminMiddleware::class])
+    ->name('admin.sales-report.data');
 
 // // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
 // Route::middleware(['auth'])->prefix('account/orders')->name('client.orders.')->group(function () {
@@ -454,5 +532,5 @@ Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRed
     ->name('client.checkout.momo-redirect');
 
 
-    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
+Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
     ->name('client.orders.invoice');
