@@ -36,6 +36,7 @@ class Product extends Model
         'length',
         'width',
         'height',
+        'size_chart', // Ảnh bảng size
     ];
 
     // Quan hệ với danh mục

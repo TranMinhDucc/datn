@@ -54,6 +54,7 @@ class ProductController extends Controller
             'attributeGroups' => 'nullable|array',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
+            'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         // 2. Tạo slug duy nhất
@@ -124,6 +125,12 @@ class ProductController extends Controller
             }
         }
 
+        // 5.1 Ảnh bảng size
+        if ($request->hasFile('size_chart')) {
+            $path = $request->file('size_chart')->store('size_charts', 'public');
+            $product->update(['size_chart' => $path]);
+        }
+
         // 6. Lưu biến thể và liên kết thuộc tính
         if ($request->has('variants')) {
             foreach ($request->variants as $index => $variant) {
@@ -183,12 +190,16 @@ class ProductController extends Controller
     public function edit($id)
     {
         $productCheck = Product::with('category')->findOrFail($id);
-        // Kiểm tra nếu danh mục đã bị xoá mềm
+
         if ($productCheck->category && $productCheck->category->trashed()) {
             return redirect()->route('admin.products.index')
                 ->with('error', 'Danh mục của sản phẩm đã bị xoá. Không thể chỉnh sửa sản phẩm này.');
         }
-        $product = Product::with('variants')->findOrFail($id);
+
+        $product = Product::with(['variants' => function ($q) {
+            $q->withCount('orderItems');
+        }])->findOrFail($id);
+
         $details = ProductDetail::where('product_id', $id)->get();
         $variants = $product->variants;
         $variantIds = $variants->pluck('id');
@@ -217,7 +228,6 @@ class ProductController extends Controller
                 ->get();
 
             $attribute_map = [];
-
             foreach ($optionsRaw as $opt) {
                 $attrName = $attributeNames[$opt->attribute_id] ?? null;
                 $val = $valueNames[$opt->value_id] ?? null;
@@ -228,6 +238,7 @@ class ProductController extends Controller
             }
 
             return [
+                'id' => $variant->id, // thêm id
                 'attribute_map' => $attribute_map,
                 'price' => $variant->price,
                 'quantity' => $variant->quantity,
@@ -236,6 +247,8 @@ class ProductController extends Controller
                 'length' => $variant->length,
                 'width' => $variant->width,
                 'height' => $variant->height,
+                'is_active' => (bool) $variant->is_active,
+                'has_orders' => $variant->order_items_count > 0, // dùng count đã load sẵn
             ];
         });
 
@@ -424,6 +437,11 @@ class ProductController extends Controller
     // }
     public function update(Request $request, $id)
     {
+        \Log::info('👉 BẮT ĐẦU UPDATE PRODUCT', [
+            'product_id' => $id,
+            'request_all' => $request->all()
+        ]);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
@@ -438,20 +456,60 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'variants' => 'nullable|array',
-            'variants.*.attributes' => 'required_with:variants|array|min:1',
+            'variants.*.attributes' => 'nullable|array|min:1',
             'variants.*.price' => 'required_with:variants|numeric|min:0.01',
             'variants.*.quantity' => 'required_with:variants|integer|min:0',
             'variants.*.sku' => 'required_with:variants|string|max:100',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
+            'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $product = Product::findOrFail($id);
 
-        DB::beginTransaction();
+        $manualVariants = array_values($request->input('variants', []) ?? []); // reindex 0..n
 
+        $errors = [];
+
+        // 2.1 Trùng SKU giữa các dòng trong form
+        $seen = [];
+        foreach ($manualVariants as $i => $row) {
+            $sku = trim($row['sku'] ?? '');
+            if ($sku === '') continue;
+
+            if (isset($seen[$sku])) {
+                $errors["variants.$i.sku"] = 'SKU bị trùng lặp giữa các biến thể.';
+            } else {
+                $seen[$sku] = true;
+            }
+        }
+
+        // 2.2 Trùng SKU với DB (toàn bảng product_variants), bỏ qua chính biến thể đang sửa
+        $inputSkus = array_keys($seen);
+        if (!empty($inputSkus)) {
+            $selfIds = collect($manualVariants)->pluck('id')->filter()->map(fn($v) => (int)$v)->all();
+
+            $conflicts = ProductVariant::query()
+                ->whereIn('sku', $inputSkus)
+                ->when(!empty($selfIds), fn($q) => $q->whereNotIn('id', $selfIds))
+                ->pluck('id', 'sku'); // [sku => id]
+
+            foreach ($manualVariants as $i => $row) {
+                $sku = trim($row['sku'] ?? '');
+                if ($sku !== '' && $conflicts->has($sku)) {
+                    $errors["variants.$i.sku"] = 'Mã SKU đã tồn tại trong hệ thống.';
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            // Trả về kèm lỗi theo từng ô; layout Toastr sẽ show từng lỗi thành toast
+            return back()->withErrors($errors)->withInput();
+        }
+
+        DB::beginTransaction();
         try {
-            // 1. Cập nhật thông tin sản phẩm chính
+            // --- 1. Cập nhật sản phẩm chính ---
             $product->update([
                 'name' => $request->name,
                 'slug' => $request->slug ?? Str::slug($request->name),
@@ -463,140 +521,137 @@ class ProductController extends Controller
                 'stock_quantity' => $request->stock_quantity,
                 'description' => $request->description,
                 'detailed_description' => $request->detailed_description,
-                'is_active' => $request->is_active,
+                'is_active' => $request->is_active ?? 0,
                 'starts_at' => $request->starts_at,
                 'ends_at' => $request->ends_at,
                 'sale_times' => $request->sale_times,
             ]);
 
-            // 2. Cập nhật ảnh đại diện nếu có
+            \Log::info('✅ PRODUCT UPDATED', ['product_id' => $product->id]);
+
+            // --- 2. Cập nhật ảnh đại diện ---
             if ($request->hasFile('image')) {
-                if ($product->image) {
-                    Storage::disk('public')->delete($product->image);
-                }
-                $path = $request->file('image')->store('products', 'public');
-                $product->update(['image' => $path]);
+                \Log::info('🖼 Cập nhật ảnh đại diện');
             }
 
-            // 3. Xoá ảnh phụ nếu có yêu cầu
-            if ($request->has('delete_image_ids')) {
-                foreach ($request->delete_image_ids as $imageId) {
-                    $image = ProductImage::find($imageId);
-                    if ($image) {
-                        Storage::disk('public')->delete($image->image_url);
-                        $image->delete();
-                    }
-                }
-            }
-
-            // 4. Thêm ảnh phụ mới
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $img) {
-                    $path = $img->store('products', 'public');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_url' => $path,
-                        'is_thumbnail' => false,
-                    ]);
-                }
-            }
-
-            // 5. Cập nhật chi tiết sản phẩm
-            $product->productDetails()->delete();
-            foreach ($request->input('details', []) as $group) {
-                $groupName = $group['group_name'] ?? null;
-                if (!$groupName || empty($group['items'])) continue;
-
-                foreach ($group['items'] as $item) {
-                    if (!empty($item['label']) || !empty($item['value'])) {
-                        $product->productDetails()->create([
-                            'group_name' => $groupName,
-                            'label' => $item['label'],
-                            'value' => $item['value'] ?? null
-                        ]);
-                    }
-                }
-            }
-
-            // 6. Cập nhật biến thể
+            // --- 3. Cập nhật biến thể ---
             $existingVariants = $product->variants()->with('options')->get();
             $manualVariants = $request->input('variants', []);
-            $newSKUs = collect($manualVariants)->pluck('sku')->toArray();
+            $deletedVariantIds = $request->input('deleted_variant_ids', []);
+            $existingSKUs = $existingVariants->pluck('sku')->toArray();
+            $processedIds = [];
 
-            // 6.1 Xử lý các biến thể cũ không còn
+            \Log::info('📌 Input Variants', $manualVariants);
+            \Log::info('📌 Deleted Variant IDs', $deletedVariantIds);
+
+            foreach ($manualVariants as $variantData) {
+                $variantId = !empty($variantData['id']) ? (int)$variantData['id'] : null;
+                $variantName = collect($variantData['attributes'] ?? [])->values()->join(' / ');
+
+                $newSKU = $variantData['sku'];
+
+
+                if ($variantId && $existingVariants->contains('id', $variantId)) {
+                    \Log::info('🔄 UPDATE VARIANT', ['id' => $variantId, 'data' => $variantData]);
+
+                    $variant = $existingVariants->where('id', $variantId)->first();
+                    $variant->update([
+                        'price' => $variantData['price'],
+                        'quantity' => $variantData['quantity'],
+                        'sku' => $newSKU,
+                        'weight' => $variantData['weight'] ?? 0,
+                        'length' => $variantData['length'] ?? 0,
+                        'width' => $variantData['width'] ?? 0,
+                        'height' => $variantData['height'] ?? 0,
+                        'variant_name' => $variantName,
+                        'is_active' => array_key_exists('is_active', $variantData)
+                            ? (int)$variantData['is_active']
+                            : $variant->is_active,
+
+                    ]);
+                    $variant->options()->delete();
+                } else {
+                    \Log::info('➕ CREATE NEW VARIANT', ['data' => $variantData]);
+
+                    $variant = $product->variants()->create([
+                        'sku' => $newSKU,
+                        'price' => $variantData['price'],
+                        'quantity' => $variantData['quantity'],
+                        'weight' => $variantData['weight'] ?? 0,
+                        'length' => $variantData['length'] ?? 0,
+                        'width' => $variantData['width'] ?? 0,
+                        'height' => $variantData['height'] ?? 0,
+                        'variant_name' => $variantName,
+                        'is_active' => array_key_exists('is_active', $variantData)
+                            ? (int)$variantData['is_active']
+                            : 1,
+                    ]);
+                }
+
+                // Lưu attributes
+                foreach ($variantData['attributes'] ?? [] as $attrName => $valName) {
+                    $attribute = Attribute::firstOrCreate(
+                        ['name' => $attrName],
+                        ['slug' => Str::slug($attrName)]
+                    );
+                    $value = AttributeValue::firstOrCreate([
+                        'attribute_id' => $attribute->id,
+                        'value' => $valName
+                    ]);
+                    $variant->options()->create([
+                        'attribute_id' => $attribute->id,
+                        'value_id' => $value->id,
+                    ]);
+                }
+
+                $existingSKUs[] = $newSKU;
+                $processedIds[] = $variant->id;
+            }
+
+            // --- Xóa biến thể ---
             foreach ($existingVariants as $variant) {
-                if (!in_array($variant->sku, $newSKUs)) {
+                if (in_array($variant->id, $deletedVariantIds)) {
                     if ($variant->orderItems()->exists()) {
-                        $variant->update(['is_active' => false]);
+                        \Log::warning('⚠️ Không thể xóa variant đã có đơn hàng', ['id' => $variant->id]);
+                        $variant->update(['is_active' => 0]);
                     } else {
+                        \Log::info('🗑 XÓA VARIANT', ['id' => $variant->id]);
                         $variant->options()->delete();
                         $variant->delete();
                     }
                 }
             }
 
-            // 6.2 Thêm hoặc cập nhật biến thể mới
-            foreach ($manualVariants as $variantData) {
-                // Tạo variant_name từ attributes
-                $variantName = collect($variantData['attributes'] ?? [])->values()->join(' / ');
-
-
-                $variant = $product->variants()->where('sku', $variantData['sku'])->first();
-
-                if ($variant) {
-                    $variant->update([
-                        'price' => $variantData['price'],
-                        'quantity' => $variantData['quantity'],
-                        'sku' => $variantData['sku'],
-                        'weight' => $variantData['weight'] ?? 0,
-                        'length' => $variantData['length'] ?? 0,
-                        'width' => $variantData['width'] ?? 0,
-                        'height' => $variantData['height'] ?? 0,
-                        'variant_name' => $variantName,
-                        'is_active' => true,
-                    ]);
-
-                    $variant->options()->delete();
-                } else {
-                    $variant = $product->variants()->create([
-                        'sku' => $variantData['sku'],
-                        'price' => $variantData['price'],
-                        'quantity' => $variantData['quantity'],
-                        'weight' => $variantData['weight'] ?? 0,
-                        'length' => $variantData['length'] ?? 0,
-                        'width' => $variantData['width'] ?? 0,
-                        'height' => $variantData['height'] ?? 0,
-                        'variant_name' => $variantName,
-                        'is_active' => true,
-                    ]);
-                }
-
-                // Lưu options
-                foreach ($variantData['attributes'] ?? [] as $attributeName => $valueName) {
-                    $attribute = Attribute::firstOrCreate(
-                        ['name' => $attributeName],
-                        ['slug' => Str::slug($attributeName)]
-                    );
-
-                    $value = AttributeValue::firstOrCreate([
-                        'attribute_id' => $attribute->id,
-                        'value' => $valueName
-                    ]);
-
-                    $variant->options()->create([
-                        'attribute_id' => $attribute->id,
-                        'value_id' => $value->id,
-                    ]);
-                }
+            // Xoá ảnh cũ nếu người dùng bấm nút xoá
+            if ($request->boolean('remove_size_chart') && $product->size_chart) {
+                Storage::disk('public')->delete($product->size_chart);
+                $product->size_chart = null;
             }
 
+            // Tải ảnh mới (nếu có) -> ghi đè ảnh cũ
+            if ($request->hasFile('size_chart')) {
+                if ($product->size_chart) {
+                    Storage::disk('public')->delete($product->size_chart);
+                }
+                $path = $request->file('size_chart')->store('size_charts', 'public');
+                $product->size_chart = $path;
+            }
+
+            $product->save();
+
             DB::commit();
+            \Log::info('🎉 UPDATE PRODUCT THÀNH CÔNG');
             return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('❌ Lỗi cập nhật sản phẩm: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()->with('error', 'Lỗi khi cập nhật: ' . $e->getMessage());
         }
     }
+
+
 
     public function show(Product $product)
     {

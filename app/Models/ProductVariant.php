@@ -17,6 +17,7 @@ class ProductVariant extends Model
         'length',
         'width',
         'height',
+        'is_active'
     ];
 
     // Quan hệ với sản phẩm

@@ -191,22 +191,22 @@
 
 
         <!--begin::Content container-->
+        <!--begin::Content container-->
         <div id="kt_app_content_container" class="app-container  container-xxl ">
             <!--begin::Products-->
             <div class="card card-flush">
                 <!--begin::Card header-->
                 <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                     <!--begin::Card title-->
-                    <form method="GET" action="{{ route('admin.search') }}">
-                        <div class="card-title">
-                            <div class="d-flex align-items-center position-relative my-1">
-                                <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-                                <input type="hidden" name="module" value="products"> <!-- module phải được gửi -->
-                                <input type="text" name="keyword" class="form-control form-control-solid w-250px ps-12"
-                                    placeholder="Tìm kiếm sản phẩm" value="{{ request('keyword') }}">
-                            </div>
+                    <div class="card-title">
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                            <input type="hidden" name="module" value="products"> <!-- module phải được gửi -->
+                            <input id="order-search" type="text" data-kt-ecommerce-order-filter="search"
+                                class="form-control form-control-solid w-250px ps-12" placeholder="Search Order"
+                                autocomplete="off" />
                         </div>
-                    </form>
+                    </div>
 
 
                     <!--end::Card title-->
@@ -271,9 +271,10 @@
                                 </tr>
                             </thead>
 
-                            <tbody class="fw-semibold text-gray-600 align-middle">
+                            <tbody class="fw-semibold text-gray-600 align-middle" id="orders_tbody">
                                 @foreach ($products as $product)
-                                    <tr>
+                                    <tr
+                                        data-search="{{ $product->id }} {{ $product->name }} {{ $product->sku }} {{ $product->category->name ?? '' }} {{ $product->import_price }} {{ $product->base_price }} {{ $product->sale_price }}">
                                         {{-- Checkbox --}}
                                         <td class="text-center">
                                             <div class="form-check form-check-sm form-check-custom form-check-solid">
@@ -417,4 +418,27 @@
 
     </div>
     <!--end::Content wrapper-->
+
+    <script>
+        const input = document.querySelector('[data-kt-ecommerce-order-filter="search"]');
+        const norm = s => (s || '').toString()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase().trim();
+        const deb = (fn, w = 250) => {
+            let t;
+            return (...a) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...a), w)
+            }
+        };
+
+        input.addEventListener('input', deb(e => {
+            const q = norm(e.target.value);
+            document.querySelectorAll('#orders_tbody tr').forEach(tr => {
+                const hay = norm(tr.dataset.search || tr.textContent);
+                tr.style.display = (!q || hay.includes(q)) ? '' : 'none';
+            });
+        }, 250));
+    </script>
+
 @endsection

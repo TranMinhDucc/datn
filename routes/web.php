@@ -65,6 +65,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
@@ -534,3 +535,13 @@ Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRed
 
 Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
     ->name('client.orders.invoice');
+
+
+
+    Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
+    ->name('variants.toggle')
+    ->middleware('auth');
+
+Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
+    ->name('variants.destroy')
+    ->middleware('auth');
