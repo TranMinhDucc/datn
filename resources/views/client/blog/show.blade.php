@@ -438,14 +438,15 @@
         <div class="custom-container container">
             <div class="row align-items-center">
                 <div class="col-sm-6">
-                    <h4>Blog Details</h4>
+                    <h4>Tin tức</h4>
                 </div>
                 <div class="col-sm-6">
                     <ul class="breadcrumb float-end">
-                        <li class="breadcrumb-item"> <a href="{{route('client.home')}}">Home </a></li>
-                        <li class="breadcrumb-item active"> <a href="#">Blog Details</a></li>
+                        <li class="breadcrumb-item"> <a href="{{ route('client.home') }}">Trang chủ </a></li>
+                        <li class="breadcrumb-item active"> <a href="{{ route('client.blog.index') }}">Tin tức</a></li>
                     </ul>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -462,7 +463,7 @@
                                         src="{{ asset('storage/' . $blog->thumbnail) }}"
                                         alt=""></div>
                             </div>
-                            <div class="blog-content"><span class="blog-date">{{$blog->published_at->format('l, d F Y')}}</span><a
+                            <div class="blog-content"><span class="blog-date">{{$blog->published_at->format('l, d m Y')}}</span><a
                                     href="#">
                                     <h4>{{$blog->title}}</h4>
                                 </a>
@@ -478,7 +479,7 @@
                                     @endforeach
                                 </ul>
                                 <div class="comments-container">
-                                    <h5>Comments</h5>
+                                    <h5>Bình luận</h5>
                                     <div class="comments-wrapper">
                                         @forelse($blog->comments->whereNull('parent_id') as $comment)
                                         @include('client.blog.comment', ['comment' => $comment])
@@ -493,28 +494,28 @@
                                         @endforelse
                                     </div>
                                 </div>
-                                <h5 class="pt-3">Leave a Comment</h5>
+                                <h5 class="pt-3">Để lại bình luận</h5>
 
                                 <form action="{{ route('client.blog.comment.store', $blog) }}" method="POST" class="comment-form">
                                     @csrf
                                     <div class="row gy-3 message-box">
                                         @guest
                                         <div class="col-md-6">
-                                            <label class="form-label">Full Name</label>
+                                            <label class="form-label">Tên Hiển Thị</label>
                                             <input type="text" name="guest_name" class="form-control" placeholder="Your Name"
                                                 value="{{ session('guest_name', '') }}" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Email address</label>
+                                            <label class="form-label">Email</label>
                                             <input type="email" name="guest_email" class="form-control" placeholder="Your Email"
                                                 value="{{ session('guest_email', '') }}" required>
                                         </div>
                                         @endguest
                                         <div class="col-12">
-                                            <label class="form-label">Message</label>
-                                            <textarea class="form-control" name="content" id="message" rows="6" placeholder="Write your comment here..." required></textarea>
+                                            <label class="form-label">Nội dung bình luận</label>
+                                            <textarea class="form-control" name="content" id="message" rows="6" placeholder="Viết bình luận của bạn ở đây..." required></textarea>
                                         </div>
-                                        <div class="col-12"><button type="submit" class="btn btn_black rounded sm">Post Comment</button></div>
+                                        <div class="col-12"><button type="submit" class="btn btn_black rounded sm">Đăng bình luận</button></div>
                                     </div>
 
 
@@ -537,7 +538,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Categories</h5>
+                                    <h5>Danh mục</h5>
                                 </div>
                                 <ul class="categories">
                                     @foreach ($categories as $category)
@@ -552,7 +553,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Top Post</h5>
+                                    <h5>Bài viết nổi bật</h5>
                                 </div>
                                 <ul class="top-post">
                                     @foreach($topViewedBlogs as $top)
@@ -562,7 +563,7 @@
                                             <a href="{{ route('client.blog.show', $top->slug) }}">
                                                 <h6>{{ \Illuminate\Support\Str::limit($top->title, 60) }}</h6>
                                             </a>
-                                            <p>{{ $top->published_at->format('F d, Y') }}</p>
+                                            <p>{{ $top->published_at->format('d/m/Y') }}</p>
                                         </div>
                                     </li>
                                     @endforeach
@@ -598,7 +599,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5>Follow Us</h5>
+                                    <h5>Theo dõi chúng tôi</h5>
                                 </div>
                                 <ul class="social-icon">
                                     <li> <a href="https://www.facebook.com/" target="_blank">

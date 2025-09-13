@@ -6,10 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use App\Services\InventoryService;
 
 class OrderController extends Controller
 {
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -54,6 +63,16 @@ class OrderController extends Controller
         return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
     }
 
+    public function downloadInvoice(Order $order)
+    {
+        // load view PDF
+        $pdf = Pdf::loadView('client.orders.invoice', compact('order'))
+            ->setPaper('a4');
+
+        // tải xuống file
+        return $pdf->download('Invoice-' . $order->order_code . '.pdf');
+    }
+
 
     public function show(Order $order)
     {
@@ -73,11 +92,18 @@ class OrderController extends Controller
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id && $item->quantity) {
-                ProductVariant::where('id', $item->product_variant_id)
-                    ->increment('quantity', $item->quantity);
+                if ($order->payment_status === 'paid') {
+                    // ✅ Đơn đã thanh toán → hoàn lại về tồn kho
+                    ProductVariant::where('id', $item->product_variant_id)
+                        ->increment('quantity', $item->quantity);
+                } else {
+                    // ✅ Đơn chưa thanh toán → chỉ giảm giữ chỗ
+                    $this->inventoryService->releaseReservedStock($item->product_variant_id, $item->quantity);
+                }
             }
         }
     }
+
 
     public function reorderData(Order $order)
     {
@@ -104,23 +130,5 @@ class OrderController extends Controller
         }
 
         return view('client.account.return-form', compact('order')); // ✅ đúng đường dẫn Blade
-    }
-
-    public function returnRequest(Request $request, Order $order)
-    {
-        $request->validate([
-            'reason' => 'required|string|max:1000',
-            'image' => 'nullable|image|max:2048',
-        ]);
-
-        $imagePath = $request->file('image')?->store('returns', 'public');
-
-        $order->update([
-            'return_reason' => $request->reason,
-            'return_image' => $imagePath,
-            'return_requested_at' => now(),
-        ]);
-
-        return redirect()->route('client.account.dashboard')->with('success', 'Đã gửi yêu cầu khiếu nại thành công.');
     }
 }

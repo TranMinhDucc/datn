@@ -96,4 +96,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Product::class, 'wishlists', 'user_id', 'product_id');
     }
+
+    public function hasPurchased($productId)
+    {
+        return OrderItem::whereHas('order', function($query) {
+                $query->where('user_id', $this->id)->where('status', '=', 'completed');
+            })
+            ->where('product_id', $productId)
+            ->exists();
+    }
 }

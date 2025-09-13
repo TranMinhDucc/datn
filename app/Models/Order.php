@@ -14,6 +14,10 @@ class Order extends Model
         'order_code',
         'address_id',
         'payment_method_id',
+        'payment_method',
+        'payment_reference',
+        'momo_trans_id',
+        'momo_order_id',
         'coupon_code',
         'coupon_id',
         'shipping_coupon_id',
@@ -25,7 +29,6 @@ class Order extends Model
         'status',
         'is_paid',
         'payment_status',
-        'payment_reference',
         'shipping_method',
         'shipping_tracking_code',
         'expected_delivery_date',
@@ -37,9 +40,8 @@ class Order extends Model
         'return_reason',
         'return_image',
         'refunded_at',
+        'paid_at',
     ];
-
-
 
     public function user()
     {
@@ -75,5 +77,22 @@ class Order extends Model
     public function shippingOrder()
     {
         return $this->hasOne(ShippingOrder::class);
+    }
+    public function originalOrder()
+    {
+        return $this->belongsTo(Order::class, 'exchanged_from_order_id');
+    }
+
+    public function exchangeOrders()
+    {
+        return $this->hasMany(Order::class, 'exchanged_from_order_id');
+    }
+    public function returnRequest()
+    {
+        return $this->hasOne(ReturnRequest::class, 'order_id');
+    }
+    public function returnRequests()
+    {
+        return $this->hasMany(ReturnRequest::class, 'order_id');
     }
 }

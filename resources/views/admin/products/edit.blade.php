@@ -1,6 +1,5 @@
 @extends('layouts.admin')
-
-@section('title', 'Cập nhật danh mục')
+@section('title', 'Cập nhật sản phẩm')
 @section('content')
 
     <!--begin::Content wrapper-->
@@ -18,7 +17,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 ">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Product Form
+                        Chỉnh sửa sản phẩm
                     </h1>
                     <!--end::Title-->
 
@@ -292,7 +291,7 @@
                                     <label class="form-label">Danh Mục:</label>
                                     <select name="category_id" class="form-select mb-2" data-control="select2">
                                         <option></option>
-                                        @foreach ($categories as $category)
+                                        @foreach ($categories->filter(fn($cat) => is_null($cat->deleted_at)) as $category)
                                             <option value="{{ $category->id }}"
                                                 {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name }}

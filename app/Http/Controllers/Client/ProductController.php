@@ -64,8 +64,10 @@ class ProductController extends Controller
         }
 
         // Lấy đánh giá
-        $reviews = Review::where('product_id', $product->id)
-            ->where('approved', true)
+        $reviews = Review::select('reviews.*', 'order_items.variant_values', 'order_items.price')
+            ->leftJoin('order_items', 'reviews.order_item_id', '=', 'order_items.id')
+            ->where('reviews.product_id', $product->id)
+            ->where('reviews.approved', true)
             ->with('user')
             ->latest()
             ->get();
@@ -127,7 +129,7 @@ class ProductController extends Controller
                 'id' => $variant->id,
                 'attributes' => $attributes,
                 'price' => $variant->price,
-                'quantity' => $variant->quantity,
+                'quantity' => $variant->available_quantity, // sử dụng accessor
                 'weight' => $variant->weight,
                 'length' => $variant->length,
                 'width' => $variant->width,
@@ -199,7 +201,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'ok',
                 'price' => $variant->price,
-                'quantity' => $variant->quantity,
+                'quantity' => $variant->available_quantity, // sử dụng accessor    
             ]);
         }
 

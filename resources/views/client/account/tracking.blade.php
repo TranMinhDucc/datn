@@ -16,9 +16,11 @@
             <li class="breadcrumb-item active">Chi tiết đơn hàng</li>
           </ul>
         </div>
+
       </div>
     </div>
   </div>
+  
 </section>
 
 <section class="section-b-space pt-0">
@@ -38,6 +40,7 @@
                   <th>Giao bởi</th>
                   <th>Trạng thái</th>
                   <th>Thanh toán</th>
+                  <th>Tải Hóa Đơn</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,6 +59,13 @@
                   <td>{{ $order->courier_name ?? 'Đang xử lý' }}</td>
                   <td><span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span></td>
                   <td>{{ $order->payment_method === 'cod' ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán' }}</td>
+                  <td>
+                    <a href="{{ route('client.orders.invoice', $order->id) }}"
+                      class="btn btn-sm btn-outline-primary" target="_blank">
+                      <i class="bi bi-download"></i> Hóa đơn
+                    </a>
+                  </td>
+
                 </tr>
               </tbody>
             </table>

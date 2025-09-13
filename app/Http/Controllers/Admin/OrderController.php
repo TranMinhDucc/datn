@@ -5,13 +5,34 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\PartnerLocationCode;
+use App\Models\PaymentMethod;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\ReturnRequestItem;
+use App\Models\ShippingMethod;
 use App\Models\ShippingOrder;
 use App\Models\ShopSetting;
+use App\Models\User;
 use App\Services\GhnService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\OrderStatusNotification;
+use Illuminate\Support\Facades\DB;
+
+
+use App\Mail\{
+    OrderConfirmedMail,
+    OrderPaidMail,
+    OrderShippingMail,
+    OrderCompletedMail,
+    OrderCancelledMail,
+    OrderReturnedMail,
+    OrderRefundedMail
+};
+use Illuminate\Support\Facades\Mail;
+
 
 class OrderController extends Controller
 {
@@ -65,20 +86,114 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $products = Product::with('variants')->where('is_active', 1)->get();
+        $users = User::all();
+        $paymentMethods = PaymentMethod::all();
+        $shippingMethods = ShippingMethod::all();
+
+        // Chuẩn bị dữ liệu biến thể theo sản phẩm
+        $productVariants = [];
+        foreach ($products as $product) {
+            $productVariants[$product->id] = $product->variants->map(function ($variant) {
+                $attributes = $variant->options->map(function ($option) {
+                    $attrName = optional($option->attribute)->name;
+                    $value = optional($option->value)->value;
+                    return $attrName . ': ' . $value;
+                })->toArray();
+
+                return [
+                    'id' => $variant->id,
+                    'variant_name' => implode(', ', $attributes) ?: 'Không có thuộc tính',
+                    'price' => $variant->price,
+                ];
+            })->all();
+        }
+
+        return view('admin.orders.create', compact('products', 'users', 'paymentMethods', 'shippingMethods', 'productVariants'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'payment_method_id' => 'required|exists:payment_methods,id',
+            'shipping_method' => 'required|string',
+            'address_id' => 'required|exists:shipping_addresses,id',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.variant_id' => 'nullable|exists:product_variants,id',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Tạo đơn hàng
+            $order = Order::create([
+                'user_id' => $validated['user_id'],
+                'order_code' => 'ORD-' . strtoupper(uniqid()),
+                'address_id' => $validated['address_id'],
+                'payment_method_id' => $validated['payment_method_id'],
+                'shipping_method' => $validated['shipping_method'],
+                'subtotal' => 0,
+                'total_amount' => 0,
+                'status' => 'pending',
+            ]);
+
+            $subtotal = 0;
+            // Thêm các mục đơn hàng
+            foreach ($validated['items'] as $item) {
+                $product = Product::findOrFail($item['product_id']);
+                $variant = $item['variant_id'] ? ProductVariant::findOrFail($item['variant_id']) : null;
+
+                // Kiểm tra tồn kho
+                $availableStock = $variant ? $variant->stock : $product->stock;
+                if ($availableStock < $item['quantity']) {
+                    throw new \Exception("Sản phẩm {$product->name} không đủ tồn kho.");
+                }
+
+                $price = $variant ? $variant->price : $product->sale_price;
+                $totalPrice = $price * $item['quantity'];
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'product_variant_id' => $variant?->id,
+                    'product_name' => $product->name,
+                    'sku' => $variant?->sku ?? $product->sku,
+                    'image_url' => $product->image,
+                    'variant_values' => $variant ? json_encode($variant->options->pluck('value_id')->toArray()) : null,
+                    'price' => $price,
+                    'quantity' => $item['quantity'],
+                    'total_price' => $totalPrice,
+                ]);
+
+                $subtotal += $totalPrice;
+
+                // Cập nhật tồn kho
+                if ($variant) {
+                    $variant->decrement('stock', $item['quantity']);
+                } else {
+                    $product->decrement('stock', $item['quantity']);
+                }
+            }
+
+            // Cập nhật tổng tiền đơn hàng
+            $order->update([
+                'subtotal' => $subtotal,
+                'total_amount' => $subtotal + ($order->shipping_fee ?? 0),
+            ]);
+
+            DB::commit();
+            return redirect()->route('admin.orders.index')->with('success', 'Tạo đơn hàng thành công.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi tạo đơn hàng: ' . $e->getMessage());
+        }
     }
 
     /**
      * Display the specified resource.
      */
+
     public function show($id)
     {
         $order = Order::with([
@@ -89,39 +204,90 @@ class OrderController extends Controller
             'shippingAddress.province',
             'shippingAddress.district',
             'shippingAddress.ward',
+            // Load các yêu cầu đổi/trả hàng và item liên quan
+            'returnRequests.items.orderItem.product',
+            'returnRequests.items.orderItem.productVariant',
         ])->findOrFail($id);
 
+        // Lấy tất cả yêu cầu đổi/trả (nếu có)
+        $returnRequests = $order->returnRequests ?? collect();
 
-        return view('admin.orders.show', compact('order'));
+        // Lấy danh sách tất cả sản phẩm (để hiển thị/thêm đơn mới)
+        $products = Product::where('is_active', 1)
+            ->with('variants')
+            ->get();
+
+        return view('admin.orders.show', [
+            'order' => $order,
+            'returnRequests' => $returnRequests,
+            'products' => $products,
+        ]);
     }
+
 
 
     public function updateStatus(Request $request, Order $order)
-    {
-        $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
-        ]);
+{
+    $validated = $request->validate([
+        'status' => 'required|in:pending,confirmed,shipping,completed,cancelled'
+    ]);
 
-        $order->status = $validated['status'];
+    $order->status = $validated['status'];
+    $order->is_paid = $request->is_paid ?? $order->is_paid;
+    $order->payment_status = $request->payment_status ?? $order->payment_status;
 
-        // Nếu trạng thái là completed → cập nhật delivered_at nếu chưa có
-        if ($validated['status'] === 'completed' && !$order->delivered_at) {
-            $order->delivered_at = now();
-        }
-
-        $order->save();
-
-        // Gửi notification realtime tới user
-        $order->user->notify(new OrderStatusNotification(
-            $order->id,
-            $order->status,
-            $order,
-            $request->cancel_reason,
-            $request->image
-        ));
-
-        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+    // Cập nhật thời gian giao hàng nếu cần
+    if ($validated['status'] === 'completed' && !$order->delivered_at) {
+        $order->delivered_at = now();
     }
+
+    $order->save();
+
+    // ✅ Gửi email theo trạng thái
+    $email = $order->user->email;
+
+    switch ($order->status) {
+        case 'confirmed':
+            Mail::to($email)->send(new OrderConfirmedMail($order));
+            if ($order->is_paid) {
+                Mail::to($email)->send(new OrderPaidMail($order));
+            }
+            break;
+
+        case 'shipping':
+            Mail::to($email)->send(new OrderShippingMail($order));
+            break;
+
+        case 'completed':
+            Mail::to($email)->send(new OrderCompletedMail($order));
+            break;
+
+        case 'cancelled':
+            Mail::to($email)->send(new OrderCancelledMail($order));
+            break;
+
+        case 'returning':
+        case 'returned':
+            Mail::to($email)->send(new OrderReturnedMail($order));
+            break;
+    }
+
+    if ($order->payment_status === 'refunded') {
+        Mail::to($email)->send(new OrderRefundedMail($order));
+    }
+
+    // ✅ Gửi notification realtime tới user
+    $order->user->notify(new OrderStatusNotification(
+        $order->id,
+        $order->status,
+        $order,
+        $request->cancel_reason,
+        $request->image
+    ));
+
+    return back()->with('success', 'Cập nhật trạng thái & gửi email + notification thành công!');
+}
+
 
 
     public function cancel()
@@ -514,5 +680,89 @@ class OrderController extends Controller
             'damage' => 'Hàng bị hư hỏng',
             'lost' => 'Hàng bị mất',
         ][$status] ?? $status; // fallback nếu không khớp trạng thái
+    }
+    public function exchangeOrder(Request $request, Order $order)
+    {
+        // Validate input
+        $validated = $request->validate([
+            'product_id.*' => 'required|exists:products,id',
+            'variant_id.*' => 'nullable|exists:product_variants,id',
+            'quantity.*' => 'required|integer|min:1',
+        ]);
+
+        // Tạo đơn hàng mới
+        $newOrder = Order::create([
+            'user_id' => $order->user_id,
+            'order_type' => 'exchange',
+            'original_order_id' => $order->id,
+            'status' => 'pending',
+            'total' => 0, // Sẽ tính lại sau
+        ]);
+
+        // Thêm sản phẩm mới vào đơn hàng mới
+        foreach ($request->product_id as $index => $productId) {
+            $product = Product::findOrFail($productId);
+            $variantId = $request->input('variant_id.' . $index);
+            $quantity = $request->input('quantity.' . $index);
+
+            $variant = null;
+            $variantValues = [];
+
+            if ($variantId) {
+                $variant = ProductVariant::findOrFail($variantId);
+                $variantValues = $variant->options->pluck('value_id')->toArray();
+            }
+
+            OrderItem::create([
+                'order_id' => $newOrder->id,
+                'product_id' => $product->id,
+                'product_variant_id' => $variant?->id,
+                'product_name' => $product->name,
+                'sku' => $variant?->sku ?? $product->sku,
+                'image_url' => $product->image,
+                'variant_values' => json_encode($variantValues),
+                'price' => $variant?->price ?? $product->sale_price,
+                'quantity' => $quantity,
+                'total_price' => ($variant?->price ?? $product->sale_price) * $quantity,
+            ]);
+        }
+
+        // Cập nhật trạng thái đơn hàng cũ
+        $order->update(['status' => 'exchanged']);
+
+        // Gọi API GHN để tạo vận đơn mới
+        $this->createGHNOrder($newOrder);
+
+        return redirect()->route('orders.show', $newOrder->id)->with('success', 'Đơn hàng mới đã được tạo.');
+    }
+
+    // Phương thức tạo vận đơn GHN cho đơn mới
+    private function createGHNOrder(Order $order)
+    {
+        $data = [
+            'to_name' => $order->shipping_address->full_name,
+            'to_phone' => $order->shipping_address->phone,
+            'to_address' => $order->shipping_address->address,
+            'to_ward_code' => $order->shipping_address->ward_code,
+            'to_district_id' => $order->shipping_address->district_id,
+            'cod_amount' => $order->total, // Nếu có thu COD
+            'content' => 'Đơn đổi hàng - Đơn gốc #' . $order->original_order_id,
+            'weight' => 500, // gram
+            'length' => 20,
+            'width' => 15,
+            'height' => 10,
+            'service_type_id' => 2, // Giao hàng tiết kiệm
+        ];
+
+        $response = Http::withToken(config('services.ghn.token'))
+            ->post('https://online-gateway.ghn.vn/shiip/public-api/v1/shipping-order/create', $data);
+
+        if ($response->successful()) {
+            $order->shipping_info = $response->json();
+            $order->save();
+        } else {
+            // Xử lý lỗi
+            throw new \Exception('Lỗi tạo đơn GHN: ' . $response->body());
+        }
     }
 }

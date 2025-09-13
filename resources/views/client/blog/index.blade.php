@@ -8,12 +8,12 @@
         <div class="custom-container container">
             <div class="row align-items-center">
                 <div class="col-sm-6">
-                    <h4>Blog Left Sidebar</h4>
+                    <h4>Tin tức</h4>
                 </div>
                 <div class="col-sm-6">
                     <ul class="breadcrumb float-end">
-                        <li class="breadcrumb-item"> <a href="index.html">Home </a></li>
-                        <li class="breadcrumb-item active"> <a href="#">Blog Left Sidebar</a></li>
+                        <li class="breadcrumb-item"> <a href="{{ route('client.home') }}">Trang chủ </a></li>
+                        <li class="breadcrumb-item active"> <a href="{{ route('client.blog.index') }}">Tin tức</a></li>
                     </ul>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="blog-content">
                                 <span class="blog-date">
-                                    {{ $blog->created_at->format('M d, Y') }}
+                                    {{ $blog->created_at->format('d/m/Y') }}
                                 </span>
                                 <a href="{{ route('client.blog.show', $blog) }}">
                                     <h4>{{ $blog->title }}</h4>
@@ -49,7 +49,7 @@
                                             src="{{ asset('assets/client/images/user/1.jpg') }}" alt="">
                                         <h6>by {{ $blog->author->username ?? 'Unknown' }}</h6>
                                     </div>
-                                    <a href="{{ route('client.blog.show', $blog) }}">Read More..</a>
+                                    <a href="{{ route('client.blog.show', $blog) }}">Đọc thêm..</a>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Categories</h5>
+                                    <h5>Danh mục</h5>
                                 </div>
                                 <ul class="categories">
                                     @foreach ($categories as $category)
@@ -96,7 +96,7 @@
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Top Post</h5>
+                                    <h5>Bài viết nổi bật</h5>
                                 </div>
                                 <ul class="top-post">
                                     @foreach($topViewedBlogs as $top)
@@ -106,18 +106,18 @@
                                             <a href="{{ route('client.blog.show', $top->slug) }}">
                                                 <h6>{{ \Illuminate\Support\Str::limit($top->title, 60) }}</h6>
                                             </a>
-                                            <p>{{ $top->published_at->format('F d, Y') }}</p>
+                                            <p>{{ $top->published_at->format('d/m/Y') }}</p>
                                         </div>
                                     </li>
                                     @endforeach
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <!-- <div class="col-12">
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5> Popular Tags</h5>
+                                    <h5>Tag phổ biến</h5>
                                 </div>
                                 <ul class="popular-tag">
                                     <li>
@@ -137,12 +137,12 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-12">
                             <div class="sidebar-box">
                                 <div class="sidebar-title">
                                     <div class="loader-line"></div>
-                                    <h5>Follow Us</h5>
+                                    <h5>Theo dõi chúng tôi</h5>
                                 </div>
                                 <ul class="social-icon">
                                     <li> <a href="https://www.facebook.com/" target="_blank">
