@@ -33,6 +33,7 @@ class SettingController extends Controller
                     'author' => 'nullable|string',
                     'address' => 'nullable|string',
                     'vat' => 'nullable|string',
+                    'return_policy' => 'nullable|string',
                 ];
                 break;
             case 'set_images':
@@ -46,6 +47,52 @@ class SettingController extends Controller
             case 'products':
                 $validationRules = [
                     'low_stock_alert' => 'required|integer|min:0',
+                ];
+                break;
+            case 'integrations':
+                $validationRules = [
+                    // SMTP
+                    'smtp_status' => 'nullable|in:0,1',
+                    'smtp_host' => 'nullable|string|max:255',
+                    'smtp_encryption' => 'nullable|string|max:50',
+                    'smtp_port' => 'nullable|integer',
+                    'smtp_email' => 'nullable|email|max:255',
+                    'smtp_password' => 'nullable|string|max:255',
+
+                    // Google Analytics
+                    'google_analytics_status' => 'nullable|in:0,1',
+                    'google_analytics_id' => 'nullable|string|max:255',
+
+                    // Google Ads
+                    'google_ads_status' => 'nullable|in:0,1',
+                    'google_ads_id' => 'nullable|string|max:255',
+
+                    // ChatGPT
+                    'chatgpt_api_key' => 'nullable|string|max:255',
+                    'chatgpt_model' => 'nullable|string|max:50',
+
+                    // Telegram
+                    'telegram_status' => 'nullable|in:0,1',
+                    'telegram_token' => 'nullable|string|max:255',
+                    'telegram_chat_id' => 'nullable|string|max:50',
+                    'telegram_url' => 'nullable|string|max:255',
+                    'telegram_proxy' => 'nullable|string|max:255',
+                    'telegram_proxy_type' => 'nullable|string|max:20',
+
+                    // Check live Gmail
+                    'api_check_live_gmail' => 'nullable|string|max:255',
+                    'api_key_check_live_gmail' => 'nullable|string|max:255',
+                    'time_limit_check_live_gmail' => 'nullable|integer|min:0',
+
+                    // Check live Instagram
+                    'api_check_live_instagram' => 'nullable|string|max:255',
+                    'api_key_check_live_instagram' => 'nullable|string|max:255',
+                    'time_limit_check_live_instagram' => 'nullable|integer|min:0',
+                ];
+                break;
+            case 'notifications':
+                $validationRules = [
+                    'telegram_low_stock_template' => 'nullable',
                 ];
                 break;
         }

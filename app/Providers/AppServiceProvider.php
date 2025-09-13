@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SearchHistory;
+use App\Observers\SettingObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,18 +45,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Setting::observe(SettingObserver::class);
         Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
 
-Fortify::loginView(fn () => view('client.auth.login'));
-Fortify::registerView(fn () => view('client.auth.register'));
-Fortify::requestPasswordResetLinkView(fn () => view('client.auth.request-reset-password'));
-Fortify::verifyEmailView(fn () => view('client.auth.verify-email'));
+        Fortify::loginView(fn() => view('client.auth.login'));
+        Fortify::registerView(fn() => view('client.auth.register'));
+        Fortify::requestPasswordResetLinkView(fn() => view('client.auth.request-reset-password'));
+        Fortify::verifyEmailView(fn() => view('client.auth.verify-email'));
 
-View::composer('*', function ($view) {
-    $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
-    $view->with('popularSearches', $popularSearches);
-});
+        View::composer('*', function ($view) {
+            $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
+            $view->with('popularSearches', $popularSearches);
+        });
 
         $this->app->singleton(
             ResetPasswordViewResponse::class,

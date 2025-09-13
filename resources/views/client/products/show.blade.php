@@ -111,46 +111,26 @@
                                     </li>
                                     <li> <span data-bs-toggle="modal" data-bs-target="#terms-conditions-modal"
                                             title="Quick View" tabindex="0"><i class="iconsax me-2"
-                                                data-icon="truck"></i>Chính sách giao hàng đổi trả</span></li>
-                                    {{-- <li> <span data-bs-toggle="modal" data-bs-target="#question-box" title="Quick View"
-                                            tabindex="0"><i class="iconsax me-2" data-icon="question-message"></i>Ask a
-                                            Question</span></li> --}}
+                                                data-icon="truck"></i>Chính sách giao hàng & đổi trả</span></li>
                                 </ul>
                             </div>
-                            {{-- Size --}}
-                            {{-- @foreach ($attributes as $attrId => $attr)
-                                <div class="mb-2">
-                                    <label><strong>{{ $attr['name'] }}:</strong></label>
-                        <select class="form-select variant-select" data-attr="{{ $attrId }}">
-                            <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
-                            @foreach ($attr['values'] as $valueId => $value)
-                            <option value="{{ $valueId }}">{{ $value }}</option>
-                            @endforeach
-                        </select>
-                    </div> <!-- Đóng thẻ div.mb-2 -->
-                    @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
-    <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
-        <h6>{{ ucfirst($groupName) }}</h6>
-        <ul class="variant-list d-flex gap-2">
-            @foreach ($values as $val)
-                <li class="variant-item px-3 py-1 border rounded"
-                    data-value="{{ $val }}" style="cursor: pointer;">
-                    {{ $val }}
-                </li>
-            @endforeach
-        </ul>
-        <div class="variant-error text-danger small mt-1" style="display:none;"></div>
-    </div>
-@endforeach
-
-
+                                <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+                                    <h6>{{ ucfirst($groupName) }}</h6>
+                                    <ul class="variant-list d-flex gap-2">
+                                        @foreach ($values as $val)
+                                            <li class="variant-item px-3 py-1 border rounded"
+                                                data-value="{{ $val }}" style="cursor: pointer;">
+                                                {{ $val }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="variant-error text-danger small mt-1" style="display:none;"></div>
+                                </div>
+                            @endforeach
                             <div id="variant-info" class="mt-3" style="display: none;">
-                                {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
                                 <p>Số lượng còn lại: <span id="variant-quantity"></span></p>
                             </div>
-
-
                             <div class="quantity-box d-flex align-items-center gap-3">
                                 <div class="quantity">
                                     <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
@@ -323,10 +303,7 @@
                             </div>
                             <div class="tab-pane fade" id="specification-tab-pane" role="tabpanel"
                                 aria-labelledby="specification-tab" tabindex="0">
-                                {{-- <p>I like to be real. I don't like things to be staged or fussy. Grunge is a hippied
-                                    romantic version of punk. I have my favourite fashion decade, yes, yes, yes: '60s. It
-                                    was a sort of little revolution; the clothes were amazing but not too exaggerated.
-                                    Fashions fade, style is eternal. A girl should be two things: classy and fabulous.</p> --}}
+
                                 @if ($groupedDetails->isNotEmpty())
                                     <div class="table-responsive theme-scrollbar">
                                         <table class="specification-table table table-striped">
@@ -700,11 +677,19 @@
                     <h4>Bảng kích thước</h4>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body pt-0"><a href="#"> <img class="img-fluid"
-                            src="../assets/images/size-chart/size-chart.jpg" alt=""></a></div>
+                <div class="modal-body pt-0 text-center">
+                    @if (!empty($sizeChart))
+                        <a href="{{ asset('storage/' . $sizeChart) }}" target="_blank">
+                            <img class="img-fluid" src="{{ asset('storage/' . $sizeChart) }}" alt="Size chart">
+                        </a>
+                    @else
+                        <p class="text-muted">⚠️ Chưa có bảng size cho sản phẩm này</p>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
+
     <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
         aria-modal="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -799,24 +784,16 @@
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-0">
-                    <ul class="returns-policy">
-                        <li> <b>Return Policy: </b>Most unopened items can be returned within 30 days of delivery for a full
-                            refund. We cover return shipping costs for our errors (e.g., incorrect or defective items).
-                            Refunds typically process within four weeks, although often faster. This includes return transit
-                            time (5-10 business days), processing upon receipt (3-5 business days), and your bank's refund
-                            processing (5-10 business days). To return an item, log in, access your order, and click "Return
-                            Item(s)." We'll email you once your return is processed.</li>
-                        <li>– Free shipping on orders over $100.</li>
-                        <li>– Returns accepted within 10 days of receipt or tracking number for unworn items. </li>
-                        <li>– Items must be in their original packaging and</li>
-                        <li>– Standard shipping charges apply otherwise. Please refer to our delivery Terms & Conditions for
-                            further details.</li>
-                        <li>– Returned products must be in original packaging, safety wrapped, undamaged, and unworn. </li>
-                    </ul>
+                    @if (!empty($returnPolicy))
+                        {!! $returnPolicy !!}
+                    @else
+                        <p class="text-muted">Chưa có chính sách đổi trả.</p>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
         aria-modal="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">

@@ -80,9 +80,6 @@
                                             class="path4"></span><span class="path5"></span></i> Theme
                                 </a>
                             </li>
-                            <!--end:::Tab item-->
-
-                            <!--begin:::Tab item-->
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_localization">
@@ -90,9 +87,12 @@
                                             class="path2"></span></i> Kết nối
                                 </a>
                             </li>
-                            <!--end:::Tab item-->
-
-                            <!--begin:::Tab item-->
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#kt_ecommerce_settings_notifications">
+                                    <i class="fa-solid fa-bell fs-2 me-2"><span class="path1"></span><span
+                                            class="path2"></span></i> Thông báo Telegram
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_products">
@@ -328,7 +328,7 @@
                                                 <span>Thuế</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Nếu bạn muốn thu thuế VAT thì nhập vào đây, nếu không có thì để trống.
-Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào tổng số tiền thanh toán sau khi trừ khuyến mãi.">
+                                                                Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào tổng số tiền thanh toán sau khi trừ khuyến mãi.">
                                                     <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
@@ -343,6 +343,17 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                             <!--end::Input-->
                                         </div>
                                     </div>
+                                    <div class="row fv-row mb-7">
+                                        <div class="col-md-3 text-md-end">
+                                            <label class="fs-6 fw-semibold form-label mt-3">
+                                                <span class="required">Chính sách đổi trả</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <textarea id="return_policy" class="form-control form-control-solid" name="return_policy">{{ $settings['return_policy']->value ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+
                                     <!--end::Input group-->
                                     <!--begin::Action buttons-->
                                     <div class="row py-5">
@@ -371,7 +382,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 <!--end::Form-->
                             </div>
                             <!--end:::Tab pane-->
-
+                            {{-- THEME  --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_store" role="tabpanel">
                                 <!--begin::Form-->
@@ -396,7 +407,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Logo Light</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -419,7 +430,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Logo Dark</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -442,7 +453,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Favicon</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -491,150 +502,593 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 <!--end::Form-->
                             </div>
                             <!--end:::Tab pane-->
-
+                            {{-- KẾT NỐI  --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_localization" role="tabpanel">
                                 <!--begin::Form-->
 
-                                <form id="kt_ecommerce_settings_general_localization" class="form" action="#">
-                                    <!--begin::Heading-->
-                                    <div class="col-md-6">
-                                        <table class="table table-bordered table-striped table-hover mb-3">
-                                            <thead class="table-dark text-center">
-                                                <tr>
-                                                    <th colspan="2">
-                                                        <img src="https://sieustore.com/assets/img/icon-smtp.png"
-                                                            width="20px" class="me-1">
-                                                        SMTP
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Bật/Tắt SMTP -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fa fa-toggle-on text-success"></i>
-                                                        SMTP Mail
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" name="smtp_status">
-                                                            <option value="1" selected="">
-                                                                ON
-                                                            </option>
-                                                            <option value="0">
-                                                                OFF
-                                                            </option>
-                                                        </select>
-                                                    </td>
-                                                </tr>
+                                <form id="kt_ecommerce_settings_general_localization" class="form"
+                                    action="{{ route('admin.settings.update') }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
 
-                                                <!-- SMTP Host -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-server text-primary"></i>
-                                                        SMTP Host
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_host" class="form-control"
-                                                            placeholder="VD: smtp.gmail.com" value="smtp.gmail.com">
-                                                    </td>
-                                                </tr>
+                                    <!-- Xác định tab để controller biết -->
+                                    <input type="hidden" name="tab" value="integrations">
 
-                                                <!-- SMTP Encryption -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-shield-alt text-warning"></i>
-                                                        SMTP Encryption
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_encryption" class="form-control"
-                                                            placeholder="VD: ssl/tls" value="tls">
-                                                    </td>
-                                                </tr>
+                                    <div class="row push mb-3">
 
-                                                <!-- SMTP Port -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-network-wired text-info"></i>
-                                                        SMTP Port
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_port" class="form-control"
-                                                            placeholder="VD: 465, 587" value="587">
-                                                    </td>
-                                                </tr>
+                                        <!-- ================= SMTP ================= -->
+                                        <div class="row">
+                                            <!-- SMTP -->
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered table-striped table-hover mb-3">
+                                                    <thead class="table-dark text-center">
+                                                        <tr>
+                                                            <th colspan="2">
+                                                                <img src="https://sieustore.com/assets/img/icon-smtp.png"
+                                                                    width="20px" class="me-1">
+                                                                SMTP
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><i class="fa fa-toggle-on text-success"></i> SMTP Mail</td>
+                                                            <td>
+                                                                <select class="form-control" name="smtp_status">
+                                                                    <option value="1"
+                                                                        {{ setting('smtp_status') == 1 ? 'selected' : '' }}>
+                                                                        ON</option>
+                                                                    <option value="0"
+                                                                        {{ setting('smtp_status') == 0 ? 'selected' : '' }}>
+                                                                        OFF</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-server text-primary"></i> SMTP Host</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_host"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_host') }}"
+                                                                    placeholder="VD: smtp.gmail.com">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-shield-alt text-warning"></i> SMTP
+                                                                Encryption</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_encryption"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_encryption') }}"
+                                                                    placeholder="VD: ssl/tls">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-network-wired text-info"></i> SMTP Port
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="smtp_port"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_port') }}"
+                                                                    placeholder="VD: 465, 587">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fa fa-envelope text-danger"></i> SMTP Email</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_email"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_email') }}"
+                                                                    placeholder="VD: yourmail@gmail.com">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-key text-secondary"></i> SMTP Password
+                                                            </td>
+                                                            <td>
+                                                                <input type="password" name="smtp_password"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_password') }}"
+                                                                    placeholder="Nhập mật khẩu SMTP...">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
 
-                                                <!-- SMTP Email -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fa fa-envelope text-danger"></i>
-                                                        SMTP Email
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_email" class="form-control"
-                                                            placeholder="VD: yourmail@gmail.com"
-                                                            value="sieustoremmo@gmail.com">
-                                                    </td>
-                                                </tr>
+                                            <!-- Telegram -->
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered table-striped table-hover mb-3">
+                                                    <thead class="table-dark text-center">
+                                                        <tr>
+                                                            <th colspan="2">
+                                                                <i class="fab fa-telegram text-primary"></i> Telegram
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Status</td>
+                                                            <td>
+                                                                <select class="form-control" name="telegram_status">
+                                                                    <option value="1"
+                                                                        {{ setting('telegram_status') == 1 ? 'selected' : '' }}>
+                                                                        ON</option>
+                                                                    <option value="0"
+                                                                        {{ setting('telegram_status') == 0 ? 'selected' : '' }}>
+                                                                        OFF</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Telegram Token</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_token"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_token') }}"
+                                                                    placeholder="Nhập Telegram Bot Token...">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Chat ID</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_chat_id"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_chat_id') }}"
+                                                                    placeholder="Nhập Chat ID...">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Telegram URL</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_url"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_url') }}"
+                                                                    placeholder="Nhập Telegram API URL...">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
 
-                                                <!-- SMTP Password -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-key text-secondary"></i>
-                                                        SMTP Password
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_password" class="form-control"
-                                                            placeholder="Nhập mật khẩu SMTP..."
-                                                            value="t d l o f r y y n y h o n y i n">
-                                                        <small class="text-muted">
 
-                                                            Hướng dẫn tích hợp SMTP Gmail miễn phí tại <a
-                                                                href="https://help.cmsnt.co/huong-dan/huong-dan-cau-hinh-smtp-vao-website-shopclone7/"
-                                                                target="_blank" class="text-primary">đây</a>, hoặc sử dụng
-                                                            Email theo tên miền tại <a href="https://ntlink.co/TMtoW"
-                                                                target="_blank" class="text-primary">đây</a>.
+                                        <!-- ================= Google Analytics ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-google text-primary"></i>
+                                                            Google Analytics</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Status</td>
+                                                        <td>
+                                                            <select class="form-control" name="google_analytics_status">
+                                                                <option value="1"
+                                                                    {{ setting('google_analytics_status') == 1 ? 'selected' : '' }}>
+                                                                    ON</option>
+                                                                <option value="0"
+                                                                    {{ setting('google_analytics_status') == 0 ? 'selected' : '' }}>
+                                                                    OFF</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tracking ID</td>
+                                                        <td>
+                                                            <input type="text" name="google_analytics_id"
+                                                                class="form-control"
+                                                                value="{{ setting('google_analytics_id') }}"
+                                                                placeholder="VD: G-XXXXXXX">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
 
-                                                        </small>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="row mb-7">
-                                        <div class="col-md-9 offset-md-3">
-                                            <h2>Localization Settings</h2>
+                                        <!-- ================= Google Ads ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-google text-success"></i>
+                                                            Google Ads</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Ads ID</td>
+                                                        <td>
+                                                            <input type="text" name="google_ads_id"
+                                                                class="form-control"
+                                                                value="{{ setting('google_ads_id') }}"
+                                                                placeholder="VD: AW-XXXXXXX">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= ChatGPT ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fas fa-robot text-info"></i> ChatGPT
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>API Key</td>
+                                                        <td>
+                                                            <input type="text" name="chatgpt_api_key"
+                                                                class="form-control"
+                                                                value="{{ setting('chatgpt_api_key') }}"
+                                                                placeholder="Nhập API Key của OpenAI...">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= Gmail Check ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fas fa-envelope text-danger"></i>
+                                                            Gmail Check</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Email</td>
+                                                        <td>
+                                                            <input type="text" name="gmail_check" class="form-control"
+                                                                value="{{ setting('gmail_check') }}"
+                                                                placeholder="VD: check@gmail.com">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= Instagram Check ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-instagram text-warning"></i>
+                                                            Instagram Check</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Username</td>
+                                                        <td>
+                                                            <input type="text" name="instagram_check"
+                                                                class="form-control"
+                                                                value="{{ setting('instagram_check') }}"
+                                                                placeholder="VD: @username">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                    <!--end::Heading-->
 
-                                    <!--begin::Input group-->
-
-                                    <!--end::Input group-->
-
-                                    <!--begin::Action buttons-->
+                                    <!-- Action buttons -->
                                     <div class="row py-5">
                                         <div class="col-md-9 offset-md-3">
                                             <div class="d-flex">
-                                                <!--begin::Button-->
-                                                <button type="reset" data-kt-ecommerce-settings-type="cancel"
-                                                    class="btn btn-light me-3">
-                                                    Cancel
-                                                </button>
-                                                <!--end::Button-->
-
-                                                <!--begin::Button-->
-                                                <button type="submit" data-kt-ecommerce-settings-type="submit"
-                                                    class="btn btn-primary">
-                                                    <span class="indicator-label">
-                                                        Save
-                                                    </span>
-                                                    <span class="indicator-progress">
-                                                        Please wait... <span
+                                                <button type="reset" class="btn btn-light me-3">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <span class="indicator-label">Save</span>
+                                                    <span class="indicator-progress">Please wait...
+                                                        <span
                                                             class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                     </span>
                                                 </button>
-                                                <!--end::Button-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                                <!--end::Form-->
+                            </div>
+                            <!--end:::Tab pane-->
+                            <!--begin:::Tab pane Telegram Notifications-->
+                            <div class="tab-pane fade" id="kt_ecommerce_settings_notifications" role="tabpanel">
+                                <!--begin::Form-->
+                                <form action="{{ route('admin.settings.update') }}" method="POST" class="form">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <!-- Xác định tab -->
+                                    <input type="hidden" name="tab" value="notifications">
+
+                                    <!--begin::Heading-->
+                                    <div class="row mb-10">
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center mb-5">
+                                                <div class="symbol symbol-45px me-5">
+                                                    <div class="symbol-label bg-light-primary">
+                                                        <i class="fab fa-telegram text-primary fs-2x"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-column">
+                                                    <h2 class="mb-1">Cài đặt thông báo Telegram</h2>
+                                                    <span class="text-muted fs-6">Tùy chỉnh các mẫu thông báo được gửi qua
+                                                        Telegram</span>
+                                                </div>
+                                            </div>
+
+                                            <!--begin::Alert-->
+                                            <div class="alert alert-primary d-flex align-items-center p-5 mb-10">
+                                                <i class="fa-solid fa-lightbulb fs-2hx text-primary me-4"></i>
+                                                <div class="d-flex flex-column">
+                                                    <h4 class="mb-1 text-primary">Hướng dẫn sử dụng</h4>
+                                                    <span>• Để mặc định nếu bạn không có nhu cầu tùy chỉnh<br>
+                                                        • Xóa toàn bộ nội dung trong ô nếu không muốn bật thông báo<br>
+                                                        • Sử dụng các biến được cung cấp để tùy chỉnh thông báo</span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 ">
+                                                <div class="d-flex flex-column pe-0 pe-sm-10">
+                                                    <span>
+                                                        <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên
+                                                        kết:
+                                                        <a class="text-primary" href="/cron/check-notification-telegram"
+                                                            target="_blank">TELEGRAM
+                                                            NOTICE</a>
+                                                        1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý thông báo telegram.
+                                                    </span>
+                                                </div>
+                                                <!--end::Alert-->
+                                            </div>
+                                        </div>
+                                        <div class="row g-6">
+
+                                            <!--begin::Notification Card 2-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-danger">
+                                                        <div class="card-title">
+                                                            <i class="fa-solid fa-box text-danger fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo số lượng hàng trong kho
+                                                                thấp</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="7" name="telegram_low_stock_template"
+                                                                placeholder="Nhập nội dung số lượng hàng trong kho thấp...">{{ setting('telegram_low_stock_template') }}</textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{product}</span>
+                                                                        <span class="text-muted fs-7">Tên sản phẩm</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{stock}</span>
+                                                                        <span class="text-muted fs-7">Số lượng tồn
+                                                                            kho</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 2-->
+
+                                            <!--begin::Notification Card 3-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-warning">
+                                                        <div class="card-title">
+                                                            <i class="fa-solid fa-user-shield text-warning fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo hành động</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="4" name="noti_action"
+                                                                placeholder="Nhập nội dung thông báo hành động...">[{time}] 
+                                            - <b>Username</b>: <code>{username}</code>
+                                            - <b>Action</b>: <code>{action}</code>
+                                            - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{domain}</span>
+                                                                        <span class="text-muted fs-7">Tên website</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{username}</span>
+                                                                        <span class="text-muted fs-7">Tên thành viên</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{action}</span>
+                                                                        <span class="text-muted fs-7">Hành động của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{ip}</span>
+                                                                        <span class="text-muted fs-7">Địa chỉ IP của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 3-->
+
+                                            <!--begin::Notification Card 4-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-danger">
+                                                        <div class="card-title">
+                                                            <i
+                                                                class="fa-solid fa-hand-holding-dollar text-danger fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo rút số dư hoa hồng</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="5" name="noti_affiliate_withdraw"
+                                                                placeholder="Nhập nội dung thông báo rút hoa hồng...">[{time}] 
+                                    - <b>Username</b>: <code>{username}</code>
+                                    - <b>Action</b>: <code>Tạo lệnh rút {amount} về ngân hàng {bank} | {account_number} | {account_name}</code>
+                                    - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{domain}</span>
+                                                                        <span class="text-muted fs-7">Tên website</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{username}</span>
+                                                                        <span class="text-muted fs-7">Tên thành viên
+                                                                            rút</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{bank}</span>
+                                                                        <span class="text-muted fs-7">Tên ngân hàng nhận
+                                                                            tiền</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{account_number}</span>
+                                                                        <span class="text-muted fs-7">Số tài khoản nhận
+                                                                            tiền</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{account_name}</span>
+                                                                        <span class="text-muted fs-7">Tên chủ tài
+                                                                            khoản</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{amount}</span>
+                                                                        <span class="text-muted fs-7">Số dư cần rút</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{ip}</span>
+                                                                        <span class="text-muted fs-7">Địa chỉ IP của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 4-->
+                                        </div>
+                                        <div class="row py-5">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-end">
+                                                    <!--begin::Button-->
+                                                    <button type="reset" class="btn btn-light me-3">
+                                                        <i class="fa-solid fa-arrow-rotate-left me-2"></i>Hủy bỏ
+                                                    </button>
+                                                    <!--end::Button-->
+
+                                                    <!--begin::Button-->
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <span class="indicator-label">
+                                                            <i class="fa-solid fa-floppy-disk me-2"></i>Lưu cài đặt
+                                                        </span>
+                                                        <span class="indicator-progress">
+                                                            Đang lưu...
+                                                            <span
+                                                                class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                        </span>
+                                                    </button>
+                                                    <!--end::Button-->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -642,8 +1096,8 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 </form>
                                 <!--end::Form-->
                             </div>
-                            <!--end:::Tab pane-->
-
+                            <!--end:::Tab pane Telegram Notifications-->
+                            {{-- Cài đặt tồn kho --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_products" role="tabpanel">
                                 <!--begin::Form-->
@@ -662,7 +1116,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                     <!--end::Heading-->
 
                                     <!--begin::Input group-->
-                                    {{-- <div class="row fv-row mb-7">
+                                    <div class="row fv-row mb-7">
                                         <div class="col-md-3 text-md-end">
                                             <!--begin::Label-->
                                             <label class="fs-6 fw-semibold form-label mt-3">
@@ -699,7 +1153,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <!--end::Radio-->
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <!--end::Input group-->
 
                                     <!--begin::Input group-->
@@ -1266,5 +1720,14 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
     <script>
         new Tagify(document.querySelector('[name="keywords"]'));
     </script>
+    <!-- CKEditor 5 CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/classic/ckeditor.js"></script>
 
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#return_policy'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 @endsection

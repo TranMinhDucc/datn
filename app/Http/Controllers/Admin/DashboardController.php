@@ -134,6 +134,11 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
+        // Tổng người dùng toàn hệ thống (không phụ thuộc filter)
+        $totalUsersAll = User::count();
+
+        // Tổng đơn hàng toàn hệ thống
+        $totalOrdersAll = Order::count();
 
         // Danh sách trạng thái và nhãn hiển thị
         $orderStatuses = [
@@ -224,7 +229,8 @@ class DashboardController extends Controller
             'recentOrders' => $recentOrders,
             'topProducts'      => $topProducts,
             'lowStockVariants' => $lowStockVariants,
-
+            'totalUsersAll'   => $totalUsersAll,
+            'totalOrdersAll'  => $totalOrdersAll,
         ]);
     }
 

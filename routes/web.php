@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AiChatAssistantController;
 use App\Http\Controllers\Admin\BadWordController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Client\HomeController;
@@ -74,6 +75,8 @@ use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
+use App\Jobs\CheckLowStockJob;
+use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
 
 // GHI ĐÈ route đăng ký Fortify
@@ -337,6 +340,9 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/aichat', [AiChatAssistantController::class, 'index'])->name('aichat');
+        Route::post('/aichat/ask', [AiChatAssistantController::class, 'ask'])->name('aichat.ask');
+
         // 1. Mở giao diện tạo đơn hàng từ yêu cầu đổi
         // GET – mở form tạo đơn hàng đổi
         Route::get('return-requests/{id}/exchange-form', [AdminReturnRequestController::class, 'showExchangeForm'])
@@ -538,10 +544,14 @@ Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderControl
 
 
 
-    Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
+Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
     ->name('variants.toggle')
     ->middleware('auth');
 
 Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
     ->name('variants.destroy')
     ->middleware('auth');
+Route::get('/cron/check-notification-telegram', function () {
+    dispatch(new CheckTelegramJob());
+    return "✅ Low stock job dispatched at " . now();
+});

@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\CheckTelegramJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -24,3 +25,7 @@ Schedule::command('sync:bank-transactions')
     ->everyFiveMinutes()
     ->withoutOverlapping()
     ->sendOutputTo(storage_path('logs/sync_bank_transactions.log'));
+Schedule::job(new CheckTelegramJob)
+    ->everyThirtyMinutes()
+    ->withoutOverlapping()
+    ->sendOutputTo(storage_path('logs/low_stock_check.log'));
