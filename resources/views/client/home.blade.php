@@ -1041,27 +1041,41 @@
             </div>
         </div>
     </section>
-    <section class="section-b-space">
+      <section class="section-b-space">
         <div class="custom-container container">
             <div class="swiper logo-slider">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/1.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/2.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/3.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/4.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/5.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/6.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/7.png') }}" alt="logo"></a></div>
-                    <div class="swiper-slide"><a href="collection-left-sidebar.html"> <img
-                                src="{{ asset('assets/client/images/logos/3.png') }}" alt="logo"></a></div>
-                </div>
+    @if(isset($brands) && $brands->count())
+        @foreach ($brands as $brand)
+           <div class="swiper-slide">
+ <a href="#">
+    <div style="
+        width:125px;
+        height:125px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin:auto;
+        background:#fff;
+        border-radius:8px;
+        overflow:hidden;
+    ">
+        <img src="{{ asset('storage/' . $brand->logo) }}"
+             alt="{{ $brand->name }}"
+             style="width:100%; height:100%; object-fit:cover;">
+    </div>
+</a>
+
+
+</div>
+        @endforeach
+    @else
+        <div class="swiper-slide">
+            <span class="text-muted">Chưa có thương hiệu nào</span>
+        </div>
+    @endif
+</div>
+
             </div>
         </div>
     </section>

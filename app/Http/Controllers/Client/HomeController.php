@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Models\Blog;
+use App\Models\Brand;
 use App\Models\Banner;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Category;
-use App\Models\Blog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +41,7 @@ class HomeController extends Controller
             ->latest('published_at')
             ->take(3)
             ->get();
+    $brands = Brand::where('status', 1)->get();
 
         $unreadNotifications = collect();
 
@@ -57,7 +60,9 @@ class HomeController extends Controller
             'latestBlogs',
             'latestProducts',
             'bestSellerProducts',
-            'unreadNotifications'
+            'unreadNotifications',
+            'brands'
+
         ));
     }
 
