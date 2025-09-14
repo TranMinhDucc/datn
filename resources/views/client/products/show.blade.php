@@ -8,12 +8,12 @@
             <div class="custom-container container">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
-                        <h4>Product</h4>
+                        <h4>Sản phẩm</h4>
                     </div>
                     <div class="col-sm-6">
                         <ul class="breadcrumb float-end">
-                            <li class="breadcrumb-item"><a href="{{ route('client.home') }}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Product</li>
+                            <li class="breadcrumb-item"><a href="{{ route('client.home') }}">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
                         </ul>
 
                     </div>
@@ -98,55 +98,39 @@
                                     </li>
                                     <li>({{ number_format($rating_summary['avg_rating'], 1) }}) Rating</li>
                                 </ul>
-                                <p>{{ $product->description }}</p>
+                                <div class="product-description">
+                                    {!! $product->description !!}
+                                </div>
+
                             </div>
                             <div class="buy-box border-buttom">
                                 <ul>
                                     <li> <span data-bs-toggle="modal" data-bs-target="#size-chart" title="Quick View"
-                                            tabindex="0"><i class="iconsax me-2" data-icon="ruler"></i>Size Chart</span>
+                                            tabindex="0"><i class="iconsax me-2" data-icon="ruler"></i>Bảng kích
+                                            thước</span>
                                     </li>
                                     <li> <span data-bs-toggle="modal" data-bs-target="#terms-conditions-modal"
                                             title="Quick View" tabindex="0"><i class="iconsax me-2"
-                                                data-icon="truck"></i>Delivery & return</span></li>
-                                    <li> <span data-bs-toggle="modal" data-bs-target="#question-box" title="Quick View"
-                                            tabindex="0"><i class="iconsax me-2" data-icon="question-message"></i>Ask a
-                                            Question</span></li>
+                                                data-icon="truck"></i>Chính sách giao hàng & đổi trả</span></li>
                                 </ul>
                             </div>
-                            {{-- Size --}}
-                            {{-- @foreach ($attributes as $attrId => $attr)
-                                <div class="mb-2">
-                                    <label><strong>{{ $attr['name'] }}:</strong></label>
-                        <select class="form-select variant-select" data-attr="{{ $attrId }}">
-                            <option value="">-- Chọn {{ strtolower($attr['name']) }} --</option>
-                            @foreach ($attr['values'] as $valueId => $value)
-                            <option value="{{ $valueId }}">{{ $value }}</option>
-                            @endforeach
-                        </select>
-                    </div> <!-- Đóng thẻ div.mb-2 -->
-                    @endforeach --}}
                             @foreach ($attributeGroups as $groupName => $values)
-    <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
-        <h6>{{ ucfirst($groupName) }}</h6>
-        <ul class="variant-list d-flex gap-2">
-            @foreach ($values as $val)
-                <li class="variant-item px-3 py-1 border rounded"
-                    data-value="{{ $val }}" style="cursor: pointer;">
-                    {{ $val }}
-                </li>
-            @endforeach
-        </ul>
-        <div class="variant-error text-danger small mt-1" style="display:none;"></div>
-    </div>
-@endforeach
-
-
+                                <div class="variant-group mb-3" data-attribute="{{ strtolower($groupName) }}">
+                                    <h6>{{ ucfirst($groupName) }}</h6>
+                                    <ul class="variant-list d-flex gap-2">
+                                        @foreach ($values as $val)
+                                            <li class="variant-item px-3 py-1 border rounded"
+                                                data-value="{{ $val }}" style="cursor: pointer;">
+                                                {{ $val }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="variant-error text-danger small mt-1" style="display:none;"></div>
+                                </div>
+                            @endforeach
                             <div id="variant-info" class="mt-3" style="display: none;">
-                                {{-- <p><strong>Giá:</strong> <span id="variant-price"></span> đ</p> --}}
                                 <p>Số lượng còn lại: <span id="variant-quantity"></span></p>
                             </div>
-
-
                             <div class="quantity-box d-flex align-items-center gap-3">
                                 <div class="quantity">
                                     <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
@@ -161,7 +145,7 @@
                                         data-image="{{ asset('storage/' . $product->image) }}"
                                         data-brand="{{ $product->brand->name ?? 'Unknown' }}"
                                         aria-controls="offcanvasRight">
-                                        Add To Cart
+                                        Thêm vào giỏ hàng
                                     </a>
 
                                     <a href="#" class="btn btn_outline sm buy-now-btn"
@@ -172,35 +156,35 @@
                                         data-max-quantity="{{ $product->stock_quantity }}"
                                         data-variant-id="{{ $selectedVariant->id ?? '' }}" {{-- nếu có variant --}}
                                         data-quantity="1">
-                                        Buy Now
+                                        Mua ngay
                                     </a>
 
-</div>
-</div>
-<div class="buy-box">
-    <ul>
-        <li> 
-            <a class="add-to-wishlist" href="javascript:;" data-id="{{ $product->id }}">
-                <i class="fa-regular fa-heart me-2"></i>
-                Yêu thích
-            </a>
-        </li>
-        <li>
-            <a href="compare.html">
-                <i class="fa-solid fa-arrows-rotate me-2"></i>
-                Add To Compare
-            </a>
-        </li>
-        <li>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
-                title="Quick View" tabindex="0">
-                <i class="fa-solid fa-share-nodes me-2"></i>
-                Share
-            </a>
-        </li>
-    </ul>
-</div>
-{{-- <div class="sale-box"> --}}
+                                </div>
+                            </div>
+                            <div class="buy-box">
+                                <ul>
+                                    <li>
+                                        <a class="add-to-wishlist" href="javascript:;" data-id="{{ $product->id }}">
+                                            <i class="fa-regular fa-heart me-2"></i>
+                                            Yêu thích
+                                        </a>
+                                    </li>
+                                    {{-- <li>
+                                        <a href="compare.html">
+                                            <i class="fa-solid fa-arrows-rotate me-2"></i>
+                                            Add To Compare
+                                        </a>
+                                    </li> --}}
+                                    <li>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#social-box"
+                                            title="Quick View" tabindex="0">
+                                            <i class="fa-solid fa-share-nodes me-2"></i>
+                                            Share
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="sale-box">
 
                                 <div class="countdown"
                                     data-starttime="{{ optional($product->starts_at ? \Carbon\Carbon::parse($product->starts_at)->timezone('Asia/Ho_Chi_Minh') : null)->toIso8601String() }}"
@@ -247,8 +231,8 @@
                                     </li>
                                     <li>
                                         <div class="d-flex align-items-center gap-2">
-                                            <h6>Available:</h6>
-                                            <p>{{ $product->stock_quantity > 0 ? 'In Stock' : 'Pre-Order' }}</p>
+                                            <h6>Có sẵn:</h6>
+                                            <p>{{ $product->stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}</p>
                                         </div>
                                     </li>
                                     <li>
@@ -261,16 +245,16 @@
                                             </p>
                                         </div>
                                     </li>
-                                    <li>
+                                    {{-- <li>
                                         <div class="d-flex align-items-center gap-2">
                                             <h6>Vendor:</h6>
                                             <p>{{ $product->vendor_name }}</p>
                                         </div>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </div>
                             <div class="share-option">
-                                <h5>Secure Checkout</h5><img class="img-fluid"
+                                <h5>Thanh toán an toàn</h5><img class="img-fluid"
                                     src="{{ asset('assets/client/images/other-img/secure_payments.png') }}"
                                     alt="">
                             </div>
@@ -289,22 +273,23 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="Description-tab" data-bs-toggle="tab"
                                     data-bs-target="#Description-tab-pane" role="tab"
-                                    aria-controls="Description-tab-pane" aria-selected="true">Description</button>
+                                    aria-controls="Description-tab-pane" aria-selected="true">Mô tả chi tiết</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="specification-tab" data-bs-toggle="tab"
                                     data-bs-target="#specification-tab-pane" role="tab"
-                                    aria-controls="specification-tab-pane" aria-selected="false">Specification</button>
+                                    aria-controls="specification-tab-pane" aria-selected="false">Thông số sản
+                                    phẩm</button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            {{-- <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="question-tab" data-bs-toggle="tab"
                                     data-bs-target="#question-tab-pane" role="tab" aria-controls="question-tab-pane"
                                     aria-selected="false">Q & A</button>
-                            </li>
+                            </li> --}}
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="Reviews-tab" data-bs-toggle="tab"
                                     data-bs-target="#Reviews-tab-pane" role="tab" aria-controls="Reviews-tab-pane"
-                                    aria-selected="false">Reviews</button>
+                                    aria-selected="false">Đánh giá</button>
                             </li>
                         </ul>
                         <div class="tab-content product-content" id="ProductContent">
@@ -314,85 +299,38 @@
                                     <div class="col-12">
                                         {!! $product->detailed_description !!}
                                     </div>
-                                    <div class="col-12">
-
-                                        @if ($groupedDetails->isNotEmpty())
-                                            <div class="row gy-4">
-                                                @foreach ($groupedDetails as $groupName => $items)
-                                                    <div class="col-xxl-3 col-lg-4 col-sm-6">
-                                                        <div class="general-summery">
-                                                            <h5>{{ $groupName }}</h5>
-                                                            <ul>
-                                                                @foreach ($items as $item)
-                                                                    <li>{{ $item->label }}{{ $item->value ? ': ' . $item->value : '' }}
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <p><strong>Không có số liệu kĩ thuật.</strong></p>
-                                        @endif
-                                    </div>
-
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="specification-tab-pane" role="tabpanel"
                                 aria-labelledby="specification-tab" tabindex="0">
-                                <p>I like to be real. I don't like things to be staged or fussy. Grunge is a hippied
-                                    romantic version of punk. I have my favourite fashion decade, yes, yes, yes: '60s. It
-                                    was a sort of little revolution; the clothes were amazing but not too exaggerated.
-                                    Fashions fade, style is eternal. A girl should be two things: classy and fabulous.</p>
-                                <div class="table-responsive theme-scrollbar">
-                                    <table class="specification-table table striped">
-                                        <tr>
-                                            <th>Product Dimensions</th>
-                                            <td>15 x 15 x 3 cm; 250 Grams</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Date First Available</th>
-                                            <td>5 April 2021</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Manufacturer&rlm;</th>
-                                            <td>Aditya Birla Fashion and Retail Limited</td>
-                                        </tr>
-                                        <tr>
-                                            <th>ASIN</th>
-                                            <td>B06Y28LCDN</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Item model number</th>
-                                            <td>AMKP317G04244</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Department</th>
-                                            <td>Men</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Item Weight</th>
-                                            <td>250 G</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Item Dimensions LxWxH</th>
-                                            <td>15 x 15 x 3 Centimeters</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Net Quantity</th>
-                                            <td>1 U</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Included Components&rlm;</th>
-                                            <td>1-T-shirt</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Generic Name</th>
-                                            <td>T-shirt</td>
-                                        </tr>
-                                    </table>
-                                </div>
+
+                                @if ($groupedDetails->isNotEmpty())
+                                    <div class="table-responsive theme-scrollbar">
+                                        <table class="specification-table table table-striped">
+                                            <tbody>
+                                                @foreach ($groupedDetails as $groupName => $items)
+                                                    <!-- Nhóm (ví dụ: Thông tin chung, Kích thước, ...) -->
+                                                    <tr>
+                                                        <th colspan="2" class="bg-light fw-bold text-dark">
+                                                            {{ $groupName }}
+                                                        </th>
+                                                    </tr>
+
+                                                    <!-- Các item trong nhóm -->
+                                                    @foreach ($items as $item)
+                                                        <tr>
+                                                            <th class="w-40">{{ $item->label }}</th>
+                                                            <td>{{ $item->value ?? '-' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <p><strong>Không có số liệu kĩ thuật.</strong></p>
+                                @endif
+
                             </div>
                             <div class="tab-pane fade" id="question-tab-pane" role="tabpanel"
                                 aria-labelledby="question-tab" tabindex="0">
@@ -602,17 +540,23 @@
                                                                             </li>
                                                                         @endfor
                                                                     </ul>
-                                                                    @if($review->variant_values)
+                                                                    @if ($review->variant_values)
                                                                         @php
-                                                                        $variant_values = json_decode($review->variant_values);
-                                                                        if (is_string($variant_values)) {
-                                                                            $variant_values = json_decode($variant_values, true);
-                                                                        }
+                                                                            $variant_values = json_decode(
+                                                                                $review->variant_values,
+                                                                            );
+                                                                            if (is_string($variant_values)) {
+                                                                                $variant_values = json_decode(
+                                                                                    $variant_values,
+                                                                                    true,
+                                                                                );
+                                                                            }
                                                                         @endphp
-                                                                        @if(is_array($variant_values) && count($variant_values) > 0)
+                                                                        @if (is_array($variant_values) && count($variant_values) > 0)
                                                                             <div>
                                                                                 @foreach ($variant_values as $key => $value)
-                                                                                    <span>{{ ucfirst($key) }}</span>: <span>{{ $value }}</span>
+                                                                                    <span>{{ ucfirst($key) }}</span>:
+                                                                                    <span>{{ $value }}</span>
                                                                                 @endforeach
                                                                             </div>
                                                                         @endif
@@ -655,9 +599,10 @@
                             <div class="product-box-3">
                                 <div class="img-wrapper">
                                     <div class="label-block"><span class="lable-1">NEW</span><a
-                                            class="label-2 wishlist-icon add-to-wishlist" data-id="{{ $value->id }}" href="javascript:void(0)" tabindex="0"><i
-                                                class="iconsax" data-icon="heart" aria-hidden="true"
-                                                data-bs-toggle="tooltip" data-bs-title="Add to Wishlist"></i></a></div>
+                                            class="label-2 wishlist-icon add-to-wishlist" data-id="{{ $value->id }}"
+                                            href="javascript:void(0)" tabindex="0"><i class="iconsax"
+                                                data-icon="heart" aria-hidden="true" data-bs-toggle="tooltip"
+                                                data-bs-title="Add to Wishlist"></i></a></div>
                                     <div class="product-image"><a class="pro-first"
                                             href="{{ route('client.products.show', $value->id) }}"> <img class="bg-img"
                                                 src="{{ asset('storage/' . $value->image) }}"
@@ -725,6 +670,130 @@
             </div>
         </div>
     </section>
+    <div class="modal theme-modal fade" id="size-chart" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Bảng kích thước</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0 text-center">
+                    @if (!empty($sizeChart))
+                        <a href="{{ asset('storage/' . $sizeChart) }}" target="_blank">
+                            <img class="img-fluid" src="{{ asset('storage/' . $sizeChart) }}" alt="Size chart">
+                        </a>
+                    @else
+                        <p class="text-muted">⚠️ Chưa có bảng size cho sản phẩm này</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Ask a Question</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="reviews-product">
+                                <div> <img src="../assets/images/modal/0.jpg" alt="">
+                                    <div>
+                                        <h5>Denim Skirts Corset Blazer</h5>
+                                        <p>$20.00
+                                            <del>$35.00 </del>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="from-group">
+                                <label class="form-label">Your Question :</label>
+                                <textarea class="form-control" id="comment" cols="30" rows="4"
+                                    placeholder="Write your Question here..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-button-group">
+                            <button class="btn btn-cancel" type="submit" data-bs-dismiss="modal"
+                                aria-label="Close">Cancel</button>
+                            <button class="btn btn-submit" type="submit" data-bs-dismiss="modal"
+                                aria-label="Close">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @php
+        $productUrl = route('client.products.show', $product->slug);
+    @endphp
+
+
+    <div class="modal theme-modal fade social-modal" id="social-box" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Copy link</h6>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-field form-field--input" type="text" value="{{ $productUrl }}" readonly>
+                    <h6>Share:</h6>
+                    <ul class="d-flex gap-3 list-unstyled">
+                        <li>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($productUrl) }}"
+                                target="_blank">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://pinterest.com/pin/create/button/?url={{ urlencode($productUrl) }}&media={{ urlencode($product->image_url) }}&description={{ urlencode($product->name) }}"
+                                target="_blank">
+                                <i class="fa-brands fa-pinterest-p"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/intent/tweet?url={{ urlencode($productUrl) }}&text={{ urlencode($product->name) }}"
+                                target="_blank">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/?url={{ urlencode($productUrl) }}" target="_blank">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terms-conditions-modal modal theme-modal fade" id="terms-conditions-modal" tabindex="-1" role="dialog"
+        aria-modal="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Chính sách giao hàng & đổi trả</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    @if (!empty($returnPolicy))
+                        {!! $returnPolicy !!}
+                    @else
+                        <p class="text-muted">Chưa có chính sách đổi trả.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="customer-reviews-modal modal theme-modal fade" id="Reviews-modal" tabindex="-1" role="dialog"
         aria-modal="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
@@ -1330,38 +1399,39 @@
                 btn.addEventListener('click', function() {
                     const productId = this.dataset.id;
 
-        fetch(`/account/wishlist/add/${productId}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status == 'ok') {
-                Swal.fire({
-                    icon: 'success',
-                    title: data.message,
-                    timer: 1000,
-                    showConfirmButton: false
+                    fetch(`/account/wishlist/add/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status == 'ok') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: data.message,
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: data.message
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Lỗi:', err);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Đã có lỗi xảy ra'
+                            });
+                        });
                 });
-            } else {
-                Swal.fire({
-                    icon: 'info',
-                    title: data.message
-                });
-            }
-        })
-        .catch(err => {
-            console.error('Lỗi:', err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Đã có lỗi xảy ra'
             });
-        });
-    });
-});
         });
     </script>
 

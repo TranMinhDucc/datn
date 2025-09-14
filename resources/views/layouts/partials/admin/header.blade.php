@@ -37,7 +37,8 @@
                       <!--begin:Menu item-->
                       <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start"
                           class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
-                          <!--begin:Menu link--><span class="menu-link"><span class="menu-title">Dashboards</span><span
+                          <!--begin:Menu link--><span class="menu-link"><span class="menu-title">Bảng điều
+                                  khiển</span><span
                                   class="menu-arrow d-lg-none"></span></span><!--end:Menu link--><!--begin:Menu sub-->
 
                       </div>
@@ -68,7 +69,7 @@
                           </div>
                           <!--end::Search toggle-->
 
-                         
+
                       </div>
                       <!--end::Search-->
                   </div>
@@ -151,7 +152,7 @@
                           data-kt-menu-placement="bottom-end">
                           <img src="{{ asset('assets/admin/media/avatars/300-3.jpg') }}" class="rounded-3"
                               alt="user" />
-                              
+
                       </div>
 
                       <!--begin::User account menu-->
@@ -167,20 +168,23 @@
                                   <!--end::Avatar-->
 
                                   <!--begin::Username-->
-                                 <div class="d-flex flex-column">
-    <div class="fw-bold d-flex align-items-center fs-5">
-        {{ auth()->user()->fullname }}
-        @if(auth()->user()->role === 'admin')
-            <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Admin</span>
-        @else
-            <span class="badge badge-light-primary fw-bold fs-8 px-2 py-1 ms-2">User</span>
-        @endif
-    </div>
+                                  <div class="d-flex flex-column">
+                                      <div class="fw-bold d-flex align-items-center fs-5">
+                                          {{ auth()->user()->fullname }}
+                                          @if (auth()->user()->role === 'admin')
+                                              <span
+                                                  class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Admin</span>
+                                          @else
+                                              <span
+                                                  class="badge badge-light-primary fw-bold fs-8 px-2 py-1 ms-2">User</span>
+                                          @endif
+                                      </div>
 
-    <a href="mailto:{{ auth()->user()->email }}" class="fw-semibold text-muted text-hover-primary fs-7">
-        {{ auth()->user()->email }}
-    </a>
-</div>
+                                      <a href="mailto:{{ auth()->user()->email }}"
+                                          class="fw-semibold text-muted text-hover-primary fs-7">
+                                          {{ auth()->user()->email }}
+                                      </a>
+                                  </div>
 
                                   <!--end::Username-->
                               </div>
@@ -406,8 +410,8 @@
                                   <div class="menu-item px-3">
                                       <a href="account/settings.html" class="menu-link d-flex px-5">
                                           <span class="symbol symbol-20px me-4">
-                                              <img class="rounded-1"
-                                                  src="{{ asset('assets/media/flags/spain.svg') }}" alt="" />
+                                              <img class="rounded-1" src="{{ asset('assets/media/flags/spain.svg') }}"
+                                                  alt="" />
                                           </span>
                                           Spanish
                                       </a>

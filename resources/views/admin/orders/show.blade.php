@@ -211,7 +211,7 @@
                         <span>
                             <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên kết:
                             <a class="text-primary" href="/cron/sync-ghn-orders" target="_blank">CRON ORDER SHIPPING</a>
-                            1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý nạp tiền tự động.
+                            1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý gửi đơn hàng shipping tự động.
                         </span>
                     </div>
 
