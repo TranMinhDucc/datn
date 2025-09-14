@@ -41,6 +41,12 @@ class Order extends Model
         'return_image',
         'refunded_at',
         'paid_at',
+        'user_id',
+        'status',
+        'subtotal',
+        'total_amount',
+        'note_shipper',
+        'required_note_shipper',
     ];
 
     public function user()

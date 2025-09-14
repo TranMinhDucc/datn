@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SearchHistory;
+use App\Models\Wishlist;
+use App\Observers\SettingObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,18 +46,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Setting::observe(SettingObserver::class);
         Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
 
-Fortify::loginView(fn () => view('client.auth.login'));
-Fortify::registerView(fn () => view('client.auth.register'));
-Fortify::requestPasswordResetLinkView(fn () => view('client.auth.request-reset-password'));
-Fortify::verifyEmailView(fn () => view('client.auth.verify-email'));
+        Fortify::loginView(fn() => view('client.auth.login'));
+        Fortify::registerView(fn() => view('client.auth.register'));
+        Fortify::requestPasswordResetLinkView(fn() => view('client.auth.request-reset-password'));
+        Fortify::verifyEmailView(fn() => view('client.auth.verify-email'));
 
-View::composer('*', function ($view) {
-    $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
-    $view->with('popularSearches', $popularSearches);
-});
+        View::composer('*', function ($view) {
+            $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
+            $view->with('popularSearches', $popularSearches);
+        });
 
         $this->app->singleton(
             ResetPasswordViewResponse::class,
@@ -115,5 +118,33 @@ View::composer('*', function ($view) {
 
             $view->with('unreadNotifications', $notifications);
         });
+        // ✅ Override mail config từ bảng settings
+        if (Schema::hasTable('settings')) {
+            if (setting('smtp_status', 0) == 1) {
+                config([
+                    'mail.mailers.smtp.host'       => setting('smtp_host'),
+                    'mail.mailers.smtp.port'       => setting('smtp_port'),
+                    'mail.mailers.smtp.encryption' => setting('smtp_encryption'),
+                    'mail.mailers.smtp.username'   => setting('smtp_email'),
+                    'mail.mailers.smtp.password'   => setting('smtp_password'),
+                    'mail.from.address'            => setting('smtp_email'),
+                    'mail.from.name'               => config('app.name'),
+                ]);
+            }
+        }
+        View::composer('layouts.partials.client.header', function ($view) {
+            $wishlistCount = 0;
+
+            if (Auth::check()) {
+                $wishlistCount = Wishlist::where('user_id', Auth::id())
+                    ->where('is_active', 1)
+                    ->count();
+            }
+
+            $view->with('wishlistCount', $wishlistCount);
+        });
+        $fontFamily = Setting::where('name', 'font_family')->value('value') ?? "font-family: 'Montserrat', sans-serif";
+
+        View::share('fontFamily', $fontFamily);
     }
 }

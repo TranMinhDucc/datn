@@ -80,9 +80,6 @@
                                             class="path4"></span><span class="path5"></span></i> Theme
                                 </a>
                             </li>
-                            <!--end:::Tab item-->
-
-                            <!--begin:::Tab item-->
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_localization">
@@ -90,14 +87,17 @@
                                             class="path2"></span></i> Kết nối
                                 </a>
                             </li>
-                            <!--end:::Tab item-->
-
-                            <!--begin:::Tab item-->
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#kt_ecommerce_settings_notifications">
+                                    <i class="fa-solid fa-bell fs-2 me-2"><span class="path1"></span><span
+                                            class="path2"></span></i> Thông báo Telegram
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_products">
-                                    <i class="ki-duotone ki-package fs-2 me-2"><span class="path1"></span><span
-                                            class="path2"></span><span class="path3"></span></i> Products
+                                    <i class="fa-solid fa-cart-shopping fs-2 me-2"><span class="path1"></span><span
+                                            class="path2"></span><span class="path3"></span></i> Sản phẩm
                                 </a>
                             </li>
                             <!--end:::Tab item-->
@@ -328,7 +328,7 @@
                                                 <span>Thuế</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Nếu bạn muốn thu thuế VAT thì nhập vào đây, nếu không có thì để trống.
-Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào tổng số tiền thanh toán sau khi trừ khuyến mãi.">
+                                                                Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào tổng số tiền thanh toán sau khi trừ khuyến mãi.">
                                                     <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
@@ -343,6 +343,17 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                             <!--end::Input-->
                                         </div>
                                     </div>
+                                    <div class="row fv-row mb-7">
+                                        <div class="col-md-3 text-md-end">
+                                            <label class="fs-6 fw-semibold form-label mt-3">
+                                                <span class="required">Chính sách đổi trả</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <textarea id="return_policy" class="form-control form-control-solid" name="return_policy">{{ $settings['return_policy']->value ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+
                                     <!--end::Input group-->
                                     <!--begin::Action buttons-->
                                     <div class="row py-5">
@@ -371,7 +382,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 <!--end::Form-->
                             </div>
                             <!--end:::Tab pane-->
-
+                            {{-- THEME  --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_store" role="tabpanel">
                                 <!--begin::Form-->
@@ -396,7 +407,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Logo Light</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -419,7 +430,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Logo Dark</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -442,7 +453,7 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                                 <span>Favicon</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Upload the light version of the logo.">
-                                                    <i class="ki-duotone ki-information-5 text-gray-500 fs-6"><span
+                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i>
                                                 </span>
@@ -491,972 +502,593 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 <!--end::Form-->
                             </div>
                             <!--end:::Tab pane-->
-
+                            {{-- KẾT NỐI  --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_localization" role="tabpanel">
                                 <!--begin::Form-->
 
-                                <form id="kt_ecommerce_settings_general_localization" class="form" action="#">
-                                    <!--begin::Heading-->
-                                    <div class="col-md-6">
-                                        <table class="table table-bordered table-striped table-hover mb-3">
-                                            <thead class="table-dark text-center">
-                                                <tr>
-                                                    <th colspan="2">
-                                                        <img src="https://sieustore.com/assets/img/icon-smtp.png"
-                                                            width="20px" class="me-1">
-                                                        SMTP
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Bật/Tắt SMTP -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fa fa-toggle-on text-success"></i>
-                                                        SMTP Mail
-                                                    </td>
-                                                    <td>
-                                                        <select class="form-control" name="smtp_status">
-                                                            <option value="1" selected="">
-                                                                ON
-                                                            </option>
-                                                            <option value="0">
-                                                                OFF
-                                                            </option>
-                                                        </select>
-                                                    </td>
-                                                </tr>
+                                <form id="kt_ecommerce_settings_general_localization" class="form"
+                                    action="{{ route('admin.settings.update') }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
 
-                                                <!-- SMTP Host -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-server text-primary"></i>
-                                                        SMTP Host
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_host" class="form-control"
-                                                            placeholder="VD: smtp.gmail.com" value="smtp.gmail.com">
-                                                    </td>
-                                                </tr>
+                                    <!-- Xác định tab để controller biết -->
+                                    <input type="hidden" name="tab" value="integrations">
 
-                                                <!-- SMTP Encryption -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-shield-alt text-warning"></i>
-                                                        SMTP Encryption
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_encryption" class="form-control"
-                                                            placeholder="VD: ssl/tls" value="tls">
-                                                    </td>
-                                                </tr>
+                                    <div class="row push mb-3">
 
-                                                <!-- SMTP Port -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-network-wired text-info"></i>
-                                                        SMTP Port
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_port" class="form-control"
-                                                            placeholder="VD: 465, 587" value="587">
-                                                    </td>
-                                                </tr>
+                                        <!-- ================= SMTP ================= -->
+                                        <div class="row">
+                                            <!-- SMTP -->
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered table-striped table-hover mb-3">
+                                                    <thead class="table-dark text-center">
+                                                        <tr>
+                                                            <th colspan="2">
+                                                                <img src="https://sieustore.com/assets/img/icon-smtp.png"
+                                                                    width="20px" class="me-1">
+                                                                SMTP
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><i class="fa fa-toggle-on text-success"></i> SMTP Mail</td>
+                                                            <td>
+                                                                <select class="form-control" name="smtp_status">
+                                                                    <option value="1"
+                                                                        {{ setting('smtp_status') == 1 ? 'selected' : '' }}>
+                                                                        ON</option>
+                                                                    <option value="0"
+                                                                        {{ setting('smtp_status') == 0 ? 'selected' : '' }}>
+                                                                        OFF</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-server text-primary"></i> SMTP Host</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_host"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_host') }}"
+                                                                    placeholder="VD: smtp.gmail.com">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-shield-alt text-warning"></i> SMTP
+                                                                Encryption</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_encryption"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_encryption') }}"
+                                                                    placeholder="VD: ssl/tls">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-network-wired text-info"></i> SMTP Port
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="smtp_port"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_port') }}"
+                                                                    placeholder="VD: 465, 587">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fa fa-envelope text-danger"></i> SMTP Email</td>
+                                                            <td>
+                                                                <input type="text" name="smtp_email"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_email') }}"
+                                                                    placeholder="VD: yourmail@gmail.com">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-key text-secondary"></i> SMTP Password
+                                                            </td>
+                                                            <td>
+                                                                <input type="password" name="smtp_password"
+                                                                    class="form-control"
+                                                                    value="{{ setting('smtp_password') }}"
+                                                                    placeholder="Nhập mật khẩu SMTP...">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
 
-                                                <!-- SMTP Email -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fa fa-envelope text-danger"></i>
-                                                        SMTP Email
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_email" class="form-control"
-                                                            placeholder="VD: yourmail@gmail.com"
-                                                            value="sieustoremmo@gmail.com">
-                                                    </td>
-                                                </tr>
-
-                                                <!-- SMTP Password -->
-                                                <tr>
-                                                    <td>
-                                                        <i class="fas fa-key text-secondary"></i>
-                                                        SMTP Password
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="smtp_password" class="form-control"
-                                                            placeholder="Nhập mật khẩu SMTP..."
-                                                            value="t d l o f r y y n y h o n y i n">
-                                                        <small class="text-muted">
-
-                                                            Hướng dẫn tích hợp SMTP Gmail miễn phí tại <a
-                                                                href="https://help.cmsnt.co/huong-dan/huong-dan-cau-hinh-smtp-vao-website-shopclone7/"
-                                                                target="_blank" class="text-primary">đây</a>, hoặc sử dụng
-                                                            Email theo tên miền tại <a href="https://ntlink.co/TMtoW"
-                                                                target="_blank" class="text-primary">đây</a>.
-
-                                                        </small>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="row mb-7">
-                                        <div class="col-md-9 offset-md-3">
-                                            <h2>Localization Settings</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Heading-->
-
-                                    <!--begin::Input group-->
-                                    {{-- <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Country</span>
-                                            </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <!--begin::Select2-->
-                                            <select id="kt_ecommerce_localization_country"
-                                                class="form-select form-select-solid" name="localization_country"
-                                                data-kt-ecommerce-settings-type="select2_flags"
-                                                data-placeholder="Select a country">
-                                                <option></option>
-                                                <option value="AF"
-                                                    data-kt-select2-country="assets/media/flags/afghanistan.html">
-                                                    Afghanistan</option>
-                                                <option value="AX"
-                                                    data-kt-select2-country="assets/media/flags/aland-islands.html">Aland
-                                                    Islands</option>
-                                                <option value="AL"
-                                                    data-kt-select2-country="assets/media/flags/albania.html">Albania
-                                                </option>
-                                                <option value="DZ"
-                                                    data-kt-select2-country="assets/media/flags/algeria.html">Algeria
-                                                </option>
-                                                <option value="AS"
-                                                    data-kt-select2-country="assets/media/flags/american-samoa.html">
-                                                    American Samoa</option>
-                                                <option value="AD"
-                                                    data-kt-select2-country="assets/media/flags/andorra.html">Andorra
-                                                </option>
-                                                <option value="AO"
-                                                    data-kt-select2-country="assets/media/flags/angola.html">Angola
-                                                </option>
-                                                <option value="AI"
-                                                    data-kt-select2-country="assets/media/flags/anguilla.html">Anguilla
-                                                </option>
-                                                <option value="AG"
-                                                    data-kt-select2-country="assets/media/flags/antigua-and-barbuda.html">
-                                                    Antigua and Barbuda</option>
-                                                <option value="AR"
-                                                    data-kt-select2-country="assets/media/flags/argentina.html">Argentina
-                                                </option>
-                                                <option value="AM"
-                                                    data-kt-select2-country="assets/media/flags/armenia.html">Armenia
-                                                </option>
-                                                <option value="AW"
-                                                    data-kt-select2-country="assets/media/flags/aruba.html">Aruba</option>
-                                                <option value="AU"
-                                                    data-kt-select2-country="assets/media/flags/australia.html">Australia
-                                                </option>
-                                                <option value="AT"
-                                                    data-kt-select2-country="assets/media/flags/austria.html">Austria
-                                                </option>
-                                                <option value="AZ"
-                                                    data-kt-select2-country="assets/media/flags/azerbaijan.html">Azerbaijan
-                                                </option>
-                                                <option value="BS"
-                                                    data-kt-select2-country="assets/media/flags/bahamas.html">Bahamas
-                                                </option>
-                                                <option value="BH"
-                                                    data-kt-select2-country="assets/media/flags/bahrain.html">Bahrain
-                                                </option>
-                                                <option value="BD"
-                                                    data-kt-select2-country="assets/media/flags/bangladesh.html">Bangladesh
-                                                </option>
-                                                <option value="BB"
-                                                    data-kt-select2-country="assets/media/flags/barbados.html">Barbados
-                                                </option>
-                                                <option value="BY"
-                                                    data-kt-select2-country="assets/media/flags/belarus.html">Belarus
-                                                </option>
-                                                <option value="BE"
-                                                    data-kt-select2-country="assets/media/flags/belgium.html">Belgium
-                                                </option>
-                                                <option value="BZ"
-                                                    data-kt-select2-country="assets/media/flags/belize.html">Belize
-                                                </option>
-                                                <option value="BJ"
-                                                    data-kt-select2-country="assets/media/flags/benin.html">Benin</option>
-                                                <option value="BM"
-                                                    data-kt-select2-country="assets/media/flags/bermuda.html">Bermuda
-                                                </option>
-                                                <option value="BT"
-                                                    data-kt-select2-country="assets/media/flags/bhutan.html">Bhutan
-                                                </option>
-                                                <option value="BO"
-                                                    data-kt-select2-country="assets/media/flags/bolivia.html">Bolivia,
-                                                    Plurinational State of</option>
-                                                <option value="BQ"
-                                                    data-kt-select2-country="assets/media/flags/bonaire.html">Bonaire, Sint
-                                                    Eustatius and Saba</option>
-                                                <option value="BA"
-                                                    data-kt-select2-country="assets/media/flags/bosnia-and-herzegovina.html">
-                                                    Bosnia and Herzegovina</option>
-                                                <option value="BW"
-                                                    data-kt-select2-country="assets/media/flags/botswana.html">Botswana
-                                                </option>
-                                                <option value="BR"
-                                                    data-kt-select2-country="assets/media/flags/brazil.html">Brazil
-                                                </option>
-                                                <option value="IO"
-                                                    data-kt-select2-country="assets/media/flags/british-indian-ocean-territory.html">
-                                                    British Indian Ocean Territory</option>
-                                                <option value="BN"
-                                                    data-kt-select2-country="assets/media/flags/brunei.html">Brunei
-                                                    Darussalam</option>
-                                                <option value="BG"
-                                                    data-kt-select2-country="assets/media/flags/bulgaria.html">Bulgaria
-                                                </option>
-                                                <option value="BF"
-                                                    data-kt-select2-country="assets/media/flags/burkina-faso.html">Burkina
-                                                    Faso</option>
-                                                <option value="BI"
-                                                    data-kt-select2-country="assets/media/flags/burundi.html">Burundi
-                                                </option>
-                                                <option value="KH"
-                                                    data-kt-select2-country="assets/media/flags/cambodia.html">Cambodia
-                                                </option>
-                                                <option value="CM"
-                                                    data-kt-select2-country="assets/media/flags/cameroon.html">Cameroon
-                                                </option>
-                                                <option value="CA"
-                                                    data-kt-select2-country="assets/media/flags/canada.html">Canada
-                                                </option>
-                                                <option value="CV"
-                                                    data-kt-select2-country="assets/media/flags/cape-verde.html">Cape Verde
-                                                </option>
-                                                <option value="KY"
-                                                    data-kt-select2-country="assets/media/flags/cayman-islands.html">Cayman
-                                                    Islands</option>
-                                                <option value="CF"
-                                                    data-kt-select2-country="assets/media/flags/central-african-republic.html">
-                                                    Central African Republic</option>
-                                                <option value="TD"
-                                                    data-kt-select2-country="assets/media/flags/chad.html">Chad</option>
-                                                <option value="CL"
-                                                    data-kt-select2-country="assets/media/flags/chile.html">Chile</option>
-                                                <option value="CN"
-                                                    data-kt-select2-country="assets/media/flags/china.html">China</option>
-                                                <option value="CX"
-                                                    data-kt-select2-country="assets/media/flags/christmas-island.html">
-                                                    Christmas Island</option>
-                                                <option value="CC"
-                                                    data-kt-select2-country="assets/media/flags/cocos-island.html">Cocos
-                                                    (Keeling) Islands</option>
-                                                <option value="CO"
-                                                    data-kt-select2-country="assets/media/flags/colombia.html">Colombia
-                                                </option>
-                                                <option value="KM"
-                                                    data-kt-select2-country="assets/media/flags/comoros.html">Comoros
-                                                </option>
-                                                <option value="CK"
-                                                    data-kt-select2-country="assets/media/flags/cook-islands.html">Cook
-                                                    Islands</option>
-                                                <option value="CR"
-                                                    data-kt-select2-country="assets/media/flags/costa-rica.html">Costa Rica
-                                                </option>
-                                                <option value="CI"
-                                                    data-kt-select2-country="assets/media/flags/ivory-coast.html">Côte
-                                                    d'Ivoire</option>
-                                                <option value="HR"
-                                                    data-kt-select2-country="assets/media/flags/croatia.html">Croatia
-                                                </option>
-                                                <option value="CU"
-                                                    data-kt-select2-country="assets/media/flags/cuba.html">Cuba</option>
-                                                <option value="CW"
-                                                    data-kt-select2-country="assets/media/flags/curacao.html">Curaçao
-                                                </option>
-                                                <option value="CZ"
-                                                    data-kt-select2-country="assets/media/flags/czech-republic.html">Czech
-                                                    Republic</option>
-                                                <option value="DK"
-                                                    data-kt-select2-country="assets/media/flags/denmark.html">Denmark
-                                                </option>
-                                                <option value="DJ"
-                                                    data-kt-select2-country="assets/media/flags/djibouti.html">Djibouti
-                                                </option>
-                                                <option value="DM"
-                                                    data-kt-select2-country="assets/media/flags/dominica.html">Dominica
-                                                </option>
-                                                <option value="DO"
-                                                    data-kt-select2-country="assets/media/flags/dominican-republic.html">
-                                                    Dominican Republic</option>
-                                                <option value="EC"
-                                                    data-kt-select2-country="assets/media/flags/ecuador.html">Ecuador
-                                                </option>
-                                                <option value="EG"
-                                                    data-kt-select2-country="assets/media/flags/egypt.html">Egypt</option>
-                                                <option value="SV"
-                                                    data-kt-select2-country="assets/media/flags/el-salvador.html">El
-                                                    Salvador</option>
-                                                <option value="GQ"
-                                                    data-kt-select2-country="assets/media/flags/equatorial-guinea.html">
-                                                    Equatorial Guinea</option>
-                                                <option value="ER"
-                                                    data-kt-select2-country="assets/media/flags/eritrea.html">Eritrea
-                                                </option>
-                                                <option value="EE"
-                                                    data-kt-select2-country="assets/media/flags/estonia.html">Estonia
-                                                </option>
-                                                <option value="ET"
-                                                    data-kt-select2-country="assets/media/flags/ethiopia.html">Ethiopia
-                                                </option>
-                                                <option value="FK"
-                                                    data-kt-select2-country="assets/media/flags/falkland-islands.html">
-                                                    Falkland Islands (Malvinas)</option>
-                                                <option value="FJ"
-                                                    data-kt-select2-country="assets/media/flags/fiji.html">Fiji</option>
-                                                <option value="FI"
-                                                    data-kt-select2-country="assets/media/flags/finland.html">Finland
-                                                </option>
-                                                <option value="FR"
-                                                    data-kt-select2-country="assets/media/flags/france.html">France
-                                                </option>
-                                                <option value="PF"
-                                                    data-kt-select2-country="assets/media/flags/french-polynesia.html">
-                                                    French Polynesia</option>
-                                                <option value="GA"
-                                                    data-kt-select2-country="assets/media/flags/gabon.html">Gabon</option>
-                                                <option value="GM"
-                                                    data-kt-select2-country="assets/media/flags/gambia.html">Gambia
-                                                </option>
-                                                <option value="GE"
-                                                    data-kt-select2-country="assets/media/flags/georgia.html">Georgia
-                                                </option>
-                                                <option value="DE"
-                                                    data-kt-select2-country="assets/media/flags/germany.html">Germany
-                                                </option>
-                                                <option value="GH"
-                                                    data-kt-select2-country="assets/media/flags/ghana.html">Ghana</option>
-                                                <option value="GI"
-                                                    data-kt-select2-country="assets/media/flags/gibraltar.html">Gibraltar
-                                                </option>
-                                                <option value="GR"
-                                                    data-kt-select2-country="assets/media/flags/greece.html">Greece
-                                                </option>
-                                                <option value="GL"
-                                                    data-kt-select2-country="assets/media/flags/greenland.html">Greenland
-                                                </option>
-                                                <option value="GD"
-                                                    data-kt-select2-country="assets/media/flags/grenada.html">Grenada
-                                                </option>
-                                                <option value="GU"
-                                                    data-kt-select2-country="assets/media/flags/guam.html">Guam</option>
-                                                <option value="GT"
-                                                    data-kt-select2-country="assets/media/flags/guatemala.html">Guatemala
-                                                </option>
-                                                <option value="GG"
-                                                    data-kt-select2-country="assets/media/flags/guernsey.html">Guernsey
-                                                </option>
-                                                <option value="GN"
-                                                    data-kt-select2-country="assets/media/flags/guinea.html">Guinea
-                                                </option>
-                                                <option value="GW"
-                                                    data-kt-select2-country="assets/media/flags/guinea-bissau.html">
-                                                    Guinea-Bissau</option>
-                                                <option value="HT"
-                                                    data-kt-select2-country="assets/media/flags/haiti.html">Haiti</option>
-                                                <option value="VA"
-                                                    data-kt-select2-country="assets/media/flags/vatican-city.html">Holy See
-                                                    (Vatican City State)</option>
-                                                <option value="HN"
-                                                    data-kt-select2-country="assets/media/flags/honduras.html">Honduras
-                                                </option>
-                                                <option value="HK"
-                                                    data-kt-select2-country="assets/media/flags/hong-kong.html">Hong Kong
-                                                </option>
-                                                <option value="HU"
-                                                    data-kt-select2-country="assets/media/flags/hungary.html">Hungary
-                                                </option>
-                                                <option value="IS"
-                                                    data-kt-select2-country="assets/media/flags/iceland.html">Iceland
-                                                </option>
-                                                <option value="IN"
-                                                    data-kt-select2-country="assets/media/flags/india.html">India</option>
-                                                <option value="ID"
-                                                    data-kt-select2-country="assets/media/flags/indonesia.html">Indonesia
-                                                </option>
-                                                <option value="IR"
-                                                    data-kt-select2-country="assets/media/flags/iran.html">Iran, Islamic
-                                                    Republic of</option>
-                                                <option value="IQ"
-                                                    data-kt-select2-country="assets/media/flags/iraq.html">Iraq</option>
-                                                <option value="IE"
-                                                    data-kt-select2-country="assets/media/flags/ireland.html">Ireland
-                                                </option>
-                                                <option value="IM"
-                                                    data-kt-select2-country="assets/media/flags/isle-of-man.html">Isle of
-                                                    Man</option>
-                                                <option value="IL"
-                                                    data-kt-select2-country="assets/media/flags/israel.html">Israel
-                                                </option>
-                                                <option value="IT"
-                                                    data-kt-select2-country="assets/media/flags/italy.html">Italy</option>
-                                                <option value="JM"
-                                                    data-kt-select2-country="assets/media/flags/jamaica.html">Jamaica
-                                                </option>
-                                                <option value="JP"
-                                                    data-kt-select2-country="assets/media/flags/japan.html">Japan</option>
-                                                <option value="JE"
-                                                    data-kt-select2-country="assets/media/flags/jersey.html">Jersey
-                                                </option>
-                                                <option value="JO"
-                                                    data-kt-select2-country="assets/media/flags/jordan.html">Jordan
-                                                </option>
-                                                <option value="KZ"
-                                                    data-kt-select2-country="assets/media/flags/kazakhstan.html">Kazakhstan
-                                                </option>
-                                                <option value="KE"
-                                                    data-kt-select2-country="assets/media/flags/kenya.html">Kenya</option>
-                                                <option value="KI"
-                                                    data-kt-select2-country="assets/media/flags/kiribati.html">Kiribati
-                                                </option>
-                                                <option value="KP"
-                                                    data-kt-select2-country="assets/media/flags/north-korea.html">Korea,
-                                                    Democratic People's Republic of</option>
-                                                <option value="KW"
-                                                    data-kt-select2-country="assets/media/flags/kuwait.html">Kuwait
-                                                </option>
-                                                <option value="KG"
-                                                    data-kt-select2-country="assets/media/flags/kyrgyzstan.html">Kyrgyzstan
-                                                </option>
-                                                <option value="LA"
-                                                    data-kt-select2-country="assets/media/flags/laos.html">Lao People's
-                                                    Democratic Republic</option>
-                                                <option value="LV"
-                                                    data-kt-select2-country="assets/media/flags/latvia.html">Latvia
-                                                </option>
-                                                <option value="LB"
-                                                    data-kt-select2-country="assets/media/flags/lebanon.html">Lebanon
-                                                </option>
-                                                <option value="LS"
-                                                    data-kt-select2-country="assets/media/flags/lesotho.html">Lesotho
-                                                </option>
-                                                <option value="LR"
-                                                    data-kt-select2-country="assets/media/flags/liberia.html">Liberia
-                                                </option>
-                                                <option value="LY"
-                                                    data-kt-select2-country="assets/media/flags/libya.html">Libya</option>
-                                                <option value="LI"
-                                                    data-kt-select2-country="assets/media/flags/liechtenstein.html">
-                                                    Liechtenstein</option>
-                                                <option value="LT"
-                                                    data-kt-select2-country="assets/media/flags/lithuania.html">Lithuania
-                                                </option>
-                                                <option value="LU"
-                                                    data-kt-select2-country="assets/media/flags/luxembourg.html">Luxembourg
-                                                </option>
-                                                <option value="MO"
-                                                    data-kt-select2-country="assets/media/flags/macao.html">Macao</option>
-                                                <option value="MG"
-                                                    data-kt-select2-country="assets/media/flags/madagascar.html">Madagascar
-                                                </option>
-                                                <option value="MW"
-                                                    data-kt-select2-country="assets/media/flags/malawi.html">Malawi
-                                                </option>
-                                                <option value="MY"
-                                                    data-kt-select2-country="assets/media/flags/malaysia.html">Malaysia
-                                                </option>
-                                                <option value="MV"
-                                                    data-kt-select2-country="assets/media/flags/maldives.html">Maldives
-                                                </option>
-                                                <option value="ML"
-                                                    data-kt-select2-country="assets/media/flags/mali.html">Mali</option>
-                                                <option value="MT"
-                                                    data-kt-select2-country="assets/media/flags/malta.html">Malta</option>
-                                                <option value="MH"
-                                                    data-kt-select2-country="assets/media/flags/marshall-island.html">
-                                                    Marshall Islands</option>
-                                                <option value="MQ"
-                                                    data-kt-select2-country="assets/media/flags/martinique.html">Martinique
-                                                </option>
-                                                <option value="MR"
-                                                    data-kt-select2-country="assets/media/flags/mauritania.html">Mauritania
-                                                </option>
-                                                <option value="MU"
-                                                    data-kt-select2-country="assets/media/flags/mauritius.html">Mauritius
-                                                </option>
-                                                <option value="MX"
-                                                    data-kt-select2-country="assets/media/flags/mexico.html">Mexico
-                                                </option>
-                                                <option value="FM"
-                                                    data-kt-select2-country="assets/media/flags/micronesia.html">
-                                                    Micronesia, Federated States of</option>
-                                                <option value="MD"
-                                                    data-kt-select2-country="assets/media/flags/moldova.html">Moldova,
-                                                    Republic of</option>
-                                                <option value="MC"
-                                                    data-kt-select2-country="assets/media/flags/monaco.html">Monaco
-                                                </option>
-                                                <option value="MN"
-                                                    data-kt-select2-country="assets/media/flags/mongolia.html">Mongolia
-                                                </option>
-                                                <option value="ME"
-                                                    data-kt-select2-country="assets/media/flags/montenegro.html">Montenegro
-                                                </option>
-                                                <option value="MS"
-                                                    data-kt-select2-country="assets/media/flags/montserrat.html">Montserrat
-                                                </option>
-                                                <option value="MA"
-                                                    data-kt-select2-country="assets/media/flags/morocco.html">Morocco
-                                                </option>
-                                                <option value="MZ"
-                                                    data-kt-select2-country="assets/media/flags/mozambique.html">Mozambique
-                                                </option>
-                                                <option value="MM"
-                                                    data-kt-select2-country="assets/media/flags/myanmar.html">Myanmar
-                                                </option>
-                                                <option value="NA"
-                                                    data-kt-select2-country="assets/media/flags/namibia.html">Namibia
-                                                </option>
-                                                <option value="NR"
-                                                    data-kt-select2-country="assets/media/flags/nauru.html">Nauru</option>
-                                                <option value="NP"
-                                                    data-kt-select2-country="assets/media/flags/nepal.html">Nepal</option>
-                                                <option value="NL"
-                                                    data-kt-select2-country="assets/media/flags/netherlands.html">
-                                                    Netherlands</option>
-                                                <option value="NZ"
-                                                    data-kt-select2-country="assets/media/flags/new-zealand.html">New
-                                                    Zealand</option>
-                                                <option value="NI"
-                                                    data-kt-select2-country="assets/media/flags/nicaragua.html">Nicaragua
-                                                </option>
-                                                <option value="NE"
-                                                    data-kt-select2-country="assets/media/flags/niger.html">Niger</option>
-                                                <option value="NG"
-                                                    data-kt-select2-country="assets/media/flags/nigeria.html">Nigeria
-                                                </option>
-                                                <option value="NU"
-                                                    data-kt-select2-country="assets/media/flags/niue.html">Niue</option>
-                                                <option value="NF"
-                                                    data-kt-select2-country="assets/media/flags/norfolk-island.html">
-                                                    Norfolk Island</option>
-                                                <option value="MP"
-                                                    data-kt-select2-country="assets/media/flags/northern-mariana-islands.html">
-                                                    Northern Mariana Islands</option>
-                                                <option value="NO"
-                                                    data-kt-select2-country="assets/media/flags/norway.html">Norway
-                                                </option>
-                                                <option value="OM"
-                                                    data-kt-select2-country="assets/media/flags/oman.html">Oman</option>
-                                                <option value="PK"
-                                                    data-kt-select2-country="assets/media/flags/pakistan.html">Pakistan
-                                                </option>
-                                                <option value="PW"
-                                                    data-kt-select2-country="assets/media/flags/palau.html">Palau</option>
-                                                <option value="PS"
-                                                    data-kt-select2-country="assets/media/flags/palestine.html">Palestinian
-                                                    Territory, Occupied</option>
-                                                <option value="PA"
-                                                    data-kt-select2-country="assets/media/flags/panama.html">Panama
-                                                </option>
-                                                <option value="PG"
-                                                    data-kt-select2-country="assets/media/flags/papua-new-guinea.html">
-                                                    Papua New Guinea</option>
-                                                <option value="PY"
-                                                    data-kt-select2-country="assets/media/flags/paraguay.html">Paraguay
-                                                </option>
-                                                <option value="PE"
-                                                    data-kt-select2-country="assets/media/flags/peru.html">Peru</option>
-                                                <option value="PH"
-                                                    data-kt-select2-country="assets/media/flags/philippines.html">
-                                                    Philippines</option>
-                                                <option value="PL"
-                                                    data-kt-select2-country="assets/media/flags/poland.html">Poland
-                                                </option>
-                                                <option value="PT"
-                                                    data-kt-select2-country="assets/media/flags/portugal.html">Portugal
-                                                </option>
-                                                <option value="PR"
-                                                    data-kt-select2-country="assets/media/flags/puerto-rico.html">Puerto
-                                                    Rico</option>
-                                                <option value="QA"
-                                                    data-kt-select2-country="assets/media/flags/qatar.html">Qatar</option>
-                                                <option value="RO"
-                                                    data-kt-select2-country="assets/media/flags/romania.html">Romania
-                                                </option>
-                                                <option value="RU"
-                                                    data-kt-select2-country="assets/media/flags/russia.html">Russian
-                                                    Federation</option>
-                                                <option value="RW"
-                                                    data-kt-select2-country="assets/media/flags/rwanda.html">Rwanda
-                                                </option>
-                                                <option value="BL"
-                                                    data-kt-select2-country="assets/media/flags/st-barts.html">Saint
-                                                    Barthélemy</option>
-                                                <option value="KN"
-                                                    data-kt-select2-country="assets/media/flags/saint-kitts-and-nevis.html">
-                                                    Saint Kitts and Nevis</option>
-                                                <option value="LC"
-                                                    data-kt-select2-country="assets/media/flags/st-lucia.html">Saint Lucia
-                                                </option>
-                                                <option value="MF"
-                                                    data-kt-select2-country="assets/media/flags/sint-maarten.html">Saint
-                                                    Martin (French part)</option>
-                                                <option value="VC"
-                                                    data-kt-select2-country="assets/media/flags/st-vincent-and-the-grenadines.html">
-                                                    Saint Vincent and the Grenadines</option>
-                                                <option value="WS"
-                                                    data-kt-select2-country="assets/media/flags/samoa.html">Samoa</option>
-                                                <option value="SM"
-                                                    data-kt-select2-country="assets/media/flags/san-marino.html">San Marino
-                                                </option>
-                                                <option value="ST"
-                                                    data-kt-select2-country="assets/media/flags/sao-tome-and-prince.html">
-                                                    Sao Tome and Principe</option>
-                                                <option value="SA"
-                                                    data-kt-select2-country="assets/media/flags/saudi-arabia.html">Saudi
-                                                    Arabia</option>
-                                                <option value="SN"
-                                                    data-kt-select2-country="assets/media/flags/senegal.html">Senegal
-                                                </option>
-                                                <option value="RS"
-                                                    data-kt-select2-country="assets/media/flags/serbia.html">Serbia
-                                                </option>
-                                                <option value="SC"
-                                                    data-kt-select2-country="assets/media/flags/seychelles.html">Seychelles
-                                                </option>
-                                                <option value="SL"
-                                                    data-kt-select2-country="assets/media/flags/sierra-leone.html">Sierra
-                                                    Leone</option>
-                                                <option value="SG"
-                                                    data-kt-select2-country="assets/media/flags/singapore.html">Singapore
-                                                </option>
-                                                <option value="SX"
-                                                    data-kt-select2-country="assets/media/flags/sint-maarten.html">Sint
-                                                    Maarten (Dutch part)</option>
-                                                <option value="SK"
-                                                    data-kt-select2-country="assets/media/flags/slovakia.html">Slovakia
-                                                </option>
-                                                <option value="SI"
-                                                    data-kt-select2-country="assets/media/flags/slovenia.html">Slovenia
-                                                </option>
-                                                <option value="SB"
-                                                    data-kt-select2-country="assets/media/flags/solomon-islands.html">
-                                                    Solomon Islands</option>
-                                                <option value="SO"
-                                                    data-kt-select2-country="assets/media/flags/somalia.html">Somalia
-                                                </option>
-                                                <option value="ZA"
-                                                    data-kt-select2-country="assets/media/flags/south-africa.html">South
-                                                    Africa</option>
-                                                <option value="KR"
-                                                    data-kt-select2-country="assets/media/flags/south-korea.html">South
-                                                    Korea</option>
-                                                <option value="SS"
-                                                    data-kt-select2-country="assets/media/flags/south-sudan.html">South
-                                                    Sudan</option>
-                                                <option value="ES"
-                                                    data-kt-select2-country="assets/media/flags/spain.html">Spain</option>
-                                                <option value="LK"
-                                                    data-kt-select2-country="assets/media/flags/sri-lanka.html">Sri Lanka
-                                                </option>
-                                                <option value="SD"
-                                                    data-kt-select2-country="assets/media/flags/sudan.html">Sudan</option>
-                                                <option value="SR"
-                                                    data-kt-select2-country="assets/media/flags/suriname.html">Suriname
-                                                </option>
-                                                <option value="SZ"
-                                                    data-kt-select2-country="assets/media/flags/swaziland.html">Swaziland
-                                                </option>
-                                                <option value="SE"
-                                                    data-kt-select2-country="assets/media/flags/sweden.html">Sweden
-                                                </option>
-                                                <option value="CH"
-                                                    data-kt-select2-country="assets/media/flags/switzerland.html">
-                                                    Switzerland</option>
-                                                <option value="SY"
-                                                    data-kt-select2-country="assets/media/flags/syria.html">Syrian Arab
-                                                    Republic</option>
-                                                <option value="TW"
-                                                    data-kt-select2-country="assets/media/flags/taiwan.html">Taiwan,
-                                                    Province of China</option>
-                                                <option value="TJ"
-                                                    data-kt-select2-country="assets/media/flags/tajikistan.html">Tajikistan
-                                                </option>
-                                                <option value="TZ"
-                                                    data-kt-select2-country="assets/media/flags/tanzania.html">Tanzania,
-                                                    United Republic of</option>
-                                                <option value="TH"
-                                                    data-kt-select2-country="assets/media/flags/thailand.html">Thailand
-                                                </option>
-                                                <option value="TG"
-                                                    data-kt-select2-country="assets/media/flags/togo.html">Togo</option>
-                                                <option value="TK"
-                                                    data-kt-select2-country="assets/media/flags/tokelau.html">Tokelau
-                                                </option>
-                                                <option value="TO"
-                                                    data-kt-select2-country="assets/media/flags/tonga.html">Tonga</option>
-                                                <option value="TT"
-                                                    data-kt-select2-country="assets/media/flags/trinidad-and-tobago.html">
-                                                    Trinidad and Tobago</option>
-                                                <option value="TN"
-                                                    data-kt-select2-country="assets/media/flags/tunisia.html">Tunisia
-                                                </option>
-                                                <option value="TR"
-                                                    data-kt-select2-country="assets/media/flags/turkey.html">Turkey
-                                                </option>
-                                                <option value="TM"
-                                                    data-kt-select2-country="assets/media/flags/turkmenistan.html">
-                                                    Turkmenistan</option>
-                                                <option value="TC"
-                                                    data-kt-select2-country="assets/media/flags/turks-and-caicos.html">
-                                                    Turks and Caicos Islands</option>
-                                                <option value="TV"
-                                                    data-kt-select2-country="assets/media/flags/tuvalu.html">Tuvalu
-                                                </option>
-                                                <option value="UG"
-                                                    data-kt-select2-country="assets/media/flags/uganda.html">Uganda
-                                                </option>
-                                                <option value="UA"
-                                                    data-kt-select2-country="assets/media/flags/ukraine.html">Ukraine
-                                                </option>
-                                                <option value="AE"
-                                                    data-kt-select2-country="assets/media/flags/united-arab-emirates.html">
-                                                    United Arab Emirates</option>
-                                                <option value="GB"
-                                                    data-kt-select2-country="assets/media/flags/united-kingdom.html">United
-                                                    Kingdom</option>
-                                                <option value="US"
-                                                    data-kt-select2-country="assets/media/flags/united-states.html">United
-                                                    States</option>
-                                                <option value="UY"
-                                                    data-kt-select2-country="assets/media/flags/uruguay.html">Uruguay
-                                                </option>
-                                                <option value="UZ"
-                                                    data-kt-select2-country="assets/media/flags/uzbekistan.html">Uzbekistan
-                                                </option>
-                                                <option value="VU"
-                                                    data-kt-select2-country="assets/media/flags/vanuatu.html">Vanuatu
-                                                </option>
-                                                <option value="VE"
-                                                    data-kt-select2-country="assets/media/flags/venezuela.html">Venezuela,
-                                                    Bolivarian Republic of</option>
-                                                <option value="VN"
-                                                    data-kt-select2-country="assets/media/flags/vietnam.html">Vietnam
-                                                </option>
-                                                <option value="VI"
-                                                    data-kt-select2-country="assets/media/flags/virgin-islands.html">Virgin
-                                                    Islands</option>
-                                                <option value="YE"
-                                                    data-kt-select2-country="assets/media/flags/yemen.html">Yemen</option>
-                                                <option value="ZM"
-                                                    data-kt-select2-country="assets/media/flags/zambia.html">Zambia
-                                                </option>
-                                                <option value="ZW"
-                                                    data-kt-select2-country="assets/media/flags/zimbabwe.html">Zimbabwe
-                                                </option>
-                                            </select>
-                                            <!--end::Select2-->
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Language</span>
-                                            </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="w-100">
-                                                <!--begin::Select2-->
-                                                <select class="form-select form-select-solid" name="localization_language"
-                                                    data-control="select2" data-placeholder="Select a language">
-                                                    <option></option>
-                                                    <option value="id">Bahasa Indonesia - Indonesian</option>
-                                                    <option value="msa">Bahasa Melayu - Malay</option>
-                                                    <option value="ca">Català - Catalan</option>
-                                                    <option value="cs">Čeština - Czech</option>
-                                                    <option value="da">Dansk - Danish</option>
-                                                    <option value="de">Deutsch - German</option>
-                                                    <option value="en">English</option>
-                                                    <option value="en-gb">English UK - British English</option>
-                                                    <option value="es">Español - Spanish</option>
-                                                    <option value="fil">Filipino</option>
-                                                    <option value="fr">Français - French</option>
-                                                    <option value="ga">Gaeilge - Irish (beta)</option>
-                                                    <option value="gl">Galego - Galician (beta)</option>
-                                                    <option value="hr">Hrvatski - Croatian</option>
-                                                    <option value="it">Italiano - Italian</option>
-                                                    <option value="hu">Magyar - Hungarian</option>
-                                                    <option value="nl">Nederlands - Dutch</option>
-                                                    <option value="no">Norsk - Norwegian</option>
-                                                    <option value="pl">Polski - Polish</option>
-                                                    <option value="pt">Português - Portuguese</option>
-                                                    <option value="ro">Română - Romanian</option>
-                                                    <option value="sk">Slovenčina - Slovak</option>
-                                                    <option value="fi">Suomi - Finnish</option>
-                                                    <option value="sv">Svenska - Swedish</option>
-                                                    <option value="vi">Tiếng Việt - Vietnamese</option>
-                                                    <option value="tr">Türkçe - Turkish</option>
-                                                    <option value="el">Ελληνικά - Greek</option>
-                                                    <option value="bg">Български език - Bulgarian</option>
-                                                    <option value="ru">Русский - Russian</option>
-                                                    <option value="sr">Српски - Serbian</option>
-                                                    <option value="uk">Українська мова - Ukrainian</option>
-                                                    <option value="he">עִבְרִית - Hebrew</option>
-                                                    <option value="ur">اردو - Urdu (beta)</option>
-                                                    <option value="ar">العربية - Arabic</option>
-                                                    <option value="fa">فارسی - Persian</option>
-                                                    <option value="mr">मराठी - Marathi</option>
-                                                    <option value="hi">हिन्दी - Hindi</option>
-                                                    <option value="bn">বাংলা - Bangla</option>
-                                                    <option value="gu">ગુજરાતી - Gujarati</option>
-                                                    <option value="ta">தமிழ் - Tamil</option>
-                                                    <option value="kn">ಕನ್ನಡ - Kannada</option>
-                                                    <option value="th">ภาษาไทย - Thai</option>
-                                                    <option value="ko">한국어 - Korean</option>
-                                                    <option value="ja">日本語 - Japanese</option>
-                                                    <option value="zh-cn">简体中文 - Simplified Chinese</option>
-                                                    <option value="zh-tw">繁體中文 - Traditional Chinese</option>
-                                                </select>
-                                                <!--end::Select2-->
+                                            <!-- Telegram -->
+                                            <div class="col-md-6">
+                                                <table class="table table-bordered table-striped table-hover mb-3">
+                                                    <thead class="table-dark text-center">
+                                                        <tr>
+                                                            <th colspan="2">
+                                                                <i class="fab fa-telegram text-primary"></i> Telegram
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Status</td>
+                                                            <td>
+                                                                <select class="form-control" name="telegram_status">
+                                                                    <option value="1"
+                                                                        {{ setting('telegram_status') == 1 ? 'selected' : '' }}>
+                                                                        ON</option>
+                                                                    <option value="0"
+                                                                        {{ setting('telegram_status') == 0 ? 'selected' : '' }}>
+                                                                        OFF</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Telegram Token</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_token"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_token') }}"
+                                                                    placeholder="Nhập Telegram Bot Token...">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Chat ID</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_chat_id"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_chat_id') }}"
+                                                                    placeholder="Nhập Chat ID...">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Telegram URL</td>
+                                                            <td>
+                                                                <input type="text" name="telegram_url"
+                                                                    class="form-control"
+                                                                    value="{{ setting('telegram_url') }}"
+                                                                    placeholder="Nhập Telegram API URL...">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
+
+
+                                        <!-- ================= Google Analytics ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-google text-primary"></i>
+                                                            Google Analytics</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Status</td>
+                                                        <td>
+                                                            <select class="form-control" name="google_analytics_status">
+                                                                <option value="1"
+                                                                    {{ setting('google_analytics_status') == 1 ? 'selected' : '' }}>
+                                                                    ON</option>
+                                                                <option value="0"
+                                                                    {{ setting('google_analytics_status') == 0 ? 'selected' : '' }}>
+                                                                    OFF</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tracking ID</td>
+                                                        <td>
+                                                            <input type="text" name="google_analytics_id"
+                                                                class="form-control"
+                                                                value="{{ setting('google_analytics_id') }}"
+                                                                placeholder="VD: G-XXXXXXX">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= Google Ads ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-google text-success"></i>
+                                                            Google Ads</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Ads ID</td>
+                                                        <td>
+                                                            <input type="text" name="google_ads_id"
+                                                                class="form-control"
+                                                                value="{{ setting('google_ads_id') }}"
+                                                                placeholder="VD: AW-XXXXXXX">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= ChatGPT ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fas fa-robot text-info"></i> ChatGPT
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>API Key</td>
+                                                        <td>
+                                                            <input type="text" name="chatgpt_api_key"
+                                                                class="form-control"
+                                                                value="{{ setting('chatgpt_api_key') }}"
+                                                                placeholder="Nhập API Key của OpenAI...">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= Gmail Check ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fas fa-envelope text-danger"></i>
+                                                            Gmail Check</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Email</td>
+                                                        <td>
+                                                            <input type="text" name="gmail_check" class="form-control"
+                                                                value="{{ setting('gmail_check') }}"
+                                                                placeholder="VD: check@gmail.com">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- ================= Instagram Check ================= -->
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered table-striped table-hover mb-3">
+                                                <thead class="table-dark text-center">
+                                                    <tr>
+                                                        <th colspan="2"><i class="fab fa-instagram text-warning"></i>
+                                                            Instagram Check</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Username</td>
+                                                        <td>
+                                                            <input type="text" name="instagram_check"
+                                                                class="form-control"
+                                                                value="{{ setting('instagram_check') }}"
+                                                                placeholder="VD: @username">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <!--end::Input group-->
 
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Currency</span>
-                                            </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="w-100">
-                                                <!--begin::Select2-->
-                                                <select class="form-select form-select-solid" name="localization_currency"
-                                                    data-control="select2" data-hide-search="true"
-                                                    data-placeholder="Select a currency">
-                                                    <option></option>
-                                                    <option value="USD">US Dollar</option>
-                                                    <option value="Euro">Euro</option>
-                                                    <option value="Pound">Pound</option>
-                                                    <option value="AUD">Australian Dollar</option>
-                                                    <option value="JPY">Japanese Yen</option>
-                                                    <option value="KRW">Korean Won</option>
-                                                </select>
-                                                <!--end::Select2-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Length Class</span>
-
-
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Set the unit measurement for length.">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="w-100">
-                                                <!--begin::Select2-->
-                                                <select class="form-select form-select-solid" name="localization_currency"
-                                                    data-control="select2" data-hide-search="true"
-                                                    data-placeholder="Select a length class">
-                                                    <option></option>
-                                                    <option value="cm" selected>Centimeter</option>
-                                                    <option value="mm">Milimeter</option>
-                                                    <option value="in">Inch</option>
-                                                </select>
-                                                <!--end::Select2-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Weight Class</span>
-
-
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Set the unit measurement for weight.">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="w-100">
-                                                <!--begin::Select2-->
-                                                <select class="form-select form-select-solid" name="localization_currency"
-                                                    data-control="select2" data-hide-search="true"
-                                                    data-placeholder="Select a weight class">
-                                                    <option></option>
-                                                    <option value="kg" selected>Kilogram</option>
-                                                    <option value="g">Gram</option>
-                                                    <option value="lb">Pound</option>
-                                                    <option value="oz">Ounce</option>
-                                                </select>
-                                                <!--end::Select2-->
-                                            </div>
-                                        </div>
-                                    </div> --}}
-                                    <!--end::Input group-->
-
-                                    <!--begin::Action buttons-->
+                                    <!-- Action buttons -->
                                     <div class="row py-5">
                                         <div class="col-md-9 offset-md-3">
                                             <div class="d-flex">
-                                                <!--begin::Button-->
-                                                <button type="reset" data-kt-ecommerce-settings-type="cancel"
-                                                    class="btn btn-light me-3">
-                                                    Cancel
-                                                </button>
-                                                <!--end::Button-->
-
-                                                <!--begin::Button-->
-                                                <button type="submit" data-kt-ecommerce-settings-type="submit"
-                                                    class="btn btn-primary">
-                                                    <span class="indicator-label">
-                                                        Save
-                                                    </span>
-                                                    <span class="indicator-progress">
-                                                        Please wait... <span
+                                                <button type="reset" class="btn btn-light me-3">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <span class="indicator-label">Save</span>
+                                                    <span class="indicator-progress">Please wait...
+                                                        <span
                                                             class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                                     </span>
                                                 </button>
-                                                <!--end::Button-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                                <!--end::Form-->
+                            </div>
+                            <!--end:::Tab pane-->
+                            <!--begin:::Tab pane Telegram Notifications-->
+                            <div class="tab-pane fade" id="kt_ecommerce_settings_notifications" role="tabpanel">
+                                <!--begin::Form-->
+                                <form action="{{ route('admin.settings.update') }}" method="POST" class="form">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <!-- Xác định tab -->
+                                    <input type="hidden" name="tab" value="notifications">
+
+                                    <!--begin::Heading-->
+                                    <div class="row mb-10">
+                                        <div class="col-md-12">
+                                            <div class="d-flex align-items-center mb-5">
+                                                <div class="symbol symbol-45px me-5">
+                                                    <div class="symbol-label bg-light-primary">
+                                                        <i class="fab fa-telegram text-primary fs-2x"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-column">
+                                                    <h2 class="mb-1">Cài đặt thông báo Telegram</h2>
+                                                    <span class="text-muted fs-6">Tùy chỉnh các mẫu thông báo được gửi qua
+                                                        Telegram</span>
+                                                </div>
+                                            </div>
+
+                                            <!--begin::Alert-->
+                                            <div class="alert alert-primary d-flex align-items-center p-5 mb-10">
+                                                <i class="fa-solid fa-lightbulb fs-2hx text-primary me-4"></i>
+                                                <div class="d-flex flex-column">
+                                                    <h4 class="mb-1 text-primary">Hướng dẫn sử dụng</h4>
+                                                    <span>• Để mặc định nếu bạn không có nhu cầu tùy chỉnh<br>
+                                                        • Xóa toàn bộ nội dung trong ô nếu không muốn bật thông báo<br>
+                                                        • Sử dụng các biến được cung cấp để tùy chỉnh thông báo</span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="alert alert-dismissible bg-light-info border border-info border-3 border-dashed d-flex flex-column flex-sm-row align-items-center justify-content-center p-5 ">
+                                                <div class="d-flex flex-column pe-0 pe-sm-10">
+                                                    <span>
+                                                        <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên
+                                                        kết:
+                                                        <a class="text-primary" href="/cron/check-notification-telegram"
+                                                            target="_blank">TELEGRAM
+                                                            NOTICE</a>
+                                                        1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý thông báo telegram.
+                                                    </span>
+                                                </div>
+                                                <!--end::Alert-->
+                                            </div>
+                                        </div>
+                                        <div class="row g-6">
+
+                                            <!--begin::Notification Card 2-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-danger">
+                                                        <div class="card-title">
+                                                            <i class="fa-solid fa-box text-danger fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo số lượng hàng trong kho
+                                                                thấp</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="7" name="telegram_low_stock_template"
+                                                                placeholder="Nhập nội dung số lượng hàng trong kho thấp...">{{ setting('telegram_low_stock_template') }}</textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{product}</span>
+                                                                        <span class="text-muted fs-7">Tên sản phẩm</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{stock}</span>
+                                                                        <span class="text-muted fs-7">Số lượng tồn
+                                                                            kho</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-success me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 2-->
+
+                                            <!--begin::Notification Card 3-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-warning">
+                                                        <div class="card-title">
+                                                            <i class="fa-solid fa-user-shield text-warning fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo hành động</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="4" name="noti_action"
+                                                                placeholder="Nhập nội dung thông báo hành động...">[{time}] 
+                                            - <b>Username</b>: <code>{username}</code>
+                                            - <b>Action</b>: <code>{action}</code>
+                                            - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{domain}</span>
+                                                                        <span class="text-muted fs-7">Tên website</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{username}</span>
+                                                                        <span class="text-muted fs-7">Tên thành viên</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{action}</span>
+                                                                        <span class="text-muted fs-7">Hành động của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{ip}</span>
+                                                                        <span class="text-muted fs-7">Địa chỉ IP của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-warning me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 3-->
+
+                                            <!--begin::Notification Card 4-->
+                                            <div class="col-12">
+                                                <div class="card card-flush border-0 shadow-sm">
+                                                    <div class="card-header bg-light-danger">
+                                                        <div class="card-title">
+                                                            <i
+                                                                class="fa-solid fa-hand-holding-dollar text-danger fs-3 me-3"></i>
+                                                            <span class="fw-bold fs-4">Thông báo rút số dư hoa hồng</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body p-6">
+                                                        <!--begin::Input group-->
+                                                        <div class="mb-6">
+                                                            <label class="form-label fw-semibold fs-6 text-gray-800">Nội
+                                                                dung
+                                                                thông báo:</label>
+                                                            <textarea class="form-control form-control-solid" rows="5" name="noti_affiliate_withdraw"
+                                                                placeholder="Nhập nội dung thông báo rút hoa hồng...">[{time}] 
+                                    - <b>Username</b>: <code>{username}</code>
+                                    - <b>Action</b>: <code>Tạo lệnh rút {amount} về ngân hàng {bank} | {account_number} | {account_name}</code>
+                                    - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        </div>
+                                                        <!--end::Input group-->
+
+                                                        <!--begin::Variables-->
+                                                        <div class="bg-light-info rounded p-5">
+                                                            <h6 class="text-info fw-bold mb-4">
+                                                                <i class="fa-solid fa-code me-2"></i>Biến có thể sử dụng:
+                                                            </h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{domain}</span>
+                                                                        <span class="text-muted fs-7">Tên website</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{username}</span>
+                                                                        <span class="text-muted fs-7">Tên thành viên
+                                                                            rút</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{bank}</span>
+                                                                        <span class="text-muted fs-7">Tên ngân hàng nhận
+                                                                            tiền</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{account_number}</span>
+                                                                        <span class="text-muted fs-7">Số tài khoản nhận
+                                                                            tiền</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{account_name}</span>
+                                                                        <span class="text-muted fs-7">Tên chủ tài
+                                                                            khoản</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{amount}</span>
+                                                                        <span class="text-muted fs-7">Số dư cần rút</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{ip}</span>
+                                                                        <span class="text-muted fs-7">Địa chỉ IP của thành
+                                                                            viên</span>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <span
+                                                                            class="badge badge-light-danger me-2">{time}</span>
+                                                                        <span class="text-muted fs-7">Thời gian</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Variables-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Notification Card 4-->
+                                        </div>
+                                        <div class="row py-5">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-end">
+                                                    <!--begin::Button-->
+                                                    <button type="reset" class="btn btn-light me-3">
+                                                        <i class="fa-solid fa-arrow-rotate-left me-2"></i>Hủy bỏ
+                                                    </button>
+                                                    <!--end::Button-->
+
+                                                    <!--begin::Button-->
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <span class="indicator-label">
+                                                            <i class="fa-solid fa-floppy-disk me-2"></i>Lưu cài đặt
+                                                        </span>
+                                                        <span class="indicator-progress">
+                                                            Đang lưu...
+                                                            <span
+                                                                class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                        </span>
+                                                    </button>
+                                                    <!--end::Button-->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1464,16 +1096,21 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                 </form>
                                 <!--end::Form-->
                             </div>
-                            <!--end:::Tab pane-->
-
+                            <!--end:::Tab pane Telegram Notifications-->
+                            {{-- Cài đặt tồn kho --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_products" role="tabpanel">
                                 <!--begin::Form-->
-                                <form id="kt_ecommerce_settings_general_products" class="form" action="#">
+                                <form id="kt_ecommerce_settings_general_products" class="form" method="POST"
+                                    action="{{ route('admin.settings.update') }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="tab" value="products">
+
                                     <!--begin::Heading-->
                                     <div class="row mb-7">
                                         <div class="col-md-9 offset-md-3">
-                                            <h2>Cateogries Settings</h2>
+                                            <h2>Cài đặt tồn kho</h2>
                                         </div>
                                     </div>
                                     <!--end::Heading-->
@@ -1524,11 +1161,11 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
                                         <div class="col-md-3 text-md-end">
                                             <!--begin::Label-->
                                             <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Default Items Per Page</span>
+                                                <span class="required">Cảnh báo kho hàng</span>
 
 
                                                 <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Determines how many items are shown per page.">
+                                                    title="Kho hàng đến số lượng này sẽ báo cáo cho admin biết gần hết">
                                                     <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i></span> </label>
@@ -1537,8 +1174,10 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
 
                                         <div class="col-md-9">
                                             <!--begin::Input-->
-                                            <input type="text" class="form-control form-control-solid"
-                                                name="products_items_per_page" value="10" />
+                                            <input type="number" class="form-control form-control-solid"
+                                                name="low_stock_alert"
+                                                value="{{ $settings['low_stock_alert']->value ?? 10 }}" />
+
                                             <!--end::Input-->
                                         </div>
                                     </div>
@@ -2081,5 +1720,14 @@ Ví dụ bạn nhập 10% thì hệ thống sẽ tự động thêm 10% vào t�
     <script>
         new Tagify(document.querySelector('[name="keywords"]'));
     </script>
+    <!-- CKEditor 5 CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/classic/ckeditor.js"></script>
 
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#return_policy'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 @endsection

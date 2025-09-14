@@ -48,7 +48,10 @@ class Product extends Model
     {
         return $this->hasOne(ProductLabel::class, 'product_id');
     }
-
+    public function labels()
+    {
+        return $this->belongsToMany(ProductLabel::class, 'product_label_product');
+    }
     // Quan hệ với thương hiệu
     public function brand()
     {

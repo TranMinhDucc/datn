@@ -203,7 +203,7 @@ class CheckoutController extends Controller
             $totalWeight += $weight * $quantity;
             $maxLength = max($maxLength, $length);
             $maxWidth = max($maxWidth, $width);
-            $totalHeight += $height * $quantity;
+            $totalHeight = max($totalHeight, $height);
         }
 
         Log::debug('Tổng thông số đơn hàng', [
@@ -454,9 +454,8 @@ class CheckoutController extends Controller
 
                 session()->put('order_id', $order->id); // ✅ Thêm dòng này
 
-Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMail($order));
-
-
+                Mail::to(auth()->user()->email ?? $order->user->email)
+                    ->later(now()->addSeconds(5), new OrderSuccessMail($order));
                 return redirect()->route('client.checkout.success')->with('success', 'Thanh toán MoMo thành công!');
             } catch (\Throwable $e) {
                 Log::error('❌ Lỗi tạo đơn hàng sau thanh toán MoMo: ' . $e->getMessage(), [
@@ -668,10 +667,6 @@ Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMai
                             'message' => 'Sản phẩm "' . $product->name . '" không đủ tồn kho để giữ chỗ.',
                         ], 400);
                     }
-
-                    // Nếu bạn muốn hỗ trợ giữ chỗ cho product gốc (không phải variant),
-                    // thì bạn cần viết thêm reserve cho Product trong InventoryService.
-                    // Còn nếu chỉ dùng Variant thì nên ép buộc sản phẩm phải có Variant.
                 }
 
                 // ✅ THÔNG TIN ĐƠN HÀNG CHI TIẾT
@@ -733,10 +728,11 @@ Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMai
 
             session()->put('order_id', $order->id);
             DB::commit(); // ✅ KẾT THÚC TRANSACTION
-            
 
-            
-Mail::to(auth()->user()->email ?? $order->user->email)->send(new OrderSuccessMail($order));
+
+
+            Mail::to(auth()->user()->email ?? $order->user->email)
+                ->queue(new OrderSuccessMail($order));
 
 
             return response()->json([

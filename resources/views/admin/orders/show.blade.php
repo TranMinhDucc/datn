@@ -33,6 +33,8 @@
                     </div>
                 @endforeach
             @endif
+
+
             <div class="d-flex flex-column gap-7 gap-lg-10">
 
                 <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
@@ -184,9 +186,12 @@
                             class="btn btn-success btn-sm">
                             <i class="fa-solid fa-paper-plane"></i> Xác nhận & Gửi đơn Shipping
                         </a>
+                        <a href="{{ route('admin.orders.print-label', $order->id) }}" class="btn btn-info btn-sm"
+                            target="_blank">
+                            <i class="fa-solid fa-print"></i>
+                        </a>
                         {{-- @endif --}}
                     </div>
-
                 </div>
                 <!--begin::Order summary-->
                 <!-- Modal for creating exchange order -->
@@ -211,7 +216,7 @@
                         <span>
                             <i class="fa-solid fa-bell"></i> Vui lòng thực hiện CRON JOB liên kết:
                             <a class="text-primary" href="/cron/sync-ghn-orders" target="_blank">CRON ORDER SHIPPING</a>
-                            1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý nạp tiền tự động.
+                            1 phút 1 lần hoặc nhanh hơn để hệ thống xử lý gửi đơn hàng shipping tự động.
                         </span>
                     </div>
 
@@ -693,6 +698,49 @@
                                 </div>
                                 <!--end::Shipping address-->
                             </div>
+                            <!--begin::Shipping note-->
+                            <div class="card card-flush py-4 flex-row-fluid">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <h2>Thông tin giao hàng (Shipper)</h2>
+                                    </div>
+                                </div>
+
+                                <div class="card-body pt-0">
+                                    <form method="POST" action="{{ route('admin.orders.updateGhnNote', $order->id) }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label class="form-label">Lưu ý giao hàng *</label>
+                                            <select name="required_note_shipper" class="form-select" required>
+                                                <option value="KHONGCHOXEMHANG"
+                                                    {{ $order->required_note_shipper == 'KHONGCHOXEMHANG' ? 'selected' : '' }}>
+                                                    Không cho xem hàng
+                                                </option>
+                                                <option value="CHOXEMHANGKHONGTHU"
+                                                    {{ $order->required_note_shipper == 'CHOXEMHANGKHONGTHU' ? 'selected' : '' }}>
+                                                    Cho xem hàng, không cho thử
+                                                </option>
+                                                <option value="CHOTHUHANG"
+                                                    {{ $order->required_note_shipper == 'CHOTHUHANG' ? 'selected' : '' }}>
+                                                    Cho thử hàng
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Ghi chú giao hàng</label>
+                                            <input type="text" name="note_shipper" class="form-control"
+                                                value="{{ old('note_shipper', $order->note_shipper) }}">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Cập nhật GHN</button>
+                                    </form>
+
+
+
+                                </div>
+                            </div>
+                            <!--end::Shipping note-->
 
                             <!--begin::Product List-->
                             <div class="card card-flush py-4 flex-row-fluid overflow-hidden">

@@ -43,6 +43,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_login_at', // ✅ thêm dòng này
         'banned'
     ];
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 
 
     /**
@@ -99,9 +103,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasPurchased($productId)
     {
-        return OrderItem::whereHas('order', function($query) {
-                $query->where('user_id', $this->id)->where('status', '=', 'completed');
-            })
+        return OrderItem::whereHas('order', function ($query) {
+            $query->where('user_id', $this->id)->where('status', '=', 'completed');
+        })
             ->where('product_id', $productId)
             ->exists();
     }
