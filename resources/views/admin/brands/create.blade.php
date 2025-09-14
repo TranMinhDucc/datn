@@ -55,7 +55,8 @@
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
                         @endif
 
@@ -64,18 +65,25 @@
 
                             <div class="row mb-6">
                                 <div class="col-md-6">
-                                    <label for="name" class="form-label fw-semibold">Tên thương hiệu <span class="text-danger">*</span></label>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control form-control-solid @error('name') is-invalid @enderror" required>
+                                    <label for="name" class="form-label fw-semibold">Tên thương hiệu <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="name" id="name" value="{{ old('name') }}"
+                                        class="form-control form-control-solid @error('name') is-invalid @enderror"
+                                        required>
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="status" class="form-label fw-semibold">Trạng thái <span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-select form-select-solid @error('status') is-invalid @enderror" data-kt-select2="true" data-placeholder="Chọn trạng thái" required>
+                                    <label for="status" class="form-label fw-semibold">Trạng thái <span
+                                            class="text-danger">*</span></label>
+                                    <select name="status" id="status"
+                                        class="form-select form-select-solid @error('status') is-invalid @enderror"
+                                        data-kt-select2="true" data-placeholder="Chọn trạng thái" required>
                                         <option value="">-- Chọn trạng thái --</option>
-                                        <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Công bố</option>
-                                        <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Chưa công bố</option>
+                                        <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Hoạt động
+                                        </option>
+                                        <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Ẩn</option>
                                     </select>
                                     @error('status')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -86,7 +94,9 @@
                             <div class="row mb-6">
                                 <div class="col-md-6">
                                     <label for="logo" class="form-label fw-semibold">Logo</label>
-                                    <input type="file" name="logo" id="logo" class="form-control form-control-solid @error('logo') is-invalid @enderror" accept="image/*">
+                                    <input type="file" name="logo" id="logo"
+                                        class="form-control form-control-solid @error('logo') is-invalid @enderror"
+                                        accept="image/*">
                                     @error('logo')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -94,7 +104,8 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                <a href="{{ route('admin.brands.index') }}" class="btn btn-sm btn-light btn-active-light-primary">
+                                <a href="{{ route('admin.brands.index') }}"
+                                    class="btn btn-sm btn-light btn-active-light-primary">
                                     Hủy
                                 </a>
                                 <button type="submit" class="btn btn-sm btn-primary">

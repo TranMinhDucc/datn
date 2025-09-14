@@ -40,160 +40,111 @@
     .swiper-wrapper {
         height: auto !important;
     }
+
     .small-product-img {
-    width: 120px;
-    height: auto;
-    object-fit: contain;
-}
+        width: 120px;
+        height: auto;
+        object-fit: contain;
+    }
 
-.product-2 .product {
-    max-width: 250px;
-}
-.custom-product-img {
-    width: 103px;
-    height: 104px;
-    object-fit: cover;
-    border-radius: 6px;
-    box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1);
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
+    .product-2 .product {
+        max-width: 250px;
+    }
 
-
+    .custom-product-img {
+        width: 103px;
+        height: 104px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1);
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
 @section('content')
-    {{-- <section class="section-space home-section-4">
-<div class="home-content">
-            <div class="row">
-                <div class="col-12">
-                    <div class="home-content">
-
-                        <p> </p>
-                        <h2> </h2>
-                        <h1> </h1>
-                        <h6> </h6><a class="btn" href="#"></a>
-                    </div>
-                    <div class="product-1">
-                        <div class="product">
-                            <div class="img-fluid"></div>
-                            <div class="product-details">
-                                <h6> </h6>
-                                <p> </p>
-                                <ul></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-2">
-                        <div class="product">
-                            <div class="img-fluid"></div>
-                        </div>
-                    </div>
-                    <div class="home-images">
-                        <div class="main-images"></div>
-                    </div>
-                    <div class="home-box-1"> <span> </span></div>
-                    <div class="home-box-2"> <span> </span></div>
-                    <div class="marquee">
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                    </div>
-                    <div class="shape-images"> <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img class="img-2 img-fluid"
-    src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt=""></div>
-</div>
-</div>
-</div>
-</section> --}}
-    <section class="section-space home-section-4"> 
+    <section class="section-space home-section-4">
         <div class="custom-container container">
             <div class="row">
                 <div class="col-12">
                     <div class="home-content">
                         <p>Tạo phong cách của bạn
-<span></span></p>
+                            <span></span>
+                        </p>
                         <h2>Phong cách mới cho</h2>
                         <h1>Xuân & Hè</h1>
                         <h6>Thời trang có thể phai mờ, nhưng phong cách thì vĩnh cửu</h6><a class="btn btn_outline"
-   href="{{ route('client.category.index') }}">Shop Now
-   <svg>
-     <use href="{{ asset('assets/svg/icon-sprite.svg#arrow') }}"></use>
-   </svg>
-</a>
+                            href="{{ route('client.category.index') }}">Shop Now
+                            <svg>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#arrow') }}"></use>
+                            </svg>
+                        </a>
 
                     </div>
-   <div class="product-1">
-    @if(isset($latestProducts[0]))
-        @php $latest = $latestProducts[0]; @endphp
-                <a href="{{ route('client.products.show', $latest->slug) }}" style="display: block; text-decoration: none; color: inherit;">
+                    <div class="product-1">
+                        @if (isset($latestProducts[0]))
+                            @php $latest = $latestProducts[0]; @endphp
+                            <a href="{{ route('client.products.show', $latest->slug) }}"
+                                style="display: block; text-decoration: none; color: inherit;">
 
-        <div class="product text-center">
-            <img class="img-fluid custom-product-img"
-                src="{{ asset('storage/' . $latest->image) }}"
-                alt="{{ $latest->name }}">
+                                <div class="product text-center">
+                                    <img class="img-fluid custom-product-img" src="{{ asset('storage/' . $latest->image) }}"
+                                        alt="{{ $latest->name }}">
 
-            <div class="product-details">
-                <h6>{{ $latest->name }}</h6>
-                <p>{{ $latest->category->name ?? 'Uncategorized' }}</p>
-                <ul class="rating">
-                    @php
-                        $avgRating = round($latest->reviews->avg('rating') ?? 0, 1);
-                        $fullStars = floor($avgRating);
-                        $halfStar = $avgRating - $fullStars >= 0.5;
-                    @endphp
-                    @for($i = 0; $i < $fullStars; $i++)
-                        <li><i class="fa-solid fa-star"></i></li>
-                    @endfor
-                    @if($halfStar)
-                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                    @endif
-                    @for($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
-                        <li><i class="fa-regular fa-star"></i></li>
-                    @endfor
-                </ul>
-                <h5>
-                    ${{ number_format($latest->sale_price ?? $latest->price, 2) }}
-                    @if($latest->sale_price && $latest->price > 0)
-                        <del>${{ number_format($latest->price, 2) }}</del>
-                        <span>
-                            -{{ round(100 - ($latest->sale_price / $latest->price * 100)) }}%
-                        </span>
-                    @endif
-                </h5>
-            </div>
-        </div>
-                </a>
-    @endif
-</div>
+                                    <div class="product-details">
+                                        <h6>{{ $latest->name }}</h6>
+                                        <p>{{ $latest->category->name ?? 'Uncategorized' }}</p>
+                                        <ul class="rating">
+                                            @php
+                                                $avgRating = round($latest->reviews->avg('rating') ?? 0, 1);
+                                                $fullStars = floor($avgRating);
+                                                $halfStar = $avgRating - $fullStars >= 0.5;
+                                            @endphp
+                                            @for ($i = 0; $i < $fullStars; $i++)
+                                                <li><i class="fa-solid fa-star"></i></li>
+                                            @endfor
+                                            @if ($halfStar)
+                                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                            @endif
+                                            @for ($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
+                                                <li><i class="fa-regular fa-star"></i></li>
+                                            @endfor
+                                        </ul>
+                                        <h5>
+                                            ${{ number_format($latest->sale_price ?? $latest->price, 2) }}
+                                            @if ($latest->sale_price && $latest->price > 0)
+                                                <del>${{ number_format($latest->price, 2) }}</del>
+                                                <span>
+                                                    -{{ round(100 - ($latest->sale_price / $latest->price) * 100) }}%
+                                                </span>
+                                            @endif
+                                        </h5>
+                                    </div>
+                                </div>
+                            </a>
+                        @endif
+                    </div>
 
 
-<div class="product-2">
-    @if(isset($bestSellerProducts[0]))
-        @php $top = $bestSellerProducts[0]; @endphp
-            <a href="{{ route('client.products.show', $top->slug) }}" style="display: block;">
+                    <div class="product-2">
+                        @if (isset($bestSellerProducts[0]))
+                            @php $top = $bestSellerProducts[0]; @endphp
+                            <a href="{{ route('client.products.show', $top->slug) }}" style="display: block;">
 
-        <div class="product">
-            <img class="img-fluid"
-                src="{{ asset('storage/' . $top->image) }}"
-                alt="{{ $top->name }}">
-            <div class="product-details">
-                <div>
-                    <h6>{{ $top->category->name ?? 'Category' }}</h6>
-                    <h5>{{ $top->name }}</h5>
-                </div>
-                <span>${{ number_format($top->sale_price ?? $top->price, 2) }}</span>
-            </div>
-        </div>
-            </a>
-    @endif
-</div>
+                                <div class="product">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $top->image) }}"
+                                        alt="{{ $top->name }}">
+                                    <div class="product-details">
+                                        <div>
+                                            <h6>{{ $top->category->name ?? 'Category' }}</h6>
+                                            <h5>{{ $top->name }}</h5>
+                                        </div>
+                                        <span>${{ number_format($top->sale_price ?? $top->price, 2) }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endif
+                    </div>
 
                     <div class="home-images">
                         <div class="main-images"></div>
@@ -215,104 +166,28 @@
                             <h4 class="animation-text">Collection</h4>
                         </div>
                     </div>
-                    <div class="shape-images"> 
-                        <img class="img-1 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-1.png') }}" alt=""><img
-                            class="img-2 img-fluid" src="{{ asset('assets/client/images/layout-4/s-2.png') }}"
-                            alt="">
-                        </div>
+                    <div class="shape-images">
+                        <img class="img-1 img-fluid" src="{{ asset('assets/client/images/layout-4/s-1.png') }}"
+                            alt=""><img class="img-2 img-fluid"
+                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt="">
+                    </div>
                 </div>
             </div>
         </div>
 
-    </section>  
-    {{-- <div class="slideshow-container">
-        @foreach ($banners as $index => $banner)
-            <section class="section-space home-section-4 fade-slide {{ $index == 0 ? 'active' : '' }}">
-                <div class="custom-container container">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="home-content">
-                                <p>{{ $banner->subtitle }} -</p>
-                                @php
-                                    $titleWords = explode(' ', $banner->title);
-                                    $firstFiveWords = implode(' ', array_slice($titleWords, 0, 7));
-                                    $remainingWords = implode(' ', array_slice($titleWords, 7));
-                                @endphp
-
-                                <h3>{{ $firstFiveWords }}</h3>
-                                <h2>{{ $remainingWords }}</h2>
-                                <h6>{{ strip_tags($banner->description) }}</h6>
-                            </div>
-
-                            <!-- Product 1 -->
-                            <div class="product-1">
-                                <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_1) }}"
-                                        alt="">
-                                    <div class="product-details">
-                                        <h6>{{ $banner->sub_image_1_name }}</h6>
-                                        <h5>${{ number_format($banner->sub_image_1_price, 0) }}
-                                            <del>${{ number_format($banner->sub_image_1_price * 1.4, 0) }}</del>
-                                            <span>-40%</span>
-                                        </h5>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Product 2 -->
-                            <div class="product-2">
-                                <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $banner->sub_image_2) }}"
-                                        alt="">
-                                    <div class="product-details">
-                                        <h6>{{ $banner->sub_image_2_name }}</h6>
-                                        <span>${{ number_format($banner->sub_image_2_price, 0) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Main Image -->
-                            <div class="home-images">
-                                <div class="main-images"></div>
-                                <img class="img-fluid" src="{{ asset('storage/' . $banner->main_image) }}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        @endforeach
-    </div> --}}
-
-    <section class="section-t-space">
-
     </section>
+
     <section class="section-t-space">
-        {{-- <div class="container-fluid fashion-images">
-            <div class="swiper fashion-images-slide">
-                <div class="swiper-wrapper ratio_square-2">
-                    <div class="swiper-slide">
-                        <div class="fashion-box"><a href="#"> <img class="img-fluid"
-                                    src="{{ asset('assets/client/images/fashion/category/1.png') }}" alt=""></a>
-    </div>
-    <h5>Top Wear</h5>
-    </div>
-    </div>
-    </div>
-    </div> --}}
-       <div class="container-fluid fashion-images">
+        <div class="container-fluid fashion-images">
             <div class="swiper fashion-images-slide">
                 <div class="swiper-wrapper ratio_square-2">
                     @foreach ($categories as $category)
                         <div class="swiper-slide text-center">
                             <div class="fashion-box ">
                                 <a href="{{ route('client.category.show', $category->id) }}">
-                                  <img 
-    class="img-fluid rounded-circle category-circle-img" 
-    src="{{ asset('storage/' . $category->image) }}" 
-    alt="{{ $category->name }}" 
-    style="width: 180px; height: 180px; object-fit: cover;"
->
+                                    <img class="img-fluid rounded-circle category-circle-img"
+                                        src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
+                                        style="width: 180px; object-fit: cover;">
                                 </a>
                             </div>
                             <h5>{{ $category->name }}</h5>
@@ -356,7 +231,7 @@
                         </ul>
                     </div>
 
-                    <!-- Fashikart specials -->
+
                     <div class="row">
                         <div class="col-12 ratio_square">
                             <div class="tab-content">
@@ -367,28 +242,20 @@
                                             <div class="col-xxl-3 col-md-4 col-6">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-                                                        @if ($product->labels && $product->labels->count())
+                                                        @if ($product->labels->count())
                                                             <div class="label-block">
                                                                 @foreach ($product->labels as $product_label)
                                                                     <div class="label-item-wrapper"
                                                                         style="display:inline-block;max-width:60px;margin-right:10px">
                                                                         <img style="width:100%"
                                                                             class="{{ $product_label->position }}"
-                                                                            src="{{ asset('storage/' . $product_label->image) }}"
+                                                                            src="{{ asset($product_label->image) }}"
                                                                             alt="label">
                                                                     </div>
                                                                 @endforeach
                                                             </div>
-                                                        @elseif ($product->label && is_object($product->label))
-                                                            <div class="label-block">
-                                                                <div class="label-item-wrapper"
-                                                                    style="display:inline-block;max-width:60px;margin-right:10px">
-                                                                    <img style="width:100%"
-                                                                        class="{{ $product->label->position }}"
-                                                                        src="{{ $product->label->image }}" alt="label">
-                                                                </div>
-                                                            </div>
                                                         @endif
+
 
                                                         <a href="{{ route('client.products.show', $product->slug) }}"
                                                             style="display: block;">
@@ -450,12 +317,16 @@
                                                                 <li class="bg-color-red"></li>
                                                                 <li class="bg-color-yellow"></li>
                                                             </ul>
-                                                            <span>{{ $product->rating_avg ?? '0' }} <i
-                                                                    class="fa-solid fa-star"></i></span>
+                                                            <span>
+                                                                {{ $product->reviews_avg_rating ? number_format($product->reviews_avg_rating, 1) : '0.0' }}
+                                                                <i class="fa-solid fa-star"></i>
+                                                            </span>
+
                                                         </div>
                                                         <a href="{{ route('client.products.show', $product->slug) }}">
-                                                            <h6>{{ $product->name }}</h6>
+                                                            <h6 class="product-title">{{ $product->name }}</h6>
                                                         </a>
+
                                                         @php
                                                             $now = \Carbon\Carbon::now();
                                                             $start = $product->starts_at
@@ -472,10 +343,15 @@
                                                                     (1 - $product->sale_times / 100)
                                                                 : $product->sale_price ?? $product->base_price;
                                                         @endphp
-                                                        <p>{{ number_format($finalPrice) }} đ</p>
-                                                        @if ($product->sale_price || $isInDiscountTime)
-                                                            <del>{{ number_format($product->base_price) }} đ</del>
-                                                        @endif
+                                                        <div class="price-box">
+                                                            <span class="final-price">{{ number_format($finalPrice) }}
+                                                                đ</span>
+                                                            @if ($product->sale_price || $isInDiscountTime)
+                                                                <span class="old-price"><del>{{ number_format($product->base_price) }}
+                                                                        đ</del></span>
+                                                            @endif
+                                                        </div>
+
                                                         @if ($isInDiscountTime)
                                                             <span>-{{ $product->sale_times }}%</span>
                                                         @endif
@@ -509,7 +385,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- End Fashikart specials-->
                 </div>
             </div>
         </div>
@@ -580,10 +455,11 @@
             </div>
         </div>
     </section>
+    <!-- Fashikart specials -->
     <section class="section-t-space">
         <div class="custom-container container product-contain">
             <div class="title">
-                <h3>Fashikart specials</h3>
+                <h3>Ưu đãi đặc biệt</h3>
                 <svg>
                     <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#main-line"></use>
                 </svg>
@@ -1067,6 +943,59 @@
     </section>
 
 @endsection
+<style>
+    .product-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        /* số dòng tối đa */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4em;
+        /* khoảng cách dòng */
+        max-height: calc(1.4em * 2);
+        /* 2 dòng */
+    }
+
+    .price-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        /* khoảng cách giữa 2 giá */
+    }
+
+    .final-price {
+        font-weight: bold;
+        color: #d19f00;
+        /* màu vàng gold hoặc tuỳ chỉnh */
+        font-size: 1rem;
+    }
+
+    .old-price {
+        color: #777;
+        font-size: 0.9rem;
+    }
+
+    .label-block {
+        display: flex;
+        flex-wrap: wrap;
+        /* Cho phép xuống hàng khi tràn */
+        gap: 6px;
+        /* khoảng cách giữa các nhãn */
+    }
+
+    .label-item-wrapper {
+        max-width: 60px;
+        flex: 0 0 auto;
+    }
+
+    @media (max-width: 576px) {
+        .label-item-wrapper {
+            max-width: 40px;
+            /* nhỏ lại trên màn hình điện thoại */
+        }
+    }
+</style>
 
 @section('js')
 

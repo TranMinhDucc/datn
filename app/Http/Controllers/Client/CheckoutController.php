@@ -203,7 +203,7 @@ class CheckoutController extends Controller
             $totalWeight += $weight * $quantity;
             $maxLength = max($maxLength, $length);
             $maxWidth = max($maxWidth, $width);
-            $totalHeight += $height * $quantity;
+            $totalHeight = max($totalHeight, $height);
         }
 
         Log::debug('Tổng thông số đơn hàng', [

@@ -133,6 +133,8 @@ class OrderController extends Controller
                 'subtotal' => 0,
                 'total_amount' => 0,
                 'status' => 'pending',
+                'note_shipper'       => $request->input('note_shipper'),          // ✅ thêm
+                'required_note_shipper' => $request->input('required_note_shipper', 'KHONGCHOXEMHANG')
             ]);
 
             $subtotal = 0;
@@ -637,8 +639,8 @@ class OrderController extends Controller
             'from_district_name' => optional($shop->district)->name,
             'from_province_name' => optional($shop->province)->name,
             'payment_type_id' => 1,
-            'note' => 'Giao hàng cho khách',
-            'required_note' => 'KHONGCHOXEMHANG',
+            'note'          => $order->note_shipper ?? 'Giao hàng cho khách',
+            'required_note' => $order->required_note_shipper ?? 'KHONGCHOXEMHANG',
             'to_name' => $order->address->full_name,
             'to_phone' => $order->address->phone,
             'to_address' => $order->address->address,
@@ -681,7 +683,7 @@ class OrderController extends Controller
                 'shipping_partner' => 'ghn',
                 'shipping_code' => $ghnOrderCode,
                 'status' => 'ready_to_pick',
-                'note' => 'Đơn hàng gửi GHN thành công',
+                'note'          => $order->note_shipper ?? 'Giao hàng cho khách',
                 'request_payload' => json_encode($data),
                 'response_payload' => json_encode(['order_code' => $ghnOrderCode]),
             ]);
@@ -863,5 +865,91 @@ class OrderController extends Controller
             'exchange_requested' => 'Khách hàng yêu cầu đổi hàng.',
             'exchanged'          => 'Đã hoàn tất việc đổi hàng.',
         ][$status] ?? 'Cập nhật trạng thái thủ công.';
+    }
+    public function updateGhnNote(Request $request, $id)
+    {
+        // Validate input
+        $request->validate([
+            'note_shipper' => 'nullable|string|max:255',
+            'required_note_shipper' => 'required|string|in:KHONGCHOXEMHANG,CHOXEMHANGKHONGTHU,CHOTHUHANG',
+        ]);
+
+        $order = Order::findOrFail($id);
+
+        // Tìm đơn GHN trong shipping_orders
+        $shippingOrder = ShippingOrder::where('order_id', $order->id)
+            ->where('shipping_partner', 'ghn')
+            ->latest()
+            ->first();
+
+        if (!$shippingOrder || !$shippingOrder->shipping_code) {
+            return back()->with('error', '❌ Không tìm thấy mã vận đơn GHN cho đơn hàng này.');
+        }
+
+        $orderCode = $shippingOrder->shipping_code;
+
+        // Payload gửi GHN
+        $payload = [
+            'order_code'    => $orderCode,
+            'note'          => $request->note_shipper ?? $order->note_shipper,
+            'required_note' => $request->required_note_shipper,
+        ];
+
+        // Gọi API GHN
+        $response = Http::withHeaders([
+            'Token' => config('services.ghn.token'),
+            'Content-Type' => 'application/json',
+            'ShopId' => config('services.ghn.shop_id'),
+        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/update', $payload);
+
+        if ($response->failed()) {
+            return back()->with('error', '❌ GHN trả lỗi: ' . $response->body());
+        }
+
+        // ✅ Cập nhật lại DB (orders table)
+        $order->update([
+            'note_shipper'          => $payload['note'],
+            'required_note_shipper' => $payload['required_note'],
+            // 'shipping_status'       => 'note_updated', // cần thêm cột shipping_status trong bảng orders nếu muốn track
+        ]);
+
+        // ✅ Lưu log vào shipping_orders để debug dễ dàng
+        $shippingOrder->update([
+            'last_note_update' => now(),
+            'note_payload'     => json_encode($payload),
+        ]);
+
+        return back()->with('success', '✅ Đã cập nhật ghi chú GHN và đồng bộ vào DB!');
+    }
+    public function printShippingLabel($id)
+    {
+        $order = Order::findOrFail($id);
+
+        $shippingOrder = \App\Models\ShippingOrder::where('order_id', $order->id)
+            ->where('shipping_partner', 'ghn')
+            ->latest()
+            ->first();
+
+        if (!$shippingOrder || !$shippingOrder->shipping_code) {
+            return back()->with('error', '❌ Không tìm thấy mã GHN cho đơn này.');
+        }
+
+        // Gọi API GHN để lấy token
+        $response = Http::withHeaders([
+            'Token' => config('services.ghn.token'),
+            'Content-Type' => 'application/json',
+            'ShopId' => config('services.ghn.shop_id'),
+        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/a5/gen-token', [
+            'order_codes' => [$shippingOrder->shipping_code],
+        ]);
+
+        if ($response->failed() || !isset($response['data']['token'])) {
+            return back()->with('error', '❌ GHN không trả về token in vận đơn. ' . $response->body());
+        }
+
+        $token = $response['data']['token'];
+
+        // Redirect sang link in PDF của GHN
+        return redirect()->away("https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token={$token}");
     }
 }

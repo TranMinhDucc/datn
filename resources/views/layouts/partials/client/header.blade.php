@@ -46,11 +46,15 @@
                                 aria-controls="offcanvasTop"><i class="iconsax"
                                     data-icon="search-normal-2"></i></button>
                         </li>
+
                         <li>
-                            <a href="{{ route('client.account.wishlist.index') }}"><i class="iconsax"
-                                    data-icon="heart"></i>
-                                <span class=""></span></a>
+                            <a href="{{ route('client.account.wishlist.index') }}">
+                                <i class="iconsax" data-icon="heart"></i>
+                                <span class="wishlist_qty_cls">{{ $wishlistCount }}</span>
+
+                            </a>
                         </li>
+
                         <li class="onhover-div">
                             <a href="#"><i class="iconsax" data-icon="user-2"></i></a>
                             <div class="onhover-show-div user">

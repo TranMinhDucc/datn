@@ -956,7 +956,6 @@
                                                                                     $fullStars = floor($avgRating); // số sao đầy
                                                                                     $halfStar =
                                                                                         $avgRating - $fullStars >= 0.5; // có nửa sao không
-
                                                                                 @endphp
 
                                                                                 <ul class="rating">
@@ -2032,36 +2031,33 @@
             });
         });
     </script>
-@endpush
-
-@section('js')
     <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('update-profile-form');
 
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Ngăn reload
+            // form.addEventListener('submit', function(e) {
+            //     e.preventDefault(); // Ngăn reload
 
-                const formData = new FormData(form);
-                const url = '{{ route('client.account.profile.update') }}';
+            //     const formData = new FormData(form);
+            //     const url = '{{ route('client.account.profile.update') }}';
 
-                // Xóa lỗi cũ
-                form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
+            //     // Xóa lỗi cũ
+            //     form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
 
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: formData
-                    })
+            //     fetch(url, {
+            //             method: 'POST',
+            //             headers: {
+            //                 'Accept': 'application/json',
+            //                 'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            //             },
+            //             body: formData
+            //         })
 
-                    .catch(error => {
-                        console.error('Lỗi:', error);
-                    });
-            });
+            //         .catch(error => {
+            //             console.error('Lỗi:', error);
+            //         });
+            // });
         });
     </script>
     {{-- EYE --}}
@@ -2185,7 +2181,15 @@
                                 const errorDiv = document.querySelector('.error-' + field);
                                 if (errorDiv) errorDiv.innerText = data.errors[field][0];
                             });
+                        } else if (data.message) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi!',
+                                text: data.message,
+                                footer: data.error ?? ''
+                            });
                         }
+
                     })
                     .catch(err => {
                         Swal.fire({
@@ -2229,8 +2233,6 @@
             }
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         $('#province-select').on('change', function() {
             const provinceId = $(this).val();
@@ -2337,21 +2339,13 @@
         <script>
             Swal.fire({
                 icon: 'success',
-                title: '{{ session('
-                                                <<<<<<< HEAD
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
-
-                ===
-                === =
-                success ') }}',
-                >>>
-                >>> > 98 c996a41720f9f49ab11f6be11ec37e99ba8541
+                title: '{{ session('success') }}',
                 showConfirmButton: false,
-
                 timer: 1200
             });
         </script>
     @endif
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -2436,4 +2430,4 @@
         });
     </script>
 
-@endsection
+@endpush

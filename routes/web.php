@@ -87,7 +87,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-
 // ========== PUBLIC CLIENT ROUTES ==========
 Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])
     ->name('client.checkout.calculate-shipping-fee');
@@ -471,6 +470,8 @@ Route::prefix('admin')
         Route::post('/orders/{order}/reject-return', [OrderController::class, 'rejectReturn'])->name('orders.reject_return');
         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
         Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
+        Route::post('/orders/{id}/ghn-note', [OrderController::class, 'updateGhnNote'])->name('orders.updateGhnNote');
+        Route::get('/orders/{id}/print-label', [OrderController::class, 'printShippingLabel'])->name('orders.print-label'); // 👈 in vận đơn
         //Inventory
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');

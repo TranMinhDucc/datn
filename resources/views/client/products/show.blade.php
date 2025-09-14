@@ -76,12 +76,21 @@
                                 const saleTimes = @json($product->sale_times);
                             </script>
                             <h3>{{ $product->name }}</h3>
-                            <p id="main-price">{{ number_format($finalPrice) }} đ
-                                <del>{{ number_format($product->base_price) }} đ</del>
-                                @if ($isInDiscountTime)
+                            <p id="main-price">
+                                @if ($minPrice == $maxPrice)
+                                    {{ number_format($minPrice, 0, ',', '.') }} đ
+                                @else
+                                    {{ number_format($minPrice, 0, ',', '.') }} đ -
+                                    {{ number_format($maxPrice, 0, ',', '.') }} đ
+                                @endif
+
+                                {{-- Nếu có base_price và sale_times --}}
+                                @if ($product->base_price && $isInDiscountTime)
+                                    <del>{{ number_format($product->base_price, 0, ',', '.') }} đ</del>
                                     <span>-{{ $product->sale_times }}%</span>
                                 @endif
                             </p>
+
                             <p></p>
                             <div class="rating">
                                 <ul class="rating">
@@ -650,19 +659,29 @@
                                 </div>
                                 <div class="product-detail">
                                     <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li>{{ $value->rating_avg ?? 0 }}</li>
-                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($value->reviews_avg_rating >= $i)
+                                                <li><i class="fa-solid fa-star"></i></li>
+                                            @elseif ($value->reviews_avg_rating >= $i - 0.5)
+                                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                            @else
+                                                <li><i class="fa-regular fa-star"></i></li>
+                                            @endif
+                                        @endfor
+                                        <li>({{ number_format($value->reviews_avg_rating, 1) }})</li>
+                                    </ul>
+
+                                    <a href="{{ route('client.products.show', $value->slug) }}">
                                         <h6>{{ $value->name }}</h6>
                                     </a>
-                                    <p>${{ number_format($value->sale_price, 2) }}
-                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
+
+                                    <p>
+                                        {{ number_format($value->sale_price, 0, ',', '.') }} đ
+                                        <del>{{ number_format($value->base_price, 0, ',', '.') }} đ</del>
+                                        <span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
                                     </p>
                                 </div>
+
                             </div>
                         </div>
                     @endforeach
@@ -690,7 +709,7 @@
         </div>
     </div>
 
-    <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
+    {{-- <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
         aria-modal="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -729,7 +748,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     @php
         $productUrl = route('client.products.show', $product->slug);
     @endphp
@@ -972,9 +991,25 @@
             }
 
             // ✅ Nếu có biến thể nhưng chưa chọn đủ
+            // if (Object.keys(selected).length !== variantGroups.length) {
+            //     document.getElementById('variant-info').style.display = 'none';
+            //     document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+            //     return;
+            // }
+            // JS truyền min-max từ PHP
+            const minPrice = @json($minPrice);
+            const maxPrice = @json($maxPrice);
+
+            // ✅ Nếu có biến thể nhưng chưa chọn đủ
             if (Object.keys(selected).length !== variantGroups.length) {
                 document.getElementById('variant-info').style.display = 'none';
-                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+                if (minPrice === maxPrice) {
+                    document.getElementById('main-price').textContent = new Intl.NumberFormat().format(minPrice) + ' đ';
+                } else {
+                    document.getElementById('main-price').textContent =
+                        new Intl.NumberFormat().format(minPrice) + ' đ - ' +
+                        new Intl.NumberFormat().format(maxPrice) + ' đ';
+                }
                 return;
             }
 
