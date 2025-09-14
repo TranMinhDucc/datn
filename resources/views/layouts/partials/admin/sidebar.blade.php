@@ -19,7 +19,7 @@
             data-kt-toggle-name="app-sidebar-minimize">
             <i class="fa-regular fa-square-caret-left fs-3 rotate-180"></i>
             {{-- <i class="ki-duotone ki-black-left-line fs-3 rotate-180"> --}}
-                <span class="path1"></span><span class="path2"></span></i>
+            <span class="path1"></span><span class="path2"></span></i>
         </div>
         <!--end::Sidebar toggle-->
     </div>
@@ -107,7 +107,7 @@
                         </div>
                         <!--end:Menu content-->
                     </div>
-                   
+
                     <!--end:Menu item--><!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.users.index') }}"
@@ -308,14 +308,23 @@
                                     class="path4"></span></i></span><span class="menu-title">Phí
                                 ship</span></a><!--end:Menu link-->
                     </div>
-                       <div class="menu-item">
+                    <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.menus.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-bars fs-4"></i><span
                                     class="path1"></span><span class="path2"></span><span
                                     class="path3"></span><span class="path4"></span></i></span><span
                                 class="menu-title">Menu
-                                </span></a><!--end:Menu link-->
+                            </span></a><!--end:Menu link-->
                     </div>
+                    <div class="menu-item">
+                        <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.support.tickets.index') }}"
+                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-circle-question fs-4"></i><span
+                                    class="path1"></span><span class="path2"></span><span
+                                    class="path3"></span><span class="path4"></span></i></span><span
+                                class="menu-title">Hỗ trợ
+                            </span></a><!--end:Menu link-->
+                    </div>
+
                     <!--end:Menu item--><!--begin:Menu item-->
                     <div class="menu-item pt-5">
                         <!--begin:Menu content-->

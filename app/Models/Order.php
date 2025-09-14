@@ -95,4 +95,8 @@ class Order extends Model
     {
         return $this->hasMany(ReturnRequest::class, 'order_id');
     }
+    public function histories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->orderBy('created_at', 'asc');
+    }
 }

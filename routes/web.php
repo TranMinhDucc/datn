@@ -35,6 +35,8 @@ use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\SupportTicketController;
+use App\Http\Controllers\Client\SupportTicketThreadController;
 
 
 
@@ -75,6 +77,8 @@ use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Admin\SupportTicketController as AdminTicket;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -137,7 +141,7 @@ Route::prefix('/')->name('client.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/place-order', 'placeOrder')->name('place-order');
     });
-Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
 
 
     Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
@@ -391,6 +395,12 @@ Route::prefix('admin')
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
+
+        // Hỗ trợ
+        Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
+        Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
+        Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -455,15 +465,33 @@ Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRed
     ->name('client.checkout.momo-redirect');
 
 
-    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
+Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
     ->name('client.orders.invoice');
 
 
 
-    Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
+Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
     ->name('variants.toggle')
     ->middleware('auth');
 
 Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
     ->name('variants.destroy')
     ->middleware('auth');
+
+
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/support/tickets', [SupportTicketController::class, 'index'])
+        ->name('support.tickets.index');
+    Route::get('/support/tickets/create', [SupportTicketController::class, 'create'])
+        ->name('support.tickets.create');
+    Route::post('/support/tickets', [SupportTicketController::class, 'store'])
+        ->name('support.tickets.store');
+
+    Route::get('/support/tickets/{ticket}', [SupportTicketThreadController::class, 'show'])
+        ->name('support.tickets.thread.show');
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketThreadController::class, 'reply'])
+        ->name('support.tickets.thread.reply');
+});
