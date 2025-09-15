@@ -30,6 +30,7 @@
                                     <th>Nội dung</th>
                                     <!-- <th>Phụ 1</th>
                                      <th>Phụ 2</th> -->
+                                    <th class="w-250px">Sản phẩm</th>
                                     <th class="w-125px">Trạng thái</th>
                                     <th class="text-end w-150px">Thao tác</th>
                                 </tr>
@@ -75,6 +76,52 @@
                                         {{ $banner->sub_image_2_name }}<br>
                                         <strong>{{ number_format($banner->sub_image_2_price, 0, ',', '.') }}₫</strong>
                                     </td> -->
+                                    <td>
+                                        @php
+                                        $p1 = $banner->product1;
+                                        $p2 = $banner->product2;
+
+                                        $img1 = $p1?->image ? (Str::startsWith($p1->image, ['http://','https://']) ? $p1->image : asset('storage/'.$p1->image)) : asset('images/no-image.png');
+                                        $img2 = $p2?->image ? (Str::startsWith($p2->image, ['http://','https://']) ? $p2->image : asset('storage/'.$p2->image)) : asset('images/no-image.png');
+                                        @endphp
+
+                                        <div class="d-flex flex-column gap-3">
+
+                                            {{-- Sản phẩm 1 --}}
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="symbol symbol-45px">
+                                                    <img src="{{ $img1 }}" alt="product 1" style="object-fit: cover;">
+                                                </div>
+                                                <div class="d-flex flex-column">
+                                                    <span class="text-muted small">Sản phẩm 1</span>
+                                                    @if($p1)
+                                                    <strong class="text-gray-800">{{ $p1->name }}</strong>
+                                                    <span class="text-muted small">ID: {{ $p1->id }}</span>
+                                                    @else
+                                                    <span class="text-muted">— Chưa chọn —</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            {{-- Sản phẩm 2 --}}
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="symbol symbol-45px">
+                                                    <img src="{{ $img2 }}" alt="product 2" style="object-fit: cover;">
+                                                </div>
+                                                <div class="d-flex flex-column">
+                                                    <span class="text-muted small">Sản phẩm 2</span>
+                                                    @if($p2)
+                                                    <strong class="text-gray-800">{{ $p2->name }}</strong>
+                                                    <span class="text-muted small">ID: {{ $p2->id }}</span>
+                                                    @else
+                                                    <span class="text-muted">— Chưa chọn —</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                    {{-- Trạng thái --}}
                                     <td>
                                         <div class="mb-2">
                                             <div class="badge badge-light-success fw-bold">

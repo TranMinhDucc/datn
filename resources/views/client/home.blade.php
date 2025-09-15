@@ -69,6 +69,10 @@
             <div class="col-12">
                 <div class="home-content">
                     @php $current = $banners->first(); @endphp
+                    @php
+                    $p1 = $current['product1']??null;
+                    $p2 = $current['product2']??null;
+                    @endphp
                     <p>
                         Tạo phong cách riêng của bạn
                         <span></span>
@@ -85,69 +89,57 @@
 
                 </div>
                 <div class="product-1">
-                    @if (isset($latestProducts[0]))
-                    @php $latest = $latestProducts[0]; @endphp
-                    <a href="{{ route('client.products.show', $latest->slug) }}"
-                        style="display: block; text-decoration: none; color: inherit;">
+  @if ($p1)
+    <a href="{{ $p1['url'] }}" style="display:block; text-decoration:none; color:inherit;">
+      <div class="product text-center">
+        <img class="img-fluid custom-product-img" src="{{ $p1['image'] }}" alt="{{ $p1['name'] }}">
+        <div class="product-details">
+          <h6>{{ $p1['name'] }}</h6>
+          <p>{{ $p1['category'] ?? 'Uncategorized' }}</p>
 
-                        <div class="product text-center">
-                            <img class="img-fluid custom-product-img" src="{{ asset('storage/' . $latest->image) }}"
-                                alt="{{ $latest->name }}">
+          @php
+            $avgRating = round($p1['avg_rating'] ?? 0, 1);
+            $full = floor($avgRating);
+            $half = $avgRating - $full >= 0.5;
+          @endphp
+          <ul class="rating">
+            @for ($i=0; $i<$full; $i++) <li><i class="fa-solid fa-star"></i></li> @endfor
+            @if ($half) <li><i class="fa-solid fa-star-half-stroke"></i></li> @endif
+            @for ($i=$full + ($half?1:0); $i<5; $i++) <li><i class="fa-regular fa-star"></i></li> @endfor
+          </ul>
 
-                            <div class="product-details">
-                                <h6>{{ $latest->name }}</h6>
-                                <p>{{ $latest->category->name ?? 'Uncategorized' }}</p>
-                                <ul class="rating">
-                                    @php
-                                    $avgRating = round($latest->reviews->avg('rating') ?? 0, 1);
-                                    $fullStars = floor($avgRating);
-                                    $halfStar = $avgRating - $fullStars >= 0.5;
-                                    @endphp
-                                    @for ($i = 0; $i < $fullStars; $i++)
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        @endfor
-                                        @if ($halfStar)
-                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                        @endif
-                                        @for ($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
-                                            <li><i class="fa-regular fa-star"></i></li>
-                                            @endfor
-                                </ul>
-                                <h5>
-                                    ${{ number_format($latest->sale_price ?? $latest->price, 2) }}
-                                    @if ($latest->sale_price && $latest->price > 0)
-                                    <del>${{ number_format($latest->price, 2) }}</del>
-                                    <span>
-                                        -{{ round(100 - ($latest->sale_price / $latest->price) * 100) }}%
-                                    </span>
-                                    @endif
-                                </h5>
-                            </div>
-                        </div>
-                    </a>
-                    @endif
-                </div>
+          @php $price = $p1['sale_price'] ?? $p1['price']; @endphp
+<h5>
+  {{ number_format($price, 0, ',', '.') }}₫
+  @if (!empty($p1['sale_price']) && !empty($p1['price']))
+    <del>{{ number_format($p1['price'], 0, ',', '.') }}₫</del>
+    <span>-{{ round(100 - ($p1['sale_price'] / $p1['price']) * 100) }}%</span>
+  @endif
+</h5>
+        </div>
+      </div>
+    </a>
+  @endif
+</div>
 
 
                 <div class="product-2">
-                    @if (isset($bestSellerProducts[0]))
-                    @php $top = $bestSellerProducts[0]; @endphp
-                    <a href="{{ route('client.products.show', $top->slug) }}" style="display: block;">
-
-                        <div class="product">
-                            <img class="img-fluid" src="{{ asset('storage/' . $top->image) }}"
-                                alt="{{ $top->name }}">
-                            <div class="product-details">
-                                <div>
-                                    <h6>{{ $top->category->name ?? 'Category' }}</h6>
-                                    <h5>{{ $top->name }}</h5>
-                                </div>
-                                <span>${{ number_format($top->sale_price ?? $top->price, 2) }}</span>
-                            </div>
-                        </div>
-                    </a>
-                    @endif
-                </div>
+  @if ($p2)
+    <a href="{{ $p2['url'] }}" style="display:block;">
+      <div class="product">
+        <img class="img-fluid" src="{{ $p2['image'] }}" alt="{{ $p2['name'] }}">
+        <div class="product-details">
+          <div>
+            <h6>{{ $p2['category'] ?? 'Category' }}</h6>
+            <h5>{{ $p2['name'] }}</h5>
+          </div>
+          @php $price2 = $p2['sale_price'] ?? $p2['price']; @endphp
+<span>{{ number_format($price2, 0, ',', '.') }}₫</span>
+        </div>
+      </div>
+    </a>
+  @endif
+</div>
 
                 <div class="home-images">
                     @php
@@ -1009,87 +1001,174 @@
 
 @section('js')
 <script>
-    const BANNERS = @json($banners); // mỗi item: {subtitle,title,description,image,button_link,button_text}
+    const BANNERS = @json($banners); // mỗi item: có product1, product2 như trên
 
-  (function () {
-    if (!Array.isArray(BANNERS) || !BANNERS.length) return;
+    (function () {
+      if (!Array.isArray(BANNERS) || !BANNERS.length) return;
 
-    const root = document.querySelector('.home-section-4');
-    if (!root) return;
+      const root = document.querySelector('.home-section-4');
+      if (!root) return;
 
-    const h2  = root.querySelector('.home-content h2');
-    const h1  = root.querySelector('.home-content h1');
-    const h6  = root.querySelector('.home-content h6');
-    const btn = root.querySelector('.home-content .btn.btn_outline');
-    const imgs = root.querySelectorAll('.home-images img.img-fluid');
+      const h2   = root.querySelector('.home-content h2');
+      const h1   = root.querySelector('.home-content h1');
+      const h6   = root.querySelector('.home-content h6');
+      const btn  = root.querySelector('.home-content .btn.btn_outline');
+      const imgs = root.querySelectorAll('.home-images img.img-fluid');
 
-    // prev/next “dấu chấm” của theme
-    const prevDot = document.querySelector('.home-box-1 span');
-    const nextDot = document.querySelector('.home-box-2 span');
+      // 2 box sản phẩm
+      const box1 = root.querySelector('.product-1');
+      const box2 = root.querySelector('.product-2');
 
-    let index = 0;
-    const speed = 800;
-    const autoplayDelay = 5000;
-    const defaultUrl = '{{ asset('assets/client/images/layout-4/1.png') }}';
+      // prev/next “dấu chấm” của theme
+      const prevDot = document.querySelector('.home-box-1 span');
+      const nextDot = document.querySelector('.home-box-2 span');
 
-    const render = (i) => {
-      const b = BANNERS[i];
-      if (!b) return;
+      let index = 0;
+      const speed = 800;
+      const autoplayDelay = 5000;
+      const defaultUrl = '{{ asset('assets/client/images/layout-4/1.png') }}';
 
-      imgs.forEach(el => { el.style.transition = `opacity ${speed}ms`; el.style.opacity = '0'; });
-      if (h2) h2.style.transition = `opacity ${speed}ms`;
-      if (h1) h1.style.transition = `opacity ${speed}ms`;
-      if (h6) h6.style.transition = `opacity ${speed}ms`;
+      // -------- helpers ----------
+      const escapeHtml = (s) => (s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      const fmt = (n) => (Number(n||0)).toFixed(2);
+      const discountPct = (sp, p) => (sp && p && Number(p) > 0) ? Math.round(100 - (Number(sp)/Number(p))*100) : 0;
 
-      setTimeout(() => {
-        if (h2) h2.textContent = b.subtitle || '';
-        if (h1) h1.textContent = b.title || '';
-        if (h6) h6.innerHTML  = b.description || '';
+      const starsHtml = (avg=0) => {
+        avg = Math.max(0, Math.min(5, Number(avg) || 0));
+        const full = Math.floor(avg);
+        const half = (avg - full) >= 0.5;
+        let out = '<ul class="rating">';
+        for (let i=0;i<full;i++) out += '<li><i class="fa-solid fa-star"></i></li>';
+        if (half) out += '<li><i class="fa-solid fa-star-half-stroke"></i></li>';
+        for (let i=full + (half?1:0); i<5; i++) out += '<li><i class="fa-regular fa-star"></i></li>';
+        out += '</ul>';
+        return out;
+      };
 
-        if (btn) {
-          if (b.button_link) btn.setAttribute('href', b.button_link);
-          // đổi text của nút nhưng giữ lại <svg>
-          const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
-          if (textNode) textNode.nodeValue = (b.button_text || 'Shop Now') + ' ';
-        }
+      function renderProductBoxes(b) {
+  // helper: format VND
+  const vnd = (n) => Number(n || 0).toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
 
-        // LẤY ẢNH: ưu tiên b.image, sau đó b.main_image, cuối cùng default
-        const url = (b.main_image).trim() || defaultUrl;
+  // Product 1 (khối “đẹp” với rating/giảm giá)
+  if (box1) {
+    if (!b.product1) {
+      box1.innerHTML = ''; // ẩn nếu không có
+    } else {
+      const p = b.product1;
+      const pct = discountPct(p.sale_price, p.price);
+      const nowPrice = (p.sale_price ?? p.price);
 
-        imgs.forEach(el => { el.setAttribute('src', url); el.style.opacity = '1'; });
-        if (h2) h2.style.opacity = '1';
-        if (h1) h1.style.opacity = '1';
-        if (h6) h6.style.opacity = '1';
-      }, speed * 0.6);
-    };
-
-    // autoplay
-    let timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay);
-    const restart = () => { clearInterval(timer); timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay); };
-
-    // nếu theme có nút/swiper thì vẫn hỗ trợ
-    const nextBtn = document.querySelector('.swiper-button-next');
-    const prevBtn = document.querySelector('.swiper-button-prev');
-    if (nextBtn) nextBtn.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
-    if (prevBtn) prevBtn.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
-
-    // gắn 2 “dấu chấm” của theme làm prev/next
-    if (nextDot) {
-      nextDot.style.cursor = 'pointer';
-      nextDot.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
+      box1.innerHTML = `
+        <a href="${p.url}" style="display:block; text-decoration:none; color:inherit;">
+          <div class="product text-center">
+            <img class="img-fluid custom-product-img" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
+            <div class="product-details">
+              <h6>${escapeHtml(p.name)}</h6>
+              <p>${escapeHtml(p.category || 'Uncategorized')}</p>
+              ${starsHtml(p.avg_rating)}
+              <h5>
+                ${vnd(nowPrice)}₫
+                ${
+                  (p.sale_price && p.price)
+                    ? `<del>${vnd(p.price)}₫</del><span> -${pct}%</span>`
+                    : ''
+                }
+              </h5>
+            </div>
+          </div>
+        </a>
+      `;
     }
-    if (prevDot) {
-      prevDot.style.cursor = 'pointer';
-      prevDot.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
+  }
+
+  // Product 2 (đơn giản hơn)
+  if (box2) {
+    if (!b.product2) {
+      box2.innerHTML = '';
+    } else {
+      const p = b.product2;
+      const nowPrice = (p.sale_price ?? p.price);
+
+      box2.innerHTML = `
+        <a href="${p.url}" style="display:block;">
+          <div class="product">
+            <img class="img-fluid" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
+            <div class="product-details">
+              <div>
+                <h6>${escapeHtml(p.category || 'Category')}</h6>
+                <h5>${escapeHtml(p.name)}</h5>
+              </div>
+              <span>${vnd(nowPrice)}₫</span>
+            </div>
+          </div>
+        </a>
+      `;
     }
+  }
+}
+      // ----------------------------
 
-    // chấm pagination nếu có (Swiper)
-    const bullets = document.querySelectorAll('.swiper-pagination-bullet');
-    bullets.forEach((b, i) => b.addEventListener('click', () => { index = i % BANNERS.length; render(index); restart(); }));
+      const render = (i) => {
+        const b = BANNERS[i];
+        if (!b) return;
 
-    // render đầu tiên
-    render(0);
-  })();
+        imgs.forEach(el => { el.style.transition = `opacity ${speed}ms`; el.style.opacity = '0'; });
+        if (h2) h2.style.transition = `opacity ${speed}ms`;
+        if (h1) h1.style.transition = `opacity ${speed}ms`;
+        if (h6) h6.style.transition = `opacity ${speed}ms`;
+
+        setTimeout(() => {
+          if (h2) h2.textContent = b.subtitle || '';
+          if (h1) h1.textContent = b.title || '';
+          if (h6) h6.innerHTML  = b.description || '';
+
+          if (btn) {
+            if (b.button_link) btn.setAttribute('href', b.button_link);
+            // đổi text của nút nhưng giữ <svg>
+            const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
+            if (textNode) textNode.nodeValue = (b.button_text || 'Shop Now') + ' ';
+          }
+
+          const url = (b.main_image && (''+b.main_image).trim()) || defaultUrl;
+          imgs.forEach(el => { el.setAttribute('src', url); el.style.opacity = '1'; });
+          if (h2) h2.style.opacity = '1';
+          if (h1) h1.style.opacity = '1';
+          if (h6) h6.style.opacity = '1';
+
+          // >>> cập nhật 2 product theo banner hiện tại
+          renderProductBoxes(b);
+        }, speed * 0.6);
+      };
+
+      // autoplay
+      let timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay);
+      const restart = () => { clearInterval(timer); timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay); };
+
+      const nextBtn = document.querySelector('.swiper-button-next');
+      const prevBtn = document.querySelector('.swiper-button-prev');
+      if (nextBtn) nextBtn.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
+      if (prevBtn) prevBtn.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
+
+      if (document.querySelector('.home-box-2 span')) {
+        const el = document.querySelector('.home-box-2 span');
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
+      }
+      if (document.querySelector('.home-box-1 span')) {
+        const el = document.querySelector('.home-box-1 span');
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
+      }
+
+      const bullets = document.querySelectorAll('.swiper-pagination-bullet');
+      bullets.forEach((b, i) => b.addEventListener('click', () => { index = i % BANNERS.length; render(index); restart(); }));
+
+      // render đầu tiên
+      render(0);
+    })();
 </script>
 
 <script src="{{ asset('assets/client/js/newsletter.js') }}"></script>

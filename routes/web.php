@@ -596,3 +596,4 @@ Route::get('/cron/check-notification-telegram', function () {
     dispatch(new CheckTelegramJob());
     return "✅ Low stock job dispatched at " . now();
 });
+});
