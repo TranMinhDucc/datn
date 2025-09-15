@@ -192,8 +192,8 @@ Route::middleware(['web', 'traffic'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{blog}', 'show')->name('show');
         });
-        Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
-        Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+        Route::post('/blog/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comment.store');
+        Route::delete('/blog/{blog}/comments/{comment}', [ClientBlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
         // Category
         Route::controller(ClientCategoryController::class)->prefix('category')->name('category.')->group(function () {
