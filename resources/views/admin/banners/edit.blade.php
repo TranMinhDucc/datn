@@ -106,9 +106,31 @@
                     <div id="preview_2" class="d-flex align-items-center gap-2 mt-2"></div>
                 </div>
             </div>
+            {{-- Button title & link --}}
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <label class="form-label">Tiêu đề nút (btn_title)</label>
+                    <input type="text"
+                        name="btn_title"
+                        class="form-control"
+                        value="{{ old('btn_title', $banner->btn_title ?? 'Shop Now') }}"
+                        placeholder="VD: Mua ngay">
+                    @error('btn_title') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Link nút (btn_link)</label>
+                    <input type="url"
+                        name="btn_link"
+                        class="form-control"
+                        value="{{ old('btn_link', $banner->btn_link) }}"
+                        placeholder="https://... hoặc /duong-dan">
+                    @error('btn_link') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+                </div>
+            </div>
             {{-- Trạng thái hiển thị --}}
             <div class="form-check form-switch mb-5">
-                <input type="checkbox" name="status" class="form-check-input" id="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
+                <input type="checkbox" name="status" class="form-check-input" id="status"
+                    value="1" {{ old('status', $banner->status) ? 'checked' : '' }}>
                 <label class="form-check-label" for="status">Ẩn hiện</label>
             </div>
         </div>
@@ -136,26 +158,32 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-  // KHÔNG để class "form-select" (Bootstrap) trên <select> – dễ xung đột chiều cao
-  $('.product-select').select2({ width: '100%', placeholder: 'Chọn sản phẩm' });
+    // KHÔNG để class "form-select" (Bootstrap) trên <select> – dễ xung đột chiều cao
+    $('.product-select').select2({
+        width: '100%',
+        placeholder: 'Chọn sản phẩm'
+    });
 
-  function renderPreview(selectId, previewId){
-    const opt = document.querySelector(`#${selectId} option:checked`);
-    const wrap = document.getElementById(previewId);
-    if (!opt || !opt.value) { wrap.innerHTML = ''; return; }
-    const img = opt.getAttribute('data-image') || '';
-    const name = opt.getAttribute('data-name') || opt.textContent;
-    wrap.innerHTML = `
+    function renderPreview(selectId, previewId) {
+        const opt = document.querySelector(`#${selectId} option:checked`);
+        const wrap = document.getElementById(previewId);
+        if (!opt || !opt.value) {
+            wrap.innerHTML = '';
+            return;
+        }
+        const img = opt.getAttribute('data-image') || '';
+        const name = opt.getAttribute('data-name') || opt.textContent;
+        wrap.innerHTML = `
       <img src="${img}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:6px;">
       <div class="text-truncate" style="max-width:260px">${name}</div>
     `;
-  }
+    }
 
-  $('#product_id_1').on('change', () => renderPreview('product_id_1', 'preview_1'));
-  $('#product_id_2').on('change', () => renderPreview('product_id_2', 'preview_2'));
+    $('#product_id_1').on('change', () => renderPreview('product_id_1', 'preview_1'));
+    $('#product_id_2').on('change', () => renderPreview('product_id_2', 'preview_2'));
 
-  // Render lần đầu khi mở trang edit
-  renderPreview('product_id_1', 'preview_1');
-  renderPreview('product_id_2', 'preview_2');
+    // Render lần đầu khi mở trang edit
+    renderPreview('product_id_1', 'preview_1');
+    renderPreview('product_id_2', 'preview_2');
 </script>
 @endsection

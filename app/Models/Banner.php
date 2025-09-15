@@ -7,18 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 class Banner extends Model
 {
       protected $fillable = [
-        'subtitle',
         'title',
+        'subtitle',
         'description',
         'main_image',
-        'sub_image_1',
-        'sub_image_1_name',
-        'sub_image_1_price',
-        'sub_image_2',
-        'sub_image_2_name',
-        'sub_image_2_price',
+        'product_id_1',
+        'product_id_2',
+        'btn_title',  
+        'btn_link',
         'status',
     ];
 
-   
+    /**
+     * Quan hệ đến sản phẩm 1
+     */
+    public function product1()
+    {
+        return $this->belongsTo(Product::class, 'product_id_1');
+    }
+
+    /**
+     * Quan hệ đến sản phẩm 2
+     */
+    public function product2()
+    {
+        return $this->belongsTo(Product::class, 'product_id_2');
+}
 }

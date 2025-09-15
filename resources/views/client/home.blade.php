@@ -61,6 +61,45 @@
         margin-left: auto;
         margin-right: auto;
     }
+    /* Product 2 row: tên bên trái, giá bên phải */
+.product-2 .product-details{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.product-2 .product-details > div{
+  flex:1 1 auto; min-width:0;                 /* cho phép co lại */
+}
+
+/* Tên sản phẩm: 2 dòng + ellipsis */
+.product-2 .product-details .prod-name{
+  margin:0;
+  display:-webkit-box;
+  -webkit-line-clamp:2;                        /* 1 -> 2 dòng tùy muốn */
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  word-break:break-word;                       /* cắt từ dài */
+}
+
+/* Badge giá không bị xuống dòng */
+.product-2 .product-details .price-badge{
+  flex:0 0 auto;
+  white-space:nowrap;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:600;
+}
+@media (max-width:576px){
+  .product-2 .product-details .prod-name{-webkit-line-clamp:1;} /* mobile: 1 dòng */
+}
+.btn_outline{display:inline-flex;align-items:center;gap:8px;}
+.half-arrow{
+  width:12px;height:12px;display:inline-block;
+  border-right:2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);      /* nghiêng lên-phải */
+  margin-left:2px; transition:transform .2s;
+}
+.btn_outline:hover .half-arrow{ transform: rotate(45deg) translate(2px,-2px); }
+/* .btn_outline{display:inline-flex;align-items:center;gap:8px;} */
 </style>
 @section('content')
 <section class="section-space home-section-4">
@@ -80,11 +119,14 @@
                     <h2>{{ $current['subtitle'] ?? '' }}</h2>
                     <h1>{{ $current['title'] ?? '' }}</h1>
                     <h6>{!! $current['description'] ?? '' !!}</h6>
-                    <a class="btn btn_outline"
-                        href="{{ route('client.category.index') }}">Shop Now
-                        <svg>
-                            <use href="{{ asset('assets/svg/icon-sprite.svg#arrow') }}"></use>
-                        </svg>
+                    @php
+                    $btnTitle = $current['btn_title'] ?? 'Shop Now';
+                    $btnLink  = $current['btn_link']  ?? route('client.category.index');
+                    @endphp
+
+                    <a class="btn btn_outline" href="{{ $btnLink }}">
+                    {{ $btnTitle }}
+                    <span class="half-arrow"></span>
                     </a>
 
                 </div>
@@ -131,10 +173,10 @@
         <div class="product-details">
           <div>
             <h6>{{ $p2['category'] ?? 'Category' }}</h6>
-            <h5>{{ $p2['name'] }}</h5>
+            <h5 class="prod-name">{{ $p2['name'] }}</h5>   {{-- thêm class --}}
           </div>
           @php $price2 = $p2['sale_price'] ?? $p2['price']; @endphp
-<span>{{ number_format($price2, 0, ',', '.') }}₫</span>
+          <span class="price-badge">{{ number_format($price2, 0, ',', '.') }}₫</span> {{-- thêm class --}}
         </div>
       </div>
     </a>
@@ -151,7 +193,7 @@
                     <img class="img-fluid" src="{{ $img }}" alt="{{ $current['title'] ?? 'Banner' }}">
 
                     <div class="main-images"></div>
-                    <img class="img-fluid" src="{{ $img }}" alt="{{ $current->title ?? 'Banner' }}">
+                    <img class="img-fluid" src="{{ $img }}" alt="{{ $current['title'] ?? 'Banner' }}">
                 </div>
 
 
@@ -1097,12 +1139,13 @@
           <div class="product">
             <img class="img-fluid" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
             <div class="product-details">
-              <div>
-                <h6>${escapeHtml(p.category || 'Category')}</h6>
-                <h5>${escapeHtml(p.name)}</h5>
-              </div>
-              <span>${vnd(nowPrice)}₫</span>
-            </div>
+  <div>
+    <h6>${escapeHtml(p.category || 'Category')}</h6>
+    <h5 class="prod-name">${escapeHtml(p.name)}</h5>
+  </div>
+  <span class="price-badge">${vnd(nowPrice)}₫</span>
+</div>
+
           </div>
         </a>
       `;
@@ -1125,12 +1168,16 @@
           if (h1) h1.textContent = b.title || '';
           if (h6) h6.innerHTML  = b.description || '';
 
-          if (btn) {
-            if (b.button_link) btn.setAttribute('href', b.button_link);
-            // đổi text của nút nhưng giữ <svg>
-            const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
-            if (textNode) textNode.nodeValue = (b.button_text || 'Shop Now') + ' ';
-          }
+          // bên trong function render(i)
+if (btn) {
+  if (b.btn_link) btn.setAttribute('href', b.btn_link);
+
+  // đổi text nhưng giữ lại <svg>
+  const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
+  const newText = (b.btn_title || 'Shop Now') + ' ';
+  if (textNode) textNode.nodeValue = newText;
+  else btn.insertBefore(document.createTextNode(newText), btn.firstChild);
+}
 
           const url = (b.main_image && (''+b.main_image).trim()) || defaultUrl;
           imgs.forEach(el => { el.setAttribute('src', url); el.style.opacity = '1'; });
@@ -1147,10 +1194,7 @@
       let timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay);
       const restart = () => { clearInterval(timer); timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay); };
 
-      const nextBtn = document.querySelector('.swiper-button-next');
-      const prevBtn = document.querySelector('.swiper-button-prev');
-      if (nextBtn) nextBtn.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
-      if (prevBtn) prevBtn.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
+    // prev/next
 
       if (document.querySelector('.home-box-2 span')) {
         const el = document.querySelector('.home-box-2 span');

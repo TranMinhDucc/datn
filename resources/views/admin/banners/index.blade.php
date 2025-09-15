@@ -31,6 +31,7 @@
                                     <!-- <th>Phụ 1</th>
                                      <th>Phụ 2</th> -->
                                     <th class="w-250px">Sản phẩm</th>
+                                    <th class="w-220px">Nút</th>
                                     <th class="w-125px">Trạng thái</th>
                                     <th class="text-end w-150px">Thao tác</th>
                                 </tr>
@@ -119,6 +120,24 @@
                                                 </div>
                                             </div>
 
+                                        </div>
+                                    </td>
+                                    {{-- Nút (title / link) --}}
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="text-muted small">Tiêu đề nút</span>
+                                            <strong class="mb-1">
+                                                {{ $banner->btn_title ?: '—' }}
+                                            </strong>
+
+                                            <span class="text-muted small">Link nút</span>
+                                            @if(!empty($banner->btn_link))
+                                            <a href="{{ $banner->btn_link }}" target="_blank" class="text-primary text-truncate" style="max-width: 260px;">
+                                                {{ \Illuminate\Support\Str::limit($banner->btn_link, 40) }}
+                                            </a>
+                                            @else
+                                            <span class="text-muted">—</span>
+                                            @endif
                                         </div>
                                     </td>
                                     {{-- Trạng thái --}}
