@@ -15,8 +15,18 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $banners = Banner::where('status', 1)->get();
-
+        $banners = Banner::where('status', 1)->get()->map(function ($b) {
+            return [
+                'subtitle'    => $b->subtitle ?? '',
+                'title'       => $b->title ?? '',
+                'description' => $b->description ?? '',
+                'main_image'       => $b->main_image
+                    ? asset('storage/' . $b->main_image)
+                    : asset('assets/client/images/layout-4/1.png'),
+                'button_link' => route('client.category.index'),
+                'button_text' => 'Shop Now',
+            ];
+        });
 
 
         $latestProducts = Product::where('is_active', 1)

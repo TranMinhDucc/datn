@@ -51,7 +51,7 @@
                 @enderror
             </div>
 
-            {{-- Sub Image 1 --}}
+            <!-- {{-- Sub Image 1 --}}
             <div class="mb-5">
                 <label class="form-label">Ảnh phụ 1 (sub_image_1)</label><br>
                 @if($banner->sub_image_1)
@@ -71,7 +71,7 @@
                 <input type="file" name="sub_image_2" class="form-control" accept="image/*">
                 <input type="text" name="sub_image_2_name" class="form-control mt-2" placeholder="Tên sản phẩm" value="{{ old('sub_image_2_name', $banner->sub_image_2_name) }}">
                 <input type="number" step="0.01" name="sub_image_2_price" class="form-control mt-2" placeholder="Giá sản phẩm" value="{{ old('sub_image_2_price', $banner->sub_image_2_price) }}">
-            </div>
+            </div> -->
 
             {{-- Trạng thái hiển thị --}}
             <div class="form-check form-switch mb-5">

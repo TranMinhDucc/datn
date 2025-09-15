@@ -34,7 +34,7 @@
                         </div>
                     </div>
 
-                    {{-- Ảnh phụ 1 --}}
+                    <!-- {{-- Ảnh phụ 1 --}}
                     <div class="mb-5">
                         <label class="fw-bold fs-6 text-gray-700">Ảnh phụ 1</label>
                         <div class="d-flex align-items-center mt-2">
@@ -56,7 +56,7 @@
                                 <div class="text-primary fw-bold">{{ number_format($banner->sub_image_2_price, 0, ',', '.') }}₫</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     {{-- Quay lại --}}
                     <div class="mt-5">

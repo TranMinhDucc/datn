@@ -50,7 +50,7 @@
                             @enderror
                         </div>
 
-                        {{-- Sub Image 1 --}}
+                        <!-- {{-- Sub Image 1 --}}
                         <h5 class="mb-3 mt-5">Ảnh phụ 1 (Sản phẩm 1)</h5>
                         <div class="mb-3">
                             <label class="form-label">Ảnh phụ 1</label>
@@ -96,7 +96,7 @@
                             @error('sub_image_2_price')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> -->
 
                         {{-- Order and Language --}}
                         <div class="row mb-5">
