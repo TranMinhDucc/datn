@@ -36,6 +36,8 @@ use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\SupportTicketController;
+use App\Http\Controllers\Client\SupportTicketThreadController;
 
 
 
@@ -78,6 +80,8 @@ use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Admin\SupportTicketController as AdminTicket;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -195,6 +199,15 @@ Route::middleware(['web', 'traffic'])->group(function () {
         Route::post('/blog/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comment.store');
         Route::delete('/blog/{blog}/comments/{comment}', [ClientBlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
+    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show', 'show')->name('show');
+    });
+    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
+    });
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
         // Category
         Route::controller(ClientCategoryController::class)->prefix('category')->name('category.')->group(function () {
             Route::get('/', 'index')->name('index');
@@ -480,6 +493,12 @@ Route::prefix('admin')
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
+
+        // Hỗ trợ
+        Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
+        Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
+        Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -556,6 +575,23 @@ Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'to
 Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
     ->name('variants.destroy')
     ->middleware('auth');
+
+
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/support/tickets', [SupportTicketController::class, 'index'])
+        ->name('support.tickets.index');
+    Route::get('/support/tickets/create', [SupportTicketController::class, 'create'])
+        ->name('support.tickets.create');
+    Route::post('/support/tickets', [SupportTicketController::class, 'store'])
+        ->name('support.tickets.store');
+
+    Route::get('/support/tickets/{ticket}', [SupportTicketThreadController::class, 'show'])
+        ->name('support.tickets.thread.show');
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketThreadController::class, 'reply'])
+        ->name('support.tickets.thread.reply');
 Route::get('/cron/check-notification-telegram', function () {
     dispatch(new CheckTelegramJob());
     return "✅ Low stock job dispatched at " . now();
