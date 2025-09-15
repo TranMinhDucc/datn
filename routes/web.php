@@ -400,7 +400,11 @@ Route::prefix('admin')
         Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
 
 
-
+        Route::prefix('return-requests')->name('return-requests.')->group(function () {
+            Route::post('{id}/approve', [AdminReturnRequestController::class, 'approve'])->name('approve');
+            Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
+            Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
+        });
 
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');

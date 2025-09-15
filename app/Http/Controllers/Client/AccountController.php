@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Password;
 use App\Models\ShippingAddress;
 use App\Models\Wishlist;
 use App\Notifications\OrderStatusNotification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,10 +35,11 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-        $orders = Order::with(['orderItems.product']) // Load luôn product của từng item
+        $orders = Order::with(['orderItems.product', 'returnRequests'])
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
+
 
         if (Auth::check()) {
             Auth::user()->unreadNotifications->markAsRead();
@@ -50,7 +52,7 @@ class AccountController extends Controller
             ->get();
 
 
-        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
+        $provinces = Province::all();
 
         return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
@@ -148,7 +150,7 @@ class AccountController extends Controller
             return response()->json(['success' => true]);
         } catch (\Throwable $e) {
             // Ghi log lỗi ra storage/logs/laravel.log
-            \Log::error('❌ Lỗi cập nhật profile: ' . $e->getMessage(), [
+            Log::error('❌ Lỗi cập nhật profile: ' . $e->getMessage(), [
                 'user_id' => $user->id,
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString(),
