@@ -10,11 +10,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Coupon extends Model
 {
     protected $fillable = [
-        'code', 'type', 'value_type', 'discount_value',
-        'max_discount_amount', 'min_order_amount',
-        'applicable_product_ids', 'applicable_category_ids',
-        'only_for_new_users', 'is_exclusive', 'usage_limit', 'used_count',
-        'per_user_limit', 'eligible_user_roles', 'start_date', 'end_date', 'active'
+        'code',
+        'type',
+        'value_type',
+        'discount_value',
+        'max_discount_amount',
+        'min_order_amount',
+        'applicable_product_ids',
+        'applicable_category_ids',
+        'only_for_new_users',
+        'is_exclusive',
+        'usage_limit',
+        'used_count',
+        'per_user_limit',
+        'eligible_user_roles',
+        'start_date',
+        'end_date',
+        'active'
     ];
 
     protected $casts = [
@@ -27,6 +39,10 @@ class Coupon extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+    public function couponUsers()
+    {
+        return $this->hasMany(CouponUser::class);
+    }
 
     public function isValidFor(User $user, float $orderAmount): bool
     {
@@ -62,5 +78,11 @@ class Coupon extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'coupon_user', 'coupon_id', 'user_id');
+    }
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'coupon_user')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }

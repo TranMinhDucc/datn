@@ -549,7 +549,12 @@
                                     <form action="{{ route('admin.return-requests.reject', $request->id) }}"
                                         method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                                        <!-- Nút mở modal từ chối -->
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#rejectReasonModal" data-id="{{ $request->id }}">
+                                            Từ chối
+                                        </button>
+
                                     </form>
                                 @elseif ($request->status === 'approved')
                                     @if ($request->type === 'exchange')
@@ -1020,5 +1025,40 @@
             </div>
         </div>
     </div>
+    <!-- Modal nhập lý do từ chối -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="rejectForm">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nhập lý do từ chối</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="reason" class="form-control" rows="4" placeholder="Nhập lý do từ chối..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.getElementById("rejectReasonModal");
+            modal.addEventListener("show.bs.modal", function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute("data-id");
+                const form = modal.querySelector("#rejectForm");
+                form.action = "/admin/return-requests/" + id + "/reject"; // route reject
+            });
+        });
+    </script>
+@endpush
