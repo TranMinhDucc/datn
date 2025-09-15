@@ -91,7 +91,7 @@
                                     </td>
                                     <td>
                                         @if ($blog->thumbnail)
-                                            <img src="{{ asset($blog->thumbnail) }}" alt="Thumbnail"
+                                            <img src="{{ asset('storage/' . $blog->thumbnail) }}" alt="Thumbnail"
                                                 class="w-80px h-45px rounded" />
                                         @else
                                             <span class="text-muted">Chưa có ảnh</span>
@@ -109,7 +109,7 @@
                                             <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                 @if (!empty($blog->author->avatar))
                                                     <div class="symbol-label">
-                                                        <img src="{{ asset('storage/' . $blog->author->avatar) }}"
+                                                        <img src="{{ asset($blog->author->avatar) }}"
                                                             class="w-100 h-100 object-fit-cover">
                                                     </div>
                                                 @else

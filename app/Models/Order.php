@@ -101,4 +101,19 @@ class Order extends Model
     {
         return $this->hasMany(ReturnRequest::class, 'order_id');
     }
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
+    public function couponUsers()
+    {
+        return $this->hasMany(CouponUser::class);
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_user')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
 }

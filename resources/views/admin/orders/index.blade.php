@@ -75,12 +75,17 @@
                             <!--begin::Card title-->
                             <div class="card-title">
                                 <!--begin::Search-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                    <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"><span
-                                            class="path1"></span><span class="path2"></span></i> <input type="text"
-                                        data-kt-ecommerce-order-filter="search"
-                                        class="form-control form-control-solid w-250px ps-12" placeholder="Search Order" />
+                                <div class="card-title">
+                                    <!--begin::Search-->
+                                    <div class="d-flex align-items-center position-relative my-1">
+                                        <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                                        <input type="text" data-kt-ecommerce-order-filter="search"
+                                            class="form-control form-control-solid w-250px ps-12"
+                                            placeholder="Search Order" />
+                                    </div>
+                                    <!--end::Search-->
                                 </div>
+
                                 <!--end::Search-->
                             </div>
                             <!--end::Card title-->
@@ -490,20 +495,20 @@
                     }
                 });
 
-                // 🔍 Tìm kiếm theo từ khoá
-                $('[data-kt-ecommerce-order-filter="search"]').on('keyup', function() {
-                    table.search(this.value).draw();
-                });
+                // // 🔍 Tìm kiếm theo từ khoá
+                // $('[data-kt-ecommerce-order-filter="search"]').on('keyup', function() {
+                //     table.search(this.value).draw();
+                // });
 
-                // ✅ Lọc theo Trạng thái
-                $('[data-kt-ecommerce-order-filter="status"]').on('change', function() {
-                    let selected = $(this).val();
-                    if (selected === 'Tất cả' || selected === '') {
-                        table.column(5).search('').draw(); // Cột Trạng thái
-                    } else {
-                        table.column(5).search(selected, true, false).draw();
-                    }
-                });
+                // // ✅ Lọc theo Trạng thái
+                // $('[data-kt-ecommerce-order-filter="status"]').on('change', function() {
+                //     let selected = $(this).val();
+                //     if (selected === 'Tất cả' || selected === '') {
+                //         table.column(5).search('').draw(); // Cột Trạng thái
+                //     } else {
+                //         table.column(5).search(selected, true, false).draw();
+                //     }
+                // });
             });
         </script>
     @endsection

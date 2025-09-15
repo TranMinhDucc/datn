@@ -37,45 +37,42 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $searchOrders = Order::query()->with(['user', 'shippingOrder']);
+        $query = Order::with(['user', 'shippingOrder']);
 
-        if ($request->filled('order_code')) {
-            $searchOrders->where('order_code', 'like', '%' . $request->order_code . '%');
-        }
+        // 🔍 Search chung
+        if ($request->filled('search')) {
+            $keyword = $request->search;
 
-        if ($request->filled('status')) {
-            $searchOrders->where('status', $request->status);
-        }
-        if ($request->filled('user_id')) {
-            $searchOrders->where('user_id', $request->user_id);
-        }
-
-        if ($request->filled('user_name')) {
-            $searchOrders->whereHas('user', function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->user_name . '%');
+            $query->where(function ($q) use ($keyword) {
+                $q->where('order_code', 'like', "%$keyword%")
+                    ->orWhereHas('user', function ($sub) use ($keyword) {
+                        $sub->where('fullname', 'like', "%$keyword%");
+                    })
+                    ->orWhereHas('shippingOrder', function ($sub) use ($keyword) {
+                        $sub->where('shipping_code', 'like', "%$keyword%");
+                    });
             });
         }
 
+        // ✅ giữ lại các filter khác nếu cần
         if ($request->filled('status')) {
-            $searchOrders->where('status', $request->status);
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $searchOrders->whereBetween('created_at', [
+            $query->whereBetween('created_at', [
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-        } elseif ($request->filled('from_date')) {
-            $searchOrders->whereDate('created_at', '>=', $request->from_date);
-        } elseif ($request->filled('to_date')) {
-            $searchOrders->whereDate('created_at', '<=', $request->to_date);
         }
 
-        $orders = $searchOrders->orderBy('id', 'desc')->paginate(10);
-
+        $orders = $query->orderBy('id', 'desc')
+            ->paginate(10)
+            ->appends($request->all()); // giữ lại search khi phân trang
 
         return view('admin.orders.index', compact('orders'));
     }
+
 
 
     /**
@@ -720,90 +717,37 @@ class OrderController extends Controller
             'lost' => 'Hàng bị mất',
         ][$status] ?? $status; // fallback nếu không khớp trạng thái
     }
-    public function exchangeOrder(Request $request, Order $order)
-    {
-        // Validate input
-        $validated = $request->validate([
-            'product_id.*' => 'required|exists:products,id',
-            'variant_id.*' => 'nullable|exists:product_variants,id',
-            'quantity.*' => 'required|integer|min:1',
-        ]);
 
-        // Tạo đơn hàng mới
-        $newOrder = Order::create([
-            'user_id' => $order->user_id,
-            'order_type' => 'exchange',
-            'original_order_id' => $order->id,
-            'status' => 'pending',
-            'total' => 0, // Sẽ tính lại sau
-        ]);
-
-        // Thêm sản phẩm mới vào đơn hàng mới
-        foreach ($request->product_id as $index => $productId) {
-            $product = Product::findOrFail($productId);
-            $variantId = $request->input('variant_id.' . $index);
-            $quantity = $request->input('quantity.' . $index);
-
-            $variant = null;
-            $variantValues = [];
-
-            if ($variantId) {
-                $variant = ProductVariant::findOrFail($variantId);
-                $variantValues = $variant->options->pluck('value_id')->toArray();
-            }
-
-            OrderItem::create([
-                'order_id' => $newOrder->id,
-                'product_id' => $product->id,
-                'product_variant_id' => $variant?->id,
-                'product_name' => $product->name,
-                'sku' => $variant?->sku ?? $product->sku,
-                'image_url' => $product->image,
-                'variant_values' => json_encode($variantValues),
-                'price' => $variant?->price ?? $product->sale_price,
-                'quantity' => $quantity,
-                'total_price' => ($variant?->price ?? $product->sale_price) * $quantity,
-            ]);
-        }
-
-        // Cập nhật trạng thái đơn hàng cũ
-        $order->update(['status' => 'exchanged']);
-
-        // Gọi API GHN để tạo vận đơn mới
-        $this->createGHNOrder($newOrder);
-
-        return redirect()->route('orders.show', $newOrder->id)->with('success', 'Đơn hàng mới đã được tạo.');
-    }
 
     // Phương thức tạo vận đơn GHN cho đơn mới
-    private function createGHNOrder(Order $order)
-    {
-        $data = [
-            'to_name' => $order->shipping_address->full_name,
-            'to_phone' => $order->shipping_address->phone,
-            'to_address' => $order->shipping_address->address,
-            'to_ward_code' => $order->shipping_address->ward_code,
-            'to_district_id' => $order->shipping_address->district_id,
-            'cod_amount' => $order->total, // Nếu có thu COD
-            'content' => 'Đơn đổi hàng - Đơn gốc #' . $order->original_order_id,
-            'weight' => 500, // gram
-            'length' => 20,
-            'width' => 15,
-            'height' => 10,
-            'service_type_id' => 2, // Giao hàng tiết kiệm
-        ];
+    // private function createGHNOrder(Order $order)
+    // {
+    //     $data = [
+    //         'to_name' => $order->shipping_address->full_name,
+    //         'to_phone' => $order->shipping_address->phone,
+    //         'to_address' => $order->shipping_address->address,
+    //         'to_ward_code' => $order->shipping_address->ward_code,
+    //         'to_district_id' => $order->shipping_address->district_id,
+    //         'cod_amount' => $order->total, // Nếu có thu COD
+    //         'content' => 'Đơn đổi hàng - Đơn gốc #' . $order->original_order_id,
+    //         'weight' => 500, // gram
+    //         'length' => 20,
+    //         'width' => 15,
+    //         'height' => 10,
+    //         'service_type_id' => 2, // Giao hàng tiết kiệm
+    //     ];
 
-        $response = Http::withToken(config('services.ghn.token'))
-            ->post('https://online-gateway.ghn.vn/shiip/public-api/v1/shipping-order/create', $data);
+    //     $response = Http::withToken(config('services.ghn.token'))
+    //         ->post('https://online-gateway.ghn.vn/shiip/public-api/v1/shipping-order/create', $data);
 
-        if ($response->successful()) {
-            $order->shipping_info = $response->json();
-            $order->save();
-        } else {
-            // Xử lý lỗi
-            throw new \Exception('Lỗi tạo đơn GHN: ' . $response->body());
-        }
-    }
+    //     if ($response->successful()) {
+    //         $order->shipping_info = $response->json();
+    //         $order->save();
+    //     } else {
+    //         // Xử lý lỗi
+    //         throw new \Exception('Lỗi tạo đơn GHN: ' . $response->body());
+    //     }
+    // }
     private array $statusLabels = [
         'pending'            => '🕐 Chờ xác nhận',
         'confirmed'          => '✅ Đã xác nhận',
