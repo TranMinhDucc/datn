@@ -61,6 +61,7 @@
         margin-left: auto;
         margin-right: auto;
     }
+
     /* Product 2 row: tên bên trái, giá bên phải */
 .product-2 .product-details{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -99,7 +100,124 @@
   margin-left:2px; transition:transform .2s;
 }
 .btn_outline:hover .half-arrow{ transform: rotate(45deg) translate(2px,-2px); }
+/* Category (product 2): clamp 2 dòng */
+.product-2 .product-details h6{
+  margin: 0 0 6px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;   /* số dòng muốn hiển thị */
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* Mobile: chỉ 1 dòng cho gọn (tùy chọn) */
+@media (max-width: 576px){
+  .product-2 .product-details h6{
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+}
 /* .btn_outline{display:inline-flex;align-items:center;gap:8px;} */
+
+/* CARD SP1: ảnh trái – nội dung phải (giống mẫu) */
+.home-section-4 .product-1 .product{
+  display:flex !important;
+  align-items:center;
+  gap:14px;
+  padding:12px;
+  border-radius:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  width:280px;                 /* cố định bề ngang (chỉnh 320–360 tùy layout) */
+}
+
+/* Ảnh vuông cố định */
+.home-section-4 .product-1 .custom-product-img{
+  flex:0 0 100px;               /* = kích thước ảnh */
+  width:100px; height:100px;
+  border-radius:10px;
+  object-fit:cover;
+  display:block;
+  background:#f5f5f5;
+}
+
+/* Vùng chữ có thể co giãn */
+.home-section-4 .product-1 .product-details{
+  flex:1 1 auto;
+  min-width:0;                 /* QUAN TRỌNG để ellipsis hoạt động */
+}
+
+/* Tên SP1 – kẹp 1 (hoặc 2) dòng */
+.home-section-4 .product-1 .product-details .prod1-name{
+  margin:0;
+  white-space:normal !important;
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:1;        /* đổi thành 2 nếu muốn 2 dòng */
+  overflow:hidden !important;
+  text-overflow:ellipsis;
+  word-break:break-word;
+}
+
+/* Danh mục SP1 — 1 dòng, cắt ngắn gọn trong card */
+.home-section-4 .product-1 .product-details > p{
+  margin: 2px 0 6px;
+  color: #6a6a6a;
+  font-size: 12px;          /* nhỏ hơn chút để gọn */
+  line-height: 1.2;
+  max-width: 100%;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+/* Rating gọn */
+.home-section-4 .product-1 .product-details .rating{
+  display:flex; gap:4px;
+  margin:0 0 6px; padding:0; list-style:none; color:#f39c12;
+}
+
+/* Hàng giá: không tràn, có badge giảm giá */
+.home-section-4 .product-1 .product-details h5{
+  display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
+  margin:0;
+}
+.home-section-4 .product-1 .product-details h5 del{ color:#999; }
+.home-section-4 .product-1 .product-details h5 span{
+  background:#E7A76D; color:#fff; border-radius:999px;
+  padding:4px 10px; font-weight:700; font-size:12px; white-space:nowrap;
+}
+/* ép SP1 căn trái, ghi đè text-center của theme */
+.home-section-4 .product-1 .product.text-center{
+  text-align: left !important;
+}
+
+/* khối chữ xếp dọc và bám trái */
+.home-section-4 .product-1 .product-details{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* sát trái */
+}
+
+/* tên & danh mục */
+.home-section-4 .product-1 .product-details .prod1-name{ margin: 0 0 2px; }
+.home-section-4 .product-1 .product-details > p{ margin: 0 0 6px; }
+
+/* rating bám trái */
+.home-section-4 .product-1 .product-details .rating{
+  justify-content: flex-start;
+}
+
+/* hàng giá đã flex sẵn: giữ trái */
+.home-section-4 .product-1 .product-details h5{
+  align-self: flex-start;
+}
+/* Mobile: card co theo chiều ngang */
+@media (max-width:576px){
+  .home-section-4 .product-1 .product{ width:100%; }
+  .home-section-4 .product-1 .product-details .prod1-name{ -webkit-line-clamp:2; }
+}
 </style>
 @section('content')
 <section class="section-space home-section-4">
@@ -136,7 +254,7 @@
       <div class="product text-center">
         <img class="img-fluid custom-product-img" src="{{ $p1['image'] }}" alt="{{ $p1['name'] }}">
         <div class="product-details">
-          <h6>{{ $p1['name'] }}</h6>
+          <h6 class="prod1-name">{{ $p1['name'] }}</h6>
           <p>{{ $p1['category'] ?? 'Uncategorized' }}</p>
 
           @php
@@ -1108,7 +1226,7 @@
           <div class="product text-center">
             <img class="img-fluid custom-product-img" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
             <div class="product-details">
-              <h6>${escapeHtml(p.name)}</h6>
+              <h6 class="prod1-name">${escapeHtml(p.name)}</h6>
               <p>${escapeHtml(p.category || 'Uncategorized')}</p>
               ${starsHtml(p.avg_rating)}
               <h5>
