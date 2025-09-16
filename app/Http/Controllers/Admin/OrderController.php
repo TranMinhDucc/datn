@@ -480,26 +480,6 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 
     public function createShippingOrder(array $data)
     {
@@ -545,31 +525,51 @@ class OrderController extends Controller
 
     public function confirmGHN($id, Request $request, GhnService $service)
     {
+        $order = Order::with([
+            'items.productVariant.product',
+            'user',
+            'address',
+            'adjustments',
+            'payments'
+        ])->findOrFail($id);
 
-        $order = Order::with('items.productVariant.product', 'user', 'address')->findOrFail($id);
         if ($order->status === 'cancelled') {
             return redirect()->back()->with('error', '❌ Đơn hàng này đã bị huỷ, không thể thao tác.');
         }
-
         if ($order->status !== 'pending') {
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
         }
-        $pmName = strtolower(trim(($order->paymentMethod->code ?? '') . ' ' . ($order->paymentMethod->name ?? '')));
-        $isCOD = str_contains($pmName, 'cod') || str_contains($pmName, 'cash on delivery') || str_contains($pmName, 'khi nhận');
-        $isPrepaid = !$isCOD || ($order->payment_status === 'paid'); // nếu không phải COD hoặc đã paid trước đó
 
-        // GHN chỉ quyết định có THU TIỀN hay không dựa vào cod_amount
-        $codAmount = $isPrepaid ? 0 : (int) round($order->total_amount);
+        // Xác định phương thức thanh toán
+        $pmName    = strtolower(trim(($order->paymentMethod->code ?? '') . ' ' . ($order->paymentMethod->name ?? '')));
+        $isCOD     = str_contains($pmName, 'cod') || str_contains($pmName, 'cash on delivery') || str_contains($pmName, 'khi nhận');
+        $isPrepaid = !$isCOD || ($order->payment_status === 'paid');
 
-        // Ai trả phí ship: 1=Shop, 2=Người nhận (tuỳ chính sách bạn)
+        // ======= TÍNH SỐ DƯ (để gửi cod_amount) =======
+        $gross = (float)($order->subtotal ?? 0)
+            + (float)($order->tax_amount ?? 0)
+            + (float)($order->shipping_fee ?? 0)
+            - (float)($order->discount_amount ?? 0);
+
+        $adjTotal = (float)$order->adjustments->sum(function ($a) {
+            return $a->type === 'charge' ? $a->amount : -$a->amount;
+        });
+
+        $net          = $gross + $adjTotal;
+        $paidIn       = (float)$order->payments->where('kind', 'payment')->sum('amount');
+        $refundedOut  = (float)$order->payments->where('kind', 'refund')->sum('amount');
+        $balance      = $net - $paidIn + $refundedOut;                 // dương = KH còn thiếu
+        $codAmount    = $isPrepaid ? 0 : max(0, (int) round($balance)); // GHN cần số nguyên không âm
+
+        // Ai trả phí ship: 1=Shop, 2=Người nhận
         $paymentTypeId = 1;
 
+        // ======= TÍNH KHỐI LƯỢNG/KÍCH THƯỚC GỬI GHN =======
         $totalWeight = 0;
         $maxLength = 0;
         $maxWidth = 0;
         $totalHeight = 0;
 
-        // Tính toán lại chính xác kích thước và cân nặng
         foreach ($order->items as $item) {
             $variant = $item->productVariant;
             $product = $variant?->product ?? $item->product;
@@ -581,19 +581,16 @@ class OrderController extends Controller
 
             $weight = $variant?->weight ?? $product?->weight ?? 100;
             $length = $variant?->length ?? $product?->length ?? 10;
-            $width = $variant?->width ?? $product?->width ?? 10;
+            $width  = $variant?->width  ?? $product?->width  ?? 10;
             $height = $variant?->height ?? $product?->height ?? 10;
 
             $totalWeight += $weight * $item->quantity;
-
-            if ($length > $maxLength)
-                $maxLength = $length;
-            if ($width > $maxWidth)
-                $maxWidth = $width;
-
+            if ($length > $maxLength) $maxLength = $length;
+            if ($width  > $maxWidth)  $maxWidth  = $width;
             $totalHeight += $height * $item->quantity;
         }
 
+        // ======= MAP ĐỊA CHỈ GHN =======
         $toDistrictId = PartnerLocationCode::where([
             'type' => 'district',
             'location_id' => $order->address->district_id,
@@ -608,62 +605,69 @@ class OrderController extends Controller
 
         Log::info('ĐỊA CHỈ GHN', [
             'district_id nội bộ' => $order->address->district_id,
-            'ward_id nội bộ' => $order->address->ward_id,
-            'mapped to_district_id' => $toDistrictId,
-            'mapped to_ward_code' => $toWardCode,
+            'ward_id nội bộ'     => $order->address->ward_id,
+            'mapped to_district' => $toDistrictId,
+            'mapped to_ward'     => $toWardCode,
         ]);
+
         $shop = ShopSetting::with(['province', 'district', 'ward'])->first();
+
         $availableServices = Http::withHeaders([
             'Token' => config('services.ghn.token'),
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', [
-            'shop_id' => (int) config('services.ghn.shop_id'),
-            'from_district' => $shop->district->ghn_district_id ?? 3440, // bạn có thể map riêng nếu cần
-            'to_district' => (int) $toDistrictId,
+            'shop_id'       => (int) config('services.ghn.shop_id'),
+            'from_district' => $shop->district->ghn_district_id ?? 3440,
+            'to_district'   => (int) $toDistrictId,
         ]);
 
         $serviceId = data_get($availableServices->json(), 'data.0.service_id');
-
         if (!$serviceId) {
             Log::error('❌ Không lấy được service_id từ GHN', $availableServices->json());
             return redirect()->back()->with('error', 'GHN không trả về service_id hợp lệ.');
         }
+
+        // ======= PAYLOAD GHN =======
         $data = [
-            'from_name' => $shop->shop_name,
-            'from_phone' => $shop->shop_phone,
-            'from_address' => $shop->address,
-            'from_ward_name' => optional($shop->ward)->name,
+            'from_name'          => $shop->shop_name,
+            'from_phone'         => $shop->shop_phone,
+            'from_address'       => $shop->address,
+            'from_ward_name'     => optional($shop->ward)->name,
             'from_district_name' => optional($shop->district)->name,
             'from_province_name' => optional($shop->province)->name,
-            'payment_type_id' => 1,
-            'note'          => $order->note_shipper ?? 'Giao hàng cho khách',
-            'required_note' => $order->required_note_shipper ?? 'KHONGCHOXEMHANG',
-            'to_name' => $order->address->full_name,
-            'to_phone' => $order->address->phone,
-            'to_address' => $order->address->address,
+
+            'payment_type_id' => $paymentTypeId,
+            'note'            => $order->note_shipper ?? 'Giao hàng cho khách',
+            'required_note'   => $order->required_note_shipper ?? 'KHONGCHOXEMHANG',
+
+            'to_name'       => $order->address->full_name,
+            'to_phone'      => $order->address->phone,
+            'to_address'    => $order->address->address,
             'to_district_id' => $toDistrictId,
-            'to_ward_code' => (string) $toWardCode,
+            'to_ward_code'  => (string) $toWardCode,
+
             'weight' => $totalWeight ?: 100,
-            'length' => $maxLength ?: 10,
-            'width' => $maxWidth ?: 10,
+            'length' => $maxLength  ?: 10,
+            'width'  => $maxWidth   ?: 10,
             'height' => $totalHeight ?: 10,
-            'service_id' => $serviceId,
-            'cod_amount'         => $codAmount,                                      // ⬅️ quan trọng
-            'content'            => $isPrepaid ? 'Hàng đã thanh toán trước' : 'Thu COD khi giao',
+
+            'service_id'  => $serviceId,
+
+            // ⬇️ Quan trọng: số tiền GHN cần thu
+            'cod_amount'  => $codAmount,
+            'content'     => $codAmount > 0 ? "Thu COD {$codAmount}đ" : 'Hàng đã thanh toán/không thu COD',
+
             'items' => $order->items->map(function ($item) {
                 $variant = $item->productVariant;
                 $product = $variant?->product ?? $item->product;
-
                 return [
-                    'name' => $product->name ?? 'Không rõ',
+                    'name'     => $product->name ?? 'Không rõ',
                     'quantity' => $item->quantity,
-                    'code' => $variant?->sku ?? $product->sku ?? 'UNKNOWN',
-                    'image' => asset('storage/' . ($product->image ?? 'default.png')),
-                    'weight' => $variant?->weight ?? $product?->weight ?? 100,
+                    'code'     => $variant?->sku ?? $product->sku ?? 'UNKNOWN',
+                    'image'    => asset('storage/' . ($product->image ?? 'default.png')),
+                    'weight'   => $variant?->weight ?? $product?->weight ?? 100,
                 ];
             })->toArray(),
-
-
         ];
 
         Log::info('GHN Request', $data);
@@ -672,16 +676,17 @@ class OrderController extends Controller
 
         if ($ghnOrderCode) {
             $order->update([
-                'status' => 'confirmed',
+                'status'         => 'confirmed',
                 'ghn_order_code' => $ghnOrderCode
             ]);
+
             ShippingOrder::create([
-                'order_id' => $order->id,
+                'order_id'         => $order->id,
                 'shipping_partner' => 'ghn',
-                'shipping_code' => $ghnOrderCode,
-                'status' => 'ready_to_pick',
-                'note'          => $order->note_shipper ?? 'Giao hàng cho khách',
-                'request_payload' => json_encode($data),
+                'shipping_code'    => $ghnOrderCode,
+                'status'           => 'ready_to_pick',
+                'note'             => $order->note_shipper ?? 'Giao hàng cho khách',
+                'request_payload'  => json_encode($data),
                 'response_payload' => json_encode(['order_code' => $ghnOrderCode]),
             ]);
 
@@ -690,6 +695,7 @@ class OrderController extends Controller
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
     }
+
     private function mapGhnStatus($status)
     {
         return [
@@ -863,7 +869,7 @@ class OrderController extends Controller
             'note_payload'     => json_encode($payload),
         ]);
 
-        return back()->with('success', '✅ Đã cập nhật ghi chú GHN và đồng bộ vào DB!');
+        return back()->with('success', 'Đã cập nhật ghi chú cho phía giao hàng!');
     }
     public function printShippingLabel($id)
     {
