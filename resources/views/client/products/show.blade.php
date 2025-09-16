@@ -76,12 +76,21 @@
                                 const saleTimes = @json($product->sale_times);
                             </script>
                             <h3>{{ $product->name }}</h3>
-                            <p id="main-price">{{ number_format($finalPrice) }} đ
-                                <del>{{ number_format($product->base_price) }} đ</del>
-                                @if ($isInDiscountTime)
+                            <p id="main-price">
+                                @if ($minPrice == $maxPrice)
+                                    {{ number_format($minPrice, 0, ',', '.') }} đ
+                                @else
+                                    {{ number_format($minPrice, 0, ',', '.') }} đ -
+                                    {{ number_format($maxPrice, 0, ',', '.') }} đ
+                                @endif
+
+                                {{-- Nếu có base_price và sale_times --}}
+                                @if ($product->base_price && $isInDiscountTime)
+                                    <del>{{ number_format($product->base_price, 0, ',', '.') }} đ</del>
                                     <span>-{{ $product->sale_times }}%</span>
                                 @endif
                             </p>
+
                             <p></p>
                             <div class="rating">
                                 <ul class="rating">
@@ -650,19 +659,29 @@
                                 </div>
                                 <div class="product-detail">
                                     <ul class="rating">
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li><i class="fa-solid fa-star"></i></li>
-                                        <li>{{ $value->rating_avg ?? 0 }}</li>
-                                    </ul><a href="{{ route('client.products.show', $value->id) }}">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($value->reviews_avg_rating >= $i)
+                                                <li><i class="fa-solid fa-star"></i></li>
+                                            @elseif ($value->reviews_avg_rating >= $i - 0.5)
+                                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                            @else
+                                                <li><i class="fa-regular fa-star"></i></li>
+                                            @endif
+                                        @endfor
+                                        <li>({{ number_format($value->reviews_avg_rating, 1) }})</li>
+                                    </ul>
+
+                                    <a href="{{ route('client.products.show', $value->slug) }}">
                                         <h6>{{ $value->name }}</h6>
                                     </a>
-                                    <p>${{ number_format($value->sale_price, 2) }}
-                                        <del>${{ number_format($value->base_price, 2) }}</del><span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
+
+                                    <p>
+                                        {{ number_format($value->sale_price, 0, ',', '.') }} đ
+                                        <del>{{ number_format($value->base_price, 0, ',', '.') }} đ</del>
+                                        <span>-{{ round((($value->base_price - $value->sale_price) / $value->base_price) * 100) }}%</span>
                                     </p>
                                 </div>
+
                             </div>
                         </div>
                     @endforeach
@@ -690,7 +709,7 @@
         </div>
     </div>
 
-    <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
+    {{-- <div class="modal theme-modal fade question-answer-modal" id="question-box" tabindex="-1" role="dialog"
         aria-modal="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -729,7 +748,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     @php
         $productUrl = route('client.products.show', $product->slug);
     @endphp
@@ -972,9 +991,25 @@
             }
 
             // ✅ Nếu có biến thể nhưng chưa chọn đủ
+            // if (Object.keys(selected).length !== variantGroups.length) {
+            //     document.getElementById('variant-info').style.display = 'none';
+            //     document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+            //     return;
+            // }
+            // JS truyền min-max từ PHP
+            const minPrice = @json($minPrice);
+            const maxPrice = @json($maxPrice);
+
+            // ✅ Nếu có biến thể nhưng chưa chọn đủ
             if (Object.keys(selected).length !== variantGroups.length) {
                 document.getElementById('variant-info').style.display = 'none';
-                document.getElementById('main-price').textContent = "{{ number_format($finalPrice) }} đ";
+                if (minPrice === maxPrice) {
+                    document.getElementById('main-price').textContent = new Intl.NumberFormat().format(minPrice) + ' đ';
+                } else {
+                    document.getElementById('main-price').textContent =
+                        new Intl.NumberFormat().format(minPrice) + ' đ - ' +
+                        new Intl.NumberFormat().format(maxPrice) + ' đ';
+                }
                 return;
             }
 
@@ -1450,4 +1485,123 @@
             });
         </script>
     @endif
+
+
+
+    <!-- HTML hiện tại của bạn giữ nguyên -->
+<!-- Thêm CSS nhỏ để thấy phần được chọn -->
+<style>
+  .variant-item.active { outline: 2px solid #c69c6d; }
+  .variant-item[hidden] { display: none !important; }
+  .variant-item.disabled { opacity:.45; pointer-events:none; }
+</style>
+
+<script>
+// ====== 1) DỮ LIỆU BIẾN THỂ TỪ BACKEND (đang bật) ======
+const VARIANTS = @json($variants); // [{id, attributes:{Màu:'Cam', Size:'M', ...}, price, quantity,...}]
+
+// Chuẩn hoá mảng làm việc
+const variantList = VARIANTS.map(v => ({ id: v.id, attrs: v.attributes }));
+
+// ====== 2) BẮT THAM CHIẾU CÁC NÚT LỰA CHỌN ======
+const groups = [...document.querySelectorAll('.variant-group')];
+const optionEls = {}; // { 'màu sắc' => Map(value => <li>), 'size' => Map(...) }
+groups.forEach(g => {
+  const attr = g.dataset.attribute;               // vd: 'màu sắc', 'size' (đang là lowercase theo blade)
+  optionEls[attr] = new Map();
+  g.querySelectorAll('.variant-item').forEach(li => {
+    optionEls[attr].set(li.dataset.value, li);    // li có data-value="Cam"/"M" ...
+  });
+});
+
+// ====== 3) HÀM TIỆN ÍCH ======
+const clone = o => JSON.parse(JSON.stringify(o));
+
+function matchVariantIds(filter) {
+  // Trả về set id các biến thể khớp toàn bộ {attr:value} trong filter
+  return new Set(
+    variantList.filter(v =>
+      Object.entries(filter).every(([a,val]) => (v.attrs[a] ?? v.attrs[capitalize(a)]) === val)
+    ).map(v => v.id)
+  );
+}
+
+function allowedValuesFor(attr, currentSel) {
+  // Giá trị hợp lệ của 'attr' khi cố định các lựa chọn khác
+  const other = clone(currentSel); delete other[attr];
+  const matched = matchVariantIds(other);
+  const values = new Set();
+  variantList.forEach(v => {
+    if (matched.size === 0 || matched.has(v.id)) {
+      const vAttrVal = v.attrs[attr] ?? v.attrs[capitalize(attr)];
+      if (vAttrVal != null) values.add(vAttrVal);
+    }
+  });
+  return values;
+}
+
+function capitalize(s){ return (s||"").charAt(0).toUpperCase()+s.slice(1); }
+
+// ====== 4) TRẠNG THÁI LỰA CHỌN & RENDER ======
+const selected = {};   // vd: { 'màu sắc':'Cam', 'size':'XS' }
+
+function refreshUI() {
+  // Với từng thuộc tính, tính giá trị hợp lệ rồi ẩn/hiện
+  Object.keys(optionEls).forEach(attr => {
+    const allowed = allowedValuesFor(attr, selected);
+    optionEls[attr].forEach((li, val) => {
+      const ok = allowed.has(val);
+      // Ẩn hoàn toàn lựa chọn không hợp lệ
+      li.hidden = !ok;
+      li.classList.toggle('disabled', !ok);
+      if (!ok && li.classList.contains('active')) {
+        li.classList.remove('active');
+        delete selected[attr];
+      }
+    });
+
+    // Hiển thị thông báo nếu không còn lựa chọn
+    const errBox = document.querySelector(`.variant-group[data-attribute="${attr}"] .variant-error`);
+    if (errBox) {
+      errBox.style.display = allowed.size ? 'none' : 'block';
+      errBox.textContent = allowed.size ? '' : 'Không còn lựa chọn phù hợp.';
+    }
+  });
+
+  // Nếu đã chọn đủ (tất cả nhóm) và khớp đúng 1 biến thể -> có thể cập nhật giá/ tồn kho
+  const chosenCount = Object.keys(optionEls).length;
+  if (Object.keys(selected).length === chosenCount) {
+    const ids = matchVariantIds(selected);
+    if (ids.size === 1) {
+      // TODO: cập nhật UI giá/tồn kho nếu bạn muốn
+      // const chosen = VARIANTS.find(v => v.id === [...ids][0]);
+      // document.querySelector('#price').textContent = formatPrice(chosen.price);
+      // document.querySelector('#stock').textContent = chosen.quantity;
+    }
+  }
+}
+
+// ====== 5) GẮN SỰ KIỆN CLICK ======
+document.querySelectorAll('.variant-item').forEach(li => {
+  li.addEventListener('click', () => {
+    if (li.hidden || li.classList.contains('disabled')) return;
+
+    const group = li.closest('.variant-group').dataset.attribute;
+    // bỏ active các anh em trong cùng nhóm
+    li.parentElement.querySelectorAll('.variant-item').forEach(sib => sib.classList.remove('active'));
+    // chọn mới
+    li.classList.add('active');
+    selected[group] = li.dataset.value;
+
+    refreshUI();
+  });
+});
+
+// ====== 6) KHỞI TẠO ======
+refreshUI();
+</script>
+
 @endsection
+
+@endsection
+

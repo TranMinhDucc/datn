@@ -36,6 +36,8 @@ use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\SupportTicketController;
+use App\Http\Controllers\Client\SupportTicketThreadController;
 
 
 
@@ -79,6 +81,8 @@ use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
 
+use App\Http\Controllers\Admin\SupportTicketController as AdminTicket;
+
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
 // GHI ĐÈ route đăng nhập Fortify
@@ -87,7 +91,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-
 // ========== PUBLIC CLIENT ROUTES ==========
 Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])
     ->name('client.checkout.calculate-shipping-fee');
@@ -193,9 +196,18 @@ Route::middleware(['web', 'traffic'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{blog}', 'show')->name('show');
         });
-        Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
-        Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+        Route::post('/blog/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comment.store');
+        Route::delete('/blog/{blog}/comments/{comment}', [ClientBlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
 
+    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/show', 'show')->name('show');
+    });
+    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/place-order', 'placeOrder')->name('place-order');
+    });
+    Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
         // Category
         Route::controller(ClientCategoryController::class)->prefix('category')->name('category.')->group(function () {
             Route::get('/', 'index')->name('index');
@@ -388,7 +400,11 @@ Route::prefix('admin')
         Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
 
 
-
+        Route::prefix('return-requests')->name('return-requests.')->group(function () {
+            Route::post('{id}/approve', [AdminReturnRequestController::class, 'approve'])->name('approve');
+            Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
+            Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
+        });
 
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
@@ -471,10 +487,18 @@ Route::prefix('admin')
         Route::post('/orders/{order}/reject-return', [OrderController::class, 'rejectReturn'])->name('orders.reject_return');
         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
         Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
+        Route::post('/orders/{id}/ghn-note', [OrderController::class, 'updateGhnNote'])->name('orders.updateGhnNote');
+        Route::get('/orders/{id}/print-label', [OrderController::class, 'printShippingLabel'])->name('orders.print-label'); // 👈 in vận đơn
         //Inventory
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
+
+        // Hỗ trợ
+        Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
+        Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
+        Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -551,6 +575,23 @@ Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'to
 Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
     ->name('variants.destroy')
     ->middleware('auth');
+
+
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/support/tickets', [SupportTicketController::class, 'index'])
+        ->name('support.tickets.index');
+    Route::get('/support/tickets/create', [SupportTicketController::class, 'create'])
+        ->name('support.tickets.create');
+    Route::post('/support/tickets', [SupportTicketController::class, 'store'])
+        ->name('support.tickets.store');
+
+    Route::get('/support/tickets/{ticket}', [SupportTicketThreadController::class, 'show'])
+        ->name('support.tickets.thread.show');
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketThreadController::class, 'reply'])
+        ->name('support.tickets.thread.reply');
 Route::get('/cron/check-notification-telegram', function () {
     dispatch(new CheckTelegramJob());
     return "✅ Low stock job dispatched at " . now();

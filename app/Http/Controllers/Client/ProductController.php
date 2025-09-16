@@ -123,16 +123,29 @@ class ProductController extends Controller
         });
 
         // 7) Sản phẩm liên quan + gợi ý
+        // 7) Sản phẩm liên quan + gợi ý
         $product->related_products = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->withAvg(['reviews' => function ($q) {
+                $q->where('approved', true);
+            }], 'rating')
             ->take(4)
-            ->get();
+            ->get()
+            ->map(function ($p) {
+                $p->reviews_avg_rating = round($p->reviews_avg_rating, 1); // làm tròn 1 số thập phân
+                return $p;
+            });
+
+
 
         $recommendedProducts = $this->getRecommendedProducts();
         // đã có $product trong show()
         $sizeChart = $product->size_chart;
         $returnPolicy = Setting::where('name', 'return_policy')->value('value');
         // 8) Trả view (chỉ truyền $attributeGroups cho UI chọn biến thể)
+        $minPrice = $variants->min('price');
+        $maxPrice = $variants->max('price');
+
         return view('client.products.show', compact(
             'product',
             'attributeGroups',
@@ -143,6 +156,8 @@ class ProductController extends Controller
             'recommendedProducts',
             'sizeChart',
             'returnPolicy',
+            'minPrice',
+            'maxPrice'
         ))->with('variants', $formattedVariants);
     }
 

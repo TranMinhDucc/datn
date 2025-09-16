@@ -6,16 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductLabel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ProductLabelController extends Controller
 {
     public function index()
     {
-        // Sắp xếp label mới nhất trước
-        $labels = ProductLabel::with('product')->orderByDesc('id')->paginate(10);
+        $labels = ProductLabel::with('products')->orderByDesc('id')->paginate(10);
         return view('admin.product_labels.index', compact('labels'));
     }
+
 
     public function create()
     {
@@ -26,24 +27,68 @@ class ProductLabelController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'products' => 'required|array',
+            'products.*' => 'exists:products,id',
             'image' => 'required|image',
             'position' => 'nullable|string',
         ]);
 
-        // Lưu ảnh vào public/labels
+        // Check sản phẩm đã có label
+        $duplicate = DB::table('product_label_product')
+            ->whereIn('product_id', $request->products)
+            ->exists();
+
+        if ($duplicate) {
+            return back()->withErrors(['products' => 'Sản phẩm hoặc số sản phẩm đã có nhãn, không thể gán thêm.']);
+        }
+
+        // Upload ảnh
         $file = $request->file('image');
         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('labels'), $filename);
         $imagePath = 'labels/' . $filename;
 
-        ProductLabel::create([
-            'product_id' => $request->product_id,
+        // Tạo label
+        $label = ProductLabel::create([
             'image' => $imagePath,
             'position' => $request->position,
         ]);
 
+        // Gán nhiều sản phẩm
+        $label->products()->sync($request->products);
+
         return redirect()->route('admin.product-labels.index')->with('success', 'Tạo nhãn dán thành công');
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $label = ProductLabel::findOrFail($id);
+
+        $request->validate([
+            'products' => 'required|array',
+            'products.*' => 'exists:products,id',
+            'image' => 'nullable|image',
+            'position' => 'nullable|string',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if (File::exists(public_path($label->image))) {
+                File::delete(public_path($label->image));
+            }
+            $file = $request->file('image');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('labels'), $filename);
+            $label->image = 'labels/' . $filename;
+        }
+
+        $label->position = $request->position;
+        $label->save();
+
+        // Cập nhật sản phẩm gán nhãn
+        $label->products()->sync($request->products);
+
+        return redirect()->route('admin.product-labels.index')->with('success', 'Cập nhật nhãn dán thành công');
     }
 
     public function edit($id)
@@ -52,40 +97,6 @@ class ProductLabelController extends Controller
         $products = Product::all();
         return view('admin.product_labels.edit', compact('label', 'products'));
     }
-
-    public function update(Request $request, $id)
-    {
-        $productLabel = ProductLabel::findOrFail($id);
-
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'image' => 'nullable|image',
-            'position' => 'nullable|string',
-        ]);
-
-        if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
-            $oldPath = public_path($productLabel->image);
-            if (File::exists($oldPath)) {
-                File::delete($oldPath);
-            }
-
-            // Lưu ảnh mới
-            $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('labels'), $filename);
-            $productLabel->image = 'labels/' . $filename;
-        }
-
-        $productLabel->update([
-            'product_id' => $request->product_id,
-            'image' => $productLabel->image,
-            'position' => $request->position,
-        ]);
-
-        return redirect()->route('admin.product-labels.index')->with('success', 'Cập nhật nhãn dán thành công');
-    }
-
     public function destroy($id)
     {
         $productLabel = ProductLabel::findOrFail($id);

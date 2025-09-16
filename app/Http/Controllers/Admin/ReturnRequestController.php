@@ -9,9 +9,11 @@ use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ReturnRequest;
+use App\Models\ReturnRequestItem;
 use App\Models\ShippingMethod;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReturnRequestController extends Controller
 {
@@ -115,97 +117,224 @@ class ReturnRequestController extends Controller
         ]);
     }
 
-    public function createExchangeOrder(Request $request, $id)
+    // public function createExchangeOrder(Request $request, $id)
+    // {
+    //     $returnRequest = ReturnRequest::with(['order.user', 'items.orderItem'])->findOrFail($id);
+
+    //     if ($returnRequest->status !== ReturnRequest::STATUS_APPROVED) {
+    //         return back()->with('error', 'Yêu cầu chưa được duyệt hoặc đã xử lý.');
+    //     }
+
+    //     DB::transaction(function () use ($returnRequest) {
+    //         $order = Order::create([
+    //             'user_id' => $returnRequest->order->user_id,
+    //             'order_code' => 'EX-' . now()->format('YmdHis'),
+    //             'address_id' => $returnRequest->order->address_id,
+    //             'payment_method_id' => $returnRequest->order->payment_method_id,
+    //             'shipping_fee' => 0,
+    //             'subtotal' => 0,
+    //             'total_amount' => 0,
+    //             'status' => 'pending',
+    //             'is_exchange' => true,
+    //         ]);
+
+    //         $subtotal = 0;
+
+    //         foreach ($returnRequest->items()->where('status', ReturnRequestItem::STATUS_APPROVED)->get() as $item) {
+    //             $product = $item->orderItem->product;
+    //             $variant = $item->orderItem->productVariant;
+    //             $price = $variant?->price ?? $product->price;
+
+    //             $lineTotal = $price * $item->approved_quantity;
+    //             $subtotal += $lineTotal;
+
+    //             $order->orderItems()->create([
+    //                 'product_id' => $product->id,
+    //                 'product_variant_id' => $variant?->id,
+    //                 'quantity' => $item->approved_quantity,
+    //                 'product_name' => $product->name,
+    //                 'variant_name' => $variant?->variant_name,
+    //                 'sku' => $variant?->sku ?? $product->sku,
+    //                 'price' => $price,
+    //                 'total_price' => $lineTotal,
+    //             ]);
+
+    //             // Trừ tồn kho
+    //             if ($variant) {
+    //                 $variant->decrement('stock', $item->approved_quantity);
+    //             } else {
+    //                 $product->decrement('stock', $item->approved_quantity);
+    //             }
+
+    //             $item->update(['status' => ReturnRequestItem::STATUS_EXCHANGED]);
+    //         }
+
+    //         $order->update([
+    //             'subtotal' => $subtotal,
+    //             'total_amount' => $subtotal,
+    //         ]);
+
+    //         $returnRequest->update([
+    //             'status' => ReturnRequest::STATUS_EXCHANGED,
+    //             'exchange_order_id' => $order->id,
+    //             'handled_by' => auth()->id(),
+    //             'handled_at' => now(),
+    //         ]);
+    //     });
+
+    //     return back()->with('success', '✅ Đã tạo đơn hàng đổi.');
+    // }
+
+    public function reject($id, Request $request)
     {
-        $returnRequest = ReturnRequest::with('order')->findOrFail($id);
+        $returnRequest = ReturnRequest::findOrFail($id);
 
-        // Chặn nếu đơn gốc là đơn đổi
-        if ($returnRequest->order && $returnRequest->order->is_exchange) {
-            return redirect()->back()->with('error', 'Không thể tiếp tục đổi đơn hàng đã là đơn đổi.');
-        }
-
-        // Chặn nếu yêu cầu đã xử lý
-        if ($returnRequest->status !== 'pending') {
-            return redirect()->back()->with('error', 'Yêu cầu đổi hàng này đã được xử lý.');
+        if ($returnRequest->status !== ReturnRequest::STATUS_PENDING) {
+            return back()->with('error', 'Yêu cầu này đã được xử lý.');
         }
 
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'address_id' => 'required|exists:shipping_addresses,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.variant_id' => 'nullable|exists:product_variants,id',
-            'items.*.quantity' => 'required|integer|min:1',
+            'reason' => 'required|string|min:3',
         ]);
 
-        $order = new Order();
-        $order->user_id = $request->input('user_id');
-        $order->order_code = 'OD' . now()->format('YmdHis');
-        $order->address_id = $request->input('address_id');
-        $order->payment_method_id = $request->input('payment_method_id');
-        $order->shipping_fee = 0;
-        $order->subtotal = 0;
-        $order->total_amount = 0;
-        $order->status = 'pending';
-        $order->is_exchange = true;
-        $order->save();
+        $returnRequest->status = ReturnRequest::STATUS_REJECTED;
+        $returnRequest->admin_note = $request->input('reason');
+        $returnRequest->save();
 
-        $subtotal = 0;
+        return back()->with('success', '❌ Đã từ chối yêu cầu đổi hàng.');
+    }
 
-        foreach ($request->input('items') as $item) {
-            $product = Product::findOrFail($item['product_id']);
-            $variant = isset($item['variant_id']) ? ProductVariant::find($item['variant_id']) : null;
+    public function approve($id, Request $request)
+    {
+        $returnRequest = ReturnRequest::with('items')->findOrFail($id);
 
-            // Lấy giá sản phẩm
-            $price = $variant?->price ?? $product->sale_price ?? $product->price ?? 0;
-            $lineTotal = $price * $item['quantity'];
-            $subtotal += $lineTotal;
+        if ($returnRequest->status !== ReturnRequest::STATUS_PENDING) {
+            return back()->with('error', 'Yêu cầu này đã được xử lý.');
+        }
 
-            // Trừ tồn kho
-            if ($variant) {
-                // Sản phẩm có biến thể
-                if ($variant->quantity < $item['quantity']) {
-                    return redirect()->back()->with('error', "Biến thể {$variant->variant_name} không đủ tồn kho.");
-                }
-                $variant->quantity -= $item['quantity'];
-                $variant->save();
-            } else {
-                // Sản phẩm không có biến thể
-                if ($product->stock_quantity < $item['quantity']) {
-                    return redirect()->back()->with('error', "Sản phẩm {$product->name} không đủ tồn kho.");
-                }
-                $product->stock_quantity -= $item['quantity'];
-                $product->save();
-            }
-
-            // Thêm vào order_items
-            $order->orderItems()->create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'product_variant_id' => $variant?->id,
-                'quantity' => $item['quantity'],
-                'product_name' => $product->name,
-                'variant_name' => $variant?->variant_name ?? null,
-                'sku' => $variant?->sku ?? $product->sku ?? null,
-                'price' => $price,
-                'discount' => 0,
-                'tax_amount' => 0,
-                'total_price' => $lineTotal,
+        // duyệt từng item
+        $data = $request->input('items', []);
+        foreach ($returnRequest->items as $item) {
+            $approvedQty = $data[$item->id]['approved_quantity'] ?? 0;
+            $item->update([
+                'approved_quantity' => $approvedQty,
+                'status' => $approvedQty > 0 ? ReturnRequestItem::STATUS_APPROVED : ReturnRequestItem::STATUS_REJECTED,
             ]);
         }
 
-        // Cập nhật tổng tiền
-        $order->subtotal = $subtotal;
-        $order->total_amount = $subtotal + $order->shipping_fee;
-        $order->save();
+        // Cập nhật trạng thái cha
+        if ($returnRequest->items()->where('status', ReturnRequestItem::STATUS_APPROVED)->exists()) {
+            $returnRequest->update([
+                'status' => ReturnRequest::STATUS_APPROVED,
+                'admin_note' => $request->input('note', 'Đã duyệt yêu cầu'),
+                'handled_by' => auth()->id(),
+                'handled_at' => now(),
+            ]);
+        } else {
+            $returnRequest->update([
+                'status' => ReturnRequest::STATUS_REJECTED,
+                'admin_note' => $request->input('note', 'Không có sản phẩm nào được duyệt'),
+                'handled_by' => auth()->id(),
+                'handled_at' => now(),
+            ]);
+        }
 
-        // Cập nhật yêu cầu đổi
-        $returnRequest->status = 'exchanged';
-        $returnRequest->exchange_order_id = $order->id;
-        $returnRequest->save();
+        return back()->with('success', '✅ Đã duyệt yêu cầu.');
+    }
 
-        return redirect()->route('admin.orders.show', $order->id)
-            ->with('success', 'Đơn hàng đổi đã được tạo thành công và đã trừ tồn kho.');
+
+
+    /**
+     * HOÀN TIỀN
+     */
+    public function refund($id, Request $request)
+    {
+        $returnRequest = ReturnRequest::with('items.orderItem')->findOrFail($id);
+
+        if (!in_array($returnRequest->status, [ReturnRequest::STATUS_APPROVED, ReturnRequest::STATUS_PENDING])) {
+            return back()->with('error', 'Yêu cầu này không thể hoàn tiền.');
+        }
+
+        DB::transaction(function () use ($returnRequest, $request) {
+            $totalRefund = 0;
+
+            foreach ($returnRequest->items()->where('status', ReturnRequestItem::STATUS_APPROVED)->get() as $item) {
+                $line = $item->approved_quantity * ($item->orderItem->price ?? 0);
+                $item->update(['status' => ReturnRequestItem::STATUS_REFUNDED]);
+                $totalRefund += $line;
+            }
+
+            $returnRequest->update([
+                'status' => ReturnRequest::STATUS_REFUNDED,
+                'total_refund_amount' => $totalRefund,
+                'admin_note' => $request->input('note', 'Đã hoàn tiền cho khách'),
+                'handled_by' => auth()->id(),
+                'handled_at' => now(),
+            ]);
+        });
+
+        return back()->with('success', '💸 Đã hoàn tiền cho khách.');
+    }
+    public function createExchangeOrder(Request $request, $id)
+    {
+        $returnRequest = ReturnRequest::with(['order.user', 'items.orderItem'])->findOrFail($id);
+
+        if ($returnRequest->status !== ReturnRequest::STATUS_APPROVED) {
+            return back()->with('error', 'Yêu cầu chưa được duyệt hoặc đã xử lý.');
+        }
+
+        DB::transaction(function () use ($returnRequest) {
+            $order = Order::create([
+                'user_id' => $returnRequest->order->user_id,
+                'order_code' => 'EX-' . now()->format('YmdHis'),
+                'address_id' => $returnRequest->order->address_id,
+                'payment_method_id' => $returnRequest->order->payment_method_id,
+                'subtotal' => 0,
+                'total_amount' => 0,
+                'status' => 'pending',
+                'is_exchange' => true,
+            ]);
+
+            $subtotal = 0;
+            foreach ($returnRequest->items()->where('status', ReturnRequestItem::STATUS_APPROVED)->get() as $item) {
+                $product = $item->orderItem->product;
+                $variant = $item->orderItem->productVariant;
+                $price = $variant?->price ?? $product->price;
+
+                $lineTotal = $price * $item->approved_quantity;
+                $subtotal += $lineTotal;
+
+                $order->orderItems()->create([
+                    'product_id' => $product->id,
+                    'product_variant_id' => $variant?->id,
+                    'quantity' => $item->approved_quantity,
+                    'product_name' => $product->name,
+                    'variant_name' => $variant?->variant_name,
+                    'sku' => $variant?->sku ?? $product->sku,
+                    'price' => $price,
+                    'total_price' => $lineTotal,
+                ]);
+
+                // Trừ kho
+                if ($variant) $variant->decrement('stock', $item->approved_quantity);
+                else $product->decrement('stock', $item->approved_quantity);
+
+                $item->update(['status' => ReturnRequestItem::STATUS_EXCHANGED]);
+            }
+
+            $order->update([
+                'subtotal' => $subtotal,
+                'total_amount' => $subtotal,
+            ]);
+
+            $returnRequest->update([
+                'status' => ReturnRequest::STATUS_EXCHANGED,
+                'exchange_order_id' => $order->id,
+                'handled_by' => auth()->id(),
+                'handled_at' => now(),
+            ]);
+        });
+
+        return back()->with('success', '✅ Đơn hàng đổi đã được tạo.');
     }
 }

@@ -33,8 +33,8 @@
                 <div class="col-12">
                     <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}"
                             alt="">
-                        <h6>Please, hurry! Someone has placed an order on one of the items you have in the cart. We'll keep
-                            it for you for<span id="countdown"></span>minutes.</h6>
+                        <h6>Xin hãy nhanh chân lên! Có người đã đặt hàng một trong những sản phẩm bạn có trong giỏ hàng.
+                            Chúng tôi sẽ giữ lại cho bạn trong<span id="countdown"></span>minutes.</h6>
                     </div>
                 </div>
                 <div class="col-xxl-9 col-xl-8">

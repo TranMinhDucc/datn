@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductLabel extends Model
 {
-    protected $fillable = ['product_id', 'image', 'position'];
+    protected $fillable = ['image', 'position'];
 
-    public function product()
+    public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(Product::class, 'product_label_product');
     }
 }

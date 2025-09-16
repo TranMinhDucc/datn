@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -18,23 +19,21 @@ class HomeController extends Controller
     {
         $banners = Banner::where('status', 1)->get();
 
-        $products = Product::where('is_active', 1)
-            ->with(['label'])
-            ->orderBy('created_at', 'desc')
-            ->take(8)
-            ->get();
+
 
         $latestProducts = Product::where('is_active', 1)
+            ->with('labels')
             ->latest('created_at')
             ->take(8)
             ->get();
 
         $bestSellerProducts = Product::where('is_active', 1)
+            ->with('labels')
             ->orderByDesc('sold_quantity')
             ->take(8)
             ->get();
 
-        $categories = Category::whereNull('parent_id')->get();
+        $categories = Category::whereNull('deleted_at')->get();
 
         $latestBlogs = Blog::with(['author'])
             ->published()
@@ -52,6 +51,30 @@ class HomeController extends Controller
             // ✅ Đánh dấu tất cả là đã đọc để không thông báo lại
             $user->unreadNotifications->markAsRead();
         }
+        $products = Product::where('is_active', 1)
+            ->with(['label'])
+            ->withAvg(['reviews' => function ($q) {
+                $q->where('approved', true);
+            }], 'rating')
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
+
+        $latestProducts = Product::where('is_active', 1)
+            ->withAvg(['reviews' => function ($q) {
+                $q->where('approved', true);
+            }], 'rating')
+            ->latest('created_at')
+            ->take(8)
+            ->get();
+
+        $bestSellerProducts = Product::where('is_active', 1)
+            ->withAvg(['reviews' => function ($q) {
+                $q->where('approved', true);
+            }], 'rating')
+            ->orderByDesc('sold_quantity')
+            ->take(8)
+            ->get();
 
         return view('client.home', compact(
             'banners',
@@ -73,13 +96,13 @@ class HomeController extends Controller
         return view('client.policy');
     }
 
-   public function contact()
-{
-    // Lấy settings dạng mảng: ['hotline' => '...', 'email' => '...', ...]
-    $settings = Setting::pluck('value', 'name')->toArray();
+    public function contact()
+    {
+        // Lấy settings dạng mảng: ['hotline' => '...', 'email' => '...', ...]
+        $settings = Setting::pluck('value', 'name')->toArray();
 
-    return view('client.contact', compact('settings'));
-}
+        return view('client.contact', compact('settings'));
+    }
 
     public function faq()
     {

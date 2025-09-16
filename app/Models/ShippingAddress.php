@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ShippingAddress extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'user_id',
         'title',
@@ -31,6 +33,7 @@ class ShippingAddress extends Model
             self::STATUS_INACTIVE => 'Vô hiệu hóa',
         ];
     }
+    protected $dates = ['deleted_at'];
     public function orders()
     {
         return $this->hasMany(Order::class, 'address_id');

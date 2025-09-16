@@ -33,6 +33,8 @@
                     </div>
                 @endforeach
             @endif
+
+
             <div class="d-flex flex-column gap-7 gap-lg-10">
 
                 <div class="d-flex flex-wrap flex-stack gap-5 gap-lg-10">
@@ -184,9 +186,12 @@
                             class="btn btn-success btn-sm">
                             <i class="fa-solid fa-paper-plane"></i> Xác nhận & Gửi đơn Shipping
                         </a>
+                        <a href="{{ route('admin.orders.print-label', $order->id) }}" class="btn btn-info btn-sm"
+                            target="_blank">
+                            <i class="fa-solid fa-print"></i>
+                        </a>
                         {{-- @endif --}}
                     </div>
-
                 </div>
                 <!--begin::Order summary-->
                 <!-- Modal for creating exchange order -->
@@ -544,7 +549,12 @@
                                     <form action="{{ route('admin.return-requests.reject', $request->id) }}"
                                         method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                                        <!-- Nút mở modal từ chối -->
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#rejectReasonModal" data-id="{{ $request->id }}">
+                                            Từ chối
+                                        </button>
+
                                     </form>
                                 @elseif ($request->status === 'approved')
                                     @if ($request->type === 'exchange')
@@ -693,6 +703,49 @@
                                 </div>
                                 <!--end::Shipping address-->
                             </div>
+                            <!--begin::Shipping note-->
+                            <div class="card card-flush py-4 flex-row-fluid">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <h2>Thông tin giao hàng (Shipper)</h2>
+                                    </div>
+                                </div>
+
+                                <div class="card-body pt-0">
+                                    <form method="POST" action="{{ route('admin.orders.updateGhnNote', $order->id) }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label class="form-label">Lưu ý giao hàng *</label>
+                                            <select name="required_note_shipper" class="form-select" required>
+                                                <option value="KHONGCHOXEMHANG"
+                                                    {{ $order->required_note_shipper == 'KHONGCHOXEMHANG' ? 'selected' : '' }}>
+                                                    Không cho xem hàng
+                                                </option>
+                                                <option value="CHOXEMHANGKHONGTHU"
+                                                    {{ $order->required_note_shipper == 'CHOXEMHANGKHONGTHU' ? 'selected' : '' }}>
+                                                    Cho xem hàng, không cho thử
+                                                </option>
+                                                <option value="CHOTHUHANG"
+                                                    {{ $order->required_note_shipper == 'CHOTHUHANG' ? 'selected' : '' }}>
+                                                    Cho thử hàng
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Ghi chú giao hàng</label>
+                                            <input type="text" name="note_shipper" class="form-control"
+                                                value="{{ old('note_shipper', $order->note_shipper) }}">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Cập nhật GHN</button>
+                                    </form>
+
+
+
+                                </div>
+                            </div>
+                            <!--end::Shipping note-->
 
                             <!--begin::Product List-->
                             <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
@@ -972,5 +1025,40 @@
             </div>
         </div>
     </div>
+    <!-- Modal nhập lý do từ chối -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="rejectForm">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nhập lý do từ chối</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="reason" class="form-control" rows="4" placeholder="Nhập lý do từ chối..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                        <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.getElementById("rejectReasonModal");
+            modal.addEventListener("show.bs.modal", function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute("data-id");
+                const form = modal.querySelector("#rejectForm");
+                form.action = "/admin/return-requests/" + id + "/reject"; // route reject
+            });
+        });
+    </script>
+@endpush

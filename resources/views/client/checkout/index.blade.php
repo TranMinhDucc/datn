@@ -30,7 +30,7 @@
                             <div class="address-title">
                                 <h4>Địa chỉ giao hàng</h4>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#address-modal" title="add product"
-                                    tabindex="0">+ Add New Address</a>
+                                    tabindex="0">+ Thêm địa chỉ mới</a>
                             </div>
                             <div class="row">
                                 @foreach ($addresses as $address)
@@ -132,17 +132,17 @@
                                         <span>{{ number_format(auth()->user()->balance) }} ₫</span>
                                     </li>
                                 </ul>
-                                <div class="coupon-code">
+                                {{-- <div class="coupon-code">
                                     <input type="text" placeholder="Enter Coupon Code">
                                     <button class="btn">Apply</button>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="total">
                                 <h6>Tổng : </h6>
                                 <h6>$ 37.73</h6>
                             </div>
-                            <div class="order-button"><button type="button" class="btn btn_black sm w-100 rounded">Place
-                                    Order</button></div>
+                            <div class="order-button"><button type="button" class="btn btn_black sm w-100 rounded">Đặt
+                                    hàng</button></div>
                         </div>
                     </div>
                 </div>

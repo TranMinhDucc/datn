@@ -160,7 +160,7 @@ return [
 
         App\Providers\ViewServiceProvider::class, // 👈 BẠN THÊM DÒNG NÀY VÀO
 
-
+        App\Providers\EventServiceProvider::class,
     ],
 
 

@@ -41,6 +41,12 @@ class Order extends Model
         'return_image',
         'refunded_at',
         'paid_at',
+        'user_id',
+        'status',
+        'subtotal',
+        'total_amount',
+        'note_shipper',
+        'required_note_shipper',
     ];
 
     public function user()
@@ -94,5 +100,20 @@ class Order extends Model
     public function returnRequests()
     {
         return $this->hasMany(ReturnRequest::class, 'order_id');
+    }
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
+    public function couponUsers()
+    {
+        return $this->hasMany(CouponUser::class);
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_user')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }
