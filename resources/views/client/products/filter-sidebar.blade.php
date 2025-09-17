@@ -42,19 +42,30 @@
                                 <!-- 🏷 Danh mục -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
                                             data-bs-target="#collapseCategory"><span>Danh mục</span></button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseCategory">
                                         <div class="accordion-body">
                                             <ul class="color-variant theme-scrollbar">
-                                                @foreach ($categories as $category)
-                                                    <li>
-                                                        <input class="custom-checkbox" id="category{{ $category->id }}"
-                                                            type="checkbox" name="category[]" value="{{ $category->id }}" {{ is_array(request('category')) && in_array($category->id, request('category')) ? 'checked' : '' }}>
-                                                        <label for="category{{ $category->id }}">{{ $category->name }}</label>
-                                                    </li>
-                                                @endforeach
+                                             @foreach ($categories->where('parent_id', null) as $parent)
+    <li>
+        <input class="custom-checkbox" id="category{{ $parent->id }}"
+            type="checkbox" name="category[]" value="{{ $parent->id }}"
+            {{ is_array(request('category')) && in_array($parent->id, request('category')) ? 'checked' : '' }}>
+        <label for="category{{ $parent->id }}"><strong>{{ $parent->name }}</strong></label>
+    </li>
+
+    @foreach ($categories->where('parent_id', $parent->id) as $child)
+        <li style="margin-left: 20px;">
+            <input class="custom-checkbox" id="category{{ $child->id }}"
+                type="checkbox" name="category[]" value="{{ $child->id }}"
+                {{ is_array(request('category')) && in_array($child->id, request('category')) ? 'checked' : '' }}>
+            <label for="category{{ $child->id }}">{{ $child->name }}</label>
+        </li>
+    @endforeach
+@endforeach
+
 
                                             </ul>
                                         </div>
@@ -64,8 +75,10 @@
                                 <!-- 🏢 Thương hiệu -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseBrand"><span>Thương hiệu</span></button>
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseBrand">
+                                            <span>Thương hiệu</span>
+                                        </button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseBrand">
                                         <div class="accordion-body">
@@ -85,7 +98,7 @@
                                 <!-- 💰 Lọc giá -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
                                             data-bs-target="#collapsePrice" aria-expanded="true"
                                             aria-controls="collapsePrice">
                                             <span>Khoảng giá</span>
@@ -117,8 +130,10 @@
                                 <!-- 🎨 Màu sắc -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseColor"><span>Màu sắc</span></button>
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseColor">
+                                            <span>Màu sắc</span>
+                                        </button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseColor">
                                         <div class="accordion-body">
@@ -138,8 +153,10 @@
                                 <!-- 👕 Kích cỡ -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseSize"><span>Kích cỡ</span></button>
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseSize">
+                                            <span>Kích cỡ</span>
+                                        </button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseSize">
                                         <div class="accordion-body">
@@ -158,8 +175,10 @@
                                 <!-- 👤 Giới tính -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseGender"><span>Giới tính</span></button>
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseGender">
+                                            <span>Giới tính</span>
+                                        </button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseGender">
                                         <div class="accordion-body">
@@ -179,8 +198,10 @@
                                 <!-- ✅ Còn hàng / Hết hàng -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseStock"><span>Tình trạng</span></button>
+                                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseStock">
+                                            <span>Tình trạng</span>
+                                        </button>
                                     </h2>
                                     <div class="accordion-collapse collapse show" id="collapseStock">
                                         <div class="accordion-body">
@@ -265,8 +286,8 @@
                                                             style="display: block;">
                                                             <div class="product-image bg-size"
                                                                 style="background-image: url('{{ asset('storage/' . $product->image) }}');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                background-size: cover;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                background-position: center;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-size: cover;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            background-position: center;">
                                                             </div>
                                                         </a>
                                                     </div>
@@ -436,13 +457,14 @@
 @endsection
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{--
     <script>
         document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (input) {
             input.addEventListener('change', function () {
                 this.closest('form').submit(); // Submit lại form khi có thay đổi checkbox
             });
         });
-    </script>
+    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.add-to-wishlist').forEach(btn => {

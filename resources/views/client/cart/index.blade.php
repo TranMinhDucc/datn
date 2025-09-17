@@ -31,8 +31,7 @@
         <div class="custom-container container">
             <div class="row g-4">
                 <div class="col-12">
-                    <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}"
-                            alt="">
+                    <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}" alt="">
                         <h6>Xin hãy nhanh chân lên! Có người đã đặt hàng một trong những sản phẩm bạn có trong giỏ hàng.
                             Chúng tôi sẽ giữ lại cho bạn trong<span id="countdown"></span>minutes.</h6>
                     </div>
@@ -166,8 +165,8 @@
                                                             <!-- Ribbon bên trái -->
                                                             <div class="voucher-ribbon bg-info text-white text-center px-2 py-3 d-flex flex-column justify-content-center align-items-center"
                                                                 style="width: 100px;">
-                                                                <div class="fw-bold"
-                                                                    style="font-size: 13px; line-height: 1.2;">FREE SHIP
+                                                                <div class="fw-bold" style="font-size: 13px; line-height: 1.2;">FREE
+                                                                    SHIP
                                                                 </div>
                                                                 <div class="fw-semibold" style="font-size: 11px;">TOÀN
                                                                     NGÀNH<br>HÀNG</div>
@@ -201,8 +200,7 @@
                                                             </div>
 
                                                             <!-- x10 góc trên phải -->
-                                                            <div
-                                                                class="position-absolute top-0 end-0 text-danger small me-2 mt-2">
+                                                            <div class="position-absolute top-0 end-0 text-danger small me-2 mt-2">
                                                                 x10</div>
 
                                                             <!-- Input ẩn -->
@@ -284,8 +282,7 @@
                                                             <input type="radio"
                                                                 class="form-check-input align-self-center me-3 coupon-radio"
                                                                 data-id="{{ $coupon->id }}" name="product_coupon"
-                                                                value="{{ $coupon->code }}"
-                                                                data-type="{{ $coupon->type }}"
+                                                                value="{{ $coupon->code }}" data-type="{{ $coupon->type }}"
                                                                 data-value="{{ $coupon->discount_value }}"
                                                                 data-value-type="{{ $coupon->value_type }}"
                                                                 data-max-discount="{{ $coupon->max_discount_amount }}"
@@ -330,102 +327,72 @@
                 </div>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 mt-4">
                 <div class="cart-slider">
-                    <div class="d-flex align-items-start justify-content-between">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
-                            <h6>For a trendy and modern twist, especially during transitional seasons.</h6>
-                            <p> <img class="me-2" src="{{ asset('assets/client/images/gif/discount.gif') }}"
-                                    alt="">You will
-                                get 10% OFF on each product</p>
-                        </div><a class="btn btn_outline sm rounded" href="product.html">View All
-                            <svg>
-                                <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use>
-                            </svg></a>
-                    </div>
-                    <div class="swiper cart-slider-box">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div class="cart-box"> <a href="product.html"> <img
-                                            src="{{ asset('assets/client/images/user/4.jpg') }}" alt=""></a>
-                                    <div> <a href="product.html">
-                                            <h5>Polo-neck Body Dress</h5>
-                                        </a>
-                                        <h6>Sold By: <span>Brown Shop</span></h6>
-                                        <div class="category-dropdown">
-                                            <select class="form-select" name="carlist">
-                                                <option value="">Best color</option>
-                                                <option value="">White</option>
-                                                <option value="">Black</option>
-                                                <option value="">Green</option>
-                                            </select>
-                                        </div>
-                                        <p>$19.90 <span>
-                                                <del>$14.90 </del></span></p><a class="btn" href="#">Add</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="cart-box"> <a href="product.html"> <img
-                                            src="{{ asset('assets/client/images/user/5.jpg') }}" alt=""></a>
-                                    <div> <a href="product.html">
-                                            <h5>Short Sleeve Sweater</h5>
-                                        </a>
-                                        <h6>Sold By: <span>Brown Shop</span></h6>
-                                        <div class="category-dropdown">
-                                            <select class="form-select" name="carlist">
-                                                <option value="">Best color</option>
-                                                <option value="">White</option>
-                                                <option value="">Black</option>
-                                                <option value="">Green</option>
-                                            </select>
-                                        </div>
-                                        <p>$22.90 <span>
-                                                <del>$24.90 </del></span></p><a class="btn" href="#">Add</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="cart-box"> <a href="product.html"> <img
-                                            src="{{ asset('assets/client/images/user/6.jpg') }}" alt=""></a>
-                                    <div> <a href="product.html">
-                                            <h5>Oversized Cotton Short</h5>
-                                        </a>
-                                        <h6>Sold By: <span>Brown Shop</span></h6>
-                                        <div class="category-dropdown">
-                                            <select class="form-select" name="carlist">
-                                                <option value="">Best color</option>
-                                                <option value="">White</option>
-                                                <option value="">Black</option>
-                                                <option value="">Green</option>
-                                            </select>
-                                        </div>
-                                        <p>$10.90 <span>
-                                                <del>$18.90 </del></span></p><a class="btn" href="#">Add</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="cart-box"> <a href="product.html"> <img
-                                            src="{{ asset('assets/client/images/user/7.jpg') }}" alt=""></a>
-                                    <div> <a href="product.html">
-                                            <h5>Oversized Women Shirt</h5>
-                                        </a>
-                                        <h6>Sold By: <span>Brown Shop</span></h6>
-                                        <div class="category-dropdown">
-                                            <select class="form-select" name="carlist">
-                                                <option value="">Best color</option>
-                                                <option value="">White</option>
-                                                <option value="">Black</option>
-                                                <option value="">Green</option>
-                                            </select>
-                                        </div>
-                                        <p>$15.90 <span>
-                                                <del>$20.90 </del></span></p><a class="btn" href="#">Add</a>
-                                    </div>
-                                </div>
-                            </div>
+                            <h6 class="fw-bold text-dark">🔥 Gợi ý cho bạn (Mix & Match)</h6>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-lightbulb me-1 text-warning"></i>
+                                Những sản phẩm có thể bạn quan tâm
+                            </p>
                         </div>
+                    </div>
+
+                    <div class="swiper suggestion-slider">
+                        <div class="swiper-wrapper">
+                            @foreach($suggestions as $product)
+                                <div class="swiper-slide">
+                                    <div class="product-card border rounded p-3 bg-white h-100 d-flex flex-column">
+                                        <a href="{{ route('client.products.show', $product->slug) }}"
+                                            class="d-block text-center mb-2">
+                                            <img class="img-fluid rounded" src="{{ asset('storage/' . $product->image) }}"
+                                                alt="{{ $product->name }}" style="max-height:160px; object-fit:contain;">
+                                        </a>
+                                        <div class="flex-grow-1 d-flex flex-column">
+                                            <a href="">
+                                                <h6 class="fw-semibold text-dark text-truncate">{{ $product->name }}</h6>
+                                            </a>
+                                            <p class="text-muted small mb-1">Thương hiệu:
+                                                <span class="fw-bold">{{ $product->brand->name ?? 'No brand' }}</span>
+                                            </p>
+
+                                            {{-- Rating --}}
+                                            <div class="rating mb-2">
+                                                @php $rating = 4; @endphp
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i
+                                                        class="fas fa-star {{ $i <= $rating ? 'text-warning' : 'text-secondary' }}"></i>
+                                                @endfor
+                                                <span class="small text-muted ms-1">(4.0)</span>
+                                            </div>
+
+                                            {{-- Giá --}}
+                                            <p class="mb-2">
+                                                <span class="fw-bold text-danger">
+                                                    {{ number_format($product->sale_price ?? $product->price) }}đ
+                                                </span>
+                                                @if($product->sale_price)
+                                                    <span class="text-muted small ms-1">
+                                                        <del>{{ number_format($product->price) }}đ</del>
+                                                    </span>
+                                                @endif
+                                            </p>
+
+                                            {{-- Button --}}
+                                            <a href="{{ route('client.products.show', $product->slug) }}"
+                                                class="btn btn-sm btn-dark w-100 mt-auto">
+                                                </i> Xem chi tiết
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- nút điều hướng --}}
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
                     </div>
                 </div>
             </div>
@@ -446,17 +413,17 @@
             toast.className = 'toast-box';
             toast.style.background =
                 type === 'error' ? '#dc3545' :
-                type === 'warning' ? '#ffc107' :
-                type === 'info' ? '#17a2b8' :
-                '#28a745';
+                    type === 'warning' ? '#ffc107' :
+                        type === 'info' ? '#17a2b8' :
+                            '#28a745';
 
             toast.innerHTML = `
-        <div class="icon">
-            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-        <button class="close-btn">&times;</button>
-    `;
+                        <div class="icon">
+                            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+                            <span>${message}</span>
+                        </div>
+                        <button class="close-btn">&times;</button>
+                    `;
 
             container.appendChild(toast);
 
@@ -474,7 +441,7 @@
 
 
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const cartBody = document.getElementById('cart-body');
             const clearAllButton = document.getElementById('clearAllButton');
 
@@ -547,61 +514,61 @@
                     // HTML hiển thị attributes
                     const attributesHtml = Object.entries(item.attributes || {})
                         .map(([key, value]) => `
-            <p class="mb-0">
-                ${key.charAt(0).toUpperCase() + key.slice(1)}: 
-                <span>${value}</span>
-            </p>
-        `)
+                            <p class="mb-0">
+                                ${key.charAt(0).toUpperCase() + key.slice(1)}: 
+                                <span>${value}</span>
+                            </p>
+                        `)
                         .join('');
 
                     // HTML row
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-        <td>
-            <div class="cart-box d-flex align-items-start gap-3">
-                <a href="product.html">
-                    <img src="${item.image}" alt="${item.name}"
-                        style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
-                </a>
-                <div>
-                    <a href="product.html">
-                        <h5 class="mb-1">${item.name}</h5>
-                    </a>
-                    <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
-                    ${attributesHtml}
-                </div>
-            </div>
-        </td>
-        <td>
-            ${item.price.toLocaleString('vi-VN')}
-            <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
-        </td>
-        <td class="align-middle">
-            <div class="quantity d-flex align-items-center gap-2">
-                <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-                <input type="number" 
-                    value="${item.quantity}" 
-                    min="1" max="99" 
-                    data-index="${index}"
-                    class="form-control form-control-sm text-center quantity-input" 
-                    style="width: 60px;">
-                <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
-        </td>
-        <td class="align-middle">
-            ${itemTotal.toLocaleString('vi-VN')}
-            <span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span>
-        </td>
-        <td class="align-middle">
-            <a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}">
-                <i class="fa fa-trash"></i>
-            </a>
-        </td>
-    `;
+                        <td>
+                            <div class="cart-box d-flex align-items-start gap-3">
+                                <a href="product.html">
+                                    <img src="${item.image}" alt="${item.name}"
+                                        style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
+                                </a>
+                                <div>
+                                    <a href="product.html">
+                                        <h5 class="mb-1">${item.name}</h5>
+                                    </a>
+                                    <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
+                                    ${attributesHtml}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            ${item.price.toLocaleString('vi-VN')}
+                            <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
+                        </td>
+                        <td class="align-middle">
+                            <div class="quantity d-flex align-items-center gap-2">
+                                <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input type="number" 
+                                    value="${item.quantity}" 
+                                    min="1" max="99" 
+                                    data-index="${index}"
+                                    class="form-control form-control-sm text-center quantity-input" 
+                                    style="width: 60px;">
+                                <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="align-middle">
+                            ${itemTotal.toLocaleString('vi-VN')}
+                            <span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span>
+                        </td>
+                        <td class="align-middle">
+                            <a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    `;
 
                     cartBody.appendChild(tr);
                 });
@@ -669,9 +636,9 @@
                         `-${discount.toLocaleString('vi-VN')}đ`;
 
                     const html = `
-            <div class="text-danger d-flex align-items-center gap-1">
-                ${icon} <strong>${code}</strong>: ${formatted}
-            </div>`;
+                            <div class="text-danger d-flex align-items-center gap-1">
+                                ${icon} <strong>${code}</strong>: ${formatted}
+                            </div>`;
 
                     return {
                         amount: discount,
@@ -770,7 +737,7 @@
 
             function bindEvents() {
                 document.querySelectorAll('.plus').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         const i = this.dataset.index;
                         const currentQty = cartItems[i].quantity;
                         const maxQty = cartItems[i].max_quantity || 99;
@@ -785,7 +752,7 @@
                     });
                 });
                 document.querySelectorAll('.minus').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         const i = this.dataset.index;
                         if (cartItems[i].quantity > 1) {
                             cartItems[i].quantity -= 1;
@@ -794,7 +761,7 @@
                     });
                 });
                 document.querySelectorAll('.quantity-input').forEach(input => {
-                    input.addEventListener('change', function() {
+                    input.addEventListener('change', function () {
                         const i = this.dataset.index;
                         const value = parseInt(this.value);
                         const maxQty = cartItems[i].max_quantity || 99;
@@ -839,37 +806,38 @@
                     const key = `${item.id}_${attributeString}`;
                     const li = document.createElement('li');
                     li.innerHTML = `
-    <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
-    <div>
-    <h6 class="mb-0">${item.name}</h6>
-    <p class="mb-1">$${item.price.toLocaleString()}
-    ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
-    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
-    ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-1" > $ {
-                        key
-                    }: < span > $ {
-                        value
-                    } < /span></p > `;}).join('')}
-    <div class="btn-containter">
-    <div class="btn-control">
-    <button class="btn-control__remove" data-key="${key}">−</button>
-    <div class="btn-control__quantity">
-    <div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
-    <div id="quantity-current">${quantity}</div>
-    <div id="quantity-next">${quantity + 1}</div>
-    </div>
-    <button class="btn-control__add" data-key="${key}">+</button>
-    </div>
-    </div>
-    </div>
-    <i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>`;
-                    li.querySelector('.delete-icon').addEventListener('click', function() {
+                    <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
+                    <div>
+                    <h6 class="mb-0">${item.name}</h6>
+                    <p class="mb-1">$${item.price.toLocaleString()}
+                    ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
+                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
+                    ${Object.entries(item.attributes || {}).map(([key, value]) => {
+                        return ` < p class = "mb-1" > $ {
+                                        key
+                                    }: < span > $ {
+                                        value
+                                    } < /span></p > `;
+                    }).join('')}
+                    <div class="btn-containter">
+                    <div class="btn-control">
+                    <button class="btn-control__remove" data-key="${key}">−</button>
+                    <div class="btn-control__quantity">
+                    <div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
+                    <div id="quantity-current">${quantity}</div>
+                    <div id="quantity-next">${quantity + 1}</div>
+                    </div>
+                    <button class="btn-control__add" data-key="${key}">+</button>
+                    </div>
+                    </div>
+                    </div>
+                    <i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>`;
+                    li.querySelector('.delete-icon').addEventListener('click', function () {
                         const key = this.dataset.key;
                         cartItems = cartItems.filter(p => `${p.id}_${p.size}_${p.color}` !== key);
                         saveAndRender();
                     });
-                    li.querySelector('.btn-control__add').addEventListener('click', function() {
+                    li.querySelector('.btn-control__add').addEventListener('click', function () {
                         const key = this.dataset.key;
                         const item = cartItems.find(p => {
                             const attrStr = Object.entries(p.attributes || {})
@@ -881,7 +849,7 @@
                             saveAndRender();
                         }
                     });
-                    li.querySelector('.btn-control__remove').addEventListener('click', function() {
+                    li.querySelector('.btn-control__remove').addEventListener('click', function () {
                         const key = this.dataset.key;
                         const item = cartItems.find(p => {
                             const attrStr = Object.entries(p.attributes || {})
@@ -900,7 +868,7 @@
 
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
 
             const voucherModal = document.getElementById('voucherShopeeModal');
             if (voucherModal) {
@@ -976,9 +944,9 @@
                     } else {
                         shippingDiscount = calculateDiscount(coupon, bagTotal);
                         shippingHTML = `
-                    <div class="text-danger">
-                        🚚 <strong>${code}</strong>: ${formatDisplay(coupon, shippingDiscount)}
-                    </div>`;
+                                    <div class="text-danger">
+                                        🚚 <strong>${code}</strong>: ${formatDisplay(coupon, shippingDiscount)}
+                                    </div>`;
                     }
                 }
 
@@ -1035,9 +1003,9 @@
                     } else {
                         productDiscount = calculateDiscount(coupon, bagTotal);
                         productHTML = `
-                <div class="text-danger">
-                    🎁 <strong>${code}</strong>: ${formatDisplay(coupon, productDiscount)}
-                </div>`;
+                                <div class="text-danger">
+                                    🎁 <strong>${code}</strong>: ${formatDisplay(coupon, productDiscount)}
+                                </div>`;
                     }
                 }
 
@@ -1116,7 +1084,7 @@
             // ✅ Xử lý click nút chọn mã
             const applyBtn = document.getElementById('applySelectedCouponBtn');
             if (applyBtn) {
-                applyBtn.addEventListener('click', function() {
+                applyBtn.addEventListener('click', function () {
                     const shippingCoupon = document.querySelector('input[name="shipping_coupon"]:checked');
                     const productCoupon = document.querySelector('input[name="product_coupon"]:checked');
 
@@ -1200,15 +1168,15 @@
                 } = JSON.parse(saved);
                 const v = Number(value);
                 couponSpan.innerHTML = `
-                <span class="badge bg-light border text-danger px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1">
-                    🎫 <strong>${code}</strong> <span>(-${v.toLocaleString('vi-VN')}đ)</span>
-                </span>`;
+                                <span class="badge bg-light border text-danger px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1">
+                                    🎫 <strong>${code}</strong> <span>(-${v.toLocaleString('vi-VN')}đ)</span>
+                                </span>`;
                 updateCartSummary();
             }
 
             // ✅ Cho phép click để huỷ mã
             if (couponSpan) {
-                couponSpan.addEventListener('click', function() {
+                couponSpan.addEventListener('click', function () {
                     if (sessionStorage.getItem('appliedCoupon')) {
                         if (confirm("Bạn muốn huỷ mã giảm giá này?")) {
                             sessionStorage.removeItem('appliedCoupon');
@@ -1225,7 +1193,7 @@
             let lastCheckedRadio = null;
 
             document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.addEventListener('click', function(e) {
+                radio.addEventListener('click', function (e) {
                     // Nếu click lại cùng radio đang chọn thì huỷ chọn
                     if (lastCheckedRadio === this) {
                         this.checked = false;
@@ -1308,7 +1276,7 @@
 
         });
 
-        document.getElementById('applySelectedCouponBtn').addEventListener('click', function() {
+        document.getElementById('applySelectedCouponBtn').addEventListener('click', function () {
             const selectedProductCoupon = document.querySelector('input[name="product_coupon"]:checked');
             const selectedShippingCoupon = document.querySelector('input[name="shipping_coupon"]:checked');
 
@@ -1342,6 +1310,15 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('voucherShopeeModal'));
             modal.hide();
         });
+        var swiper = new Swiper(".suggestion-slider", {
+            slidesPerView: 3,   // mỗi hàng 3 sản phẩm
+            spaceBetween: 20,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            loop: true,
+        });
     </script>
 
 
@@ -1355,13 +1332,13 @@
             const toast = document.createElement('div');
             toast.className = 'toast-box';
             toast.style.cssText = `
-        background: ${type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#28a745'};
-        color: white;
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    `;
+                        background: ${type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#28a745'};
+                        color: white;
+                        padding: 10px 15px;
+                        margin-bottom: 10px;
+                        border-radius: 5px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                    `;
             toast.innerHTML = `<strong>${message}</strong>`;
             container.appendChild(toast);
             setTimeout(() => {
@@ -1395,7 +1372,7 @@
         // 🚫 Ngăn chuyển trang nếu tồn kho lỗi
         function preventDefaultCheckoutLink() {
             const btn = document.querySelector('#checkout-btn');
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 if (btn.dataset.disabled === 'true') {
                     e.preventDefault();
                     showToast("Vui lòng xoá sản phẩm hết hàng khỏi giỏ hàng", "warning");
@@ -1473,5 +1450,83 @@
             checkStock();
         });
     </script>
+    @push('css')
+        <style>
+            .cart-box img {
+                width: 100%;
+                height: 240px;
+                object-fit: cover;
+                border-radius: 8px;
+            }
 
+            .cart-box h5 {
+                max-width: 250px;
+                /* Giới hạn chiều rộng */
+                white-space: nowrap;
+                /* Không xuống dòng */
+                overflow: hidden;
+                /* Ẩn phần dư */
+                text-overflow: ellipsis;
+                /* Hiện dấu ... */
+                display: block;
+            }
+
+            .product-card {
+                transition: all 0.3s ease;
+            }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            }
+
+            .rating i {
+                color: #ddd;
+                font-size: 14px;
+            }
+
+            .rating i.active {
+                color: #FFD700;
+                /* vàng gold */
+            }
+
+            .price {
+                font-size: 16px;
+            }
+
+            .btn-add-to-cart {
+                background: linear-gradient(45deg, #ff6b6b, #f94d6a);
+                color: #fff !important;
+                border-radius: 25px;
+                padding: 6px 12px;
+                font-size: 14px;
+                font-weight: 600;
+                transition: 0.3s;
+            }
+
+            .btn-add-to-cart:hover {
+                background: linear-gradient(45deg, #f94d6a, #ff6b6b);
+                transform: scale(1.05);
+            }
+
+            .product-card {
+                transition: all 0.2s ease-in-out;
+            }
+
+            .product-card:hover {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                transform: translateY(-3px);
+            }
+
+            .rating i {
+                font-size: 13px;
+            }
+
+            .btn-dark {
+                border-radius: 6px;
+                font-weight: 500;
+                font-size: 14px;
+            }
+        </style>
+    @endpush
 @endsection

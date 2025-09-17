@@ -255,10 +255,19 @@ class ProductController extends Controller
         }
 
         // 🏷 Danh mục (bảo vệ không lọc nếu không có checkbox nào được chọn)
-        $categoryIds = $request->input('category', []); // luôn trả array (nếu không có -> rỗng)
+        // 🏷 Danh mục (bao gồm cả danh mục con nếu có)
+        $categoryIds = $request->input('category', []);
         if (!empty($categoryIds)) {
-            $query->whereIn('category_id', $categoryIds);
+            $allCategoryIds = [];
+
+            foreach ($categoryIds as $id) {
+                $allCategoryIds[] = $id;
+                $allCategoryIds = array_merge($allCategoryIds, Category::getAllChildIds($id)); // lấy id con, cháu
+            }
+
+            $query->whereIn('category_id', $allCategoryIds);
         }
+
 
         // 🏢 Thương hiệu
         if ($request->filled('brand')) {
@@ -344,7 +353,8 @@ class ProductController extends Controller
         $products = $query->paginate(8)->withQueryString();
 
         // Dữ liệu hiển thị
-        $categories = Category::all();
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+
         $brands = Brand::all();
 
         // 🎨 Màu sắc
