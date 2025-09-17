@@ -71,6 +71,7 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\OrderAdjustmentController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
@@ -557,6 +558,10 @@ Route::prefix('admin')
             [ReturnRequestController::class, 'createExchange']
         )->name('return-requests.exchange')
             ->middleware('throttle:5,1');
+        Route::post('/return-requests/{rr}/refunds', [RefundController::class, 'createFromRR'])
+            ->name('refunds.createFromRR');
+        Route::post('/refunds/{refund}/mark-done', [RefundController::class, 'markDone'])
+            ->name('refunds.markDone');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
