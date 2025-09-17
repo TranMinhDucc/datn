@@ -42,30 +42,29 @@
 
       {{-- Dòng 2: Nhóm vấn đề + Mã đơn --}}
       {{-- Hàng: Nhóm vấn đề + Mã đơn --}}
-<div id="rowCatOrder" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
-  <div id="catWrap">
-    <label style="font-weight:700;">Nhóm vấn đề *</label>
-    <select name="category" id="category"
+      <div id="rowCatOrder" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+        <div id="catWrap">
+          <label style="font-weight:700;">Nhóm vấn đề *</label>
+          <select name="category" id="category"
             style="width:100%;margin-top:6px;padding:10px;border:1px solid #eee;border-radius:10px;" required>
-      <option value="order"   {{ old('category')==='order'?'selected':'' }}>Đơn hàng & vận chuyển</option>
-      <option value="product" {{ old('category')==='product'?'selected':'' }}>Sản phẩm & chất lượng</option>
-      <option value="payment" {{ old('category')==='payment'?'selected':'' }}>Thanh toán & hoá đơn</option>
-      <option value="account" {{ old('category')==='account'?'selected':'' }}>Tài khoản & đăng nhập</option>
-      <option value="other"   {{ old('category')==='other'?'selected':'' }}>Khác</option>
-    </select>
-  </div>
+            <option value="order" {{ old('category')==='order'?'selected':'' }}>Đơn hàng & vận chuyển</option>
+            <option value="product" {{ old('category')==='product'?'selected':'' }}>Sản phẩm & chất lượng</option>
+            <option value="payment" {{ old('category')==='payment'?'selected':'' }}>Thanh toán & hoá đơn</option>
+            <option value="other" {{ old('category')==='other'?'selected':'' }}>Khác</option>
+          </select>
+        </div>
 
-  <div id="orderCodeWrap">
-    <label style="font-weight:700;">Mã đơn (tuỳ chọn)</label>
-    <input list="order-codes" name="order_code" id="order_code" value="{{ old('order_code') }}"
-           style="width:100%;margin-top:6px;padding:10px;border:1px solid #eee;border-radius:10px;">
-    <datalist id="order-codes">
-      @foreach(($orders ?? []) as $o)
-        <option value="{{ $o->code }}">#{{ $o->code }} — {{ \Illuminate\Support\Str::title($o->status) }} ({{ $o->created_at->format('d/m') }})</option>
-      @endforeach
-    </datalist>
-  </div>
-</div>
+        <div id="orderCodeWrap">
+          <label style="font-weight:700;">Mã đơn (tuỳ chọn)</label>
+          <input list="order-codes" name="order_code" id="order_code" value="{{ old('order_code') }}"
+            style="width:100%;margin-top:6px;padding:10px;border:1px solid #eee;border-radius:10px;">
+          <datalist id="order-codes">
+            @foreach(($orders ?? []) as $o)
+            <option value="{{ $o->code }}">#{{ $o->code }} — {{ \Illuminate\Support\Str::title($o->status) }} ({{ $o->created_at->format('d/m') }})</option>
+            @endforeach
+          </datalist>
+        </div>
+      </div>
 
 
       {{-- Dòng 3: Mã vận đơn --}}
@@ -108,126 +107,141 @@
 
 
 <script>
-(function attachPreview(inputSel, previewSel, errorSel, opts) {
-  const input   = document.querySelector(inputSel);
-  const wrap    = document.querySelector(previewSel);
-  const errBox  = document.querySelector(errorSel);
-  if (!input || !wrap) return;
+  (function attachPreview(inputSel, previewSel, errorSel, opts) {
+    const input = document.querySelector(inputSel);
+    const wrap = document.querySelector(previewSel);
+    const errBox = document.querySelector(errorSel);
+    if (!input || !wrap) return;
 
-  const MAX_FILES = (opts && opts.maxFiles) || 5;
-  const MAX_SIZE  = (opts && opts.maxSize)  || 5 * 1024 * 1024; // 5MB
-  let files = []; // mảng quản lý nội bộ
+    const MAX_FILES = (opts && opts.maxFiles) || 5;
+    const MAX_SIZE = (opts && opts.maxSize) || 5 * 1024 * 1024; // 5MB
+    let files = []; // mảng quản lý nội bộ
 
-  function fileId(f){ return [f.name, f.size, f.lastModified].join('|'); }
+    function fileId(f) {
+      return [f.name, f.size, f.lastModified].join('|');
+    }
 
-  function render(){
-    // clear preview
-    wrap.innerHTML = '';
-    errBox && (errBox.textContent = '');
+    function render() {
+      // clear preview
+      wrap.innerHTML = '';
+      errBox && (errBox.textContent = '');
 
-    // rebuild FileList cho <input>
-    const dt = new DataTransfer();
-    files.forEach(f => dt.items.add(f));
-    input.files = dt.files;
+      // rebuild FileList cho <input>
+      const dt = new DataTransfer();
+      files.forEach(f => dt.items.add(f));
+      input.files = dt.files;
 
-    // vẽ thẻ preview
-    files.forEach(f => {
-      const card = document.createElement('div');
-      card.style.cssText = `
+      // vẽ thẻ preview
+      files.forEach(f => {
+        const card = document.createElement('div');
+        card.style.cssText = `
         position:relative;width:110px;height:110px;border:1px solid #eee;border-radius:10px;
         overflow:hidden;background:#fafafa;display:flex;align-items:center;justify-content:center;
       `;
 
-      if (f.type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(f);
-        img.onload = () => URL.revokeObjectURL(img.src);
-        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-        card.appendChild(img);
-      } else {
-        const box = document.createElement('div');
-        box.style.cssText = 'text-align:center;padding:6px;font-size:12px;color:#444;';
-        box.innerHTML = '📄<br>'+ (f.name.length>16? f.name.slice(0,13)+'…' : f.name);
-        card.appendChild(box);
-      }
+        if (f.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(f);
+          img.onload = () => URL.revokeObjectURL(img.src);
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          card.appendChild(img);
+        } else {
+          const box = document.createElement('div');
+          box.style.cssText = 'text-align:center;padding:6px;font-size:12px;color:#444;';
+          box.innerHTML = '📄<br>' + (f.name.length > 16 ? f.name.slice(0, 13) + '…' : f.name);
+          card.appendChild(box);
+        }
 
-      const close = document.createElement('button');
-      close.type = 'button';
-      close.textContent = '×';
-      close.title = 'Xoá';
-      close.style.cssText = `
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.textContent = '×';
+        close.title = 'Xoá';
+        close.style.cssText = `
         position:absolute;top:4px;right:4px;width:22px;height:22px;border:0;border-radius:50%;
         background:#00000080;color:#fff;cursor:pointer;line-height:22px;text-align:center;
       `;
-      close.onclick = () => {
-        files = files.filter(x => fileId(x) !== fileId(f));
-        render();
-      };
-      card.appendChild(close);
+        close.onclick = () => {
+          files = files.filter(x => fileId(x) !== fileId(f));
+          render();
+        };
+        card.appendChild(close);
 
-      wrap.appendChild(card);
-    });
-  }
-
-  input.addEventListener('change', (e) => {
-    errBox && (errBox.textContent = '');
-    const picked = Array.from(e.target.files);
-
-    // cộng dồn (bỏ trùng), kiểm tra giới hạn
-    for (const f of picked) {
-      const id = fileId(f);
-      if (files.some(x => fileId(x) === id)) continue;       // tránh trùng
-      if (files.length >= MAX_FILES) {                        // quá số file
-        errBox && (errBox.textContent = `Chỉ chọn tối đa ${MAX_FILES} tệp.`);
-        break;
-      }
-      if (f.size > MAX_SIZE) {                                // quá dung lượng
-        errBox && (errBox.textContent = `Tệp "${f.name}" vượt quá ${Math.round(MAX_SIZE/1024/1024)}MB.`);
-        continue;
-      }
-      files.push(f);
+        wrap.appendChild(card);
+      });
     }
-    render();
 
-    // reset input.value để có thể chọn lại cùng file sau khi xoá
-    input.value = '';
+    input.addEventListener('change', (e) => {
+      errBox && (errBox.textContent = '');
+      const picked = Array.from(e.target.files);
+
+      for (const f of picked) {
+        const id = fileId(f);
+        if (files.some(x => fileId(x) === id)) continue;
+        if (files.length >= MAX_FILES) {
+          errBox && (errBox.textContent = `Chỉ chọn tối đa ${MAX_FILES} tệp.`);
+          break;
+        }
+        if (f.size > MAX_SIZE) {
+          errBox && (errBox.textContent = `Tệp "${f.name}" vượt quá ${Math.round(MAX_SIZE/1024/1024)}MB.`);
+          continue;
+        }
+        files.push(f);
+      }
+
+      // ⬇️ Đặt trước render để reset picker, rồi render sẽ gán lại input.files
+      input.value = '';
+
+      render(); // rebuild DataTransfer -> input.files = dt.files
+    });
+
+
+    // lần đầu
+    render();
+  })('#attachments', '#attachments-previews', '#attachments-error', {
+    maxFiles: 5,
+    maxSize: 5 * 1024 * 1024
   });
 
-  // lần đầu
-  render();
-})('#attachments', '#attachments-previews', '#attachments-error', {maxFiles:5, maxSize: 5*1024*1024});
+  const form = document.getElementById('ticket-form');
+  form && form.addEventListener('submit', () => {
+    // gọi render để chắc chắn input.files đang khớp với mảng `files`
+    // (render có sẵn trong scope của IIFE)
+    try {
+      render();
+    } catch {}
+  });
 </script>
 
 
 <script>
-(function () {
-  const cat   = document.getElementById('category');
-  const row   = document.getElementById('rowCatOrder');
-  const catCol= document.getElementById('catWrap');
-  const wrap  = document.getElementById('orderCodeWrap');
-  const input = document.getElementById('order_code');
+  (function() {
+    const cat = document.getElementById('category');
+    const row = document.getElementById('rowCatOrder');
+    const catCol = document.getElementById('catWrap');
+    const wrap = document.getElementById('orderCodeWrap');
+    const input = document.getElementById('order_code');
 
-  function toggleOrderCode() {
-    const v = (cat.value || '').toLowerCase();
-    const hide = (v === 'account' || v === 'other'); // ẩn khi tài khoản/khác
-    if (hide) {
-      wrap.style.display = 'none';
-      row.style.gridTemplateColumns = '1fr';  // hàng còn 1 cột, cột trái full width
-      catCol.style.gridColumn = '1 / -1';
+    function toggleOrderCode() {
+      const v = (cat.value || '').toLowerCase();
+      const hide = (v === 'account' || v === 'other'); // ẩn khi tài khoản/khác
+      if (hide) {
+        wrap.style.display = 'none';
+        row.style.gridTemplateColumns = '1fr'; // hàng còn 1 cột, cột trái full width
+        catCol.style.gridColumn = '1 / -1';
 
-      input.value = '';
-      input.disabled = true;                  // tránh gửi giá trị cũ
-    } else {
-      wrap.style.display = '';
-      row.style.gridTemplateColumns = '1fr 1fr';
-      catCol.style.gridColumn = '';
-      input.disabled = false;
+        input.value = '';
+        input.disabled = true; // tránh gửi giá trị cũ
+      } else {
+        wrap.style.display = '';
+        row.style.gridTemplateColumns = '1fr 1fr';
+        catCol.style.gridColumn = '';
+        input.disabled = false;
+      }
     }
-  }
 
-  cat.addEventListener('change', toggleOrderCode);
-  toggleOrderCode(); // khởi tạo theo giá trị hiện tại
-})();
+    cat.addEventListener('change', toggleOrderCode);
+    toggleOrderCode(); // khởi tạo theo giá trị hiện tại
+  })();
 </script>
 
 @endsection
