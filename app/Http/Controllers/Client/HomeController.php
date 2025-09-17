@@ -121,6 +121,15 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
+        $specialOfferProducts = Product::where('is_active', 1)
+            ->where('is_special_offer', true)
+            ->withAvg(['reviews' => function ($q) {
+                $q->where('approved', true);
+            }], 'rating')
+            ->orderByDesc('sold_quantity')
+            ->take(8)
+            ->get();
+
         return view('client.home', compact(
             'banners',
             'categories',
@@ -128,7 +137,8 @@ class HomeController extends Controller
             'latestBlogs',
             'latestProducts',
             'bestSellerProducts',
-            'unreadNotifications'
+            'unreadNotifications',
+            'specialOfferProducts',
         ));
     }
 
