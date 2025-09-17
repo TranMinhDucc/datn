@@ -197,6 +197,13 @@ Route::middleware(['web', 'traffic'])->group(function () {
             Route::get('/search/suggest', 'suggest')->name('suggest');
             Route::get('{slug}', 'show')->name('show');
         });
+        Route::controller(\App\Http\Controllers\Client\TagController::class)
+            ->prefix('tag')->name('tag.')
+            ->group(function () {
+                Route::get('/{slug}', 'show')
+                    ->where('slug', '[A-Za-z0-9-]+')   // tránh ký tự lạ
+                    ->name('show');
+            });
 
         // Blog
         Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
@@ -603,13 +610,6 @@ Route::get('/cron/sync-ghn-orders', function () {
         'message' => 'GHN sync triggered via HTTP.',
     ]);
 });
-// ✅ Đặt hàng (tạo đơn và gọi MoMo nếu cần)
-Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('client.checkout.place-order');
-Route::post('/checkout/init-momo', [CheckoutController::class, 'initMomoPayment'])->name('client.checkout.init-momo');
-Route::match(['GET', 'POST'], '/checkout/momo/callback', [CheckoutController::class, 'handleMomoCallback'])->name('client.checkout.payment-callback');
-Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRedirect'])
-    ->name('client.checkout.momo-redirect');
-
 
 // ✅ Đặt hàng (tạo đơn và gọi MoMo nếu cần)
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('client.checkout.place-order');

@@ -80,74 +80,56 @@
         table.table-bordered td, table.table-bordered th {
             border: 1px solid #dee2e6;
         }
-        .text-end {
-            text-align: right;
-        }
-        .text-start {
-            text-align: left;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .fw-bold {
-            font-weight: bold;
-        }
-        .fw-semibold {
-            font-weight: 600;
-        }
-        .text-success {
-            color: #28a745;
-        }
-        .text-warning {
-            color: #cca270;
-        }
-        .text-muted {
-            color: #6c757d;
-        }
-        .small {
-            font-size: 12px;
-        }
+        .text-end { text-align: right; }
+        .text-start { text-align: left; }
+        .text-center { text-align: center; }
+        .fw-bold { font-weight: bold; }
+        .fw-semibold { font-weight: 600; }
+        .text-success { color: #28a745; }
+        .text-warning { color: #cca270; }
+        .text-muted { color: #6c757d; }
+        .small { font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="invoice-wrapper">
-        {{-- Header --}}
+        {{-- Tiêu đề --}}
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <img src="{{ public_path('img-invoice/logo.png') }}" height="40" alt="Logo">
             </div>
             <div style="text-align: right;">
-                <h5 style="margin: 0;">Invoice</h5>
+                <h5 style="margin: 0;">HÓA ĐƠN</h5>
                 <small class="text-muted">#{{ $order->order_code }}</small>
             </div>
         </div>
 
-        {{-- Info --}}
+        {{-- Thông tin --}}
         <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
             <div>
-                <h6 style="margin: 0 0 5px; text-transform: uppercase; font-weight: 600;">Invoice To:</h6>
+                <h6 style="margin: 0 0 5px; text-transform: uppercase; font-weight: 600;">Thông tin người nhận</h6>
                 <p style="margin: 0;">{{ $order->address->full_name }}</p>
                 <p style="margin: 0;">{{ $order->address->address }}</p>
-                <p style="margin: 0;">Phone: {{ $order->address->phone }}</p>
-                <p style="margin: 0;">Postal Code: {{ $order->address->pincode }}</p>
+                <p style="margin: 0;">Điện thoại: {{ $order->address->phone }}</p>
+                <p style="margin: 0;">Mã bưu chính: {{ $order->address->pincode }}</p>
             </div>
             <div style="text-align: right;">
-                <p style="margin: 0;"><strong>Date:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
-                <p style="margin: 0;"><strong>Name:</strong> {{ $order->user->fullname ?? '---' }}</p>
+                <p style="margin: 0;"><strong>Ngày lập:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
+                <p style="margin: 0;"><strong>Khách hàng:</strong> {{ $order->user->fullname ?? '---' }}</p>
                 <p style="margin: 0;"><strong>Email:</strong> {{ $order->user->email }}</p>
-                <p style="margin: 0;"><strong>Payment:</strong> {{ $order->paymentMethod->name }}</p>
+                <p style="margin: 0;"><strong>Hình thức thanh toán:</strong> {{ $order->paymentMethod->name }}</p>
             </div>
         </div>
 
-        {{-- Table --}}
+        {{-- Bảng sản phẩm --}}
         <table class="table table-bordered text-center">
             <thead>
                 <tr>
-                    <th style="width: 60px;">No</th>
-                    <th class="text-start">Product name</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Total</th>
+                    <th style="width: 60px;">STT</th>
+                    <th class="text-start">Tên sản phẩm</th>
+                    <th>Đơn giá</th>
+                    <th>SL</th>
+                    <th>Thành tiền</th>
                 </tr>
             </thead>
             <tbody>
@@ -166,7 +148,7 @@
             </tbody>
         </table>
 
-        {{-- Summary --}}
+        {{-- Tổng kết --}}
         <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
             <table style="width: 300px;">
                 <tr>
@@ -180,31 +162,27 @@
                 @if ($order->discount_amount > 0)
                     <tr>
                         <td class="text-end text-muted">Giảm giá:</td>
-                        <td class="text-end fw-semibold">
-                            -{{ number_format($order->discount_amount, 0, ',', '.') }}₫
-                        </td>
+                        <td class="text-end fw-semibold">-{{ number_format($order->discount_amount, 0, ',', '.') }}₫</td>
                     </tr>
                 @endif
                 <tr style="border-top: 1px solid #dee2e6;">
                     <td class="text-end fw-bold">Tổng thanh toán:</td>
-                    <td class="text-end fw-bold text-success">
-                        {{ number_format($order->total_amount, 0, ',', '.') }}₫
-                    </td>
+                    <td class="text-end fw-bold text-success">{{ number_format($order->total_amount, 0, ',', '.') }}₫</td>
                 </tr>
             </table>
         </div>
 
-        {{-- Footer --}}
+        {{-- Chân trang --}}
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
             <div>
-                <img src="{{ public_path('img-invoice/signature.svg') }}" width="100" alt="Signature">
+                <img src="{{ public_path('img-invoice/signature.svg') }}" width="100" alt="Chữ ký">
                 <p style="margin: 5px 0 0;">{{ $order->user->fullname }}</p>
-                <small class="text-muted">Accounting Manager</small>
+                <small class="text-muted">Quản lý kế toán</small>
             </div>
             <div style="text-align: right;">
-                <h6 class="text-warning fw-bold" style="margin: 0 0 5px;">GRATEFUL FOR YOUR BUSINESS!</h6>
-                <p style="margin: 0;"><i class="bi bi-telephone"></i> {{ $order->address->phone }}</p>
-                <p style="margin: 0;"><i class="bi bi-envelope"></i> {{ $order->user->email }}</p>
+                <h6 class="text-warning fw-bold" style="margin: 0 0 5px;">XIN CẢM ƠN QUÝ KHÁCH!</h6>
+                <p style="margin: 0;">{{ $order->address->phone }}</p>
+                <p style="margin: 0;">{{ $order->user->email }}</p>
             </div>
         </div>
     </div>

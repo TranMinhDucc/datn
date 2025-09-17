@@ -255,7 +255,7 @@
                 <p>$ 49.59 USD</p>
             </div>
             <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> Xem giỏ
-                    hàng</a><a class="btn btn_black" href="check-out.html"> Checkout</a></div>
+                    hàng</a><a class="btn btn_black" href="{{ route('client.checkout.index') }}"> Thanh toán</a></div>
         </div>
     </div>
     <div class="offcanvas offcanvas-top search-details" id="offcanvasTop" tabindex="-1"
@@ -698,6 +698,30 @@
         showToast("Lỗi", "{{ session('error') }}", "error");
     </script>
 @endif
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('offcanvas-checkout-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', (e) => {
+      const currentUser = localStorage.getItem('currentUser') || 'guest';
+      const cart = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`) || '[]');
+      const totalQty = cart.reduce((s, i) => s + (parseInt(i.quantity) || 0), 0);
+
+      // Giỏ trống hoặc toàn quantity = 0 thì không cho đi
+      if (cart.length === 0 || totalQty === 0) {
+        e.preventDefault();
+        // dùng hàm showToast bạn đã có
+        showToast('Thông báo', 'Giỏ hàng đang trống. Vui lòng thêm sản phẩm.', 'warning');
+      }
+
+      // Nếu bạn muốn chặn khi check-stock đang báo lỗi,
+      // có thể dùng cờ chung trong sessionStorage:
+      // if (sessionStorage.getItem('stockInvalid') === '1') { e.preventDefault(); ... }
+    });
+  });
+</script>
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
