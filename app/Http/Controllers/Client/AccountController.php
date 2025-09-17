@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 class AccountController extends Controller
 {
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
 
         $user = Auth::user();
@@ -35,10 +35,18 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-        $orders = Order::with(['orderItems.product', 'returnRequests'])
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
+        if ($request->filled('order_code')) {
+            $orders = Order::with(['orderItems.product', 'returnRequests'])
+                ->where('user_id', auth()->id())
+                ->whereLike('order_code', '%' . $request->get('order_code') . '%')
+                ->latest()
+                ->get();
+        } else {
+            $orders = Order::with(['orderItems.product', 'returnRequests'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+        }
 
 
         if (Auth::check()) {

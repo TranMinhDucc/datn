@@ -478,6 +478,9 @@
                                         <div class="loader-line"></div>
                                         <h4>Lịch sử đơn hàng</h4>
                                     </div>
+                                    <form action="{{ route('client.account.dashboard') }}" class="form_search_order mb-4">
+                                        <input name="order_code" type="text" class="form-control input_search_order" value="{{ request('order_code') }}" placeholder="Nhập mã đơn hàng cần tìm ...">
+                                    </form>
                                     <div class="row gy-4">
                                         <div class="col-12">
                                             @php
@@ -2515,4 +2518,20 @@
             });
         });
     </script>
+
+    <script>
+        $('.input_search_order').on('change', function () {
+            $('.form_search_order').trigger('submit');
+        });
+    </script>
+
+    @if (request()->filled('order_code'))
+        <script>
+            $('#v-pills-tab .nav-link').removeClass('active');
+            $('#v-pills-tabContent .tab-pane').removeClass('show active')
+            $('#order-tab').addClass('active');
+            $('#order').addClass('show active');
+            $('#order-status-all').addClass('show active')
+        </script>
+    @endif
 @endsection
