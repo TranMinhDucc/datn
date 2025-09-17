@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('coupon_user', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
+            $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
+
             $table->timestamps();
 
-            $table->unique(['user_id', 'coupon_id']); // mỗi user chỉ dùng 1 coupon 1 lần
+            // ❌ bỏ unique, vì sẽ gây lỗi duplicate khi user dùng lại coupon cho nhiều order
+            // Nếu muốn giới hạn số lần, hãy check logic ở Controller thay vì unique constraint
         });
     }
 

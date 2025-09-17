@@ -646,28 +646,21 @@
                                                                     <div
                                                                         class="order-actions d-flex justify-content-end flex-wrap gap-2 mt-3">
 
-
-
-                                                                        <!-- Nút mở modal -->
-
-
-
                                                                         <!-- Modal -->
-                                                                        @if ($order->status === 'completed' && $order->delivered_at && now()->diffInDays($order->delivered_at) <= 3)
+                                                                        @if ($order->delivered_at && now()->diffInDays($order->delivered_at) <= 3)
                                                                             @if ($order->returnRequests->isEmpty())
-                                                                                {{-- Nếu chưa gửi khiếu nại → hiện nút Gửi --}}
                                                                                 <a href="{{ route('client.account.return_requests.create', $order->id) }}"
                                                                                     class="btn btn-danger">
                                                                                     Hoàn / Đổi hàng
                                                                                 </a>
                                                                             @else
-                                                                                {{-- Nếu đã gửi → hiện nút Xem --}}
                                                                                 <a href="{{ route('client.account.return_requests.index') }}"
                                                                                     class="btn btn-outline-primary">
                                                                                     📝 Đã gửi khiếu nại – Xem lại
                                                                                 </a>
                                                                             @endif
                                                                         @endif
+
 
 
 
@@ -860,12 +853,6 @@
                                                                             </button>
                                                                         @endif
 
-                                                                        @if (($order->status === 'cancelled' || $order->cancel_request) && $order->cancel_reason)
-                                                                            <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                                                class="btn btn-outline-danger btn-sm">
-                                                                                Chi tiết hủy đơn
-                                                                            </a>
-                                                                        @endif
 
 
 
@@ -956,7 +943,6 @@
                                                                                     $fullStars = floor($avgRating); // số sao đầy
                                                                                     $halfStar =
                                                                                         $avgRating - $fullStars >= 0.5; // có nửa sao không
-
                                                                                 @endphp
 
                                                                                 <ul class="rating">
@@ -1189,7 +1175,7 @@
                                 <div class="address-tab">
                                     <div class="sidebar-title">
                                         <div class="loader-line"></div>
-                                        <h4>My Address Details</h4>
+                                        <h4>Địa chỉ của tôi</h4>
                                     </div>
                                     <div class="d-flex justify-content-end mb-3">
                                         <button class="btn add-address" data-bs-toggle="modal"
@@ -1246,7 +1232,7 @@
                                                 </div>
                                             </div>
                                             {{-- Edit modal --}}
-                                            <div class="reviews-modal modal theme-modal"
+                                            <div class="reviews-modal modal theme-modal fade"
                                                 id="editAddressModal-{{ $address->id }}" tabindex="-1" role="dialog"
                                                 aria-modal="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
@@ -1263,11 +1249,12 @@
                                                                 @csrf
                                                                 @method('PUT')
 
-                                                                <div class="col-12">
-                                                                    <label style="font-weight: 600; color: #000;">Loại địa
-                                                                        chỉ</label>
-                                                                    <select class="form-control form-select"
+                                                                <div class="col-6">
+                                                                    <label class="form-label">Loại địa chỉ</label>
+                                                                    <select
+                                                                        class="form-select @error('title') is-invalid @enderror"
                                                                         name="title">
+                                                                        <option value="">-- Chọn loại --</option>
                                                                         <option value="Nhà riêng"
                                                                             {{ old('title', $address->title) == 'Nhà riêng' ? 'selected' : '' }}>
                                                                             Nhà riêng</option>
@@ -1276,99 +1263,108 @@
                                                                             Công ty</option>
                                                                         <option value="Khác"
                                                                             {{ old('title', $address->title) == 'Khác' ? 'selected' : '' }}>
-                                                                            Khác
-                                                                        </option>
+                                                                            Khác</option>
                                                                     </select>
                                                                     @error('title')
-                                                                        <small
-                                                                            class="text-danger">{{ $message }}</small>
+                                                                        <div class="text-danger small">{{ $message }}
+                                                                        </div>
                                                                     @enderror
                                                                 </div>
 
                                                                 <div class="col-6">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Điện Thoại</label>
-                                                                        <input class="form-control" type="text"
-                                                                            name="phone"
-                                                                            value="{{ old('phone', $address->phone) }}"
-                                                                            placeholder="Nhập số điện thoại">
-                                                                        @error('phone')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                    <label class="form-label">Tên người nhận</label>
+                                                                    <input
+                                                                        class="form-control @error('full_name') is-invalid @enderror"
+                                                                        name="full_name"
+                                                                        value="{{ old('full_name', $address->full_name) }}">
+                                                                    @error('full_name')
+                                                                        <div class="text-danger small">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
                                                                 </div>
 
                                                                 <div class="col-6">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Mã Bưu chính</label>
-                                                                        <input class="form-control" name="pincode"
-                                                                            type="text"
-                                                                            value="{{ old('pincode', $address->pincode) }}">
-                                                                        @error('pincode')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                    <label class="form-label">Điện thoại</label>
+                                                                    <input
+                                                                        class="form-control @error('phone') is-invalid @enderror"
+                                                                        type="text" name="phone"
+                                                                        value="{{ old('phone', $address->phone) }}">
+                                                                    @error('phone')
+                                                                        <div class="text-danger small">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
                                                                 </div>
 
                                                                 <div class="col-6">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Quốc gia</label>
-                                                                        <input class="form-control" type="text"
-                                                                            name="country"
-                                                                            value="{{ old('country', $address->country) }}">
-                                                                        @error('country')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                    <label class="form-label">Mã bưu chính</label>
+                                                                    <input
+                                                                        class="form-control @error('pincode') is-invalid @enderror"
+                                                                        name="pincode"
+                                                                        value="{{ old('pincode', $address->pincode) }}">
+                                                                    @error('pincode')
+                                                                        <div class="text-danger small">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
                                                                 </div>
 
-                                                                <div class="col-6">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Tỉnh/Thành Phố</label>
-                                                                        <input class="form-control" name="state"
-                                                                            type="text"
-                                                                            value="{{ old('state', $address->state) }}">
-                                                                        @error('state')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                <input type="hidden" name="country" value="Vietnam">
+
+                                                                <div class="col-4">
+                                                                    <label class="form-label">Tỉnh/Thành phố</label>
+                                                                    <select class="form-select" name="province_id"
+                                                                        id="province-select-{{ $address->id }}"
+                                                                        data-current-district="{{ $address->district_id }}"
+                                                                        data-current-ward="{{ $address->ward_id }}"
+                                                                        required>
+                                                                        <option value="">-- Chọn tỉnh --</option>
+                                                                        @foreach ($provinces as $province)
+                                                                            <option value="{{ $province->id }}"
+                                                                                {{ old('province_id', $address->province_id) == $province->id ? 'selected' : '' }}>
+                                                                                {{ $province->name }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+
                                                                 </div>
 
-                                                                <div class="col-6">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Quận/Huyện</label>
-                                                                        <input class="form-control" name="city"
-                                                                            type="text"
-                                                                            value="{{ old('city', $address->city) }}">
-                                                                        @error('city')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                <div class="col-4">
+                                                                    <label class="form-label">Quận/Huyện</label>
+                                                                    <select class="form-select" name="district_id"
+                                                                        id="district-select-{{ $address->id }}"
+                                                                        required>
+                                                                        <option value="">-- Chọn huyện --</option>
+                                                                        {{-- Khi load modal, bạn có thể đổ sẵn district của address --}}
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="col-4">
+                                                                    <label class="form-label">Phường/Xã</label>
+                                                                    <select class="form-select" name="ward_id"
+                                                                        id="ward-select-{{ $address->id }}" required>
+                                                                        <option value="">-- Chọn xã --</option>
+                                                                        {{-- Khi load modal, bạn có thể đổ sẵn ward của address --}}
+                                                                    </select>
                                                                 </div>
 
                                                                 <div class="col-12">
-                                                                    <div class="from-group">
-                                                                        <label class="form-label">Địa chỉ</label>
-                                                                        <textarea class="form-control" name="address" cols="30" rows="4" placeholder="Nhập địa chỉ">{{ old('address', $address->address) }}</textarea>
-                                                                        @error('address')
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
-                                                                        @enderror
-                                                                    </div>
+                                                                    <label class="form-label">Địa chỉ chi tiết</label>
+                                                                    <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address', $address->address) }}</textarea>
+                                                                    @error('address')
+                                                                        <div class="text-danger small">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
                                                                 </div>
 
-                                                                <button class="btn btn-submit" type="submit">Cập
-                                                                    nhật</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-dark btn-lg px-5 py-2 fw-semibold">
+                                                                    Cập nhật
+                                                                </button>
                                                             </form>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             {{-- Delete Modal --}}
                                             <div class="modal theme-modal confirmation-modal"
                                                 id="deleteAddressModal-{{ $address->id }}" tabindex="-1"
@@ -1754,7 +1750,7 @@
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4>Edit Profile</h4>
+                    <h4>Cập nhật thông tin người dùng</h4>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -1959,11 +1955,24 @@
             color: #938181;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .input-group-text {
+            cursor: pointer;
+            background-color: #fff;
+            border-left: none;
+            color: #938181;
+        }
 
+        .input-group .form-control {
+            border-right: none;
+        }
 
-@endsection
+        .fa-eye {
+            color: #938181;
+        }
+    </style>
 
-@section('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .avatar-wrapper {
@@ -2310,14 +2319,17 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                <<<<<<< HEAD
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
+                                                                                                                                                                                                                                <<<<<<< HEAD
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
 
                 ===
-                === =
+                ===
+                =
                 success ') }}',
                 >>>
-                >>> > 98 c996a41720f9f49ab11f6be11ec37e99ba8541
+                >>>
+                >
+                98 c996a41720f9f49ab11f6be11ec37e99ba8541
                 showConfirmButton: false,
 
                 timer: 1200
@@ -2407,5 +2419,100 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bắt sự kiện khi mở modal sửa địa chỉ
+            document.querySelectorAll('[id^="editAddressModal-"]').forEach(modal => {
+                modal.addEventListener('show.bs.modal', function() {
+                    const addressId = this.id.split('-')[1]; // lấy ID address
+                    const provinceSelect = document.getElementById(`province-select-${addressId}`);
+                    const districtSelect = document.getElementById(`district-select-${addressId}`);
+                    const wardSelect = document.getElementById(`ward-select-${addressId}`);
 
+                    // Lấy dữ liệu hiện tại từ blade (in ra trong attribute data-)
+                    const currentDistrict = provinceSelect.getAttribute('data-current-district');
+                    const currentWard = provinceSelect.getAttribute('data-current-ward');
+
+                    // 1. Load lại district khi mở modal
+                    if (provinceSelect.value) {
+                        fetch(`/api/districts?province_id=${provinceSelect.value}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                districtSelect.innerHTML =
+                                    '<option value="">-- Chọn huyện --</option>';
+                                data.forEach(d => {
+                                    const opt = document.createElement('option');
+                                    opt.value = d.id;
+                                    opt.textContent = d.name;
+                                    if (d.id == currentDistrict) opt.selected = true;
+                                    districtSelect.appendChild(opt);
+                                });
+
+                                // 2. Load lại ward nếu có district cũ
+                                if (currentDistrict) {
+                                    fetch(`/api/wards?district_id=${currentDistrict}`)
+                                        .then(res => res.json())
+                                        .then(wards => {
+                                            wardSelect.innerHTML =
+                                                '<option value="">-- Chọn xã --</option>';
+                                            wards.forEach(w => {
+                                                const opt = document.createElement(
+                                                    'option');
+                                                opt.value = w.id;
+                                                opt.textContent = w.name;
+                                                if (w.id == currentWard) opt
+                                                    .selected = true;
+                                                wardSelect.appendChild(opt);
+                                            });
+                                        });
+                                }
+                            });
+                    }
+
+                    // 3. Sự kiện thay đổi province
+                    provinceSelect.addEventListener('change', function() {
+                        const provinceId = this.value;
+                        districtSelect.innerHTML =
+                            '<option value="">-- Đang tải huyện --</option>';
+                        wardSelect.innerHTML = '<option value="">-- Chọn xã --</option>';
+
+                        fetch(`/api/districts?province_id=${provinceId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                districtSelect.innerHTML =
+                                    '<option value="">-- Chọn huyện --</option>';
+                                data.forEach(d => {
+                                    const opt = document.createElement(
+                                        'option');
+                                    opt.value = d.id;
+                                    opt.textContent = d.name;
+                                    districtSelect.appendChild(opt);
+                                });
+                            });
+                    });
+
+                    // 4. Sự kiện thay đổi district
+                    districtSelect.addEventListener('change', function() {
+                        const districtId = this.value;
+                        wardSelect.innerHTML =
+                            '<option value="">-- Đang tải xã --</option>';
+
+                        fetch(`/api/wards?district_id=${districtId}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                wardSelect.innerHTML =
+                                    '<option value="">-- Chọn xã --</option>';
+                                data.forEach(w => {
+                                    const opt = document.createElement(
+                                        'option');
+                                    opt.value = w.id;
+                                    opt.textContent = w.name;
+                                    wardSelect.appendChild(opt);
+                                });
+                            });
+                    });
+                });
+            });
+        });
+    </script>
 @endsection

@@ -31,7 +31,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SearchHistory;
+use App\Models\Wishlist;
 use App\Observers\SettingObserver;
+use Illuminate\Support\Facades\Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -117,5 +119,42 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('unreadNotifications', $notifications);
         });
+        // ✅ Override mail config từ bảng settings
+        // Không bắt buộc apply config SMTP khi chạy các lệnh artisan
+        if (app()->runningInConsole()) {
+            return;
+        }
+
+        try {
+            if (Schema::hasTable('settings') && function_exists('setting')) {
+                if ((int) setting('smtp_status', 0) === 1) {
+                    config([
+                        'mail.mailers.smtp.host'       => setting('smtp_host'),
+                        'mail.mailers.smtp.port'       => setting('smtp_port'),
+                        'mail.mailers.smtp.encryption' => setting('smtp_encryption'),
+                        'mail.mailers.smtp.username'   => setting('smtp_username'),
+                        'mail.mailers.smtp.password'   => setting('smtp_password'),
+                        'mail.from.address'            => setting('smtp_from_address'),
+                        'mail.from.name'               => setting('smtp_from_name'),
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Skip SMTP settings on boot: ' . $e->getMessage());
+        }
+        View::composer('layouts.partials.client.header', function ($view) {
+            $wishlistCount = 0;
+
+            if (Auth::check()) {
+                $wishlistCount = Wishlist::where('user_id', Auth::id())
+                    ->where('is_active', 1)
+                    ->count();
+            }
+
+            $view->with('wishlistCount', $wishlistCount);
+        });
+        $fontFamily = Setting::where('name', 'font_family')->value('value') ?? "font-family: 'Montserrat', sans-serif";
+
+        View::share('fontFamily', $fontFamily);
     }
 }

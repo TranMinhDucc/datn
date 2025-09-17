@@ -42,7 +42,8 @@
                         <div class="row mb-6">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Kiểu giảm</label>
-                                <select name="value_type" class="form-select form-select-solid" required>
+                                <select id="valueTypeSelect" name="value_type" class="form-select form-select-solid"
+                                    required>
                                     <option value="percentage">Phần trăm</option>
                                     <option value="fixed">Số tiền cố định</option>
                                 </select>
@@ -57,8 +58,9 @@
                         <div class="row mb-6">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Giảm tối đa (nếu là %)</label>
-                                <input type="number" step="0.01" name="max_discount_amount"
+                                <input type="number" step="0.01" name="max_discount_amount" id="maxDiscountInput"
                                     class="form-control form-control-solid">
+                                <small id="maxDiscountNote" class="text-muted"></small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Giá trị đơn tối thiểu</label>

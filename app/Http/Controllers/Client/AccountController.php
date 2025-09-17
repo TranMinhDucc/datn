@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Password;
 use App\Models\ShippingAddress;
 use App\Models\Wishlist;
 use App\Notifications\OrderStatusNotification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,10 +35,11 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-        $orders = Order::with(['orderItems.product']) // Load luôn product của từng item
+        $orders = Order::with(['orderItems.product', 'returnRequests'])
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
+
 
         if (Auth::check()) {
             Auth::user()->unreadNotifications->markAsRead();
@@ -50,7 +52,7 @@ class AccountController extends Controller
             ->get();
 
 
-        $provinces = Province::all(); // chỉ cần load tỉnh ban đầu
+        $provinces = Province::all();
 
         return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces'));
     }
@@ -120,70 +122,49 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $rules = [
-            'fullname' => 'required|string|max:255',
-            'email' => [
-                'required',
-                // 'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-                function ($attribute, $value, $fail) {
-                    // Bắt đầu: kiểm tra có ký tự '@'
-                    if (!str_contains($value, '@')) {
-                        return $fail('Email phải chứa ký tự "@".');
-                    }
-                    [$local, $domain] = explode('@', $value, 2) + [null, null];
+        try {
+            $rules = [
+                'fullname' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'max:255',
+                    Rule::unique('users')->ignore($user->id),
+                ],
+                'phone' => ['nullable', 'regex:/^(0|\+84)[0-9]{9}$/'],
+                'address' => 'nullable|string|max:255',
+            ];
 
-                    if (!in_array($domain, ['gmail.com', 'yahoo.com', 'outlook.com'])) {
-                        return $fail('Chỉ chấp nhận các tên miền email phổ biến như gmail.com, yahoo.com, outlook.com.');
-                    }
+            $messages = [
+                'fullname.required' => 'Vui lòng nhập họ tên.',
+                'email.required' => 'Vui lòng nhập email.',
+                'email.email' => 'Định dạng email không hợp lệ.',
+                'email.unique' => 'Email đã được sử dụng.',
+                'phone.regex' => 'Số điện thoại không đúng định dạng.',
+            ];
 
-                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                        return $fail('Địa chỉ email không hợp lệ theo chuẩn RFC.');
-                    }
-                    // Cắt chuỗi thành phần local và domain
-                    [$local, $domain] = explode('@', $value, 2) + [null, null];
+            $validated = $request->validate($rules, $messages);
 
-                    // Kiểm tra phần tên miền có hay không
-                    if (empty($domain)) {
-                        return $fail('Email thiếu tên miền sau ký tự "@".');
-                    }
+            $user->update($validated);
 
-                    // Kiểm tra tên miền có dấu chấm hay không
-                    if (!str_contains($domain, '.')) {
-                        return $fail('Tên miền email phải có dấu chấm ".", ví dụ: gmail.com');
-                    }
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            // Ghi log lỗi ra storage/logs/laravel.log
+            Log::error('❌ Lỗi cập nhật profile: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-                    // Kiểm tra đuôi tên miền có đúng định dạng .com/.vn/...
-                    if (!preg_match('/\.[a-z]{2,}$/', $domain)) {
-                        return $fail('Email phải có đuôi tên miền hợp lệ như ".com", ".vn"...');
-                    }
-
-                    // Kiểm tra tổng thể theo filter_var cuối cùng
-                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                        return $fail('Địa chỉ email không hợp lệ theo chuẩn RFC.');
-                    }
-                }
-
-            ],
-            'phone' => ['nullable', 'regex:/^(0|\+84)[0-9]{9}$/'],
-            'address' => 'nullable|string|max:255',
-        ];
-
-        $messages = [
-            'fullname.required' => 'Vui lòng nhập họ tên.',
-            'email.required' => 'Vui lòng nhập email.',
-            // 'email.email' => 'Định dạng email không hợp lệ.',
-            'email.unique' => 'Email đã được sử dụng.',
-            'phone.regex' => 'Số điện thoại không đúng định dạng. Vui lòng nhập số điện thoại hợp lệ (ví dụ: 0123456789 hoặc +84123456789).',
-        ];
-
-        $validated = $request->validate($rules, $messages);
-
-        $user->update($validated);
-
-        return response()->json(['success' => true]);
+            // Trả JSON để frontend hiển thị bằng Swal
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi cập nhật thông tin!',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
+
     public function changePassword(Request $request)
     {
         $user = Auth::user();

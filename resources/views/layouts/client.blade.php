@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/swiper-slider/swiper-bundle.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/style.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/client/css/custom.css') }}"> --}}
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -45,6 +47,24 @@
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
+<style>
+    header .sub_header ul .wishlist_qty_cls {
+        background: rgba(var(--theme-default));
+        border-radius: 20px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        height: 18px;
+        line-height: 18px;
+        padding: 0 6px;
+        position: absolute;
+        right: -8px;
+        top: -9px;
+        text-align: center;
+        min-width: 18px;
+    }
+</style>
+
 
 <script>
     @auth
@@ -52,9 +72,6 @@
     @else
         localStorage.setItem('currentUser', 'guest');
     @endauth
-</script>
-
-<script>
     @auth
     const userId = '{{ auth()->user()->id }}';
     const guestKey = 'cartItems_guest';
@@ -216,7 +233,7 @@
     <div class="offcanvas offcanvas-end shopping-details" id="offcanvasRight" tabindex="-1"
         aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
-            <h4 class="offcanvas-title" id="offcanvasRightLabel">Shopping Cart</h4>
+            <h4 class="offcanvas-title" id="offcanvasRightLabel">Giỏ hàng</h4>
             <button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body theme-scrollbar">
@@ -225,20 +242,20 @@
             </ul>
         </div>
         <div class="offcanvas-footer">
-            <p>Spend <span>$ 14.81 </span>more and enjoy <span>FREE SHIPPING!</span></p>
+            {{-- <p>Spend <span>$ 14.81 </span>more and enjoy <span>FREE SHIPPING!</span></p>
             <div class="footer-range-slider">
                 <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="46"
                     aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar progress-bar-striped progress-bar-animated theme-default"
                         style="width: 46%"></div>
                 </div>
-            </div>
+            </div> --}}
             <div class="price-box">
                 <h6>Tổng :</h6>
                 <p>$ 49.59 USD</p>
             </div>
-            <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> View
-                    Cart</a><a class="btn btn_black" href="check-out.html"> Checkout</a></div>
+            <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> Xem giỏ
+                    hàng</a><a class="btn btn_black" href="{{ route('client.checkout.index') }}"> Thanh toán</a></div>
         </div>
     </div>
     <div class="offcanvas offcanvas-top search-details" id="offcanvasTop" tabindex="-1"
@@ -444,36 +461,63 @@
             `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`
         ).join('<br>');
 
-        li.innerHTML = `
-            <a href="#"><img src="${item.image}" alt=""></a>
-            <div>
-                <h6 class="mb-0">${item.name}</h6>
-                <p>
-    ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
-    <del>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.originalPrice)}</del>
-    <span class="btn-cart">
-        <span class="btn-cart__total">
-            ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}
-        </span>
-    </span>
-</p>
+        const format = (value) => new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(Number(value) || 0);
 
-                <p class="attributes">${attributesHTML}</p>
-                <div class="btn-containter">
-                    <div class="btn-control">
-                        <button class="btn-control__remove">&minus;</button>
-                        <div class="btn-control__quantity">
-                            <div id="quantity-previous">${item.quantity - 1}</div>
-                            <div id="quantity-current">${item.quantity}</div>
-                            <div id="quantity-next">${item.quantity + 1}</div>
-                        </div>
-                        <button class="btn-control__add">+</button>
+        // HTML
+        li.innerHTML = `
+        <a href="#"><img src="${item.image}" alt=""></a>
+        <div>
+            <h6 class="mb-0 product-name" title="${item.name}">${item.name}</h6>
+            <p>
+                ${format(item.price)}
+                ${(item.originalPrice && Number(item.originalPrice) > Number(item.price)) 
+                    ? `<del>${format(item.originalPrice)}</del>` 
+                    : ""}
+            </p>
+            ${item.quantity > 1 
+                ? `<p class="cart-total">Tổng: ${format(item.price * item.quantity)}</p>` 
+                : ""}
+            
+            <p class="attributes">${attributesHTML}</p>
+            <div class="btn-containter">
+                <div class="btn-control">
+                    <button class="btn-control__remove">&minus;</button>
+                    <div class="btn-control__quantity">
+                        <div id="quantity-previous">${item.quantity - 1}</div>
+                        <div id="quantity-current">${item.quantity}</div>
+                        <div id="quantity-next">${item.quantity + 1}</div>
                     </div>
+                    <button class="btn-control__add">+</button>
                 </div>
             </div>
-            <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-        `;
+        </div>
+        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+    `;
 
+        // Giới hạn tên sản phẩm 2 dòng
+        const style = document.createElement('style');
+        style.innerHTML = `
+        .product-name {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 3em; /* khoảng 2 dòng */
+            line-height: 1.5em;
+        }
+        .cart-total {
+            font-weight: 600;
+            color: #000;
+            margin-top: 2px;
+        }
+    `;
+        document.head.appendChild(style);
+
+        // Nút tăng giảm
         li.querySelector('.btn-control__add').addEventListener('click', () => {
             item.quantity += 1;
             saveAndRender();
@@ -496,6 +540,7 @@
 
         cartList.appendChild(li);
     }
+
 
     function updateTotal() {
         let total = 0;
@@ -653,6 +698,30 @@
         showToast("Lỗi", "{{ session('error') }}", "error");
     </script>
 @endif
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('offcanvas-checkout-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', (e) => {
+      const currentUser = localStorage.getItem('currentUser') || 'guest';
+      const cart = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`) || '[]');
+      const totalQty = cart.reduce((s, i) => s + (parseInt(i.quantity) || 0), 0);
+
+      // Giỏ trống hoặc toàn quantity = 0 thì không cho đi
+      if (cart.length === 0 || totalQty === 0) {
+        e.preventDefault();
+        // dùng hàm showToast bạn đã có
+        showToast('Thông báo', 'Giỏ hàng đang trống. Vui lòng thêm sản phẩm.', 'warning');
+      }
+
+      // Nếu bạn muốn chặn khi check-stock đang báo lỗi,
+      // có thể dùng cờ chung trong sessionStorage:
+      // if (sessionStorage.getItem('stockInvalid') === '1') { e.preventDefault(); ... }
+    });
+  });
+</script>
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->
 
