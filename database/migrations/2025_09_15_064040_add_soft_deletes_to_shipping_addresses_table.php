@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('momo_trans_id')->nullable()->after('payment_method_id')->unique();
+        Schema::table('shipping_addresses', function (Blueprint $table) {
+            $table->softDeletes(); // thêm cột deleted_at
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('momo_trans_id');
+        Schema::table('shipping_addresses', function (Blueprint $table) {
+            $table->dropSoftDeletes();
         });
     }
 };

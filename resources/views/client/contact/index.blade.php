@@ -86,21 +86,6 @@
                             <h4>Liên hệ với chúng tôi </h4>
                             <p>Nếu bạn có thắc mắc cần hỗ trợ hay có sản phẩm tuyệt vời hoặc muốn hợp tác, hãy liên hệ với
                                 chúng tôi. </p>
-
-                            {{-- Thông báo --}}
-                            @if (session('success'))
-                                <div class="alert alert-success mt-2">{{ session('success') }}</div>
-                            @endif
-                            @if ($errors->any())
-                                <div class="alert alert-danger mt-2">
-                                    <ul class="mb-0">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <form method="POST" action="{{ route('client.contact.store') }}" class="contact-form">
                                 @csrf
 

@@ -16,21 +16,17 @@ class CartController extends Controller
 
         $availableCoupons = Coupon::where('active', 1)
             ->where(function ($q) {
-                $q->where('usage_limit', 0)
+                $q->where('usage_limit', 0) // 0 = không giới hạn toàn hệ thống
                     ->orWhereRaw('used_count < usage_limit');
             })
             ->get()
             ->filter(function ($coupon) {
-                // Nếu có per_user_limit thì kiểm tra user đã dùng bao nhiêu lần
-                if (!is_null($coupon->per_user_limit)) {
-                    $userUsageCount = $coupon->users()
-                        ->where('user_id', auth()->id())
-                        ->count();
+                $userUsage = $coupon->users()
+                    ->where('user_id', auth()->id())
+                    ->count();
 
-                    return $userUsageCount < $coupon->per_user_limit;
-                }
-
-                return true; // nếu không giới hạn thì cho qua
+                // Nếu per_user_limit = 0 thì không giới hạn số lần dùng mỗi user
+                return $coupon->per_user_limit == 0 || $userUsage < $coupon->per_user_limit;
             });
 
         return view('client.cart.index', compact('products', 'availableCoupons'));
@@ -40,8 +36,6 @@ class CartController extends Controller
     {
         $cartItems = $request->input('cartItems', []);
         $invalidItems = [];
-
-
 
         foreach ($cartItems as $item) {
             $variantId = $item['variant_id'] ?? null;
@@ -54,7 +48,9 @@ class CartController extends Controller
                     $invalidItems[] = [
                         'id' => $productId,
                         'variant_id' => $variantId,
-                        'message' => !$variant ? 'Không tìm thấy biến thể' : "Chỉ còn {$variant->quantity} sản phẩm"
+                        'message' => !$variant
+                            ? 'Không tìm thấy biến thể'
+                            : "Chỉ còn {$variant->quantity} sản phẩm"
                     ];
                 }
             } else {
@@ -63,7 +59,9 @@ class CartController extends Controller
                     $invalidItems[] = [
                         'id' => $productId,
                         'variant_id' => null,
-                        'message' => !$product ? 'Không tìm thấy sản phẩm' : "Chỉ còn {$product->stock_quantity} sản phẩm"
+                        'message' => !$product
+                            ? 'Không tìm thấy sản phẩm'
+                            : "Chỉ còn {$product->stock_quantity} sản phẩm"
                     ];
                 }
             }
@@ -75,5 +73,4 @@ class CartController extends Controller
 
         return response()->json(['message' => 'Tất cả sản phẩm còn hàng']);
     }
-
 }

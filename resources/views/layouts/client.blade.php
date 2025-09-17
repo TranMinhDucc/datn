@@ -29,8 +29,11 @@
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/iconsax.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/swiper-slider/swiper-bundle.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/client/css/vendors/toastify.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/client/css/style.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/client/css/custom.css') }}"> --}}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -38,56 +41,30 @@
     @stack('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <style>
-        .toast-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 12px 16px;
-            background: #dc3545;
-            color: white;
-            font-weight: 500;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            position: relative;
-            min-width: 260px;
-            max-width: 300px;
-            animation: fade-in 0.3s ease;
 
-        }
-
-        .toast-box .icon {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-        }
-
-        .toast-box .close-btn {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .toast-box .icon span:first-child {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-
-        .toast-box .icon span:last-child {
-            color: #ffffff;
-            font-size: 14px;
-        }
-    </style>
     @yield('style')
     @if (Auth::check())
         <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
+<style>
+    header .sub_header ul .wishlist_qty_cls {
+        background: rgba(var(--theme-default));
+        border-radius: 20px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        height: 18px;
+        line-height: 18px;
+        padding: 0 6px;
+        position: absolute;
+        right: -8px;
+        top: -9px;
+        text-align: center;
+        min-width: 18px;
+    }
+</style>
+
 
 <script>
     @auth
@@ -95,28 +72,6 @@
     @else
         localStorage.setItem('currentUser', 'guest');
     @endauth
-</script>
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const swiper = new Swiper('.main-images', {
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-    });
-</script> --}}
-
-<script>
     @auth
     const userId = '{{ auth()->user()->id }}';
     const guestKey = 'cartItems_guest';
@@ -278,7 +233,7 @@
     <div class="offcanvas offcanvas-end shopping-details" id="offcanvasRight" tabindex="-1"
         aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
-            <h4 class="offcanvas-title" id="offcanvasRightLabel">Shopping Cart</h4>
+            <h4 class="offcanvas-title" id="offcanvasRightLabel">Giỏ hàng</h4>
             <button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body theme-scrollbar">
@@ -287,20 +242,20 @@
             </ul>
         </div>
         <div class="offcanvas-footer">
-            <p>Spend <span>$ 14.81 </span>more and enjoy <span>FREE SHIPPING!</span></p>
+            {{-- <p>Spend <span>$ 14.81 </span>more and enjoy <span>FREE SHIPPING!</span></p>
             <div class="footer-range-slider">
                 <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="46"
                     aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar progress-bar-striped progress-bar-animated theme-default"
                         style="width: 46%"></div>
                 </div>
-            </div>
+            </div> --}}
             <div class="price-box">
                 <h6>Tổng :</h6>
                 <p>$ 49.59 USD</p>
             </div>
-            <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> View
-                    Cart</a><a class="btn btn_black" href="check-out.html"> Checkout</a></div>
+            <div class="cart-button"> <a class="btn btn_outline" href="{{ route('client.cart.index') }}"> Xem giỏ
+                    hàng</a><a class="btn btn_black" href="check-out.html"> Checkout</a></div>
         </div>
     </div>
     <div class="offcanvas offcanvas-top search-details" id="offcanvasTop" tabindex="-1"
@@ -395,7 +350,6 @@
     <script src="{{ asset('assets/client/js/countdown.js') }}"></script>
     <script src="{{ asset('assets/client/js/touchspin.js') }}"></script>
     <script src="{{ asset('assets/client/js/cookie.js') }}"></script>
-    <script src="{{ asset('assets/client/js/toastify.js') }}"></script>
     <script src="{{ asset('assets/client/js/theme-setting.js') }}"></script>
     @yield('js')
     <script src="{{ asset('assets/client/js/script.js') }}"></script>
@@ -403,46 +357,27 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.4/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- SweetAlert2 JS (bắt buộc để Swal.fire hoạt động) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session('success'))
-        <script>
-            let timerInterval;
-            let timeout = 3000;
-            let action = "{{ session('action') }}";
 
-            if (action === "register") timeout = 5000;
-            else if (action === "logout") timeout = 600;
-            else if (action === "reset") timeout = 4000;
-
-            Swal.fire({
-                title: "🎉 {{ session('success') }}",
-                html: "Sẽ tự đóng trong <b></b> ms.",
-                timer: timeout,
-                timerProgressBar: true,
-                didOpen: () => {
-                    Swal.showLoading();
-                    const timer = Swal.getPopup().querySelector("b");
-                    timerInterval = setInterval(() => {
-                        timer.textContent = Swal.getTimerLeft();
-                    }, 100);
-                },
-                willClose: () => {
-                    clearInterval(timerInterval);
-                }
-            });
-        </script>
-    @endif
-
-    <div id="toast-container"
-        style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-">
+    <!-- Toast container -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="mainToast" class="toast align-items-center border-0 shadow" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <div class="d-flex align-items-center mb-1">
+                        <img src="{{ asset('assets/client/images/favicon.png') }}" class="rounded me-2"
+                            width="24" height="24" alt="Logo">
+                        <strong class="me-auto">Thông báo</strong>
+                        <small class="text-muted ms-2" id="toast-time">Vừa xong</small>
+                    </div>
+                    <div id="toast-message">Hello, world! Đây là thông báo!</div>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
     </div>
+
 </body>
 
 
@@ -526,36 +461,63 @@
             `${key.charAt(0).toUpperCase() + key.slice(1)}: <span>${value}</span>`
         ).join('<br>');
 
-        li.innerHTML = `
-            <a href="#"><img src="${item.image}" alt=""></a>
-            <div>
-                <h6 class="mb-0">${item.name}</h6>
-                <p>
-    ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
-    <del>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.originalPrice)}</del>
-    <span class="btn-cart">
-        <span class="btn-cart__total">
-            ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}
-        </span>
-    </span>
-</p>
+        const format = (value) => new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(Number(value) || 0);
 
-                <p class="attributes">${attributesHTML}</p>
-                <div class="btn-containter">
-                    <div class="btn-control">
-                        <button class="btn-control__remove">&minus;</button>
-                        <div class="btn-control__quantity">
-                            <div id="quantity-previous">${item.quantity - 1}</div>
-                            <div id="quantity-current">${item.quantity}</div>
-                            <div id="quantity-next">${item.quantity + 1}</div>
-                        </div>
-                        <button class="btn-control__add">+</button>
+        // HTML
+        li.innerHTML = `
+        <a href="#"><img src="${item.image}" alt=""></a>
+        <div>
+            <h6 class="mb-0 product-name" title="${item.name}">${item.name}</h6>
+            <p>
+                ${format(item.price)}
+                ${(item.originalPrice && Number(item.originalPrice) > Number(item.price)) 
+                    ? `<del>${format(item.originalPrice)}</del>` 
+                    : ""}
+            </p>
+            ${item.quantity > 1 
+                ? `<p class="cart-total">Tổng: ${format(item.price * item.quantity)}</p>` 
+                : ""}
+            
+            <p class="attributes">${attributesHTML}</p>
+            <div class="btn-containter">
+                <div class="btn-control">
+                    <button class="btn-control__remove">&minus;</button>
+                    <div class="btn-control__quantity">
+                        <div id="quantity-previous">${item.quantity - 1}</div>
+                        <div id="quantity-current">${item.quantity}</div>
+                        <div id="quantity-next">${item.quantity + 1}</div>
                     </div>
+                    <button class="btn-control__add">+</button>
                 </div>
             </div>
-            <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
-        `;
+        </div>
+        <i class="fa fa-trash delete-icon" style="font-size: 18px; color: #888; cursor: pointer;"></i>
+    `;
 
+        // Giới hạn tên sản phẩm 2 dòng
+        const style = document.createElement('style');
+        style.innerHTML = `
+        .product-name {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 3em; /* khoảng 2 dòng */
+            line-height: 1.5em;
+        }
+        .cart-total {
+            font-weight: 600;
+            color: #000;
+            margin-top: 2px;
+        }
+    `;
+        document.head.appendChild(style);
+
+        // Nút tăng giảm
         li.querySelector('.btn-control__add').addEventListener('click', () => {
             item.quantity += 1;
             saveAndRender();
@@ -578,6 +540,7 @@
 
         cartList.appendChild(li);
     }
+
 
     function updateTotal() {
         let total = 0;
@@ -648,10 +611,6 @@
         }
     });
 </script>
-<!-- Toastr CSS + JS (CDN) -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 <!-- Laravel Echo + Pusher -->
 <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
@@ -669,15 +628,12 @@
 
         window.Echo.private(`App.Models.User.${userIdd}`)
             .notification((notification) => {
-                toastr.options.onclick = function() {
-                    if (notification.url) {
-                        window.location.href = notification.url;
-                    }
-                };
-                toastr.info("Bạn có một thông báo mới");
+                let message = notification.message || "Bạn có một thông báo mới";
+                showToast("🔔 Thông báo", message, "info");
             });
     @endif
 </script>
+
 <script>
     function updateCartBadge() {
         const badge = document.querySelector('.cart_qty_cls'); // phần tử badge hiển thị số lượng
@@ -698,31 +654,48 @@
     // Gọi lại khi giỏ hàng được cập nhật
     document.addEventListener('cartUpdated', updateCartBadge);
 </script>
+<script>
+    function showToast(title = "Thông báo", message = "Nội dung ở đây", type = "success", timeLabel = "Vừa xong") {
+        const toastEl = document.getElementById('mainToast');
+        const bsToast = new bootstrap.Toast(toastEl, {
+            delay: 4000
+        });
+
+        toastEl.querySelector(".me-auto").innerText = title;
+        toastEl.querySelector("#toast-message").innerText = message;
+        toastEl.querySelector("#toast-time").innerText = timeLabel;
+
+        toastEl.classList.remove("border-success", "border-danger", "border-warning", "border-info");
+        if (type === "success") toastEl.classList.add("border-success");
+        else if (type === "error") toastEl.classList.add("border-danger");
+        else if (type === "warning") toastEl.classList.add("border-warning");
+        else if (type === "info") toastEl.classList.add("border-info");
+
+        bsToast.show();
+    }
+</script>
+
 @if (Auth::check() && $unreadNotifications->count())
     <script>
         const unreadNotifications = @json($unreadNotifications);
 
-        unreadNotifications.forEach((notification, index) => {
+        unreadNotifications.forEach((notification) => {
             const data = notification.data;
             const message = `🔔 Đơn hàng #${data.order_id} đã chuyển sang trạng thái: ${data.status.toUpperCase()}`;
-
-            // Debug log để chắc chắn đoạn này chạy
-            console.log(`✅ Hiển thị Toast ${index + 1}:`, message);
-
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "timeOut": "8000",
-                "extendedTimeOut": "1000",
-                "onclick": function() {
-                    if (data.url) {
-                        window.location.href = data.url;
-                    }
-                }
-            };
-
-            toastr.info(message, "Thông báo đơn hàng");
+            showToast("Thông báo đơn hàng", message, "info");
         });
+    </script>
+@endif
+
+@if (session('success'))
+    <script>
+        showToast("Thành công", "{{ session('success') }}", "success");
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        showToast("Lỗi", "{{ session('error') }}", "error");
     </script>
 @endif
 

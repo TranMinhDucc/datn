@@ -6,16 +6,45 @@
     <div class="d-flex flex-column flex-column-fluid">
         <!--begin::Toolbar-->
         <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-            <div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
-                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+            <div id="kt_app_toolbar_container" class="app-container  container-xxl d-flex flex-stack " bis_skin_checked="1">
+
+
+
+                <!--begin::Page title-->
+                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3 " bis_skin_checked="1">
+                    <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                         Danh sách nhãn dán sản phẩm
                     </h1>
+                    <!--end::Title-->
+
+
+                    <!--begin::Breadcrumb-->
+                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                        <!--begin::Item-->
+                        <li class="breadcrumb-item text-muted">
+                            <a href="../../../index.html" class="text-muted text-hover-primary">
+                                Home </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                        </li>
+                        <li class="breadcrumb-item text-muted">
+                            Danh sách nhãn dán sản phẩm </li>
+                    </ul>
                 </div>
-                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="{{ route('admin.product-labels.create') }}" class="btn btn-danger">
-                        Thêm nhãn
-                    </a>
+                <div class="d-flex align-items-center gap-2 gap-lg-3" bis_skin_checked="1">
+                    <div class="m-0" bis_skin_checked="1">
+                        <a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click"
+                            data-kt-menu-placement="bottom-end">
+                            <i class="fa-solid fa-filter fs-6 text-muted me-1"><span class="path1"></span><span
+                                    class="path2"></span></i>
+                            Filter
+                        </a>
+                    </div>
+                    <a href="{{ route('admin.product-labels.create') }}" class="btn btn-sm fw-bold btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">
+                        Thêm nhãn </a>
                 </div>
             </div>
         </div>
@@ -49,7 +78,14 @@
                                         <td>
                                             <span class="badge badge-light-info">{{ $label->position }}</span>
                                         </td>
-                                        <td>{{ $label->product->name ?? 'Không có' }}</td>
+                                        <td>
+                                            @forelse ($label->products as $product)
+                                                <span class="badge badge-light-primary">{{ $product->name }}</span>
+                                            @empty
+                                                <span class="text-muted">Không có</span>
+                                            @endforelse
+                                        </td>
+
                                         <td>{{ $label->created_at->format('H:i:s d/m/Y') }}</td>
                                         <td class="text-end">
                                             <div class="dropdown">
@@ -66,7 +102,8 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <form action="{{ route('admin.product-labels.destroy', $label->id) }}"
+                                                        <form
+                                                            action="{{ route('admin.product-labels.destroy', $label->id) }}"
                                                             method="POST" onsubmit="return confirm('Xoá nhãn này?')">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger">

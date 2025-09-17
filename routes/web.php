@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AiChatAssistantController;
 use App\Http\Controllers\Admin\BadWordController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Client\HomeController;
@@ -35,6 +36,8 @@ use App\Http\Controllers\Client\CouponController as ClientCouponController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\WishlistController as ClientWishlistController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\SupportTicketController;
+use App\Http\Controllers\Client\SupportTicketThreadController;
 
 
 
@@ -65,6 +68,9 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\OrderAdjustmentController;
+use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
 use App\Http\Controllers\Admin\ShippingZoneController;
@@ -73,7 +79,15 @@ use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
+use App\Http\Controllers\Admin\ReturnRequestItemController;
+use App\Http\Controllers\Admin\ReturnRequestItemActionController;
+
+
+use App\Jobs\CheckLowStockJob;
+use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Admin\SupportTicketController as AdminTicket;
 
 // GHI ĐÈ route đăng ký Fortify
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
@@ -83,80 +97,166 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // GHI ĐÈ route đăng nhập Fortify
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-
 // ========== PUBLIC CLIENT ROUTES ==========
 Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])
     ->name('client.checkout.calculate-shipping-fee');
-Route::prefix('/')->name('client.')->group(function () {
-    Route::controller(HomeController::class)->group(function () {
-        Route::get('/', 'index')->name('home');
-        Route::get('/policy', 'policy')->name('policy');
-        Route::get('/faq', 'faq')->name('faq');
-    });
+// Route::middleware(['web', 'traffic'])->group(function () {
+//     Route::prefix('/')->name('client.')->group(function () {
+//         Route::controller(HomeController::class)->group(function () {
+//             Route::get('/', 'index')->name('home');
+//             Route::get('/policy', 'policy')->name('policy');
+//             Route::get('/faq', 'faq')->name('faq');
+//         });
 
-    Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
+//         Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
 
-    });
+//         });
 
-    Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
+//         Route::get('/shipping-fee/calculate', [CheckoutController::class, 'calculateShippingFee'])->name('shipping.fee');
 
-    Route::controller(ClientProductController::class)
-        ->prefix('products')
-        ->name('products.')
-        ->group(function () {
+//         Route::controller(ClientProductController::class)
+//             ->prefix('products')
+//             ->name('products.')
+//             ->group(function () {
+//                 Route::get('/', 'index')->name('index');
+//                 Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+//                 Route::get('/search', 'search')->name('search');
+//                 Route::get('/search/suggest', 'suggest')->name('suggest');
+//                 Route::get('{slug}', 'show')->name('show');
+//             });
+//         Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
+
+//         });
+
+//         Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::get('/{blog}', 'show')->name('show');
+//         });
+//         Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
+//         Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+
+//         Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
+//         Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
+
+//         Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::get('/show', 'show')->name('show');
+//         });
+//         Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//             Route::post('/place-order', 'placeOrder')->name('place-order');
+//         });
+
+//         Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+
+
+//         Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+//             Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+//             Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+//             Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
+//         });
+
+//         Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+//             Route::get('/', 'index')->name('index');
+//         });
+
+
+//         Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+
+//         // Mua lại đơn hàng    
+//         Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
+//             ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
+//             ->name('orders.reorderData');
+//     });
+// });
+Route::middleware(['web', 'traffic'])->group(function () {
+    Route::prefix('/')->name('client.')->group(function () {
+        // Home
+        Route::controller(HomeController::class)->group(function () {
+            Route::get('/', 'index')->name('home');
+            Route::get('/policy', 'policy')->name('policy');
+            Route::get('/faq', 'faq')->name('faq');
+        });
+
+        // Contact
+        Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/filter', 'filter')->name('filterSidebar'); // ✅ Đúng
+            Route::post('/', 'store')->name('store');
+        });
+
+        // Products
+        Route::controller(ClientProductController::class)->prefix('products')->name('products.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/filter', 'filter')->name('filterSidebar');
             Route::get('/search', 'search')->name('search');
             Route::get('/search/suggest', 'suggest')->name('suggest');
             Route::get('{slug}', 'show')->name('show');
         });
-    Route::controller(ClientContactController::class)->prefix('contact')->name('contact.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');       // Xử lý gửi liên hệ
 
+        // Blog
+        Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{blog}', 'show')->name('show');
+        });
+        Route::post('/blog/{blog}/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comment.store');
+        Route::delete('/blog/{blog}/comments/{comment}', [ClientBlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
+
+        Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/show', 'show')->name('show');
+        });
+        Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/place-order', 'placeOrder')->name('place-order');
+        });
+        Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+        // Category
+        Route::controller(ClientCategoryController::class)->prefix('category')->name('category.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+        });
+
+        // Cart
+        Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/show', 'show')->name('show');
+        });
+
+        // Checkout
+        Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/place-order', 'placeOrder')->name('place-order');
+        });
+        Route::get('/order-success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+        // Account Orders
+        Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
+            Route::get('/', [ClientOrderController::class, 'index'])->name('index');
+            Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
+            Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
+        });
+
+        // FAQ
+        Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
+
+        // Review
+        Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
+
+        // Reorder
+        Route::get('/orders/{order}/reorder-data', [ClientOrderController::class, 'reorderData'])
+            ->middleware('auth')
+            ->name('orders.reorderData');
     });
-
-    Route::controller(ClientBlogController::class)->prefix('blog')->name('blog.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{blog}', 'show')->name('show');
-    });
-    Route::post('/blog/{blog}/comments', [BlogCommentController::class, 'store'])->name('blog.comment.store');
-    Route::delete('/blog/{blog}/comments/{comment}', [BlogCommentController::class, 'destroy'])->name('blog.comment.destroy');
-
-    Route::get('/category/{id}', [ClientCategoryController::class, 'show'])->name('category.show');
-    Route::get('/category', [ClientCategoryController::class, 'index'])->name('category.index');
-
-    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/show', 'show')->name('show');
-    });
-    Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/place-order', 'placeOrder')->name('place-order');
-    });
-Route::get('/order-success', [\App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
-
-
-    Route::middleware(['auth'])->prefix('account')->name('orders.')->group(function () {
-        Route::get('/', [ClientOrderController::class, 'index'])->name('index');
-        Route::patch('/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('cancel');
-        Route::get('/order-tracking/{order}', [ClientOrderController::class, 'show'])->name('tracking.show');
-    });
-
-    Route::controller(ClientFaqController::class)->prefix('faq')->name('faq.')->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
-
-
-    Route::post('/review', [ClientReviewController::class, 'store'])->middleware('auth')->name('review');
-
-    // Mua lại đơn hàng    
-    Route::get('/orders/{order}/reorder-data', [\App\Http\Controllers\Client\OrderController::class, 'reorderData'])
-        ->middleware('auth') // chỉ cho user đã login mới được lấy lại đơn hàng
-        ->name('orders.reorderData');
 });
+Route::get('/admin/sales-report/data', [DashboardController::class, 'salesReport'])
+    ->middleware(['auth', AdminMiddleware::class])
+    ->name('admin.sales-report.data');
 
 // // 👇 Không nằm trong nhóm 'client.' để tránh trùng lặp
 // Route::middleware(['auth'])->prefix('account/orders')->name('client.orders.')->group(function () {
@@ -258,10 +358,38 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/aichat', [AiChatAssistantController::class, 'index'])->name('aichat');
+        Route::post('/aichat/ask', [AiChatAssistantController::class, 'ask'])->name('aichat.ask');
+
         // 1. Mở giao diện tạo đơn hàng từ yêu cầu đổi
         // GET – mở form tạo đơn hàng đổi
         Route::get('return-requests/{id}/exchange-form', [AdminReturnRequestController::class, 'showExchangeForm'])
             ->name('return-requests.exchange.form');
+        Route::put(
+            'return-requests/items/{id}/variant',
+            [ReturnRequestItemController::class, 'setVariant']
+        )->name('return-requests.items.set-variant');
+        // ---- Return Request Items: ACTIONS (exchange / refund / reject) ----
+        Route::prefix('return-requests/items')->name('return-requests.items.')->group(function () {
+            // Đổi SKU cho item (giữ như bạn đã khai báo ở trên)
+            Route::put('{id}/variant', [ReturnRequestItemController::class, 'setVariant'])
+                ->name('set-variant');
+
+            // Thêm 1 action cho item (dùng trong 3 modal: +Đổi, +Hoàn, +Từ chối)
+            // POST /admin/return-requests/items/{item}/actions
+            Route::post('{item}/actions', [ReturnRequestItemActionController::class, 'store'])
+                ->name('actions.store');
+
+            // (Tuỳ chọn) Cập nhật action đã tạo (đổi variant, đổi qty/amount/note)
+            // PUT /admin/return-requests/items/actions/{action}
+            Route::put('actions/{action}', [ReturnRequestItemActionController::class, 'update'])
+                ->name('actions.update');
+
+            // Xoá action
+            // DELETE /admin/return-requests/items/actions/{action}
+            Route::delete('actions/{action}', [ReturnRequestItemActionController::class, 'destroy'])
+                ->name('actions.destroy');
+        });
 
         // POST – submit form tạo đơn hàng đổi
         Route::post('return-requests/{id}/exchange', [AdminReturnRequestController::class, 'createExchangeOrder'])
@@ -281,7 +409,8 @@ Route::prefix('admin')
         Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
         Route::resource('products', ProductController::class);
-
+        // AJAX helper cho màn tạo đơn (địa chỉ theo user)
+        Route::get('/ajax/users/{user}/addresses', [OrderController::class, 'addresses'])->name('ajax.user.addresses');
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);
 
@@ -303,8 +432,15 @@ Route::prefix('admin')
         Route::post('/users/{id}/adjust-balance', [UserController::class, 'adjustBalance'])->name('users.adjustBalance');
 
 
-
-
+        Route::prefix('return-requests')->name('return-requests.')->group(function () {
+            Route::post('{id}/approve', [AdminReturnRequestController::class, 'approve'])->name('approve');
+            Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
+            Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
+        });
+        // Route::put('/return-requests/items/{id}', [ReturnRequestItemController::class, 'update'])
+        //     ->name('return-requests.items.update');
+        Route::post('/return-requests/{id}/exchange', [ReturnRequestItemController::class, 'handleExchange'])
+            ->name('return-requests.exchange');
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
         Route::resource('badwords', BadWordController::class);
@@ -386,10 +522,34 @@ Route::prefix('admin')
         Route::post('/orders/{order}/reject-return', [OrderController::class, 'rejectReturn'])->name('orders.reject_return');
         Route::patch('/orders/{order}/approve-cancel', [OrderController::class, 'approveCancel'])->name('orders.approve_cancel');
         Route::patch('/orders/{order}/reject-cancel', [OrderController::class, 'rejectCancel'])->name('orders.reject_cancel');
+        Route::post('/orders/{id}/ghn-note', [OrderController::class, 'updateGhnNote'])->name('orders.updateGhnNote');
+        Route::get('/orders/{id}/print-label', [OrderController::class, 'printShippingLabel'])->name('orders.print-label'); // 👈 in vận đơn
         //Inventory
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
+
+        // Hỗ trợ
+        Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
+        Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
+        Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
+
+        Route::post('/orders/{order}/adjustments', [OrderAdjustmentController::class, 'store'])->name('orders.adjustments.store');
+        Route::delete('/orders/adjustments/{adj}', [OrderAdjustmentController::class, 'destroy'])->name('orders.adjustments.destroy');
+
+        Route::post('/orders/{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
+        Route::delete('/orders/payments/{payment}', [PaymentController::class, 'destroy'])->name('orders.payments.destroy');
+
+        Route::post(
+            '/admin/return-requests/{rr}/exchange',
+            [ReturnRequestController::class, 'createExchange']
+        )->name('admin.return-requests.exchange');
+        Route::post(
+            '/return-requests/{rr}/exchange',
+            [ReturnRequestController::class, 'createExchange']
+        )->name('return-requests.exchange')
+            ->middleware('throttle:5,1');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -454,5 +614,38 @@ Route::get('/checkout/momo/redirect', [CheckoutController::class, 'handleMomoRed
     ->name('client.checkout.momo-redirect');
 
 
-    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
+Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Client\OrderController::class, 'downloadInvoice'])
     ->name('client.orders.invoice');
+
+
+
+Route::patch('/variants/{variant}/toggle', [ProductVariantController::class, 'toggleStatus'])
+    ->name('variants.toggle')
+    ->middleware('auth');
+
+Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy'])
+    ->name('variants.destroy')
+    ->middleware('auth');
+
+
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/support/tickets', [SupportTicketController::class, 'index'])
+        ->name('support.tickets.index');
+    Route::get('/support/tickets/create', [SupportTicketController::class, 'create'])
+        ->name('support.tickets.create');
+    Route::post('/support/tickets', [SupportTicketController::class, 'store'])
+        ->name('support.tickets.store');
+
+    Route::get('/support/tickets/{ticket}', [SupportTicketThreadController::class, 'show'])
+        ->name('support.tickets.thread.show');
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketThreadController::class, 'reply'])
+        ->name('support.tickets.thread.reply');
+    Route::get('/cron/check-notification-telegram', function () {
+        dispatch(new CheckTelegramJob());
+        return "✅ Low stock job dispatched at " . now();
+    });
+});
+});

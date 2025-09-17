@@ -642,7 +642,7 @@
                                                     <label class="required form-label">Giá bán</label>
                                                     <input type="number" name="base_price" class="form-control"
                                                         value="{{ old('base_price', $product->base_price ?? 0) }}"
-                                                        min="0" step="0.01">
+                                                        min="1" step="0.01">
                                                     @error('base_price')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
@@ -855,6 +855,34 @@
                                                 <div id="image-preview-container" class="d-flex flex-wrap gap-4 mt-4">
                                                 </div>
                                             </div>
+                                            {{-- Ảnh bảng size --}}
+<div class="mt-4">
+  <label class="form-label">Ảnh bảng size</label>
+  <input type="file" name="size_chart" id="size-chart-input"
+         class="form-control mb-3" accept=".png,.jpg,.jpeg,.webp">
+
+  <div class="d-flex gap-4 align-items-start">
+    {{-- Ảnh size chart đã lưu --}}
+    @if($product->size_chart)
+      <div id="size_chart_box"
+           class="position-relative rounded border p-1 shadow-sm"
+           style="width:120px;height:120px;">
+        <img src="{{ asset('storage/'.$product->size_chart) }}"
+             class="rounded w-100 h-100 object-fit-cover" alt="Size chart">
+        <button type="button"
+                class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                onclick="removeSizeChart()" title="Xoá ảnh này">&times;</button>
+      </div>
+    @endif
+
+    {{-- Preview ảnh mới chọn --}}
+    <div id="size-chart-preview-container" class="d-flex flex-wrap gap-4"></div>
+  </div>
+
+  {{-- Cờ xoá ảnh cũ --}}
+  <input type="hidden" name="remove_size_chart" id="remove_size_chart" value="0">
+</div>
+
 
                                         </div>
                                     </div>
@@ -1000,8 +1028,9 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-row-dashed table-bordered table-rounded border-gray-300">
+                                    <div class="table-responsive" style="overflow-x:auto;">
+    <table class="table table-row-dashed table-bordered table-rounded border-gray-300"
+           style="min-width:1100px; table-layout:auto;">
                                             <thead class="fw-bold text-gray-700 bg-light">
                                                 <tr>
                                                     <th>Thuộc tính</th>
@@ -1012,7 +1041,7 @@
                                                     <th>Dài (cm)</th>
                                                     <th>Rộng (cm)</th>
                                                     <th>Cao (cm)</th>
-                                                    <th class="text-center">Xóa</th>
+                                                    <th class="text-center">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="pf_variant_list"></tbody>
@@ -1081,6 +1110,7 @@
 
     <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         window.oldAttributeGroups = @json($attributeGroups);
@@ -1104,6 +1134,10 @@
             toolbarCanCollapse: true
         });
     </script>
+
+
+
+
 
 
     <script>
@@ -1191,9 +1225,9 @@
 
 
         const PF_ATTRIBUTE_SUGGESTIONS = {
-            "Màu sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng"],
+            "Màu Sắc": ["Đỏ", "Cam", "Vàng", "Xanh lá", "Xanh dương", "Tím", "Hồng"],
             "Size": ["XS", "S", "M", "L", "XL", "XXL"],
-            "Giới tính": ["Nam", "Nữ", "Unisex"]
+            "Giới Tính": ["Nam", "Nữ", "Unisex"]
         };
 
         let pfAttributeIndex = 0;
@@ -1206,418 +1240,645 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const oldGroups = window.oldAttributeGroups || [];
-            const oldVariants = window.oldVariants || [];
+  const oldGroups = window.oldAttributeGroups || [];
+  const oldVariants = window.oldVariants || [];
 
-            oldGroups.forEach(group => {
-                const groupId = `pf_group_${pfAttributeIndex}`;
-                pfAttributeGroups[groupId] = {
-                    name: group.name,
-                    values: group.values || []
-                };
-                pfRenderAttributeGroup(groupId, group.name, group.values);
-                pfAttributeIndex++;
-            });
+  // ✅ Nhóm phân loại cũ = readonly, khoá các value hiện có
+  oldGroups.forEach(group => {
+    const groupId = `pf_group_${pfAttributeIndex}`;
+    pfAttributeGroups[groupId] = {
+      name: group.name,
+      values: group.values || [],
+      readonly: true,                                 // <-- nhóm cũ
+      lockedValues: new Set(group.values || [])       // <-- value cũ (không hiện icon xoá)
+    };
+    pfRenderAttributeGroup(groupId, group.name, group.values);
+    pfAttributeIndex++;
+  });
 
-            if (oldVariants.length > 0) {
-                const tbody = document.getElementById("pf_variant_list");
-                tbody.innerHTML = "";
 
-                oldVariants.forEach((variant, i) => {
-                    const row = document.createElement("tr");
+    // Khởi tạo biến thể cũ
+    // Khởi tạo biến thể cũ
+if (oldVariants.length > 0) {
+    const tbody = document.getElementById("pf_variant_list");
+    tbody.innerHTML = "";
 
-                    const tdAttr = document.createElement("td");
-                    Object.entries(variant.attribute_map).forEach(([name, value]) => {
-                        const div = document.createElement("div");
-                        div.textContent = `${name}: ${value}`;
-                        const hidden = document.createElement("input");
-                        hidden.type = "hidden";
-                        hidden.name = `variants[${i}][attributes][${name}]`;
-                        hidden.value = value;
-                        tdAttr.appendChild(div);
-                        tdAttr.appendChild(hidden);
-                    });
+    oldVariants.forEach((variant, i) => {
+        const row = document.createElement("tr");
 
-                    const tdPrice = document.createElement("td");
-                    tdPrice.innerHTML =
-                        `<input type="number" name="variants[${i}][price]" class="form-control" value="${variant.price}">`;
+        // --- Cột thuộc tính
+        const tdAttr = document.createElement("td");
+        const attrSignature = [];
 
-                    const tdQty = document.createElement("td");
-                    tdQty.innerHTML =
-                        `<input type="number" name="variants[${i}][quantity]" class="form-control" value="${variant.quantity}">`;
+        Object.entries(variant.attribute_map).forEach(([name, value]) => {
+            const div = document.createElement("div");
+            div.textContent = `${name}: ${value}`;
 
-                    const tdSku = document.createElement("td");
-                    tdSku.innerHTML =
-                        `<input type="text" name="variants[${i}][sku]" class="form-control" value="${variant.sku}">`;
-                    const tdWeight = document.createElement("td");
-                    tdWeight.innerHTML =
-                        `<input type="number" name="variants[${i}][weight]" class="form-control" value="${variant.weight ?? ''}">`;
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = `variants[${i}][attributes][${name}]`;
+            hidden.value = value;
+            hidden.dataset.attr = "1";       // 🔥 thêm để pfRenderVariants nhận diện
+            hidden.dataset.group = name;     // 🔥 khớp key signature
 
-                    const tdLength = document.createElement("td");
-                    tdLength.innerHTML =
-                        `<input type="number" name="variants[${i}][length]" class="form-control" value="${variant.length ?? ''}">`;
-
-                    const tdWidth = document.createElement("td");
-                    tdWidth.innerHTML =
-                        `<input type="number" name="variants[${i}][width]" class="form-control" value="${variant.width ?? ''}">`;
-
-                    const tdHeight = document.createElement("td");
-                    tdHeight.innerHTML =
-                        `<input type="number" name="variants[${i}][height]" class="form-control" value="${variant.height ?? ''}">`;
-
-                    const tdDelete = document.createElement("td");
-                    tdDelete.innerHTML =
-                        `
-                                                                                                                                                                                                                                    <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
-                                                                                                                                                                                                                                        <i class="bi bi-trash text-danger fs-5"></i>
-                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                    `;
-
-                    row.appendChild(tdAttr);
-                    row.appendChild(tdPrice);
-                    row.appendChild(tdQty);
-                    row.appendChild(tdSku);
-                    row.appendChild(tdWeight);
-                    row.appendChild(tdLength);
-                    row.appendChild(tdWidth);
-                    row.appendChild(tdHeight);
-                    row.appendChild(tdDelete);
-
-                    tbody.appendChild(row);
-                });
-
-                document.getElementById("pf_variant_section").style.display = "block";
-                calculateTotalStock();
-
-            } else {
-                pfRenderVariants();
-            }
-
-            document.getElementById("pf_add_attribute_group")?.addEventListener("click", pfAddAttributeGroup);
-            document.addEventListener('input', function(e) {
-                if (e.target && e.target.name && e.target.name.includes('[quantity]')) {
-                    calculateTotalStock();
-                }
-            });
+            tdAttr.appendChild(div);
+            tdAttr.appendChild(hidden);
+            attrSignature.push(`${name}:${value}`);
         });
 
-        function pfAddAttributeGroup() {
-            const groupId = `pf_group_${pfAttributeIndex}`;
-            pfAttributeGroups[groupId] = {
-                name: '',
-                values: []
-            };
-            pfRenderAttributeGroup(groupId);
-            pfAttributeIndex++;
+        // Hidden ID
+        if (variant.id) {
+            const hiddenId = document.createElement("input");
+            hiddenId.type = "hidden";
+            hiddenId.name = `variants[${i}][id]`;
+            hiddenId.value = variant.id;
+            tdAttr.appendChild(hiddenId);
         }
 
-        function pfRenderAttributeGroup(groupId, selectedName = '', selectedValues = []) {
-            const wrapper = document.getElementById("pf_attribute_groups_wrapper");
-            const div = document.createElement("div");
-            div.className = "bg-light rounded p-4 border position-relative mb-4";
-            div.id = groupId;
+        // Hidden has_orders
+        const hiddenOrders = document.createElement("input");
+        hiddenOrders.type = "hidden";
+        hiddenOrders.name = `variants[${i}][has_orders]`;
+        hiddenOrders.value = variant.has_orders ? "1" : "0";
+        tdAttr.appendChild(hiddenOrders);
 
-            div.innerHTML =
-                `
-                                                                                                                                                                                                                                            <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" onclick="pfRemoveAttributeGroup('${groupId}')"></button>
-                                                                                                                                                                                                                                            <div class="mb-3 d-flex align-items-center gap-3">
-                                                                                                                                                                                                                                                <label class="form-label fw-bold mb-0" style="min-width: 90px;">Phân loại</label>
-                                                                                                                                                                                                                                                <input type="text" class="form-control w-50 pf-attribute-name-input" />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div class="mb-1">
-                                                                                                                                                                                                                                                <label class="form-label fw-bold">Tuỳ chọn</label>
-                                                                                                                                                                                                                                                <div id="${groupId}_tags" class="pf-attribute-option-container d-flex flex-wrap gap-2 align-items-center"></div>
-                                                                                                                                                                                                                                                <div class="form-text text-muted">Nhập và nhấn Enter hoặc chọn từ gợi ý</div>
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <input type="hidden" name="attributeGroups[]" value="${selectedName}">
-                                                                                                                                                                                                                                        `;
-
-            wrapper.appendChild(div);
-
-            const input = div.querySelector(".pf-attribute-name-input");
-
-            const usedNames = Object.values(pfAttributeGroups)
-                .map(g => g.name)
-                .filter(name => name && name !== selectedName); // Tránh tự disable chính mình khi edit
-
-            const options = Object.keys(PF_ATTRIBUTE_SUGGESTIONS).map(name => ({
-                value: name,
-                text: name,
-                disabled: usedNames.includes(name)
-            }));
-
-            const ts = new TomSelect(input, {
-                create: true,
-                maxItems: 1,
-                mode: "input",
-                options: options,
-                placeholder: "Chọn hoặc nhập phân loại",
-                onInitialize() {
-                    if (selectedName) {
-                        this.addOption({
-                            value: selectedName,
-                            text: selectedName
-                        });
-                        this.setValue(selectedName);
-                    }
-                },
-                onChange: val => {
-                    pfAttributeGroups[groupId].name = val;
-                    div.querySelector('input[type=hidden]').value = val;
-                    pfRenderTags(groupId);
-                    pfRenderVariants();
-                }
-            });
-
-            pfAttributeGroups[groupId].values = selectedValues;
-            pfRenderTags(groupId);
-        }
-
-        function pfRenderTags(groupId) {
-            const container = document.getElementById(`${groupId}_tags`);
-            container.innerHTML = "";
-
-            const selected = pfAttributeGroups[groupId].values || [];
-            const list = document.createElement("div");
-            list.className = "d-flex flex-wrap gap-2 align-items-center";
-
-            selected.forEach(val => {
-                const tag = document.createElement("div");
-                tag.className = "d-inline-flex align-items-center bg-white border rounded p-2";
-
-                const input = document.createElement("input");
-                input.type = "text";
-                input.className = "form-control form-control-sm border-0 p-0";
-                input.style.background = "transparent";
-                input.value = val;
-                input.readOnly = true;
-
-                const trash = document.createElement("i");
-                trash.className = "bi bi-trash text-danger ms-2 cursor-pointer";
-                trash.onclick = () => pfRemoveTag(groupId, val);
-
-                tag.appendChild(input);
-                tag.appendChild(trash);
-                list.appendChild(tag);
-            });
-
-            container.appendChild(list);
-
-            const input = document.createElement("input");
-            container.appendChild(input);
-
-            const ts = new TomSelect(input, {
-                create: true,
-                maxItems: 1,
-                persist: false,
-                options: selected.map(val => ({
-                    value: val,
-                    text: val
-                })),
-                onItemAdd(value) {
-                    if (!pfAttributeGroups[groupId].values.includes(value)) {
-                        pfAttributeGroups[groupId].values.push(value);
-                        pfRenderTags(groupId);
-                        pfRenderVariants();
-                    }
-                    ts.clear();
-                },
-                onBlur() {
-                    const val = ts.getValue().trim();
-                    if (val && !pfAttributeGroups[groupId].values.includes(val)) {
-                        ts.addOption({
-                            value: val,
-                            text: val
-                        });
-                        ts.addItem(val);
-                    } else {
-                        ts.clear();
-                    }
-                }
-            });
-
-            const suggest = PF_ATTRIBUTE_SUGGESTIONS[pfAttributeGroups[groupId].name] || window.allAttributeValues?.[
-                pfAttributeGroups[groupId].name
-            ] || [];
-            if (suggest.length > 0) {
-                ts.addOptions(suggest.map(val => ({
-                    value: val,
-                    text: val
-                })));
-            }
-
-            // Remove old hidden input nếu tồn tại
-            const oldHiddenInput = container.querySelector(`input[name="attributeValues[${groupId}]"]`);
-            if (oldHiddenInput) oldHiddenInput.remove();
-
-            // Tạo hidden input lưu các giá trị tuỳ chọn của phân loại
-            const hiddenValues = document.createElement("input");
-            hiddenValues.type = "hidden";
-            hiddenValues.name = `attributeValues[${groupId}]`; // Key này dùng trong Laravel
-            hiddenValues.value = JSON.stringify(pfAttributeGroups[groupId].values || []);
-            container.appendChild(hiddenValues);
-
-        }
+        // --- Các input chi tiết
+        const tdPrice = document.createElement("td");
+        tdPrice.innerHTML =
+        `<input type="number" name="variants[${i}][price]" 
+                class="form-control"
+                value="${parseInt(variant.price)}"
+                min="1" step="1" required
+                style="display:inline-block;width:auto;min-width:70px;">`;
 
 
-        function pfRenderVariants() {
-            const tbody = document.getElementById("pf_variant_list");
-            if (!tbody) return;
+        const tdQty = document.createElement("td");
+        tdQty.innerHTML =
+            `<input type="number" name="variants[${i}][quantity]" class="form-control" value="${variant.quantity}" min="0" required style="width:70px;">`;
 
-            // 1. Lưu lại dữ liệu cũ
-            const oldData = {};
-            document.querySelectorAll("#pf_variant_list tr").forEach((row) => {
-                const attrs = Array.from(row.querySelectorAll("input[type=hidden]"))
-                    .map(input => `${input.name}:${input.value}`)
-                    .sort()
-                    .join("|");
-                const price = row.querySelector('input[name$="[price]"]')?.value || '0';
-                const quantity = row.querySelector('input[name$="[quantity]"]')?.value || '0';
-                const sku = row.querySelector('input[name$="[sku]"]')?.value || '';
-                oldData[attrs] = {
-                    price: row.querySelector('input[name$="[price]"]')?.value || '0',
-                    quantity: row.querySelector('input[name$="[quantity]"]')?.value || '0',
-                    sku: row.querySelector('input[name$="[sku]"]')?.value || '',
-                    weight: row.querySelector('input[name$="[weight]"]')?.value || '',
-                    length: row.querySelector('input[name$="[length]"]')?.value || '',
-                    width: row.querySelector('input[name$="[width]"]')?.value || '',
-                    height: row.querySelector('input[name$="[height]"]')?.value || '',
-                };
-            });
-
-            tbody.innerHTML = "";
-
-            const keys = Object.keys(pfAttributeGroups).filter(id => pfAttributeGroups[id].name && pfAttributeGroups[id]
-                .values.length);
-
-            const stockInput = document.getElementById("stock_quantity");
-            const hiddenStockInput = document.getElementById("hidden_stock_quantity");
-
-            if (keys.length === 0) {
-                // ✅ Nếu không có biến thể → mở lại tồn kho, không reset giá trị
-                if (stockInput) {
-                    stockInput.readOnly = false;
-                    stockInput.disabled = false;
-                }
-
-                if (hiddenStockInput) {
-                    hiddenStockInput.value = stockInput?.value || '';
-                }
-
-                // Ẩn bảng biến thể
-                document.getElementById("pf_variant_section").style.display = "none";
-                document.getElementById("pf_apply_all_wrapper").style.display = "none";
-
-                return;
-            }
-
-            const combinations = cartesian(keys.map(id => pfAttributeGroups[id].values.map(val => ({
-                groupName: pfAttributeGroups[id].name,
-                value: val
-            }))));
-
-            combinations.forEach((combo, i) => {
-                const row = document.createElement("tr");
-
-                const tdAttr = document.createElement("td");
-                const attrSignature = [];
-
-                combo.forEach(opt => {
-                    const text = document.createElement("div");
-                    text.textContent = `${opt.groupName}: ${opt.value}`;
-
-                    const hidden = document.createElement("input");
-                    hidden.type = "hidden";
-                    hidden.name = `variants[${i}][attributes][${opt.groupName}]`;
-                    hidden.value = opt.value;
-
-                    attrSignature.push(`${hidden.name}:${hidden.value}`);
-
-                    tdAttr.appendChild(text);
-                    tdAttr.appendChild(hidden);
-                });
-
-                const signatureKey = attrSignature.sort().join("|");
-                const existing = oldData[signatureKey] || {
-                    price: '0',
-                    quantity: '0',
-                    sku: ''
-                };
-
-                const tdPrice = document.createElement("td");
-                tdPrice.innerHTML =
-                    `
-                                                                                                                                                                                                                                                <input type="number"
-                                                                                                                                                                                                                                                       name="variants[${i}][price]"
-                                                                                                                                                                                                                                                       class="form-control"
-                                                                                                                                                                                                                                                       value="${existing.price !== '0' ? existing.price : ''}"
-                                                                                                                                                                                                                                                       min="1"
-                                                                                                                                                                                                                                                       required>
-                                                                                                                                                                                                                                            `;
-
-                const tdQty = document.createElement("td");
-                tdQty.innerHTML =
-                    `
-                                                                                                                                                                                                                                                <input type="number"
-                                                                                                                                                                                                                                                       name="variants[${i}][quantity]"
-                                                                                                                                                                                                                                                       class="form-control"
-                                                                                                                                                                                                                                                       value="${existing.quantity !== '0' ? existing.quantity : ''}"
-                                                                                                                                                                                                                                                       min="1"
-                                                                                                                                                                                                                                                       required>
-                                                                                                                                                                                                                                            `;
-
-                const tdSku = document.createElement("td");
-                tdSku.innerHTML =
-                    `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
-
-                const tdWeight = document.createElement("td");
-                tdWeight.innerHTML =
-                    `<input type="number" name="variants[${i}][weight]" class="form-control" value="${existing.weight ?? ''}" placeholder="gram">`;
-
-                const tdLength = document.createElement("td");
-                tdLength.innerHTML =
-                    `<input type="number" name="variants[${i}][length]" class="form-control" value="${existing.length ?? ''}" placeholder="cm">`;
-
-                const tdWidth = document.createElement("td");
-                tdWidth.innerHTML =
-                    `<input type="number" name="variants[${i}][width]" class="form-control" value="${existing.width ?? ''}" placeholder="cm">`;
-
-                const tdHeight = document.createElement("td");
-                tdHeight.innerHTML =
-                    `<input type="number" name="variants[${i}][height]" class="form-control" value="${existing.height ?? ''}" placeholder="cm">`;
-
-                const tdDelete = document.createElement("td");
-                tdDelete.innerHTML =
-                    `
-                    <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger" onclick="removeVariantRow(this)">
-                   <i class="bi bi-trash text-danger fs-5"></i>
-                   </button>
-                                                                                                                                                                                                                                            `;
-                row.appendChild(tdAttr);
-                row.appendChild(tdPrice);
-                row.appendChild(tdQty);
-                row.appendChild(tdSku);
-                row.appendChild(tdWeight);
-                row.appendChild(tdLength);
-                row.appendChild(tdWidth);
-                row.appendChild(tdHeight);
-                row.appendChild(tdDelete);
+        const tdSku = document.createElement("td");
+    tdSku.innerHTML =
+        `<input type="text" name="variants[${i}][sku]" 
+                class="form-control"
+                value="${variant.sku || ''}"
+                style="display:inline-block;width:auto;min-width:70px;">`;
 
 
-                tbody.appendChild(row);
-            });
+        const tdWeight = document.createElement("td");
+tdWeight.innerHTML =
+  `<input type="number" name="variants[${i}][weight]"
+     class="form-control" value="${variant.weight ?? ''}"
+     placeholder="gram" step="0.01" min="0" inputmode="decimal"
+     style="width:70px;">`;
 
-            // ✅ Có biến thể → khóa tồn kho và cập nhật tổng số lượng
-            if (stockInput) {
-                stockInput.readOnly = true;
-                stockInput.disabled = true;
-            }
+const tdLength = document.createElement("td");
+tdLength.innerHTML =
+  `<input type="number" name="variants[${i}][length]"
+     class="form-control" value="${variant.length ?? ''}"
+     placeholder="cm" step="0.01" min="0" inputmode="decimal"
+     style="width:70px;">`;
 
-            document.getElementById("pf_variant_section").style.display = "block";
-            document.getElementById("pf_apply_all_wrapper").style.display = "block";
+const tdWidth = document.createElement("td");
+tdWidth.innerHTML =
+  `<input type="number" name="variants[${i}][width]"
+     class="form-control" value="${variant.width ?? ''}"
+     placeholder="cm" step="0.01" min="0" inputmode="decimal"
+     style="width:70px;">`;
 
+const tdHeight = document.createElement("td");
+tdHeight.innerHTML =
+  `<input type="number" name="variants[${i}][height]"
+     class="form-control" value="${variant.height ?? ''}"
+     placeholder="cm" step="0.01" min="0" inputmode="decimal"
+     style="width:70px;">`;
+
+
+        // --- Cột hành động
+const tdAction = document.createElement("td");
+if (variant.has_orders) {
+    // 🔥 Nếu có đơn hàng → chỉ cho bật/tắt
+    tdAction.innerHTML = `
+        <div class="form-check form-switch">
+            <input type="hidden" name="variants[${i}][is_active]" value="0">
+            <input type="checkbox" class="form-check-input"
+                   name="variants[${i}][is_active]" value="1"
+                   ${variant.is_active ? "checked" : ""}>
+        </div>`;
+} else {
+    // Nếu chưa có đơn hàng → cho phép xóa
+    tdAction.innerHTML = `
+        <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger"
+                onclick="removeVariantRow(this)">
+            <i class="bi bi-trash text-danger fs-5"></i>
+        </button>`;
+}
+
+
+        row.appendChild(tdAttr);
+        row.appendChild(tdPrice);
+        row.appendChild(tdQty);
+        row.appendChild(tdSku);
+        row.appendChild(tdWeight);
+        row.appendChild(tdLength);
+        row.appendChild(tdWidth);
+        row.appendChild(tdHeight);
+        row.appendChild(tdAction);
+
+
+
+         const priceInput = row.querySelector(`input[name="variants[${i}][price]"]`);
+    if (priceInput) autoGrowInput(priceInput, 4, 2);
+
+    const skuInput = row.querySelector(`input[name="variants[${i}][sku]"]`);
+    if (skuInput) autoGrowInput(skuInput, 4, 2);
+
+
+        tbody.appendChild(row);
+    });
+
+    document.getElementById("pf_variant_section").style.display = "block";
+    calculateTotalStock();
+} else {
+    pfRenderVariants();
+}
+
+
+    // Thêm nhóm mới
+    document.getElementById("pf_add_attribute_group")?.addEventListener("click", pfAddAttributeGroup);
+
+    // Lắng nghe thay đổi số lượng để update tổng tồn kho
+    document.addEventListener('input', function (e) {
+        if (e.target && e.target.name && e.target.name.includes('[quantity]')) {
             calculateTotalStock();
         }
+    });
+});
+
+// Hàm thêm nhóm phân loại
+function pfAddAttributeGroup() {
+  const groupId = `pf_group_${pfAttributeIndex++}`;
+  pfAttributeGroups[groupId] = { name: '', values: [], readonly: false, lockedValues: new Set() };
+  pfRenderAttributeGroup(groupId);
+}
+
+
+function normalizeGroupName(s='') {
+  // Trim + gộp space
+  s = (s || '').trim().replace(/\s+/g, ' ');
+  // Title Case (giữ nguyên dấu tiếng Việt)
+  return s.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+
+       function pfRenderAttributeGroup(groupId, selectedName = "", selectedValues = []) {
+  const wrapper = document.getElementById("pf_attribute_groups_wrapper");
+  if (!wrapper) { console.warn("[pf] wrapper not found"); return; }
+
+  // đảm bảo state tồn tại
+  pfAttributeGroups[groupId] = pfAttributeGroups[groupId] || { name: "", values: [], readonly: false, lockedValues: new Set() };
+  const state = pfAttributeGroups[groupId];
+  const isReadonly = !!state.readonly;
+
+  const div = document.createElement("div");
+  div.className = "bg-light rounded p-4 border position-relative mb-4";
+  div.id = groupId;
+
+  div.innerHTML = `
+    ${!isReadonly ? `
+      <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2"
+              onclick="pfRemoveAttributeGroup('${groupId}')"></button>` : ``}
+    <div class="mb-3 d-flex align-items-center gap-3">
+      <label class="form-label fw-bold mb-0" style="min-width:90px;">Phân loại</label>
+      <input type="text" class="form-control w-50 pf-attribute-name-input" >
+    </div>
+    <div class="mb-1">
+      <label class="form-label fw-bold">Tuỳ chọn</label>
+      <div id="${groupId}_tags" class="pf-attribute-option-container d-flex flex-wrap gap-2 align-items-center"></div>
+      <div class="form-text text-muted">Nhập và nhấn Enter hoặc chọn từ gợi ý</div>
+    </div>
+    <input type="hidden" name="attributeGroups[]" value="${selectedName || state.name || ""}">
+  `;
+
+  wrapper.appendChild(div);
+
+  const nameInput = div.querySelector(".pf-attribute-name-input");
+  // cập nhật state ban đầu
+  const initialName = normalizeGroupName(selectedName || state.name || "");
+  if (initialName) {
+    state.name = initialName;
+    nameInput.value = initialName;
+    div.querySelector('input[type=hidden][name="attributeGroups[]"]').value = initialName;
+  }
+
+  // Chỉ init TomSelect khi KHÔNG readonly và TomSelect có tồn tại
+  const canInitTs = !isReadonly && typeof TomSelect !== "undefined" && nameInput;
+
+  if (canInitTs) {
+    const usedNames = Object.values(pfAttributeGroups)
+      .map(g => g.name).filter(n => n && n !== initialName);
+
+    try {
+      new TomSelect(nameInput, {
+        // gõ tự do + gợi ý
+        create: (input) => {
+          const v = normalizeGroupName(input);
+          return v ? { value: v, text: v } : null;
+        },
+        maxItems: 1,
+        options: Object.keys(PF_ATTRIBUTE_SUGGESTIONS || {}).map(n => ({
+          value: n,
+          text: n,
+          disabled: usedNames.some(u => u?.toLowerCase() === n.toLowerCase())
+        })),
+        placeholder: "Nhập hoặc chọn phân loại (vd: Màu sắc, Size...)",
+        onInitialize() {
+          if (initialName) {
+            this.addOption({ value: initialName, text: initialName });
+            this.setValue(initialName, true);
+          }
+        },
+        onChange: (valRaw) => {
+          const val = normalizeGroupName(valRaw || "");
+          if (!val) return;
+
+          // chống trùng tên nhóm
+          const duplicated = Object.entries(pfAttributeGroups).some(([id, g]) =>
+            id !== groupId && (g?.name || "").toLowerCase() === val.toLowerCase()
+          );
+          if (duplicated) {
+            this.clear();
+            Swal?.fire?.({ icon: "error", title: "Tên phân loại bị trùng", text: "Hãy dùng tên khác." });
+            return;
+          }
+
+          state.name = val;
+          div.querySelector('input[type=hidden][name="attributeGroups[]"]').value = val;
+
+          // (tuỳ chọn) reset values khi đổi tên nhóm:
+          // state.values = [];
+
+          pfRenderTags(groupId);
+          pfRenderVariants();
+        }
+      });
+    } catch (e) {
+      console.error("[pf] TomSelect init error:", e);
+      // fallback: input thường
+      nameInput.addEventListener("change", () => {
+        const val = normalizeGroupName(nameInput.value || "");
+        state.name = val;
+        div.querySelector('input[type=hidden][name="attributeGroups[]"]').value = val;
+        pfRenderTags(groupId);
+        pfRenderVariants();
+      });
+    }
+  } else {
+    // fallback readonly hoặc thiếu TomSelect: dùng input thường
+    nameInput.addEventListener?.("change", () => {
+      const val = normalizeGroupName(nameInput.value || "");
+      state.name = val;
+      div.querySelector('input[type=hidden][name="attributeGroups[]"]').value = val;
+      pfRenderTags(groupId);
+      pfRenderVariants();
+    });
+  }
+
+  // giữ/ghi values
+  state.values = selectedValues.length ? selectedValues : (state.values || []);
+  pfRenderTags(groupId);
+}
+
+function norm(s='') {
+  return String(s).trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+// Helper: chuẩn hoá để so sánh (bỏ dấu + lowercase + trim)
+
+
+function pfRenderTags(groupId) {
+  const container = document.getElementById(`${groupId}_tags`);
+  if (!container) return;
+  container.innerHTML = "";
+
+  const state = pfAttributeGroups[groupId] || { name: '', values: [] };
+  const locked = state.lockedValues || new Set();
+  const groupName = state.name || '';
+  const values = Array.isArray(state.values) ? state.values : [];
+  const existingSet = new Set(values.map(norm)); // để chống trùng
+
+  // --- Render các tag đang có
+  const list = document.createElement("div");
+  list.className = "d-flex flex-wrap gap-2 align-items-center";
+
+  values.forEach(val => {
+    const tag = document.createElement("div");
+    tag.className = "d-inline-flex align-items-center bg-white border rounded p-2";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control form-control-sm border-0 p-0";
+    input.style.background = "transparent";
+    input.readOnly = true;
+    input.value = val;
+    tag.appendChild(input);
+
+    if (!locked.has(val)) {
+      const trash = document.createElement("i");
+      trash.className = "bi bi-trash text-danger ms-2 cursor-pointer";
+      trash.onclick = () => {
+        state.values = state.values.filter(v => v !== val);
+        pfRenderTags(groupId);
+        pfRenderVariants();
+      };
+      tag.appendChild(trash);
+    }
+    list.appendChild(tag);
+  });
+
+  container.appendChild(list);
+
+  // --- Ô nhập thêm tuỳ chọn
+  const inputOpt = document.createElement("input");
+  inputOpt.disabled = !groupName; // chưa chọn tên nhóm -> disable
+  container.appendChild(inputOpt);
+
+  const initWithTomSelect = typeof TomSelect !== "undefined";
+
+  if (initWithTomSelect) {
+    const tsOpt = new TomSelect(inputOpt, {
+      // gõ tự do, chặn tạo trùng (không dấu/hoa-thường)
+      create: (input) => {
+        const raw = (input || '').trim();
+        if (!raw) return null;
+        if (existingSet.has(norm(raw))) return null;
+        return { value: raw, text: raw };
+      },
+      createFilter: (input) => !existingSet.has(norm(input)),
+      maxItems: 1,
+      persist: false,
+      options: [], // ❗ không seed từ state.values để tránh lặp
+      placeholder: groupName ? "Nhập giá trị (VD: Đỏ, M...)" : "Chọn tên phân loại trước",
+
+      onItemAdd(value) {
+        if (!groupName) return;
+        const v = (value || '').trim();
+        if (!v) return;
+        if (!existingSet.has(norm(v))) {
+          state.values.push(v);
+          existingSet.add(norm(v));
+        }
+        pfRenderTags(groupId);
+        pfRenderVariants();
+        tsOpt.clear();
+      },
+
+      onBlur() {
+        const v = (tsOpt.getValue() || '').trim();
+        if (v && !existingSet.has(norm(v))) {
+          state.values.push(v);
+          existingSet.add(norm(v));
+          pfRenderTags(groupId);
+          pfRenderVariants();
+        }
+        tsOpt.clear();
+      }
+    });
+
+    // Gợi ý theo tên nhóm (lọc bỏ những gì đã có)
+    const suggest = (PF_ATTRIBUTE_SUGGESTIONS[groupName] || []);
+    tsOpt.addOptions(
+      suggest
+        .filter(v => !existingSet.has(norm(v)))
+        .map(v => ({ value: v, text: v }))
+    );
+
+  } else {
+    // Fallback nếu thiếu TomSelect: Enter để thêm
+    inputOpt.placeholder = groupName ? "Nhập giá trị (nhấn Enter để thêm)" : "Chọn tên phân loại trước";
+    inputOpt.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      if (!groupName) return;
+      const v = (inputOpt.value || '').trim();
+      if (!v) return;
+      if (!existingSet.has(norm(v))) {
+        state.values.push(v);
+        existingSet.add(norm(v));
+        pfRenderTags(groupId);
+        pfRenderVariants();
+      }
+      inputOpt.value = '';
+    });
+  }
+
+  // --- Hidden input cho server
+  const hiddenValues = document.createElement("input");
+  hiddenValues.type = "hidden";
+  hiddenValues.name = `attributeValues[${groupId}]`;
+  hiddenValues.value = JSON.stringify(state.values || []);
+  container.appendChild(hiddenValues);
+}
+
+
+function pfRenderVariants() {
+  const tbody = document.getElementById("pf_variant_list");
+  if (!tbody) return;
+
+  // chuẩn hoá để so sánh (bỏ dấu + lowercase + trim)
+  const norm = (s='') =>
+    String(s).trim()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+  const stableKeyFromPairs = (pairs) =>
+    pairs.map(([g, v]) => `${norm(g)}:${norm(v)}`).sort().join("|");
+
+  // 1) Lưu dữ liệu cũ (trước khi xoá tbody)
+  const oldData = {};
+  document.querySelectorAll("#pf_variant_list tr").forEach((row) => {
+    const pairs = Array.from(row.querySelectorAll('input[type=hidden][data-attr]'))
+      .map(input => {
+        const group = input.dataset.group || input.name.match(/\[attributes\]\[(.+?)\]/)?.[1] || "";
+        return [group, input.value];
+      });
+    const key = stableKeyFromPairs(pairs);
+
+    const idInput = row.querySelector('input[name$="[id]"]');
+    const hasOrdersInput = row.querySelector('input[name$="[has_orders]"]');
+
+    oldData[key] = {
+      id: idInput ? idInput.value : null,
+      persisted: !!(idInput && idInput.value),
+      price: row.querySelector('input[name$="[price]"]')?.value || '0',
+      quantity: row.querySelector('input[name$="[quantity]"]')?.value || '0',
+      sku: row.querySelector('input[name$="[sku]"]')?.value || '',
+      weight: row.querySelector('input[name$="[weight]"]')?.value || '',
+      length: row.querySelector('input[name$="[length]"]')?.value || '',
+      width: row.querySelector('input[name$="[width]"]')?.value || '',
+      height: row.querySelector('input[name$="[height]"]')?.value || '',
+      is_active: (() => {
+        const hidden = row.querySelector('input[type="hidden"][name$="[is_active]"]');
+        const checkbox = row.querySelector('input[type="checkbox"][name$="[is_active]"]');
+        if (checkbox) return checkbox.checked;
+        if (hidden) return hidden.value === "1";
+        return true;
+      })(),
+      has_orders: hasOrdersInput ? (hasOrdersInput.value === "1") : false
+    };
+  });
+
+  const stockInput = document.getElementById("stock_quantity");
+  const hiddenStockInput = document.getElementById("hidden_stock_quantity");
+  const sec = document.getElementById("pf_variant_section");
+  const applyWrap = document.getElementById("pf_apply_all_wrapper");
+
+  try {
+    tbody.innerHTML = "";
+
+    const keys = Object.keys(pfAttributeGroups).filter(id => {
+      const g = pfAttributeGroups[id] || {};
+      return g.name && Array.isArray(g.values) && g.values.length > 0;
+    });
+
+    if (keys.length === 0) {
+      if (stockInput) { stockInput.readOnly = false; stockInput.disabled = false; }
+      if (hiddenStockInput) hiddenStockInput.value = stockInput?.value || '';
+      if (applyWrap) applyWrap.style.display = "none";
+      if (sec) sec.style.display = "none";
+      return;
+    }
+
+    // 2) Tạo combinations
+    const combinations = cartesian(
+      keys.map(id => (Array.isArray(pfAttributeGroups[id].values) ? pfAttributeGroups[id].values : [])
+        .map(val => ({ groupName: pfAttributeGroups[id].name, value: val })))
+    );
+
+    // 3) Render
+    combinations.forEach((combo, i) => {
+      const row = document.createElement("tr");
+
+      const tdAttr = document.createElement("td");
+      const pairs = [];
+
+      combo.forEach(opt => {
+        const text = document.createElement("div");
+        text.textContent = `${opt.groupName}: ${opt.value}`;
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = `variants[${i}][attributes][${opt.groupName}]`;
+        hidden.value = opt.value;
+        hidden.dataset.attr = "1";
+        hidden.dataset.group = opt.groupName;
+
+        pairs.push([opt.groupName, opt.value]);
+        tdAttr.appendChild(text);
+        tdAttr.appendChild(hidden);
+      });
+
+      const key = stableKeyFromPairs(pairs);
+      const existing = oldData[key] || {
+        id: null, persisted: false,
+        price:'0', quantity:'0', sku:'', weight:'', length:'', width:'', height:'',
+        is_active: true, has_orders: false
+      };
+
+      if (existing.id) {
+        const hiddenId = document.createElement("input");
+        hiddenId.type = "hidden";
+        hiddenId.name = `variants[${i}][id]`;
+        hiddenId.value = existing.id;
+        tdAttr.appendChild(hiddenId);
+      }
+
+      const hiddenOrders = document.createElement("input");
+      hiddenOrders.type = "hidden";
+      hiddenOrders.name = `variants[${i}][has_orders]`;
+      hiddenOrders.value = existing.has_orders ? "1" : "0";
+      tdAttr.appendChild(hiddenOrders);
+
+      const tdPrice = document.createElement("td");
+      tdPrice.innerHTML =
+        `<input type="number" name="variants[${i}][price]" class="form-control"
+           value="${existing.price !== '0' ? existing.price : ''}" min="1" required>`;
+
+      const tdQty = document.createElement("td");
+      tdQty.innerHTML =
+        `<input type="number" name="variants[${i}][quantity]" class="form-control"
+           value="${existing.quantity !== '0' ? existing.quantity : ''}" min="0" required>`;
+
+      const tdSku = document.createElement("td");
+      tdSku.innerHTML =
+        `<input type="text" name="variants[${i}][sku]" class="form-control" value="${existing.sku}">`;
+
+      const tdWeight = document.createElement("td");
+tdWeight.innerHTML =
+  `<input type="number" name="variants[${i}][weight]" class="form-control"
+     value="${existing.weight}" placeholder="gram"
+     step="0.01" min="0" inputmode="decimal">`;
+
+const tdLength = document.createElement("td");
+tdLength.innerHTML =
+  `<input type="number" name="variants[${i}][length]" class="form-control"
+     value="${existing.length}" placeholder="cm"
+     step="0.01" min="0" inputmode="decimal">`;
+
+const tdWidth = document.createElement("td");
+tdWidth.innerHTML =
+  `<input type="number" name="variants[${i}][width]" class="form-control"
+     value="${existing.width}" placeholder="cm"
+     step="0.01" min="0" inputmode="decimal">`;
+
+const tdHeight = document.createElement("td");
+tdHeight.innerHTML =
+  `<input type="number" name="variants[${i}][height]" class="form-control"
+     value="${existing.height}" placeholder="cm"
+     step="0.01" min="0" inputmode="decimal">`;
+
+
+      const tdAction = document.createElement("td");
+      if (existing.has_orders) {
+        tdAction.innerHTML = `
+          <div class="form-check form-switch">
+            <input type="hidden" name="variants[${i}][is_active]" value="0">
+            <input type="checkbox" class="form-check-input"
+                   name="variants[${i}][is_active]" value="1"
+                   ${existing.is_active ? "checked" : ""}>
+          </div>`;
+      } else {
+        tdAction.innerHTML = `
+          <button type="button" class="btn btn-icon btn-bg-light btn-sm btn-hover-danger"
+                  onclick="removeVariantRow(this)">
+            <i class="bi bi-trash text-danger fs-5"></i>
+          </button>`;
+      }
+
+      row.appendChild(tdAttr);
+      row.appendChild(tdPrice);
+      row.appendChild(tdQty);
+      row.appendChild(tdSku);
+      row.appendChild(tdWeight);
+      row.appendChild(tdLength);
+      row.appendChild(tdWidth);
+      row.appendChild(tdHeight);
+      row.appendChild(tdAction);
+
+      tbody.appendChild(row);
+    });
+
+    if (stockInput) { stockInput.readOnly = true; stockInput.disabled = true; }
+    if (sec) sec.style.display = "block";
+    if (applyWrap) applyWrap.style.display = "block";
+    calculateTotalStock();
+  } catch (e) {
+    console.error("[pf] Render variants error:", e);
+  }
+}
+
+
+
 
 
 
@@ -1701,13 +1962,63 @@
         }
 
 
-        function removeVariantRow(button) {
+function removeVariantRow(button) {
+    Swal.fire({
+        title: "Bạn có chắc muốn xoá?",
+        text: "Biến thể sẽ bị xoá vĩnh viễn nếu chưa có đơn hàng!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Xoá",
+        cancelButtonText: "Hủy"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Tìm row chứa button
             const row = button.closest("tr");
-            if (row) {
-                row.remove();
-                calculateTotalStock(); // cập nhật tồn kho lại sau xoá
+            if (!row) return; // Nếu không tìm thấy thì dừng
+
+            // Tìm input chứa variant ID trong row
+            const variantIdInput = row.querySelector('input[name$="[id]"]');
+            if (variantIdInput && variantIdInput.value) {
+                // Tìm form chứa button
+                const form = button.closest("form");
+                if (form) {
+                    const hidden = document.createElement("input");
+                    hidden.type = "hidden";
+                    hidden.name = "deleted_variant_ids[]";
+                    hidden.value = variantIdInput.value;
+                    form.appendChild(hidden);
+                }
             }
+
+            // Xoá row trên UI
+            row.remove();
+
+            // Đồng bộ lại attribute values khi có hàng bị xoá
+if (typeof pfPruneUnusedAttributeValues === "function") {
+  pfPruneUnusedAttributeValues();
+}
+
+
+            // Cập nhật stock tổng
+            if (typeof calculateTotalStock === "function") {
+                calculateTotalStock();
+            }
+
+            // Thông báo thành công
+            Swal.fire({
+                icon: "success",
+                title: "Đã xoá!",
+                text: "Biến thể đã được xử lý thành công.",
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
+    });
+}
+
+
 
 
 
@@ -1772,5 +2083,101 @@
                 }
             });
         });
+
+
+function pfCollectAttributeUsage() {
+  // usage: { [groupName]: Set(values) }
+  const usage = {};
+  document.querySelectorAll('#pf_variant_list tr').forEach(row => {
+    row.querySelectorAll('input[type=hidden][data-attr][data-group]').forEach(inp => {
+      const g = inp.dataset.group;
+      const v = inp.value;
+      if (!usage[g]) usage[g] = new Set();
+      usage[g].add(v);
+    });
+  });
+  return usage;
+}
+function pfPruneUnusedAttributeValues() {
+  const usage = pfCollectAttributeUsage();
+  let removedSomething = false;
+
+  // duyệt mọi group đang tồn tại
+  Object.keys(pfAttributeGroups).forEach(groupId => {
+    const state = pfAttributeGroups[groupId];
+    const groupName = state.name;
+    if (!groupName) return;
+
+    const usedSet = usage[groupName] || new Set();
+    const locked = state.lockedValues || new Set(); // value cũ (không tự xoá)
+    const before = (state.values || []).slice();
+
+    // chỉ xoá những value KHÔNG được dùng VÀ KHÔNG locked
+    state.values = (state.values || []).filter(val => {
+      if (locked.has(val)) return true;         // giữ lại value cũ
+      return usedSet.has(val);                  // giữ lại nếu còn dùng
+    });
+
+    if (JSON.stringify(before) !== JSON.stringify(state.values)) {
+      removedSomething = true;
+      pfRenderTags(groupId);                    // cập nhật UI tag ở trên
+    }
+  });
+
+  // nếu có thay đổi danh sách tuỳ chọn -> render lại variants để đồng bộ chỉ mục, ô nhập...
+  if (removedSomething) {
+    pfRenderVariants();
+  }
+}
+
+function autoGrowInput(input, baseCh = 4, extra = 2) {
+  const grow = () => {
+    const len = input.value.length || baseCh;
+    input.style.width = (len + extra) + "ch";
+  };
+  input.addEventListener("input", grow);
+  grow(); // chạy 1 lần cho giá trị ban đầu
+}
+
     </script>
+
+    <script>
+  function removeSizeChart() {
+    const box = document.getElementById('size_chart_box');
+    if (box) box.remove();
+    document.getElementById('remove_size_chart').value = '1'; // báo controller xoá
+    // nếu người dùng đã chọn ảnh mới thì vẫn giữ; còn không chọn thì sẽ set NULL
+  }
+
+  // Preview 1 ảnh duy nhất
+  document.getElementById('size-chart-input')
+    .addEventListener('change', function (e) {
+      const c = document.getElementById('size-chart-preview-container');
+      c.innerHTML = '';
+      const f = e.target.files[0];
+      if (!f) return;
+
+      const r = new FileReader();
+      r.onload = function (ev) {
+        const wrap = document.createElement('div');
+        wrap.className = 'position-relative rounded border p-1 shadow-sm';
+        wrap.style.width = '120px'; wrap.style.height = '120px';
+
+        const img = new Image();
+        img.src = ev.target.result;
+        img.className = 'rounded w-100 h-100 object-fit-cover';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
+        btn.innerHTML = '&times;';
+        btn.onclick = () => { wrap.remove(); e.target.value = ''; };
+
+        wrap.append(img, btn);
+        c.appendChild(wrap);
+      };
+      r.readAsDataURL(f);
+    });
+</script>
+
 @endsection

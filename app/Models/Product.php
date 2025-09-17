@@ -36,6 +36,7 @@ class Product extends Model
         'length',
         'width',
         'height',
+        'size_chart', // Ảnh bảng size
     ];
 
     // Quan hệ với danh mục
@@ -47,7 +48,10 @@ class Product extends Model
     {
         return $this->hasOne(ProductLabel::class, 'product_id');
     }
-
+    public function labels()
+    {
+        return $this->belongsToMany(ProductLabel::class, 'product_label_product');
+    }
     // Quan hệ với thương hiệu
     public function brand()
     {

@@ -18,15 +18,15 @@
                 <div class="swiper-wrapper ratio1_3">
 
                     @foreach ($products as $product)
-
                         <div class="swiper-slide">
                             <div class="product-box-3">
                                 <div class="img-wrapper">
-                                    <div class="label-block">@if ($product->label)
-    <span class="lable-1">{{ $product->label->position }}</span>
-@else
-    <span class="lable-1">NEW</span> {{-- fallback nếu không có nhãn --}}
-@endif
+                                    <div class="label-block">
+                                        @if ($product->label)
+                                            <span class="lable-1">{{ $product->label->position }}</span>
+                                        @else
+                                            <span class="lable-1">NEW</span> {{-- fallback nếu không có nhãn --}}
+                                        @endif
                                         <a class="label-2 wishlist-icon add-to-wishlist" href="javascript:void(0)"
                                             data-id="{{ $product->id }}" tabindex="0">
                                             <i class="iconsax {{ in_array($product->id, $wishlistProductIds ?? []) ? 'active' : '' }}"
@@ -44,7 +44,7 @@
                                         </a>
                                         <a class="pro-sec" href="{{ route('client.products.show', $product->slug) }}">
                                             <img class="bg-img"
-                                                src="{{ asset('storage/' . ($product->hover_image ?? $product->image ?? 'images/default-hover.jpg')) }}"
+                                                src="{{ asset('storage/' . ($product->hover_image ?? ($product->image ?? 'images/default-hover.jpg'))) }}"
                                                 alt="{{ $product->name }}">
                                         </a>
                                     </div>
@@ -152,19 +152,20 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.add-to-wishlist').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const productId = this.dataset.id;
                     const icon = this.querySelector('i');
 
                     fetch(`/account/wishlist/add/${productId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        }
-                    })
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            }
+                        })
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
@@ -194,7 +195,6 @@
                 });
             });
         });
-
     </script>
     <script>
         function getTimeRemaining(endtime) {
@@ -245,7 +245,7 @@
                 $seconds.text(String(t.seconds).padStart(2, '0'));
             }
             updateClock();
-            const interval = setInterval(function () {
+            const interval = setInterval(function() {
                 const now = Date.now();
                 const end = Date.parse(endtimeStr);
                 if (now > end) {
@@ -257,8 +257,8 @@
             }, 1000);
         }
 
-        $(document).ready(function () {
-            $('.countdown[data-starttime][data-endtime]').each(function () {
+        $(document).ready(function() {
+            $('.countdown[data-starttime][data-endtime]').each(function() {
                 const $clock = $(this);
                 const start = $clock.attr('data-starttime');
                 const end = $clock.attr('data-endtime');
