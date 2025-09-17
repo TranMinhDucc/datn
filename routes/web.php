@@ -653,3 +653,4 @@ Route::middleware('auth')->group(function () {
         return "✅ Low stock job dispatched at " . now();
     });
 });
+
