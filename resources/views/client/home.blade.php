@@ -551,72 +551,148 @@
         </div>
     </div>
 </section>
-<section class="section-t-space">
-    <div class="custom-container container best-seller">
-        <div class="row">
-            <div class="col-xl-9">
-                <div class="row g-4">
-                    <div class="col-md-5">
-                        <div class="best-seller-img ratio_square-3"><a href="collection-left-sidebar.html"> <img
-                                    class="bg-img"
-                                    src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}"
-                                    alt=""></a>
+@if($bestSeller)
+    {{-- Nếu có dữ liệu trong DB thì render động --}}
+    <section class="section-t-space">
+        <div class="custom-container container best-seller">
+            <div class="row">
+                <div class="col-xl-9">
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="best-seller-img ratio_square-3">
+                                <a href="{{ $bestSeller->btn_url ?? '#' }}">
+                                    <img class="bg-img"
+                                         src="{{ $bestSeller->left_image ? asset('storage/'.$bestSeller->left_image) : asset('assets/client/images/layout-4/main-category/1.png') }}"
+                                         alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-7 ratio_landscape">
+                            <div class="style-content">
+                                <h6>{{ $bestSeller->title_small }}</h6>
+                                <h2>{{ $bestSeller->title_main }}</h2>
+                                <h4>{{ $bestSeller->subtitle }}</h4>
+                                <div class="link-hover-anim underline">
+                                    <a class="btn btn_underline link-strong link-strong-unhovered"
+                                       href="{{ $bestSeller->btn_url ?? '#' }}">
+                                        {{ $bestSeller->btn_text }}
+                                        <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                    </a>
+                                    <a class="btn btn_underline link-strong link-strong-hovered"
+                                       href="{{ $bestSeller->btn_url ?? '#' }}">
+                                        {{ $bestSeller->btn_text }}
+                                        <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="{{ $bestSeller->btn_url ?? '#' }}">
+                                <img class="bg-img"
+                                     src="{{ $bestSeller->right_image ? asset('storage/'.$bestSeller->right_image) : asset('assets/client/images/layout-4/main-category/2.jpg') }}"
+                                     alt="">
+                            </a>
                         </div>
                     </div>
-                    <div class="col-md-7 ratio_landscape">
-                        <div class="style-content">
-                            <h6>Wear Your Style</h6>
-                            <h2>Create New Version Of Yourself</h2>
-                            <h4>About Online Fashion Purchases</h4>
-                            <div class="link-hover-anim underline"><a
-                                    class="btn btn_underline link-strong link-strong-unhovered"
-                                    href="collection-left-sidebar.html">Shop Collection
-                                    <svg>
-                                        <use
-                                            href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
-                                        </use>
-                                    </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                    href="collection-left-sidebar.html">Shop Collection
-                                    <svg>
-                                        <use
-                                            href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
-                                        </use>
-                                    </svg></a></div>
-                        </div><a href="collection-left-sidebar.html"> <img class="bg-img"
-                                src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}"
-                                alt=""></a>
+                </div>
+
+                <div class="col-3 d-none d-xl-block">
+                    <div class="best-seller-box">
+                        <div class="offer-banner">
+                            <a href="{{ $bestSeller->btn_url ?? '#' }}">
+                                <h2>{{ $bestSeller->side_offer_title }}</h2><span> </span>
+                                <p>{{ $bestSeller->side_offer_desc }}</p>
+                                <div class="btn">
+                                    <h6>Use Code: <span>{{ $bestSeller->side_offer_code }}</span></h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="best-seller-content">
+                            <h3>{{ $bestSeller->side_title }}</h3><span> </span>
+                            <div class="link-hover-anim underline">
+                                <a class="btn btn_underline link-strong link-strong-unhovered"
+                                   href="{{ $bestSeller->btn_url ?? '#' }}">
+                                    {{ $bestSeller->btn_text }}
+                                    <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                </a>
+                                <a class="btn btn_underline link-strong link-strong-hovered"
+                                   href="{{ $bestSeller->btn_url ?? '#' }}">
+                                    {{ $bestSeller->btn_text }}
+                                    <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
-            <div class="col-3 d-none d-xl-block">
-                <div class="best-seller-box">
-                    <div class="offer-banner"><a href="collection-left-sidebar.html">
-                            <h2>Extra 15% OFF</h2><span> </span>
-                            <p>Designer Brand Season off In-store & Online for a limited Time</p>
-                            <div class="btn">
-                                <h6>Use Code: <span>KHUTRD***</span></h6>
+        </div>
+    </section>
+@else
+    {{-- Nếu trong DB KHÔNG có dữ liệu thì hiển thị nội dung mặc định (tiếng Việt) --}}
+    <section class="section-t-space">
+        <div class="custom-container container best-seller">
+            <div class="row">
+                <div class="col-xl-9">
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="best-seller-img ratio_square-3">
+                                <a href="collection-left-sidebar.html">
+                                    <img class="bg-img" src="{{ asset('assets/client/images/layout-4/main-category/1.png') }}" alt="">
+                                </a>
                             </div>
-                        </a></div>
-                    <div class="best-seller-content">
-                        <h3>Make You Look Comfortable and Luxurious</h3><span> </span>
-                        <div class="link-hover-anim underline"><a
-                                class="btn btn_underline link-strong link-strong-unhovered"
-                                href="collection-left-sidebar.html">Shop Collection
-                                <svg>
-                                    <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
-                                    </use>
-                                </svg></a><a class="btn btn_underline link-strong link-strong-hovered"
-                                href="collection-left-sidebar.html">Shop Collection
-                                <svg>
-                                    <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow">
-                                    </use>
-                                </svg></a></div>
+                        </div>
+                        <div class="col-md-7 ratio_landscape">
+                            <div class="style-content">
+                                <h6>Thời trang của bạn</h6>
+                                <h2>Tạo phiên bản mới của chính mình</h2>
+                                <h4>Về việc mua sắm thời trang trực tuyến</h4>
+                                <div class="link-hover-anim underline">
+                                    <a class="btn btn_underline link-strong link-strong-unhovered" href="collection-left-sidebar.html">
+                                        Xem bộ sưu tập
+                                        <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                    </a>
+                                    <a class="btn btn_underline link-strong link-strong-hovered" href="collection-left-sidebar.html">
+                                        Xem bộ sưu tập
+                                        <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="collection-left-sidebar.html">
+                                <img class="bg-img" src="{{ asset('assets/client/images/layout-4/main-category/2.jpg') }}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 d-none d-xl-block">
+                    <div class="best-seller-box">
+                        <div class="offer-banner">
+                            <a href="collection-left-sidebar.html">
+                                <h2>Giảm thêm 15%</h2><span> </span>
+                                <p>Thương hiệu thiết kế giảm giá theo mùa, áp dụng tại cửa hàng & trực tuyến trong thời gian có hạn</p>
+                                <div class="btn">
+                                    <h6>Mã sử dụng: <span>KHUTRD***</span></h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="best-seller-content">
+                            <h3>Giúp bạn trông thoải mái và sang trọng</h3><span> </span>
+                            <div class="link-hover-anim underline">
+                                <a class="btn btn_underline link-strong link-strong-unhovered" href="collection-left-sidebar.html">
+                                    Xem bộ sưu tập
+                                    <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                </a>
+                                <a class="btn btn_underline link-strong link-strong-hovered" href="collection-left-sidebar.html">
+                                    Xem bộ sưu tập
+                                    <svg><use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#arrow"></use></svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+@endif
+
 <!-- Fashikart specials -->
 <section class="section-t-space">
     <div class="custom-container container product-contain">
