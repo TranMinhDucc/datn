@@ -47,8 +47,12 @@ class Order extends Model
         'total_amount',
         'note_shipper',
         'required_note_shipper',
+        'exchange_of_return_request_id',
     ];
-
+    public function exchangeOfReturnRequest()
+    {
+        return $this->belongsTo(ReturnRequest::class, 'exchange_of_return_request_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -115,6 +119,54 @@ class Order extends Model
         return $this->belongsToMany(Coupon::class, 'coupon_user')
             ->withPivot('status')
             ->withTimestamps();
+    }
+
+    public static function generateOrderCode()
+    {
+        do {
+            $code = 'ORD' . now()->timestamp . rand(10, 99);
+        } while (self::where('order_code', $code)->exists());
+
+        return $code;
+    }
+    public function adjustments()
+    {
+        return $this->hasMany(\App\Models\OrderAdjustment::class);
+    }
+    public function payments()
+    {
+        return $this->hasMany(\App\Models\Payment::class);
+    }
+
+    // Tổng cộng/trừ từ adjustments (charge cộng, discount trừ)
+    public function getAdjustmentsTotalAttribute()
+    {
+        return (float) ($this->adjustments()
+            ->selectRaw("COALESCE(SUM(CASE WHEN type='charge' THEN amount ELSE -amount END),0) as s")
+            ->value('s') ?? 0);
+    }
+
+    // Tổng tiền phải thu sau cùng (hàng + VAT + ship + adjustments)
+    public function getNetTotalAttribute()
+    {
+        return (float)$this->subtotal + (float)$this->tax_amount + (float)$this->shipping_fee
+            + (float)$this->adjustments_total;
+    }
+
+    // Tiền đã thu & đã hoàn (đã complete)
+    public function getPaidInAttribute()
+    {
+        return (float) $this->payments()->where('kind', 'payment')->where('status', 'completed')->sum('amount');
+    }
+    public function getRefundedOutAttribute()
+    {
+        return (float) $this->payments()->where('kind', 'refund')->where('status', 'completed')->sum('amount');
+    }
+
+    // Số dư: dương = KH còn thiếu; âm = shop còn phải hoàn
+    public function getBalanceAttribute()
+    {
+        return (float)$this->net_total - (float)$this->paid_in;
     }
     public function histories()
     {

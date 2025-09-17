@@ -68,6 +68,8 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\EmailCampaignController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\OrderAdjustmentController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\ShippingFeeController;
 use App\Http\Controllers\Admin\ShippingMethodController;
@@ -77,6 +79,10 @@ use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
 use App\Http\Controllers\Webhook\GhnWebhookController;
+use App\Http\Controllers\Admin\ReturnRequestItemController;
+use App\Http\Controllers\Admin\ReturnRequestItemActionController;
+
+
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
@@ -366,6 +372,31 @@ Route::prefix('admin')
         // GET – mở form tạo đơn hàng đổi
         Route::get('return-requests/{id}/exchange-form', [AdminReturnRequestController::class, 'showExchangeForm'])
             ->name('return-requests.exchange.form');
+        Route::put(
+            'return-requests/items/{id}/variant',
+            [ReturnRequestItemController::class, 'setVariant']
+        )->name('return-requests.items.set-variant');
+        // ---- Return Request Items: ACTIONS (exchange / refund / reject) ----
+        Route::prefix('return-requests/items')->name('return-requests.items.')->group(function () {
+            // Đổi SKU cho item (giữ như bạn đã khai báo ở trên)
+            Route::put('{id}/variant', [ReturnRequestItemController::class, 'setVariant'])
+                ->name('set-variant');
+
+            // Thêm 1 action cho item (dùng trong 3 modal: +Đổi, +Hoàn, +Từ chối)
+            // POST /admin/return-requests/items/{item}/actions
+            Route::post('{item}/actions', [ReturnRequestItemActionController::class, 'store'])
+                ->name('actions.store');
+
+            // (Tuỳ chọn) Cập nhật action đã tạo (đổi variant, đổi qty/amount/note)
+            // PUT /admin/return-requests/items/actions/{action}
+            Route::put('actions/{action}', [ReturnRequestItemActionController::class, 'update'])
+                ->name('actions.update');
+
+            // Xoá action
+            // DELETE /admin/return-requests/items/actions/{action}
+            Route::delete('actions/{action}', [ReturnRequestItemActionController::class, 'destroy'])
+                ->name('actions.destroy');
+        });
 
         // POST – submit form tạo đơn hàng đổi
         Route::post('return-requests/{id}/exchange', [AdminReturnRequestController::class, 'createExchangeOrder'])
@@ -385,7 +416,8 @@ Route::prefix('admin')
         Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
         Route::resource('products', ProductController::class);
-
+        // AJAX helper cho màn tạo đơn (địa chỉ theo user)
+        Route::get('/ajax/users/{user}/addresses', [OrderController::class, 'addresses'])->name('ajax.user.addresses');
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);
 
@@ -412,7 +444,10 @@ Route::prefix('admin')
             Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
             Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
         });
-
+        // Route::put('/return-requests/items/{id}', [ReturnRequestItemController::class, 'update'])
+        //     ->name('return-requests.items.update');
+        Route::post('/return-requests/{id}/exchange', [ReturnRequestItemController::class, 'handleExchange'])
+            ->name('return-requests.exchange');
         //reviews crud
         Route::resource('reviews', ReviewController::class)->names('reviews');
         Route::resource('badwords', BadWordController::class);
@@ -506,6 +541,22 @@ Route::prefix('admin')
         Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
         Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
         Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
+
+        Route::post('/orders/{order}/adjustments', [OrderAdjustmentController::class, 'store'])->name('orders.adjustments.store');
+        Route::delete('/orders/adjustments/{adj}', [OrderAdjustmentController::class, 'destroy'])->name('orders.adjustments.destroy');
+
+        Route::post('/orders/{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
+        Route::delete('/orders/payments/{payment}', [PaymentController::class, 'destroy'])->name('orders.payments.destroy');
+
+        Route::post(
+            '/admin/return-requests/{rr}/exchange',
+            [ReturnRequestController::class, 'createExchange']
+        )->name('admin.return-requests.exchange');
+        Route::post(
+            '/return-requests/{rr}/exchange',
+            [ReturnRequestController::class, 'createExchange']
+        )->name('return-requests.exchange')
+            ->middleware('throttle:5,1');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -597,3 +648,4 @@ Route::middleware('auth')->group(function () {
         return "✅ Low stock job dispatched at " . now();
     });
 });
+

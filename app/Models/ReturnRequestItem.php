@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ReturnRequestItem extends Model
 {
@@ -53,5 +54,13 @@ class ReturnRequestItem extends Model
             'order_item_id', // foreign key on return_request_items
             'product_id'    // foreign key on order_items
         );
+    }
+    public function exchangeVariant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'exchange_variant_id');
+    }
+    public function actions(): HasMany
+    {
+        return $this->hasMany(ReturnRequestItemAction::class);
     }
 }
