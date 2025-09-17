@@ -61,121 +61,283 @@
         margin-left: auto;
         margin-right: auto;
     }
+    
+    /* Product 2 row: tên bên trái, giá bên phải */
+.product-2 .product-details{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.product-2 .product-details > div{
+  flex:1 1 auto; min-width:0;                 /* cho phép co lại */
+}
+
+/* Tên sản phẩm: 2 dòng + ellipsis */
+.product-2 .product-details .prod-name{
+  margin:0;
+  display:-webkit-box;
+  -webkit-line-clamp:2;                        /* 1 -> 2 dòng tùy muốn */
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  word-break:break-word;                       /* cắt từ dài */
+}
+
+/* Badge giá không bị xuống dòng */
+.product-2 .product-details .price-badge{
+  flex:0 0 auto;
+  white-space:nowrap;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:600;
+}
+@media (max-width:576px){
+  .product-2 .product-details .prod-name{-webkit-line-clamp:1;} /* mobile: 1 dòng */
+}
+.btn_outline{display:inline-flex;align-items:center;gap:8px;}
+.half-arrow{
+  width:12px;height:12px;display:inline-block;
+  border-right:2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);      /* nghiêng lên-phải */
+  margin-left:2px; transition:transform .2s;
+}
+.btn_outline:hover .half-arrow{ transform: rotate(45deg) translate(2px,-2px); }
+/* Category (product 2): clamp 2 dòng */
+.product-2 .product-details h6{
+  margin: 0 0 6px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;   /* số dòng muốn hiển thị */
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* Mobile: chỉ 1 dòng cho gọn (tùy chọn) */
+@media (max-width: 576px){
+  .product-2 .product-details h6{
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+}
+/* .btn_outline{display:inline-flex;align-items:center;gap:8px;} */
+
+/* CARD SP1: ảnh trái – nội dung phải (giống mẫu) */
+.home-section-4 .product-1 .product{
+  display:flex !important;
+  align-items:center;
+  gap:14px;
+  padding:12px;
+  border-radius:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  width:280px;                 /* cố định bề ngang (chỉnh 320–360 tùy layout) */
+}
+
+/* Ảnh vuông cố định */
+.home-section-4 .product-1 .custom-product-img{
+  flex:0 0 100px;               /* = kích thước ảnh */
+  width:100px; height:100px;
+  border-radius:10px;
+  object-fit:cover;
+  display:block;
+  background:#f5f5f5;
+}
+
+/* Vùng chữ có thể co giãn */
+.home-section-4 .product-1 .product-details{
+  flex:1 1 auto;
+  min-width:0;                 /* QUAN TRỌNG để ellipsis hoạt động */
+}
+
+/* Tên SP1 – kẹp 1 (hoặc 2) dòng */
+.home-section-4 .product-1 .product-details .prod1-name{
+  margin:0;
+  white-space:normal !important;
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:1;        /* đổi thành 2 nếu muốn 2 dòng */
+  overflow:hidden !important;
+  text-overflow:ellipsis;
+  word-break:break-word;
+}
+
+/* Danh mục SP1 — 1 dòng, cắt ngắn gọn trong card */
+.home-section-4 .product-1 .product-details > p{
+  margin: 2px 0 6px;
+  color: #6a6a6a;
+  font-size: 12px;          /* nhỏ hơn chút để gọn */
+  line-height: 1.2;
+  max-width: 100%;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
+/* Rating gọn */
+.home-section-4 .product-1 .product-details .rating{
+  display:flex; gap:4px;
+  margin:0 0 6px; padding:0; list-style:none; color:#f39c12;
+}
+
+/* Hàng giá: không tràn, có badge giảm giá */
+.home-section-4 .product-1 .product-details h5{
+  display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
+  margin:0;
+}
+.home-section-4 .product-1 .product-details h5 del{ color:#999; }
+.home-section-4 .product-1 .product-details h5 span{
+  background:#E7A76D; color:#fff; border-radius:999px;
+  padding:4px 10px; font-weight:700; font-size:12px; white-space:nowrap;
+}
+/* ép SP1 căn trái, ghi đè text-center của theme */
+.home-section-4 .product-1 .product.text-center{
+  text-align: left !important;
+}
+
+/* khối chữ xếp dọc và bám trái */
+.home-section-4 .product-1 .product-details{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* sát trái */
+}
+
+/* tên & danh mục */
+.home-section-4 .product-1 .product-details .prod1-name{ margin: 0 0 2px; }
+.home-section-4 .product-1 .product-details > p{ margin: 0 0 6px; }
+
+/* rating bám trái */
+.home-section-4 .product-1 .product-details .rating{
+  justify-content: flex-start;
+}
+
+/* hàng giá đã flex sẵn: giữ trái */
+.home-section-4 .product-1 .product-details h5{
+  align-self: flex-start;
+}
+/* Mobile: card co theo chiều ngang */
+@media (max-width:576px){
+  .home-section-4 .product-1 .product{ width:100%; }
+  .home-section-4 .product-1 .product-details .prod1-name{ -webkit-line-clamp:2; }
+}
 </style>
 @section('content')
-    <section class="section-space home-section-4">
-        <div class="custom-container container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="home-content">
-                        <p>Tạo phong cách của bạn
-                            <span></span>
-                        </p>
-                        <h2>Phong cách mới cho</h2>
-                        <h1>Xuân & Hè</h1>
-                        <h6>Thời trang có thể phai mờ, nhưng phong cách thì vĩnh cửu</h6><a class="btn btn_outline"
-                            href="{{ route('client.category.index') }}">Shop Now
-                            <svg>
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#arrow') }}"></use>
-                            </svg>
-                        </a>
+  <section class="section-space home-section-4">
+    <div class="custom-container container">
+        <div class="row">
+            <div class="col-12">
+                <div class="home-content">
+                    @php $current = $banners->first(); @endphp
+                    @php
+                    $p1 = $current['product1']??null;
+                    $p2 = $current['product2']??null;
+                    @endphp
+                    <p>
+                        Tạo phong cách riêng của bạn
+                        <span></span>
+                    </p>
+                    <h2>{{ $current['subtitle'] ?? '' }}</h2>
+                    <h1>{{ $current['title'] ?? '' }}</h1>
+                    <h6>{!! $current['description'] ?? '' !!}</h6>
+                    @php
+                    $btnTitle = $current['btn_title'] ?? 'Shop Now';
+                    $btnLink  = $current['btn_link']  ?? route('client.category.index');
+                    @endphp
 
+                    <a class="btn btn_outline" href="{{ $btnLink }}">
+                    {{ $btnTitle }}
+                    <span class="half-arrow"></span>
+                    </a>
+
+                </div>
+                <div class="product-1">
+  @if ($p1)
+    <a href="{{ $p1['url'] }}" style="display:block; text-decoration:none; color:inherit;">
+      <div class="product text-center">
+        <img class="img-fluid custom-product-img" src="{{ $p1['image'] }}" alt="{{ $p1['name'] }}">
+        <div class="product-details">
+          <h6 class="prod1-name">{{ $p1['name'] }}</h6>
+          <p>{{ $p1['category'] ?? 'Uncategorized' }}</p>
+
+          @php
+            $avgRating = round($p1['avg_rating'] ?? 0, 1);
+            $full = floor($avgRating);
+            $half = $avgRating - $full >= 0.5;
+          @endphp
+          <ul class="rating">
+            @for ($i=0; $i<$full; $i++) <li><i class="fa-solid fa-star"></i></li> @endfor
+            @if ($half) <li><i class="fa-solid fa-star-half-stroke"></i></li> @endif
+            @for ($i=$full + ($half?1:0); $i<5; $i++) <li><i class="fa-regular fa-star"></i></li> @endfor
+          </ul>
+
+          @php $price = $p1['sale_price'] ?? $p1['price']; @endphp
+<h5>
+  {{ number_format($price, 0, ',', '.') }}₫
+  @if (!empty($p1['sale_price']) && !empty($p1['price']))
+    <del>{{ number_format($p1['price'], 0, ',', '.') }}₫</del>
+    <span>-{{ round(100 - ($p1['sale_price'] / $p1['price']) * 100) }}%</span>
+  @endif
+</h5>
+        </div>
+      </div>
+    </a>
+  @endif
+</div>
+
+
+                <div class="product-2">
+  @if ($p2)
+    <a href="{{ $p2['url'] }}" style="display:block;">
+      <div class="product">
+        <img class="img-fluid" src="{{ $p2['image'] }}" alt="{{ $p2['name'] }}">
+        <div class="product-details">
+          <div>
+            <h6>{{ $p2['category'] ?? 'Category' }}</h6>
+            <h5 class="prod-name">{{ $p2['name'] }}</h5>   {{-- thêm class --}}
+          </div>
+          @php $price2 = $p2['sale_price'] ?? $p2['price']; @endphp
+          <span class="price-badge">{{ number_format($price2, 0, ',', '.') }}₫</span> {{-- thêm class --}}
+        </div>
+      </div>
+    </a>
+  @endif
+</div>
+
+                <div class="home-images">
+                    @php
+                    $img = !empty($current['main_image'])
+                    ? asset('storage/' . $current['main_image'])
+                    : asset('assets/client/images/layout-4/1.png');
+                    @endphp
+
+                    <img class="img-fluid" src="{{ $img }}" alt="{{ $current['title'] ?? 'Banner' }}">
+
+                    <div class="main-images"></div>
+                    <img class="img-fluid" src="{{ $img }}" alt="{{ $current['title'] ?? 'Banner' }}">
+                </div>
+
+
+                <div class="home-box-1"> <span> </span></div>
+                <div class="home-box-2"> <span> </span></div>
+                <div class="marquee">
+                    <div class="marquee__item">
+                        <h4 class="animation-text">Collection</h4>
                     </div>
-                    <div class="product-1">
-                        @if (isset($latestProducts[0]))
-                            @php $latest = $latestProducts[0]; @endphp
-                            <a href="{{ route('client.products.show', $latest->slug) }}"
-                                style="display: block; text-decoration: none; color: inherit;">
-
-                                <div class="product text-center">
-                                    <img class="img-fluid custom-product-img" src="{{ asset('storage/' . $latest->image) }}"
-                                        alt="{{ $latest->name }}">
-
-                                    <div class="product-details">
-                                        <h6>{{ $latest->name }}</h6>
-                                        <p>{{ $latest->category->name ?? 'Uncategorized' }}</p>
-                                        <ul class="rating">
-                                            @php
-                                                $avgRating = round($latest->reviews->avg('rating') ?? 0, 1);
-                                                $fullStars = floor($avgRating);
-                                                $halfStar = $avgRating - $fullStars >= 0.5;
-                                            @endphp
-                                            @for ($i = 0; $i < $fullStars; $i++)
-                                                <li><i class="fa-solid fa-star"></i></li>
-                                            @endfor
-                                            @if ($halfStar)
-                                                <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                            @endif
-                                            @for ($i = $fullStars + ($halfStar ? 1 : 0); $i < 5; $i++)
-                                                <li><i class="fa-regular fa-star"></i></li>
-                                            @endfor
-                                        </ul>
-                                        <h5>
-                                            ${{ number_format($latest->sale_price ?? $latest->price, 2) }}
-                                            @if ($latest->sale_price && $latest->price > 0)
-                                                <del>${{ number_format($latest->price, 2) }}</del>
-                                                <span>
-                                                    -{{ round(100 - ($latest->sale_price / $latest->price) * 100) }}%
-                                                </span>
-                                            @endif
-                                        </h5>
-                                    </div>
-                                </div>
-                            </a>
-                        @endif
+                    <div class="marquee__item">
+                        <h4 class="animation-text">Collection</h4>
                     </div>
-
-
-                    <div class="product-2">
-                        @if (isset($bestSellerProducts[0]))
-                            @php $top = $bestSellerProducts[0]; @endphp
-                            <a href="{{ route('client.products.show', $top->slug) }}" style="display: block;">
-
-                                <div class="product">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $top->image) }}"
-                                        alt="{{ $top->name }}">
-                                    <div class="product-details">
-                                        <div>
-                                            <h6>{{ $top->category->name ?? 'Category' }}</h6>
-                                            <h5>{{ $top->name }}</h5>
-                                        </div>
-                                        <span>${{ number_format($top->sale_price ?? $top->price, 2) }}</span>
-                                    </div>
-                                </div>
-                            </a>
-                        @endif
+                    <div class="marquee__item">
+                        <h4 class="animation-text">Collection</h4>
                     </div>
-
-                    <div class="home-images">
-                        <div class="main-images"></div>
-                        <img class="img-fluid" src="{{ asset('assets/client/images/layout-4/1.png') }}" alt="">
-                    </div>
-
-
-
-                    <div class="home-box-1"> <span> </span></div>
-                    <div class="home-box-2"> <span> </span></div>
-                    <div class="marquee">
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                        <div class="marquee__item">
-                            <h4 class="animation-text">Collection</h4>
-                        </div>
-                    </div>
-                    <div class="shape-images">
-                        <img class="img-1 img-fluid" src="{{ asset('assets/client/images/layout-4/s-1.png') }}"
-                            alt=""><img class="img-2 img-fluid"
-                            src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt="">
-                    </div>
+                </div>
+                <div class="shape-images">
+                    <img class="img-1 img-fluid" src="{{ asset('assets/client/images/layout-4/s-1.png') }}"
+                        alt=""><img class="img-2 img-fluid"
+                        src="{{ asset('assets/client/images/layout-4/s-2.png') }}" alt="">
                 </div>
             </div>
         </div>
+    </div>
 
-    </section>
+</section>
 
     <section class="section-t-space">
         <div class="container-fluid fashion-images">
@@ -998,7 +1160,178 @@
 </style>
 
 @section('js')
+<script>
+    const BANNERS = @json($banners); // mỗi item: có product1, product2 như trên
 
+    (function () {
+      if (!Array.isArray(BANNERS) || !BANNERS.length) return;
+
+      const root = document.querySelector('.home-section-4');
+      if (!root) return;
+
+      const h2   = root.querySelector('.home-content h2');
+      const h1   = root.querySelector('.home-content h1');
+      const h6   = root.querySelector('.home-content h6');
+      const btn  = root.querySelector('.home-content .btn.btn_outline');
+      const imgs = root.querySelectorAll('.home-images img.img-fluid');
+
+      // 2 box sản phẩm
+      const box1 = root.querySelector('.product-1');
+      const box2 = root.querySelector('.product-2');
+
+      // prev/next “dấu chấm” của theme
+      const prevDot = document.querySelector('.home-box-1 span');
+      const nextDot = document.querySelector('.home-box-2 span');
+
+      let index = 0;
+      const speed = 800;
+      const autoplayDelay = 5000;
+      const defaultUrl = '{{ asset('assets/client/images/layout-4/1.png') }}';
+
+      // -------- helpers ----------
+      const escapeHtml = (s) => (s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      const fmt = (n) => (Number(n||0)).toFixed(2);
+      const discountPct = (sp, p) => (sp && p && Number(p) > 0) ? Math.round(100 - (Number(sp)/Number(p))*100) : 0;
+
+      const starsHtml = (avg=0) => {
+        avg = Math.max(0, Math.min(5, Number(avg) || 0));
+        const full = Math.floor(avg);
+        const half = (avg - full) >= 0.5;
+        let out = '<ul class="rating">';
+        for (let i=0;i<full;i++) out += '<li><i class="fa-solid fa-star"></i></li>';
+        if (half) out += '<li><i class="fa-solid fa-star-half-stroke"></i></li>';
+        for (let i=full + (half?1:0); i<5; i++) out += '<li><i class="fa-regular fa-star"></i></li>';
+        out += '</ul>';
+        return out;
+      };
+
+      function renderProductBoxes(b) {
+  // helper: format VND
+  const vnd = (n) => Number(n || 0).toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+
+  // Product 1 (khối “đẹp” với rating/giảm giá)
+  if (box1) {
+    if (!b.product1) {
+      box1.innerHTML = ''; // ẩn nếu không có
+    } else {
+      const p = b.product1;
+      const pct = discountPct(p.sale_price, p.price);
+      const nowPrice = (p.sale_price ?? p.price);
+
+      box1.innerHTML = `
+        <a href="${p.url}" style="display:block; text-decoration:none; color:inherit;">
+          <div class="product text-center">
+            <img class="img-fluid custom-product-img" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
+            <div class="product-details">
+              <h6 class="prod1-name">${escapeHtml(p.name)}</h6>
+              <p>${escapeHtml(p.category || 'Uncategorized')}</p>
+              ${starsHtml(p.avg_rating)}
+              <h5>
+                ${vnd(nowPrice)}₫
+                ${
+                  (p.sale_price && p.price)
+                    ? `<del>${vnd(p.price)}₫</del><span> -${pct}%</span>`
+                    : ''
+                }
+              </h5>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+  }
+
+  // Product 2 (đơn giản hơn)
+  if (box2) {
+    if (!b.product2) {
+      box2.innerHTML = '';
+    } else {
+      const p = b.product2;
+      const nowPrice = (p.sale_price ?? p.price);
+
+      box2.innerHTML = `
+        <a href="${p.url}" style="display:block;">
+          <div class="product">
+            <img class="img-fluid" src="${p.image || ''}" alt="${escapeHtml(p.name)}">
+            <div class="product-details">
+  <div>
+    <h6>${escapeHtml(p.category || 'Category')}</h6>
+    <h5 class="prod-name">${escapeHtml(p.name)}</h5>
+  </div>
+  <span class="price-badge">${vnd(nowPrice)}₫</span>
+</div>
+
+          </div>
+        </a>
+      `;
+    }
+  }
+}
+      // ----------------------------
+
+      const render = (i) => {
+        const b = BANNERS[i];
+        if (!b) return;
+
+        imgs.forEach(el => { el.style.transition = `opacity ${speed}ms`; el.style.opacity = '0'; });
+        if (h2) h2.style.transition = `opacity ${speed}ms`;
+        if (h1) h1.style.transition = `opacity ${speed}ms`;
+        if (h6) h6.style.transition = `opacity ${speed}ms`;
+
+        setTimeout(() => {
+          if (h2) h2.textContent = b.subtitle || '';
+          if (h1) h1.textContent = b.title || '';
+          if (h6) h6.innerHTML  = b.description || '';
+
+          // bên trong function render(i)
+if (btn) {
+  if (b.btn_link) btn.setAttribute('href', b.btn_link);
+
+  // đổi text nhưng giữ lại <svg>
+  const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
+  const newText = (b.btn_title || 'Shop Now') + ' ';
+  if (textNode) textNode.nodeValue = newText;
+  else btn.insertBefore(document.createTextNode(newText), btn.firstChild);
+}
+
+          const url = (b.main_image && (''+b.main_image).trim()) || defaultUrl;
+          imgs.forEach(el => { el.setAttribute('src', url); el.style.opacity = '1'; });
+          if (h2) h2.style.opacity = '1';
+          if (h1) h1.style.opacity = '1';
+          if (h6) h6.style.opacity = '1';
+
+          // >>> cập nhật 2 product theo banner hiện tại
+          renderProductBoxes(b);
+        }, speed * 0.6);
+      };
+
+      // autoplay
+      let timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay);
+      const restart = () => { clearInterval(timer); timer = setInterval(() => { index = (index + 1) % BANNERS.length; render(index); }, autoplayDelay); };
+
+    // prev/next
+
+      if (document.querySelector('.home-box-2 span')) {
+        const el = document.querySelector('.home-box-2 span');
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { index = (index + 1) % BANNERS.length; render(index); restart(); });
+      }
+      if (document.querySelector('.home-box-1 span')) {
+        const el = document.querySelector('.home-box-1 span');
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { index = (index - 1 + BANNERS.length) % BANNERS.length; render(index); restart(); });
+      }
+
+      const bullets = document.querySelectorAll('.swiper-pagination-bullet');
+      bullets.forEach((b, i) => b.addEventListener('click', () => { index = i % BANNERS.length; render(index); restart(); }));
+
+      // render đầu tiên
+      render(0);
+    })();
+</script>
 
     <script src="{{ asset('assets/client/js/newsletter.js') }}"></script>
     <script src="{{ asset('assets/client/js/skeleton-loader.js') }}"></script>

@@ -1169,36 +1169,7 @@
                 });
             });
 
-            function showToast(message, type = 'error') {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-
-                toast.className = 'toast-box';
-                toast.style.background =
-                    type === 'error' ? '#dc3545' :
-                    type === 'warning' ? '#ffc107' :
-                    type === 'info' ? '#17a2b8' :
-                    '#28a745';
-
-                toast.innerHTML = `
-    <div class="icon">
-        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-        <span>${message}</span>
-    </div>
-    <button class="close-btn">&times;</button>
-    `;
-
-                container.appendChild(toast);
-
-                toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
-
-                setTimeout(() => {
-                    toast.style.transition = 'opacity 0.5s ease';
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 500);
-                }, 3000 + container.children.length * 500);
-            }
-
+            
             // ✅ Lấy ID biến thể từ selected attributes
             function getSelectedVariantId(attributes) {
                 const variantData = window.variantData || [];
@@ -1249,7 +1220,7 @@
                     });
 
                     if (!valid) {
-                        missingAttrs.forEach(attr => showToast(`Vui lòng chọn ${attr}`, 'error'));
+                        missingAttrs.forEach(attr => showToast('Thông báo',`Vui lòng chọn ${attr}`));
                         return;
                     }
 
@@ -1262,7 +1233,7 @@
                         const stockQty = rawQtyText.includes('hết hàng') ? 0 : parseInt(rawQtyText
                             .replace(/\D/g, '') || '0');
                         if (stockQty <= 0) {
-                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            showToast('Thông báo','Sản phẩm đã hết hàng');
                             return;
                         }
 
@@ -1290,12 +1261,12 @@
                         );
 
                         if (!matchedVariant) {
-                            showToast('Không tìm thấy biến thể phù hợp', 'error');
+                            showToast('Thông báo','Không tìm thấy biến thể phù hợp');
                             return;
                         }
 
                         if (matchedVariant.quantity <= 0) {
-                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            showToast('Thông báo','Sản phẩm đã hết hàng');
                             return;
                         }
                     }
@@ -1316,8 +1287,7 @@
                     const totalQty = existingQty + quantity;
 
                     if (totalQty > matchedVariant.quantity) {
-                        showToast(`Chỉ còn ${matchedVariant.quantity} sản phẩm trong kho`,
-                            'warning');
+                        showToast('Thông báo',`Chỉ còn ${matchedVariant.quantity} sản phẩm trong kho. Vui lòng giảm số lượng.`);
                         return;
                     }
 
@@ -1389,7 +1359,7 @@
 
                     if (!valid) {
                         missingAttrs.forEach(attr => {
-                            showToast(`Vui lòng chọn ${attr}`, 'error');
+                            showToast('Thông báo',`Vui lòng chọn ${attr}`);
                         });
                         return;
                     }
@@ -1403,7 +1373,7 @@
                         if (matchedVariant) {
                             // ✅ Kiểm tra tồn kho
                             if (matchedVariant.quantity <= 0) {
-                                showToast('Sản phẩm đã hết hàng', 'warning');
+                                showToast('Thông báo','Sản phẩm đã hết hàng');
                                 return;
                             }
                             price = matchedVariant.price;
@@ -1488,7 +1458,7 @@
 
 
 
-    <!-- HTML hiện tại của bạn giữ nguyên -->
+     <!-- HTML hiện tại của bạn giữ nguyên -->
 <!-- Thêm CSS nhỏ để thấy phần được chọn -->
 <style>
   .variant-item.active { outline: 2px solid #c69c6d; }
@@ -1600,8 +1570,4 @@ document.querySelectorAll('.variant-item').forEach(li => {
 // ====== 6) KHỞI TẠO ======
 refreshUI();
 </script>
-
 @endsection
-
-
-

@@ -33,7 +33,7 @@
                 <div class="col-12">
                     <div class="cart-countdown"><img src="{{ asset('assets/client/images/gif/fire-2.gif') }}" alt="">
                         <h6>Xin hãy nhanh chân lên! Có người đã đặt hàng một trong những sản phẩm bạn có trong giỏ hàng.
-                            Chúng tôi sẽ giữ lại cho bạn trong<span id="countdown"></span>minutes.</h6>
+                        </h6>
                     </div>
                 </div>
                 <div class="col-xxl-9 col-xl-8">
@@ -198,6 +198,7 @@
                                                                         kiện</a>
                                                                 </div>
                                                             </div>
+
 
                                                             <!-- x10 góc trên phải -->
                                                             <div class="position-absolute top-0 end-0 text-danger small me-2 mt-2">
@@ -418,12 +419,12 @@
                             '#28a745';
 
             toast.innerHTML = `
-                        <div class="icon">
-                            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-                            <span>${message}</span>
-                        </div>
-                        <button class="close-btn">&times;</button>
-                    `;
+                                                                        <div class="icon">
+                                                                            <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+                                                                            <span>${message}</span>
+                                                                        </div>
+                                                                        <button class="close-btn">&times;</button>
+                                                                    `;
 
             container.appendChild(toast);
 
@@ -514,61 +515,61 @@
                     // HTML hiển thị attributes
                     const attributesHtml = Object.entries(item.attributes || {})
                         .map(([key, value]) => `
-                            <p class="mb-0">
-                                ${key.charAt(0).toUpperCase() + key.slice(1)}: 
-                                <span>${value}</span>
-                            </p>
-                        `)
+                                                            <p class="mb-0">
+                                                                ${key.charAt(0).toUpperCase() + key.slice(1)}: 
+                                                                <span>${value}</span>
+                                                            </p>
+                                                        `)
                         .join('');
 
                     // HTML row
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>
-                            <div class="cart-box d-flex align-items-start gap-3">
-                                <a href="product.html">
-                                    <img src="${item.image}" alt="${item.name}"
-                                        style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
-                                </a>
-                                <div>
-                                    <a href="product.html">
-                                        <h5 class="mb-1">${item.name}</h5>
-                                    </a>
-                                    <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
-                                    ${attributesHtml}
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            ${item.price.toLocaleString('vi-VN')}
-                            <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
-                        </td>
-                        <td class="align-middle">
-                            <div class="quantity d-flex align-items-center gap-2">
-                                <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input type="number" 
-                                    value="${item.quantity}" 
-                                    min="1" max="99" 
-                                    data-index="${index}"
-                                    class="form-control form-control-sm text-center quantity-input" 
-                                    style="width: 60px;">
-                                <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="align-middle">
-                            ${itemTotal.toLocaleString('vi-VN')}
-                            <span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span>
-                        </td>
-                        <td class="align-middle">
-                            <a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    `;
+                                                        <td>
+                                                            <div class="cart-box d-flex align-items-start gap-3">
+                                                                <a href="product.html">
+                                                                    <img src="${item.image}" alt="${item.name}"
+                                                                        style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
+                                                                </a>
+                                                                <div>
+                                                                    <a href="product.html">
+                                                                        <h5 class="mb-1">${item.name}</h5>
+                                                                    </a>
+                                                                    <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
+                                                                    ${attributesHtml}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            ${item.price.toLocaleString('vi-VN')}
+                                                            <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <div class="quantity d-flex align-items-center gap-2">
+                                                                <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
+                                                                    <i class="fa-solid fa-minus"></i>
+                                                                </button>
+                                                                <input type="number" 
+                                                                    value="${item.quantity}" 
+                                                                    min="1" max="99" 
+                                                                    data-index="${index}"
+                                                                    class="form-control form-control-sm text-center quantity-input" 
+                                                                    style="width: 60px;">
+                                                                <button class="plus btn btn-sm btn-outline-secondary" data-index="${index}">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            ${itemTotal.toLocaleString('vi-VN')}
+                                                            <span style="font-size:0.75em;vertical-align:super;color:#666;">đ</span>
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <a class="deleteButton text-danger" href="javascript:void(0)" data-index="${index}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    `;
 
                     cartBody.appendChild(tr);
                 });
@@ -636,9 +637,9 @@
                         `-${discount.toLocaleString('vi-VN')}đ`;
 
                     const html = `
-                            <div class="text-danger d-flex align-items-center gap-1">
-                                ${icon} <strong>${code}</strong>: ${formatted}
-                            </div>`;
+                                                                <div class="text-danger d-flex align-items-center gap-1">
+                                                                    ${icon} <strong>${code}</strong>: ${formatted}
+                                                                </div>`;
 
                     return {
                         amount: discount,
@@ -806,32 +807,32 @@
                     const key = `${item.id}_${attributeString}`;
                     const li = document.createElement('li');
                     li.innerHTML = `
-                    <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
-                    <div>
-                    <h6 class="mb-0">${item.name}</h6>
-                    <p class="mb-1">$${item.price.toLocaleString()}
-                    ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
-                    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
-                    ${Object.entries(item.attributes || {}).map(([key, value]) => {
+                                                                <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
+                                                                <div>
+                                                                <h6 class="mb-0">${item.name}</h6>
+                                                                <p class="mb-1">$${item.price.toLocaleString()}
+                                                                ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
+                                                                <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
+                                                                ${Object.entries(item.attributes || {}).map(([key, value]) => {
                         return ` < p class = "mb-1" > $ {
-                                        key
-                                    }: < span > $ {
-                                        value
-                                    } < /span></p > `;
+                                                                                    key
+                                                                                }: <p span > $ {
+                                                                                    value
+                                                                                } < /span></p > `;
                     }).join('')}
-                    <div class="btn-containter">
-                    <div class="btn-control">
-                    <button class="btn-control__remove" data-key="${key}">−</button>
-                    <div class="btn-control__quantity">
-                    <div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
-                    <div id="quantity-current">${quantity}</div>
-                    <div id="quantity-next">${quantity + 1}</div>
-                    </div>
-                    <button class="btn-control__add" data-key="${key}">+</button>
-                    </div>
-                    </div>
-                    </div>
-                    <i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>`;
+                                                                <div class="btn-containter">
+                                                                <div class="btn-control">
+                                                                <button class="btn-control__remove" data-key="${key}">−</button>
+                                                                <div class="btn-control__quantity">
+                                                                <div id="quantity-previous">${quantity > 1 ? quantity - 1 : ''}</div>
+                                                                <div id="quantity-current">${quantity}</div>
+                                                                <div id="quantity-next">${quantity + 1}</div>
+                                                                </div>
+                                                                <button class="btn-control__add" data-key="${key}">+</button>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <i class="fa fa-trash delete-icon" data-key="${key}" style="font-size: 18px; color: #888; cursor: pointer;"></i>`;
                     li.querySelector('.delete-icon').addEventListener('click', function () {
                         const key = this.dataset.key;
                         cartItems = cartItems.filter(p => `${p.id}_${p.size}_${p.color}` !== key);
@@ -944,9 +945,9 @@
                     } else {
                         shippingDiscount = calculateDiscount(coupon, bagTotal);
                         shippingHTML = `
-                                    <div class="text-danger">
-                                        🚚 <strong>${code}</strong>: ${formatDisplay(coupon, shippingDiscount)}
-                                    </div>`;
+                                                                                    <div class="text-danger">
+                                                                                        🚚 <strong>${code}</strong>: ${formatDisplay(coupon, shippingDiscount)}
+                                                                                    </div>`;
                     }
                 }
 
@@ -1003,9 +1004,9 @@
                     } else {
                         productDiscount = calculateDiscount(coupon, bagTotal);
                         productHTML = `
-                                <div class="text-danger">
-                                    🎁 <strong>${code}</strong>: ${formatDisplay(coupon, productDiscount)}
-                                </div>`;
+                                                                                <div class="text-danger">
+                                                                                    🎁 <strong>${code}</strong>: ${formatDisplay(coupon, productDiscount)}
+                                                                                </div>`;
                     }
                 }
 
@@ -1168,9 +1169,9 @@
                 } = JSON.parse(saved);
                 const v = Number(value);
                 couponSpan.innerHTML = `
-                                <span class="badge bg-light border text-danger px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1">
-                                    🎫 <strong>${code}</strong> <span>(-${v.toLocaleString('vi-VN')}đ)</span>
-                                </span>`;
+                                                                                <span class="badge bg-light border text-danger px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1">
+                                                                                    🎫 <strong>${code}</strong> <span>(-${v.toLocaleString('vi-VN')}đ)</span>
+                                                                                </span>`;
                 updateCartSummary();
             }
 
@@ -1319,6 +1320,7 @@
             },
             loop: true,
         });
+
     </script>
 
 
@@ -1332,13 +1334,13 @@
             const toast = document.createElement('div');
             toast.className = 'toast-box';
             toast.style.cssText = `
-                        background: ${type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#28a745'};
-                        color: white;
-                        padding: 10px 15px;
-                        margin-bottom: 10px;
-                        border-radius: 5px;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                    `;
+                                                                        background: ${type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#28a745'};
+                                                                        color: white;
+                                                                        padding: 10px 15px;
+                                                                        margin-bottom: 10px;
+                                                                        border-radius: 5px;
+                                                                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                                                                    `;
             toast.innerHTML = `<strong>${message}</strong>`;
             container.appendChild(toast);
             setTimeout(() => {

@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SearchHistory;
 use App\Models\Wishlist;
 use App\Observers\SettingObserver;
+use Illuminate\Support\Facades\Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -119,18 +120,27 @@ class AppServiceProvider extends ServiceProvider
             $view->with('unreadNotifications', $notifications);
         });
         // ✅ Override mail config từ bảng settings
-        if (Schema::hasTable('settings')) {
-            if (setting('smtp_status', 0) == 1) {
-                config([
-                    'mail.mailers.smtp.host'       => setting('smtp_host'),
-                    'mail.mailers.smtp.port'       => setting('smtp_port'),
-                    'mail.mailers.smtp.encryption' => setting('smtp_encryption'),
-                    'mail.mailers.smtp.username'   => setting('smtp_email'),
-                    'mail.mailers.smtp.password'   => setting('smtp_password'),
-                    'mail.from.address'            => setting('smtp_email'),
-                    'mail.from.name'               => config('app.name'),
-                ]);
+        // Không bắt buộc apply config SMTP khi chạy các lệnh artisan
+        if (app()->runningInConsole()) {
+            return;
+        }
+
+        try {
+            if (Schema::hasTable('settings') && function_exists('setting')) {
+                if ((int) setting('smtp_status', 0) === 1) {
+                    config([
+                        'mail.mailers.smtp.host'       => setting('smtp_host'),
+                        'mail.mailers.smtp.port'       => setting('smtp_port'),
+                        'mail.mailers.smtp.encryption' => setting('smtp_encryption'),
+                        'mail.mailers.smtp.username'   => setting('smtp_username'),
+                        'mail.mailers.smtp.password'   => setting('smtp_password'),
+                        'mail.from.address'            => setting('smtp_from_address'),
+                        'mail.from.name'               => setting('smtp_from_name'),
+                    ]);
+                }
             }
+        } catch (\Throwable $e) {
+            Log::warning('Skip SMTP settings on boot: ' . $e->getMessage());
         }
         View::composer('layouts.partials.client.header', function ($view) {
             $wishlistCount = 0;

@@ -14,6 +14,7 @@ use App\Models\ProductVariantOption;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\ProductImage;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -62,10 +63,11 @@ class ProductController extends Controller
 
     public function create()
     {
+        $tags = Tag::all();
         $categories = Category::all();
         $brands = Brand::all();
         $attributes = Attribute::with('values')->get();
-        return view('admin.products.create', compact('categories', 'brands', 'attributes'));
+        return view('admin.products.create', compact('categories', 'brands', 'attributes', 'tags'));
     }
 
     public function store(Request $request)
@@ -161,6 +163,13 @@ class ProductController extends Controller
             $product->update(['size_chart' => $path]);
         }
 
+
+        // 7. Gắn Tag cho sản phẩm
+        if ($request->has('tags')) {
+            $product->tags()->sync($request->tags);
+        }
+
+
         // 6. Lưu biến thể và liên kết thuộc tính
         if ($request->has('variants')) {
             foreach ($request->variants as $index => $variant) {
@@ -226,16 +235,19 @@ class ProductController extends Controller
                 ->with('error', 'Danh mục của sản phẩm đã bị xoá. Không thể chỉnh sửa sản phẩm này.');
         }
 
-        $product = Product::with(['variants' => function ($q) {
-            $q->withCount('orderItems');
-        }])->findOrFail($id);
+        $product = Product::with([
+            'variants' => function ($q) {
+                $q->withCount('orderItems');
+            },
+            'tags:id,name' // nạp sẵn tag của sản phẩm
+        ])->findOrFail($id);
 
-        $details = ProductDetail::where('product_id', $id)->get();
-        $variants = $product->variants;
-        $variantIds = $variants->pluck('id');
+        $details     = ProductDetail::where('product_id', $id)->get();
+        $variants    = $product->variants;
+        $variantIds  = $variants->pluck('id');
 
         $attributeNames = Attribute::pluck('name', 'id')->toArray();
-        $valueNames = AttributeValue::pluck('value', 'id')->toArray();
+        $valueNames     = AttributeValue::pluck('value', 'id')->toArray();
 
         $attributeGroupsRaw = DB::table('product_variant_options')
             ->join('attributes', 'product_variant_options.attribute_id', '=', 'attributes.id')
@@ -247,7 +259,7 @@ class ProductController extends Controller
 
         $attributeGroups = $attributeGroupsRaw->map(function ($items, $groupName) {
             return [
-                'name' => $groupName,
+                'name'   => $groupName,
                 'values' => $items->pluck('value')->unique()->values()->toArray()
             ];
         })->values()->all();
@@ -260,7 +272,7 @@ class ProductController extends Controller
             $attribute_map = [];
             foreach ($optionsRaw as $opt) {
                 $attrName = $attributeNames[$opt->attribute_id] ?? null;
-                $val = $valueNames[$opt->value_id] ?? null;
+                $val      = $valueNames[$opt->value_id] ?? null;
 
                 if ($attrName && $val) {
                     $attribute_map[$attrName] = $val;
@@ -268,17 +280,17 @@ class ProductController extends Controller
             }
 
             return [
-                'id' => $variant->id, // thêm id
+                'id'          => $variant->id,
                 'attribute_map' => $attribute_map,
-                'price' => $variant->price,
-                'quantity' => $variant->quantity,
-                'sku' => $variant->sku,
-                'weight' => $variant->weight,
-                'length' => $variant->length,
-                'width' => $variant->width,
-                'height' => $variant->height,
-                'is_active' => (bool) $variant->is_active,
-                'has_orders' => $variant->order_items_count > 0, // dùng count đã load sẵn
+                'price'       => $variant->price,
+                'quantity'    => $variant->quantity,
+                'sku'         => $variant->sku,
+                'weight'      => $variant->weight,
+                'length'      => $variant->length,
+                'width'       => $variant->width,
+                'height'      => $variant->height,
+                'is_active'   => (bool) $variant->is_active,
+                'has_orders'  => $variant->order_items_count > 0,
             ];
         });
 
@@ -287,7 +299,10 @@ class ProductController extends Controller
         });
 
         $categories = Category::all();
-        $brands = Brand::all();
+        $brands     = Brand::all();
+
+        // 🔹 LẤY DANH SÁCH TAG ĐỂ ĐỔ VÀO SELECT2
+        $tags = Tag::orderBy('sort_order')->get(['id', 'name']);
 
         return view('admin.products.edit', compact(
             'product',
@@ -296,9 +311,11 @@ class ProductController extends Controller
             'attributeValues',
             'categories',
             'brands',
-            'details'
+            'details',
+            'tags' // nhớ truyền vào view
         ));
     }
+
 
 
 
@@ -493,6 +510,8 @@ class ProductController extends Controller
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
             'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tags'   => 'nullable|array',
+            'tags.*' => 'nullable|string',
         ]);
 
         $product = Product::findOrFail($id);
@@ -665,6 +684,50 @@ class ProductController extends Controller
                 }
                 $path = $request->file('size_chart')->store('size_charts', 'public');
                 $product->size_chart = $path;
+            }
+
+            // --- 3.1 Đồng bộ Tag ---
+            if ($request->has('tags')) {
+                $rawTags = (array) $request->input('tags', []);
+                $tagIds  = [];
+
+                foreach ($rawTags as $t) {
+                    $t = trim((string)$t);
+                    if ($t === '') continue;
+
+                    // Nếu là ID số -> dùng luôn
+                    if (ctype_digit($t)) {
+                        $tag = Tag::find((int)$t);
+                        if ($tag) {
+                            $tagIds[] = $tag->id;
+                        }
+                        continue;
+                    }
+
+                    // Nếu là tên mới -> tạo tag mới (slug unique, sort_order = max+1)
+                    $name     = mb_substr($t, 0, 50);
+                    $baseSlug = Str::slug($name) ?: Str::slug(Str::random(6));
+                    $slug     = $baseSlug;
+                    $i        = 1;
+                    while (Tag::where('slug', $slug)->exists()) {
+                        $slug = $baseSlug . '-' . $i++;
+                    }
+
+                    $tag = Tag::firstOrCreate(
+                        ['slug' => $slug],
+                        [
+                            'name'       => $name,
+                            'description' => null,
+                            'is_active'  => 1,
+                            'sort_order' => (int) Tag::max('sort_order') + 1,
+                        ]
+                    );
+
+                    $tagIds[] = $tag->id;
+                }
+
+                // Ghi vào bảng trung gian product_tags
+                $product->tags()->sync($tagIds);   // nếu muốn cộng dồn dùng syncWithoutDetaching($tagIds)
             }
 
             $product->save();

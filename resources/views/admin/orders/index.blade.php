@@ -76,22 +76,22 @@
                             <form method="GET" action="{{ route('admin.orders.index') }}"
                                 class="d-flex w-100 justify-content-between">
                                 <div class="card-title">
+                                    <!--begin::Search-->
+                                    <div class="card-title">
                                         <!--begin::Search-->
-                                        <div class="card-title">
-                                            <!--begin::Search-->
-                                            <div class="d-flex align-items-center position-relative my-1">
-                                                <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
-                                                <input type="text" name="search" value="{{ request('search') }}"
-                                                    class="form-control form-control-solid w-250px ps-12"
-                                                    placeholder="Tìm mã đơn, tên khách hàng, mã vận đơn..." />
-                                            </div>
-                                            <!--end::Search-->
+                                        <div class="d-flex align-items-center position-relative my-1">
+                                            <i class="fa-solid fa-magnifying-glass fs-4 position-absolute ms-4"></i>
+                                            <input type="text" name="search" value="{{ request('search') }}"
+                                                class="form-control form-control-solid w-250px ps-12"
+                                                placeholder="Tìm mã đơn, tên khách hàng, mã vận đơn..." />
                                         </div>
-
                                         <!--end::Search-->
                                     </div>
+
+                                    <!--end::Search-->
+                                </div>
                                 <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-                                    
+
                                     <!--end::Card title-->
 
                                     <!--begin::Card toolbar-->

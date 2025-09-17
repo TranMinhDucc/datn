@@ -46,7 +46,11 @@
                           <h5>{{ $item->product_name }}</h5>
                           <p>SKU: {{ $item->product_variant->sku ?? $item->product->sku ?? 'Không có SKU' }}</p>
 
-                          <p>Phân loại: {{ $item->product_variant->variant_name ?? 'Không có phân loại' }}</p>
+                          @if($item->product_variant_id && $item->productVariant)
+                          <p>Phân loại: {{ $item->productVariant->variant_name }}</p>
+                          @else
+                          <p>Phân loại: Không có phân loại</p>
+                          @endif
 
 
                         </div>
@@ -144,12 +148,12 @@
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentUser = localStorage.getItem('currentUser') || 'guest';
-        localStorage.removeItem(`cartItems_${currentUser}`);
-        sessionStorage.removeItem('shippingCoupon');
-        sessionStorage.removeItem('productCoupon');
-    });
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentUser = localStorage.getItem('currentUser') || 'guest';
+    localStorage.removeItem(`cartItems_${currentUser}`);
+    sessionStorage.removeItem('shippingCoupon');
+    sessionStorage.removeItem('productCoupon');
+  });
 </script>
 
 
