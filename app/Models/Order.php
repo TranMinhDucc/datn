@@ -116,4 +116,8 @@ class Order extends Model
             ->withPivot('status')
             ->withTimestamps();
     }
+    public function histories()
+    {
+        return $this->hasMany(OrderStatusHistory::class, 'order_id');
+    }
 }

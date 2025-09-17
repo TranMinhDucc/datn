@@ -38,7 +38,6 @@
                   <th>SĐT</th>
                   <th>Địa chỉ</th>
                   <th>Giao bởi</th>
-                  <th>Trạng thái</th>
                   <th>Thanh toán</th>
                   <th>Tải Hóa Đơn</th>
                 </tr>
@@ -46,7 +45,7 @@
               <tbody>
                 <tr>
                   <td>#{{ $order->order_code ?? $order->id }}</td>
-                  <td>{{ $order->created_at->format('M d, Y') }}</td>
+                  <td>{{ $order->created_at->locale('vi')->translatedFormat('d/m/Y') }}</td>
                   <td>{{ $order->address->full_name }}</td>
                   <td>{{ $order->address->phone }}</td>
                   <td style="max-width: 300px; word-wrap: break-word; white-space: normal;">
@@ -57,7 +56,6 @@
                   </td>
 
                   <td>{{ $order->courier_name ?? 'Đang xử lý' }}</td>
-                  <td><span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span></td>
                   <td>{{ $order->payment_method === 'cod' ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán' }}</td>
                   <td>
                     <a href="{{ route('client.orders.invoice', $order->id) }}"

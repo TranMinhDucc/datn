@@ -66,7 +66,10 @@ class SupportTicketController extends Controller
             'order_code'    => 'nullable|string|max:100',
             'carrier_code'  => 'nullable|string|max:100',
             'body'          => 'required|string|min:20',
-            'attachments.*' => 'nullable|file|max:5120|mimes:jpg,jpeg,png,webp,mp4,pdf',
+
+            // 🔒 Quan trọng: xác nhận mảng & giới hạn 5 tệp, 5MB/tệp
+            'attachments'   => 'nullable|array|max:5',
+            'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,webp,mp4,pdf',
         ]);
 
         $ticket = SupportTicket::create([
@@ -74,15 +77,11 @@ class SupportTicketController extends Controller
             'subject'      => $data['subject'],
             'category'     => $data['category'],
             'priority'     => $data['priority'],
-            'order_code'   => $data['order_code'] ?? null,
+            'order_code'   => $data['order_code']   ?? null,
             'carrier_code' => $data['carrier_code'] ?? null,
-            // 'contact_via'  => [],
-            // 'contact_time' => null,
             'status'       => 'open',
         ]);
 
-
-        // tin nhắn đầu tiên = mô tả ban đầu
         $msg = SupportTicketMessage::create([
             'support_ticket_id' => $ticket->id,
             'user_id'  => Auth::id(),
@@ -90,18 +89,26 @@ class SupportTicketController extends Controller
             'body'     => $data['body'],
         ]);
 
-        if ($r->hasFile('attachments')) {
-            foreach ($r->file('attachments') as $file) {
-                $path = $file->store('support_messages', 'public');
-                SupportMessageAttachment::create([
-                    'support_ticket_message_id' => $msg->id,
-                    'path'          => $path,
-                    'original_name' => $file->getClientOriginalName(),
-                    'mime'          => $file->getClientMimeType(),
-                    'size'          => $file->getSize(),
-                ]);
-            }
+        // ✅ Nhận cả mảng và 1 file đơn
+        $files = $r->file('attachments', []);
+        if ($files instanceof \Illuminate\Http\UploadedFile) {
+            $files = [$files];
         }
+
+        foreach ($files as $file) {
+            if (!$file) continue;
+            $path = $file->store('support_messages', 'public');
+            SupportMessageAttachment::create([
+                'support_ticket_message_id' => $msg->id,
+                'path'          => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime'          => $file->getClientMimeType(),
+                'size'          => $file->getSize(),
+            ]);
+        }
+
+        // (tuỳ chọn) debug:
+        // \Log::info('📎 files uploaded', ['count' => is_array($files) ? count($files) : 0]);
 
         return redirect()->route('support.tickets.thread.show', $ticket)
             ->with('success', 'Đã tạo phiếu hỗ trợ!');

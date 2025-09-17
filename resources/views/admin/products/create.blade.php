@@ -365,22 +365,41 @@
                             </div>
 
                             <div class="row g-4">
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-4">
                                     <label class="form-label">Thời gian bắt đầu</label>
                                     <input type="datetime-local" name="starts_at" class="form-control"
                                         value="{{ old('starts_at', $product->starts_at ?? '') }}">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-4">
                                     <label class="form-label">Thời gian kết thúc</label>
                                     <input type="datetime-local" name="ends_at" class="form-control"
                                         value="{{ old('ends_at', $product->ends_at ?? '') }}">
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-12">
                                     <label class="form-label">Phần trăm / giá tiền</label>
                                     <input type="number" name="sale_times" class="form-control"
                                         value="{{ old('sale_times', $product->sale_times ?? '') }}">
                                 </div>
+
+
+
                             </div>
+                            <div>
+                                {{-- Thêm chọn Tag --}}
+                                <div class="col-md-12 mb-4">
+                                    <label class="form-label">Tag sản phẩm</label>
+                                    <select name="tags[]" id="tag-select" class="form-select" multiple>
+                                        @foreach($tags as $tag)
+                                        <option value="{{ $tag->id }}"
+                                            {{ collect(old('tags', []))->contains($tag->id) ? 'selected' : '' }}>
+                                            {{ $tag->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+
 
                             <div>
                                 <label class="form-label">Mô tả ngắn</label>
@@ -1138,6 +1157,17 @@
 
 
 
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#tag-select').select2({
+            placeholder: 'Chọn tag...',
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+@endpush
 
 <!--end::Content wrapper-->
 
