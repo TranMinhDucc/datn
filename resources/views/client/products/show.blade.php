@@ -1169,35 +1169,6 @@
                 });
             });
 
-            function showToast(message, type = 'error') {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-
-                toast.className = 'toast-box';
-                toast.style.background =
-                    type === 'error' ? '#dc3545' :
-                    type === 'warning' ? '#ffc107' :
-                    type === 'info' ? '#17a2b8' :
-                    '#28a745';
-
-                toast.innerHTML = `
-    <div class="icon">
-        <span>${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
-        <span>${message}</span>
-    </div>
-    <button class="close-btn">&times;</button>
-    `;
-
-                container.appendChild(toast);
-
-                toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
-
-                setTimeout(() => {
-                    toast.style.transition = 'opacity 0.5s ease';
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 500);
-                }, 3000 + container.children.length * 500);
-            }
 
             // ✅ Lấy ID biến thể từ selected attributes
             function getSelectedVariantId(attributes) {
@@ -1249,7 +1220,8 @@
                     });
 
                     if (!valid) {
-                        missingAttrs.forEach(attr => showToast(`Vui lòng chọn ${attr}`, 'error'));
+                        missingAttrs.forEach(attr => showToast('Thông báo',
+                            `Vui lòng chọn ${attr}`));
                         return;
                     }
 
@@ -1262,7 +1234,7 @@
                         const stockQty = rawQtyText.includes('hết hàng') ? 0 : parseInt(rawQtyText
                             .replace(/\D/g, '') || '0');
                         if (stockQty <= 0) {
-                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            showToast('Thông báo', 'Sản phẩm đã hết hàng');
                             return;
                         }
 
@@ -1290,12 +1262,12 @@
                         );
 
                         if (!matchedVariant) {
-                            showToast('Không tìm thấy biến thể phù hợp', 'error');
+                            showToast('Thông báo', 'Không tìm thấy biến thể phù hợp');
                             return;
                         }
 
                         if (matchedVariant.quantity <= 0) {
-                            showToast('Sản phẩm đã hết hàng', 'warning');
+                            showToast('Thông báo', 'Sản phẩm đã hết hàng');
                             return;
                         }
                     }
@@ -1316,8 +1288,9 @@
                     const totalQty = existingQty + quantity;
 
                     if (totalQty > matchedVariant.quantity) {
-                        showToast(`Chỉ còn ${matchedVariant.quantity} sản phẩm trong kho`,
-                            'warning');
+                        showToast('Thông báo',
+                            `Chỉ còn ${matchedVariant.quantity} sản phẩm trong kho. Vui lòng giảm số lượng.`
+                            );
                         return;
                     }
 
@@ -1389,7 +1362,7 @@
 
                     if (!valid) {
                         missingAttrs.forEach(attr => {
-                            showToast(`Vui lòng chọn ${attr}`, 'error');
+                            showToast('Thông báo', `Vui lòng chọn ${attr}`);
                         });
                         return;
                     }
@@ -1403,7 +1376,7 @@
                         if (matchedVariant) {
                             // ✅ Kiểm tra tồn kho
                             if (matchedVariant.quantity <= 0) {
-                                showToast('Sản phẩm đã hết hàng', 'warning');
+                                showToast('Thông báo', 'Sản phẩm đã hết hàng');
                                 return;
                             }
                             price = matchedVariant.price;
@@ -1485,4 +1458,135 @@
             });
         </script>
     @endif
+
+
+
+    <!-- HTML hiện tại của bạn giữ nguyên -->
+    <!-- Thêm CSS nhỏ để thấy phần được chọn -->
+    <style>
+        .variant-item.active {
+            outline: 2px solid #c69c6d;
+        }
+
+        .variant-item[hidden] {
+            display: none !important;
+        }
+
+        .variant-item.disabled {
+            opacity: .45;
+            pointer-events: none;
+        }
+    </style>
+
+    <script>
+        // ====== 1) DỮ LIỆU BIẾN THỂ TỪ BACKEND (đang bật) ======
+        const VARIANTS = @json($variants); // [{id, attributes:{Màu:'Cam', Size:'M', ...}, price, quantity,...}]
+
+        // Chuẩn hoá mảng làm việc
+        const variantList = VARIANTS.map(v => ({
+            id: v.id,
+            attrs: v.attributes
+        }));
+
+        // ====== 2) BẮT THAM CHIẾU CÁC NÚT LỰA CHỌN ======
+        const groups = [...document.querySelectorAll('.variant-group')];
+        const optionEls = {}; // { 'màu sắc' => Map(value => <li>), 'size' => Map(...) }
+        groups.forEach(g => {
+            const attr = g.dataset.attribute; // vd: 'màu sắc', 'size' (đang là lowercase theo blade)
+            optionEls[attr] = new Map();
+            g.querySelectorAll('.variant-item').forEach(li => {
+                optionEls[attr].set(li.dataset.value, li); // li có data-value="Cam"/"M" ...
+            });
+        });
+
+        // ====== 3) HÀM TIỆN ÍCH ======
+        const clone = o => JSON.parse(JSON.stringify(o));
+
+        function matchVariantIds(filter) {
+            // Trả về set id các biến thể khớp toàn bộ {attr:value} trong filter
+            return new Set(
+                variantList.filter(v =>
+                    Object.entries(filter).every(([a, val]) => (v.attrs[a] ?? v.attrs[capitalize(a)]) === val)
+                ).map(v => v.id)
+            );
+        }
+
+        function allowedValuesFor(attr, currentSel) {
+            // Giá trị hợp lệ của 'attr' khi cố định các lựa chọn khác
+            const other = clone(currentSel);
+            delete other[attr];
+            const matched = matchVariantIds(other);
+            const values = new Set();
+            variantList.forEach(v => {
+                if (matched.size === 0 || matched.has(v.id)) {
+                    const vAttrVal = v.attrs[attr] ?? v.attrs[capitalize(attr)];
+                    if (vAttrVal != null) values.add(vAttrVal);
+                }
+            });
+            return values;
+        }
+
+        function capitalize(s) {
+            return (s || "").charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        // ====== 4) TRẠNG THÁI LỰA CHỌN & RENDER ======
+        const selected = {}; // vd: { 'màu sắc':'Cam', 'size':'XS' }
+
+        function refreshUI() {
+            // Với từng thuộc tính, tính giá trị hợp lệ rồi ẩn/hiện
+            Object.keys(optionEls).forEach(attr => {
+                const allowed = allowedValuesFor(attr, selected);
+                optionEls[attr].forEach((li, val) => {
+                    const ok = allowed.has(val);
+                    // Ẩn hoàn toàn lựa chọn không hợp lệ
+                    li.hidden = !ok;
+                    li.classList.toggle('disabled', !ok);
+                    if (!ok && li.classList.contains('active')) {
+                        li.classList.remove('active');
+                        delete selected[attr];
+                    }
+                });
+
+                // Hiển thị thông báo nếu không còn lựa chọn
+                const errBox = document.querySelector(`.variant-group[data-attribute="${attr}"] .variant-error`);
+                if (errBox) {
+                    errBox.style.display = allowed.size ? 'none' : 'block';
+                    errBox.textContent = allowed.size ? '' : 'Không còn lựa chọn phù hợp.';
+                }
+            });
+
+            // Nếu đã chọn đủ (tất cả nhóm) và khớp đúng 1 biến thể -> có thể cập nhật giá/ tồn kho
+            const chosenCount = Object.keys(optionEls).length;
+            if (Object.keys(selected).length === chosenCount) {
+                const ids = matchVariantIds(selected);
+                if (ids.size === 1) {
+                    // TODO: cập nhật UI giá/tồn kho nếu bạn muốn
+                    // const chosen = VARIANTS.find(v => v.id === [...ids][0]);
+                    // document.querySelector('#price').textContent = formatPrice(chosen.price);
+                    // document.querySelector('#stock').textContent = chosen.quantity;
+                }
+            }
+        }
+
+        // ====== 5) GẮN SỰ KIỆN CLICK ======
+        document.querySelectorAll('.variant-item').forEach(li => {
+            li.addEventListener('click', () => {
+                if (li.hidden || li.classList.contains('disabled')) return;
+
+                const group = li.closest('.variant-group').dataset.attribute;
+                // bỏ active các anh em trong cùng nhóm
+                li.parentElement.querySelectorAll('.variant-item').forEach(sib => sib.classList.remove(
+                    'active'));
+                // chọn mới
+                li.classList.add('active');
+                selected[group] = li.dataset.value;
+
+                refreshUI();
+            });
+        });
+
+        // ====== 6) KHỞI TẠO ======
+        refreshUI();
+    </script>
 @endsection

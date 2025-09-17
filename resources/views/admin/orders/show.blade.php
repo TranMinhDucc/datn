@@ -2,6 +2,13 @@
 @section('title', 'Chi tiết đơn hàng')
 
 @section('content')
+    @php
+        function vnd($n)
+        {
+            return number_format((float) $n, 0) . 'đ';
+        } // nếu muốn dấu chấm: number_format((float)$n, 0, ',', '.')
+    @endphp
+
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-xxl">
 
@@ -471,6 +478,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="card card-flush py-4 mt-6">
                     <div class="card-header">
                         <h3 class="card-title">Thanh toán / Hoàn tiền</h3>
@@ -540,329 +548,463 @@
                         </div>
 
                         <div class="mt-4 d-flex flex-column gap-1">
-                            <div class="d-flex justify-content-between"><span>Tổng hàng + VAT +
-                                    ship</span><strong>{{ number_format($order->subtotal + $order->tax_amount + $order->shipping_fee, 2) }}</strong>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng hàng + VAT + ship</span>
+                                <strong>{{ number_format($order->subtotal + $order->tax_amount + $order->shipping_fee, 0, ',', '.') }}đ</strong>
                             </div>
-                            <div class="d-flex justify-content-between"><span>Tổng điều
-                                    chỉnh</span><strong>{{ number_format($order->adjustments_total, 2) }}</strong></div>
-                            <div class="d-flex justify-content-between"><span><u>Phải thu sau
-                                        cùng</u></span><strong>{{ number_format($order->net_total, 2) }}</strong></div>
-                            <div class="d-flex justify-content-between"><span>Đã thu
-                                    (payment)</span><strong>{{ number_format($order->paid_in, 2) }}</strong></div>
-                            <div class="d-flex justify-content-between"><span>Đã hoàn
-                                    (refund)</span><strong>{{ number_format($order->refunded_out, 2) }}</strong></div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng điều chỉnh</span>
+                                <strong>{{ number_format($order->adjustments_total, 0, ',', '.') }}đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><u>Phải thu sau cùng</u></span>
+                                <strong>{{ number_format($order->net_total, 0, ',', '.') }}đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Đã thu (payment)</span>
+                                <strong>{{ number_format($order->paid_in, 0, ',', '.') }}đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Đã hoàn (refund)</span>
+                                <strong>{{ number_format($order->refunded_out, 0, ',', '.') }}đ</strong>
+                            </div>
                             <div class="d-flex justify-content-between fs-5">
                                 <span><b>Số dư</b> (dương = KH còn thiếu, âm = cần hoàn)</span>
-                                <strong>{{ number_format($order->balance, 2) }}</strong>
+                                <strong>{{ number_format($order->balance, 0, ',', '.') }}đ</strong>
                             </div>
                         </div>
+
                     </div>
                 </div>
+                {{-- @php
+                    $refundLocked = \App\Models\Refund::where('return_request_id', $rr->id)
+                        ->whereIn('status', ['pending', 'done'])
+                        ->exists();
+                @endphp --}}
 
                 {{-- ======= Return/Exchange requests ======= --}}
                 @if ($returnRequests->count())
                     @foreach ($returnRequests as $rr)
-                        <div class="card mb-3 shadow-sm">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>
-                                        @if ($rr->type === 'exchange')
-                                            🔁 Yêu cầu đổi hàng
-                                        @elseif ($rr->type === 'return')
-                                            ↩️ Yêu cầu hoàn hàng
+                        @php
+                            $refundPending = \App\Models\Refund::where('return_request_id', $rr->id)
+                                ->where('status', 'pending')
+                                ->first();
+
+                            $refundLocked = \App\Models\Refund::where('return_request_id', $rr->id)
+                                ->whereIn('status', ['pending', 'done'])
+                                ->exists();
+
+                            $sumItemRefund = (float) $rr->items->sum(
+                                fn($it) => (float) ($it->actions?->where('action', 'refund')->sum('refund_amount') ??
+                                    0),
+                            );
+                        @endphp
+
+
+                        {{-- Card chính cho Return Request --}}
+                        <div class="card shadow-sm mb-6">
+                            {{-- Header của card --}}
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    {{-- Thông tin request --}}
+                                    <div class="d-flex align-items-center">
+                                        <div class="symbol symbol-40px me-3">
+                                            <div class="symbol-label bg-primary">
+                                                @if ($rr->type === 'exchange')
+                                                    <i class="fas fa-exchange-alt fs-2 text-white"></i>
+                                                @else
+                                                    <i class="fas fa-undo fs-2 text-white"></i>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title mb-0">
+                                                @if ($rr->type === 'exchange')
+                                                    Yêu cầu đổi hàng
+                                                @else
+                                                    Yêu cầu hoàn hàng
+                                                @endif
+                                                <span class="text-muted">#{{ $rr->id }}</span>
+                                            </h5>
+                                            <div class="text-muted fs-7">{{ $rr->created_at->format('d/m/Y H:i') }}</div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Status và actions --}}
+                                    <div class="d-flex align-items-center gap-3">
+                                        @php
+                                            $requestBadgeClass = match ($rr->status) {
+                                                'pending' => 'badge-warning',
+                                                'approved' => 'badge-primary',
+                                                'refunded' => 'badge-success',
+                                                'rejected' => 'badge-danger',
+                                                default => 'badge-secondary',
+                                            };
+                                        @endphp
+                                        <span
+                                            class="badge {{ $requestBadgeClass }} fs-7">{{ ucfirst($rr->status) }}</span>
+
+                                        {{-- Action buttons --}}
+                                        @php
+                                            $canCreateExchange =
+                                                in_array($rr->status, ['pending', 'approved']) &&
+                                                empty($rr->exchange_order_id) &&
+                                                $rr->items->sum(
+                                                    fn($i) => $i->actions
+                                                        ?->where('action', 'exchange')
+                                                        ->sum('quantity') ?? 0,
+                                                ) > 0;
+                                        @endphp
+
+                                        @if ($canCreateExchange)
+                                            <form action="{{ route('admin.return-requests.exchange', $rr->id) }}"
+                                                method="POST" class="js-exchange-form">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-plus me-1"></i>
+                                                    Tạo đơn đổi
+                                                </button>
+                                            </form>
                                         @endif
-                                        #{{ $rr->id }}
-                                    </strong>
-                                    @php
-                                        // status cấp REQUEST: chỉ pending|approved|rejected|refunded
-                                        $requestBadgeClass = match ($rr->status) {
-                                            'pending' => 'bg-warning',
-                                            'approved' => 'bg-primary',
-                                            'refunded' => 'bg-success',
-                                            'rejected' => 'bg-danger',
-                                            default => 'bg-secondary',
-                                        };
-                                    @endphp
-                                    <span class="ms-2 badge {{ $requestBadgeClass }}">{{ ucfirst($rr->status) }}</span>
+                                    </div>
                                 </div>
 
-                                @php
-                                    $canCreateExchange =
-                                        in_array($rr->status, ['pending', 'approved']) &&
-                                        empty($rr->exchange_order_id) && // <<< thêm dòng này
-                                        $rr->items->sum(
-                                            fn($i) => $i->actions?->where('action', 'exchange')->sum('quantity') ?? 0,
-                                        ) > 0;
-                                @endphp
-
-
-                                <div class="d-flex align-items-center gap-2">
-                                    <small class="text-muted">{{ $rr->created_at->format('d/m/Y H:i') }}</small>
-
-                                    @if ($canCreateExchange)
-                                        <form action="{{ route('admin.return-requests.exchange', $rr->id) }}"
-                                            method="POST" class="js-exchange-form d-inline">
+                                {{-- Refund section --}}
+                                @if ($refundPending)
+                                    {{-- ĐANG CHỜ CHUYỂN --}}
+                                    <div class="mt-4 p-4 bg-light-primary rounded border-primary border border-dashed">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-clock text-warning fs-2 me-3"></i>
+                                                <div>
+                                                    <div class="fw-bold text-gray-800">Phiếu hoàn đang chờ xử lý</div>
+                                                    <div class="text-muted fs-7">Phiếu #{{ $refundPending->id }} -
+                                                        {{ vnd($refundPending->amount) }}</div>
+                                                </div>
+                                            </div>
+                                            <form action="{{ route('admin.refunds.markDone', $refundPending) }}"
+                                                method="POST" class="d-flex align-items-center gap-2">
+                                                @csrf
+                                                <input name="bank_ref" class="form-control form-control-sm"
+                                                    placeholder="Mã giao dịch" style="width: 150px;" required>
+                                                <input type="datetime-local" name="transferred_at"
+                                                    class="form-control form-control-sm" style="width: 180px;">
+                                                <button class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i>Đã
+                                                    chuyển</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @elseif (!$refundLocked)
+                                    {{-- CHƯA CÓ PHIẾU HOÀN (pending/done) -> cho tạo --}}
+                                    <div class="mt-4 p-4 bg-light-warning rounded border-warning border border-dashed">
+                                        <form action="{{ route('admin.refunds.createFromRR', $rr) }}" method="POST"
+                                            class="d-flex align-items-center gap-3">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-primary">Tạo đơn đổi</button>
+                                            <label class="form-label mb-0 fw-semibold text-gray-800">Tạo phiếu
+                                                hoàn:</label>
+                                            <input type="number" step="0.01" name="amount"
+                                                class="form-control form-control-sm w-200px"
+                                                placeholder="Số tiền (mặc định: {{ vnd($sumItemRefund) }})">
+                                            <button class="btn btn-warning btn-sm"><i class="fas fa-wallet me-1"></i>Tạo
+                                                phiếu</button>
                                         </form>
-                                    @endif
-                                </div>
+                                    </div>
+                                @else
+                                    {{-- ĐÃ CÓ PHIẾU DONE -> chỉ hiển thị thông tin, KHÔNG cho tạo lại --}}
+                                    <div class="mt-4 p-3 bg-light-success rounded border-success border border-dashed">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Đã có phiếu hoàn – đã khóa.
+                                    </div>
+                                @endif
+
+                                @if ($refundPending)
+                                    <div class="mt-4 p-4 bg-light-primary rounded border-primary border border-dashed">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-clock text-warning fs-2 me-3"></i>
+                                                <div>
+                                                    <div class="fw-bold text-gray-800">Phiếu hoàn đang chờ xử lý</div>
+                                                    <div class="text-muted fs-7">Phiếu #{{ $refundPending->id }} -
+                                                        {{ vnd($refundPending->amount) }}</div>
+                                                </div>
+                                            </div>
+                                            <form action="{{ route('admin.refunds.markDone', $refundPending) }}"
+                                                method="POST" class="d-flex align-items-center gap-2">
+                                                @csrf
+                                                <input name="bank_ref" class="form-control form-control-sm"
+                                                    placeholder="Mã giao dịch" style="width: 150px;" required>
+                                                <input type="datetime-local" name="transferred_at"
+                                                    class="form-control form-control-sm" style="width: 180px;">
+                                                <button class="btn btn-success btn-sm">
+                                                    <i class="fas fa-check me-1"></i>
+                                                    Đã chuyển
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
-                            {{-- Bảng item trong request --}}
-                            <div class="table-responsive mb-3">
-                                <table class="table table-sm table-bordered align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Tên sản phẩm</th>
-                                            <th class="text-center" style="width:100px;">SL yêu cầu</th>
-                                            <th class="text-center" style="width:210px;">Xử lý</th>
-                                            <th class="text-center" style="width:160px;">Trạng thái</th>
-                                            <th class="text-center" style="width:260px;">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($rr->items as $it)
-                                            @php
-                                                // ==== tổng xử lý của item ====
-                                                $exQty =
-                                                    (int) ($it->actions
-                                                        ?->where('action', 'exchange')
-                                                        ->sum('quantity') ?? 0);
-                                                $rfQty =
-                                                    (int) ($it->actions?->where('action', 'refund')->sum('quantity') ??
-                                                        0);
-                                                $rjQty =
-                                                    (int) ($it->actions?->where('action', 'reject')->sum('quantity') ??
-                                                        0);
-                                                $rfAmt =
-                                                    (float) ($it->actions
-                                                        ?->where('action', 'refund')
-                                                        ->sum('refund_amount') ?? 0);
+                            {{-- Body - Danh sách items --}}
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-row-dashed table-row-gray-300 gy-5 gs-7">
+                                        <thead>
+                                            <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200">
+                                                <th class="min-w-300px">Sản phẩm</th>
+                                                <th class="text-center min-w-80px">SL yêu cầu</th>
+                                                <th class="text-center min-w-120px">Đã xử lý</th>
+                                                <th class="text-center min-w-100px">Trạng thái</th>
+                                                <th class="text-end min-w-200px">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($rr->items as $it)
+                                                @php
+                                                    // Tính toán số lượng
+                                                    $exQty =
+                                                        (int) ($it->actions
+                                                            ?->where('action', 'exchange')
+                                                            ->sum('quantity') ?? 0);
+                                                    $rfQty =
+                                                        (int) ($it->actions
+                                                            ?->where('action', 'refund')
+                                                            ->sum('quantity') ?? 0);
+                                                    $rjQty =
+                                                        (int) ($it->actions
+                                                            ?->where('action', 'reject')
+                                                            ->sum('quantity') ?? 0);
+                                                    $rfAmt =
+                                                        (float) ($it->actions
+                                                            ?->where('action', 'refund')
+                                                            ->sum('refund_amount') ?? 0);
 
-                                                // ==== trạng thái item ====
-                                                $itemStatus = 'pending';
-                                                if ($exQty || $rfQty || $rjQty) {
-                                                    if ($exQty && !$rfQty && !$rjQty) {
-                                                        $itemStatus = 'approved_exchange';
-                                                    } elseif ($rfQty && !$exQty && !$rjQty) {
-                                                        $itemStatus = 'approved_refund';
-                                                    } elseif ($rjQty && !$exQty && !$rfQty) {
-                                                        $itemStatus = 'rejected';
-                                                    } else {
-                                                        $itemStatus = 'approved_mixed';
-                                                    }
-                                                }
-                                                $statusBadge = match ($itemStatus) {
-                                                    'approved_exchange' => [
-                                                        'badge' => 'bg-success',
-                                                        'text' => '✅ Đồng ý đổi',
-                                                    ],
-                                                    'approved_refund' => [
-                                                        'badge' => 'bg-info',
-                                                        'text' => '💳 Hoàn tiền',
-                                                    ],
-                                                    'approved_mixed' => [
-                                                        'badge' => 'bg-primary',
-                                                        'text' => '🧩 Đã chia xử lý',
-                                                    ],
-                                                    'rejected' => ['badge' => 'bg-danger', 'text' => '❌ Từ chối'],
-                                                    default => ['badge' => 'bg-warning', 'text' => '⏳ Chờ xử lý'],
-                                                };
-
-                                                // ==== thuộc tính biến thể hiển thị sau tên sản phẩm ====
-                                                $attrs = '';
-                                                $raw = $it->orderItem->variant_values ?? null; // có thể là JSON string hoặc array
-                                                $vals = is_string($raw)
-                                                    ? json_decode($raw, true)
-                                                    : (is_array($raw)
-                                                        ? $raw
-                                                        : []);
-                                                if (json_last_error() === JSON_ERROR_NONE && !empty($vals)) {
-                                                    $pairs = [];
-                                                    foreach ($vals as $k => $v) {
-                                                        $label = is_string($k)
-                                                            ? mb_convert_case(trim($k), MB_CASE_TITLE, 'UTF-8')
-                                                            : $k;
-                                                        $pairs[] = $label . ': ' . $v;
-                                                    }
-                                                    $attrs = ' – ' . implode(', ', $pairs);
-                                                } else {
-                                                    // fallback từ quan hệ variant
-                                                    $variant = $it->orderItem->productVariant ?? null;
-                                                    if ($variant) {
-                                                        $parts = [];
-                                                        if (!empty($variant->color)) {
-                                                            $parts[] = 'Màu: ' . $variant->color;
-                                                        }
-                                                        if (!empty($variant->size)) {
-                                                            $parts[] = 'Size: ' . $variant->size;
-                                                        }
-                                                        if (
-                                                            method_exists($variant, 'options') &&
-                                                            $variant->options?->count()
-                                                        ) {
-                                                            foreach ($variant->options as $o) {
-                                                                $n = optional($o->attribute)->name;
-                                                                $v = optional($o->value)->value;
-                                                                if ($n && $v) {
-                                                                    $parts[] = $n . ': ' . $v;
-                                                                }
-                                                            }
-                                                        }
-                                                        if ($parts) {
-                                                            $attrs = ' – ' . implode(', ', $parts);
+                                                    // Trạng thái item
+                                                    $itemStatus = 'pending';
+                                                    if ($exQty || $rfQty || $rjQty) {
+                                                        if ($exQty && !$rfQty && !$rjQty) {
+                                                            $itemStatus = 'approved_exchange';
+                                                        } elseif ($rfQty && !$exQty && !$rjQty) {
+                                                            $itemStatus = 'approved_refund';
+                                                        } elseif ($rjQty && !$exQty && !$rfQty) {
+                                                            $itemStatus = 'rejected';
+                                                        } else {
+                                                            $itemStatus = 'approved_mixed';
                                                         }
                                                     }
-                                                }
-                                            @endphp
 
-                                            <tr>
-                                                <td>{{ $it->orderItem->product_name }}{{ $attrs }}</td>
+                                                    $statusBadge = match ($itemStatus) {
+                                                        'approved_exchange' => [
+                                                            'badge' => 'badge-success',
+                                                            'text' => 'Đồng ý đổi',
+                                                        ],
+                                                        'approved_refund' => [
+                                                            'badge' => 'badge-info',
+                                                            'text' => 'Hoàn tiền',
+                                                        ],
+                                                        'approved_mixed' => [
+                                                            'badge' => 'badge-primary',
+                                                            'text' => 'Chia xử lý',
+                                                        ],
+                                                        'rejected' => ['badge' => 'badge-danger', 'text' => 'Từ chối'],
+                                                        default => ['badge' => 'badge-warning', 'text' => 'Chờ xử lý'],
+                                                    };
 
-                                                <td class="text-center"><strong>{{ $it->quantity }}</strong></td>
+                                                    // Thuộc tính sản phẩm
+                                                    $attrs = '';
+                                                    $raw = $it->orderItem->variant_values ?? null;
+                                                    $vals = is_string($raw)
+                                                        ? json_decode($raw, true)
+                                                        : (is_array($raw)
+                                                            ? $raw
+                                                            : []);
+                                                    if (json_last_error() === JSON_ERROR_NONE && !empty($vals)) {
+                                                        $pairs = [];
+                                                        foreach ($vals as $k => $v) {
+                                                            $label = is_string($k)
+                                                                ? mb_convert_case(trim($k), MB_CASE_TITLE, 'UTF-8')
+                                                                : $k;
+                                                            $pairs[] = $label . ': ' . $v;
+                                                        }
+                                                        $attrs = ' • ' . implode(', ', $pairs);
+                                                    }
 
-                                                <td class="text-center">
-                                                    <div class="small text-muted">
-                                                        Đổi: <b>{{ $exQty }}</b> •
-                                                        Hoàn: <b>{{ $rfQty }}</b> •
-                                                        Từ chối: <b>{{ $rjQty }}</b>
-                                                    </div>
-                                                    @if ($rfAmt > 0)
-                                                        <div class="small text-muted">Tổng hoàn:
-                                                            {{ number_format($rfAmt, 2) }}</div>
-                                                    @endif
-                                                </td>
+                                                    // Lock logic
+                                                    $locked =
+                                                        $refundLocked ||
+                                                        !empty($rr->exchange_order_id) ||
+                                                        in_array($rr->status, ['refunded', 'rejected'], true);
+                                                    $usedQty = (int) ($exQty + $rfQty + $rjQty);
+                                                    $leftQty = max(0, (int) $it->quantity - $usedQty);
+                                                @endphp
 
-                                                <td class="text-center">
-                                                    <span
-                                                        class="badge {{ $statusBadge['badge'] }}">{{ $statusBadge['text'] }}</span>
-                                                </td>
-
-                                                <td class="text-center">
-                                                    {{-- DANH SÁCH ACTIONS ĐÃ THÊM --}}
-                                                    @php
-                                                        // Khóa khi RR đã có đơn đổi hoặc request đã kết thúc
-                                                        $locked =
-                                                            !empty($rr->exchange_order_id) ||
-                                                            in_array($rr->status, ['refunded', 'rejected'], true);
-
-                                                        // SL đã dùng & còn lại cho dòng này
-                                                        $usedQty = (int) ($exQty + $rfQty + $rjQty);
-                                                        $leftQty = max(0, (int) $it->quantity - $usedQty);
-                                                    @endphp
-                                                    @if ($it->actions?->count())
-                                                        <ul class="list-unstyled mb-2 text-start small">
-                                                            @foreach ($it->actions as $act)
-                                                                <li
-                                                                    class="d-flex justify-content-between align-items-center border rounded px-2 py-1 mb-1">
-                                                                    <div>
-                                                                        @if ($act->action === 'exchange')
-                                                                            <span class="badge bg-success">Đổi</span>
-                                                                            {{ optional($act->variant)->variant_name ?? (optional($act->variant)->sku ?? 'SKU hiện tại') }}
-                                                                            × <b>{{ $act->quantity }}</b>
-                                                                        @elseif ($act->action === 'refund')
-                                                                            <span class="badge bg-info">Hoàn</span>
-                                                                            SL: <b>{{ $act->quantity }}</b>
-                                                                            @if ($act->refund_amount)
-                                                                                —
-                                                                                {{ number_format($act->refund_amount, 2) }}
-                                                                            @endif
-                                                                        @else
-                                                                            <span class="badge bg-danger">Từ chối</span>
-                                                                            SL: <b>{{ $act->quantity }}</b>
-                                                                        @endif
-                                                                        @if ($act->note)
-                                                                            <em class="text-muted">—
-                                                                                {{ $act->note }}</em>
-                                                                        @endif
-                                                                    </div>
-
-                                                                    {{-- Xoá action --}}
-                                                                    {{-- Xoá action (ẩn nếu đã khóa) --}}
-                                                                    @if (!$locked)
-                                                                        <form method="POST"
-                                                                            action="{{ route('admin.return-requests.items.actions.destroy', $act->id) }}"
-                                                                            onsubmit="return confirm('Xoá dòng xử lý này?');">
-                                                                            @csrf @method('DELETE')
-                                                                            <button
-                                                                                class="btn btn-xs btn-light-danger">Xoá</button>
-                                                                        </form>
-                                                                    @endif
-
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                    @php
-                                                        // Khoá sửa/xoá khi RR đã có đơn đổi hoặc request đã kết thúc
-                                                        $locked =
-                                                            !empty($rr->exchange_order_id) ||
-                                                            in_array($rr->status, ['refunded', 'rejected'], true);
-
-                                                        // SL đã dùng & còn lại cho dòng này
-                                                        $usedQty = (int) ($exQty + $rfQty + $rjQty);
-                                                        $leftQty = max(0, (int) $it->quantity - $usedQty);
-                                                    @endphp
-
-                                                    {{-- NÚT THÊM ACTION --}}
-                                                    @if (!$locked && $leftQty > 0)
-                                                        <div class="btn-group">
-                                                            {{-- + Đổi --}}
-                                                            <button type="button" class="btn btn-sm btn-primary"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#addExchangeActionModal"
-                                                                data-item-id="{{ $it->id }}"
-                                                                data-qty="{{ $it->quantity }}"
-                                                                data-used="{{ $usedQty }}"
-                                                                data-variants='@json(optional($it->orderItem->product)->variants?->map(fn($v) => [
-                                                                            'id' => $v->id,
-                                                                            'label' =>
-                                                                                ($v->variant_name ?? trim(($v->color ?? '') . ' ' . ($v->size ?? ''))) .
-                                                                                " — SKU: {$v->sku} — " .
-                                                                                number_format($v->price) .
-                                                                                'đ',
-                                                                        ]) ?? []
-                                                                )'>
-                                                                + Đổi
-                                                            </button>
-
-                                                            {{-- + Hoàn --}}
-                                                            <button type="button" class="btn btn-sm btn-warning"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#addRefundActionModal"
-                                                                data-item-id="{{ $it->id }}"
-                                                                data-qty="{{ $it->quantity }}"
-                                                                data-used="{{ $usedQty }}">
-                                                                + Hoàn
-                                                            </button>
-
-                                                            {{-- + Từ chối --}}
-                                                            <button type="button" class="btn btn-sm btn-danger"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#addRejectActionModal"
-                                                                data-item-id="{{ $it->id }}"
-                                                                data-qty="{{ $it->quantity }}"
-                                                                data-used="{{ $usedQty }}">
-                                                                + Từ chối
-                                                            </button>
+                                                <tr>
+                                                    {{-- Tên sản phẩm --}}
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="symbol symbol-50px me-3">
+                                                                <div class="symbol-label bg-light-primary">
+                                                                    <i class="fas fa-box text-primary fs-2"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ms-3">
+                                                                <div class="fw-bold text-gray-800 fs-6">
+                                                                    {{ $it->orderItem->product_name }}</div>
+                                                                @if ($attrs)
+                                                                    <div class="text-muted fs-7">{{ $attrs }}</div>
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                    @else
-                                                        <div class="text-muted small">
-                                                            @if ($locked)
-                                                                Yêu cầu đã khoá (đã tạo đơn đổi hoặc đã kết thúc).
-                                                            @else
-                                                                Đã xử lý đủ số lượng.
+                                                    </td>
+
+                                                    {{-- Số lượng yêu cầu --}}
+                                                    <td class="text-center">
+                                                        <span
+                                                            class="badge badge-light-primary fs-6">{{ $it->quantity }}</span>
+                                                    </td>
+
+                                                    {{-- Đã xử lý --}}
+                                                    <td class="text-center">
+                                                        <div class="d-flex flex-column gap-1">
+                                                            @if ($exQty > 0)
+                                                                <span class="badge badge-light-success fs-8">Đổi:
+                                                                    {{ $exQty }}</span>
+                                                            @endif
+                                                            @if ($rfQty > 0)
+                                                                <span class="badge badge-light-info fs-8">Hoàn:
+                                                                    {{ $rfQty }}</span>
+                                                            @endif
+                                                            @if ($rjQty > 0)
+                                                                <span class="badge badge-light-danger fs-8">Từ chối:
+                                                                    {{ $rjQty }}</span>
+                                                            @endif
+                                                            @if ($rfAmt > 0)
+                                                                <div class="text-muted fs-8 mt-1">{{ vnd($rfAmt) }}
+                                                                </div>
                                                             @endif
                                                         </div>
-                                                    @endif
+                                                    </td>
 
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                    {{-- Trạng thái --}}
+                                                    <td class="text-center">
+                                                        <span
+                                                            class="badge {{ $statusBadge['badge'] }} fs-7">{{ $statusBadge['text'] }}</span>
+                                                    </td>
 
-                                    </tbody>
-                                </table>
+                                                    {{-- Thao tác --}}
+                                                    <td class="text-end">
+                                                        {{-- Danh sách actions đã thêm --}}
+                                                        @if ($it->actions?->count())
+                                                            <div class="mb-3">
+                                                                @foreach ($it->actions as $act)
+                                                                    <div
+                                                                        class="d-flex align-items-center justify-content-between bg-light-gray-200 rounded p-2 mb-2">
+                                                                        <div class="d-flex align-items-center">
+                                                                            @if ($act->action === 'exchange')
+                                                                                <span
+                                                                                    class="badge badge-success me-2">Đổi</span>
+                                                                                <span
+                                                                                    class="fs-7">{{ optional($act->variant)->variant_name ?? (optional($act->variant)->sku ?? 'SKU hiện tại') }}
+                                                                                    × {{ $act->quantity }}</span>
+                                                                            @elseif ($act->action === 'refund')
+                                                                                <span
+                                                                                    class="badge badge-info me-2">Hoàn</span>
+                                                                                <span class="fs-7">SL:
+                                                                                    {{ $act->quantity }} @if ($act->refund_amount)
+                                                                                        • {{ vnd($act->refund_amount) }}
+                                                                                    @endif
+                                                                                </span>
+                                                                            @else
+                                                                                <span class="badge badge-danger me-2">Từ
+                                                                                    chối</span>
+                                                                                <span class="fs-7">SL:
+                                                                                    {{ $act->quantity }}</span>
+                                                                            @endif
+                                                                            @if ($act->note)
+                                                                                <div class="text-muted fs-8 mt-1">
+                                                                                    {{ $act->note }}</div>
+                                                                            @endif
+                                                                        </div>
+                                                                        @if (!$locked)
+                                                                            <form method="POST"
+                                                                                action="{{ route('admin.return-requests.items.actions.destroy', $act->id) }}"
+                                                                                onsubmit="return confirm('Xoá dòng xử lý này?');">
+                                                                                @csrf @method('DELETE')
+                                                                                <button
+                                                                                    class="btn btn-icon btn-sm btn-light-danger">
+                                                                                    <i
+                                                                                        class="fas fa-trash text-danger"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        @endif
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+
+                                                        {{-- Nút thêm action --}}
+                                                        @if (!$locked && $leftQty > 0)
+                                                            <div class="btn-group">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-light-primary"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addExchangeActionModal"
+                                                                    data-item-id="{{ $it->id }}"
+                                                                    data-qty="{{ $it->quantity }}"
+                                                                    data-used="{{ $usedQty }}"
+                                                                    data-variants='@json(optional($it->orderItem->product)->variants?->map(fn($v) => [
+                                                                                'id' => $v->id,
+                                                                                'label' =>
+                                                                                    ($v->variant_name ?? trim(($v->color ?? '') . ' ' . ($v->size ?? ''))) .
+                                                                                    " — SKU: {$v->sku} — " .
+                                                                                    number_format($v->price) .
+                                                                                    'đ',
+                                                                            ]) ?? []
+                                                                    )'>
+                                                                    <i class="fas fa-exchange-alt me-1"></i>
+                                                                    Đổi
+                                                                </button>
+
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-light-warning"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addRefundActionModal"
+                                                                    data-item-id="{{ $it->id }}"
+                                                                    data-qty="{{ $it->quantity }}"
+                                                                    data-used="{{ $usedQty }}">
+                                                                    <i class="fas fa-wallet me-1"></i>
+                                                                    Hoàn
+                                                                </button>
+
+                                                                <button type="button" class="btn btn-sm btn-light-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addRejectActionModal"
+                                                                    data-item-id="{{ $it->id }}"
+                                                                    data-qty="{{ $it->quantity }}"
+                                                                    data-used="{{ $usedQty }}">
+                                                                    <i class="fas fa-times me-1"></i>
+                                                                    Từ chối
+                                                                </button>
+                                                            </div>
+                                                        @else
+                                                            <div class="text-muted fs-7 fst-italic">
+                                                                @if ($refundLocked)
+                                                                    Đã có phiếu hoàn - đã khóa
+                                                                @elseif (!empty($rr->exchange_order_id))
+                                                                    Đã có đơn đổi - đã khóa
+                                                                @elseif (in_array($rr->status, ['refunded', 'rejected'], true))
+                                                                    Yêu cầu đã kết thúc
+                                                                @else
+                                                                    Đã xử lý đủ số lượng
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -913,7 +1055,8 @@
                                                         </td>
                                                         <td class="text-end">{{ $item->quantity }}</td>
                                                         <td class="text-end">{{ number_format($item->price) }}đ</td>
-                                                        <td class="text-end">{{ number_format($item->total_price) }}đ</td>
+                                                        <td class="text-end">{{ number_format($item->total_price) }}đ
+                                                        </td>
                                                     </tr>
                                                 @endforeach
 
@@ -927,12 +1070,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td colspan="4" class="text-end">Phí vận chuyển</td>
-                                                    <td class="text-end">{{ number_format($order->shipping_fee) }}đ</td>
+                                                    <td class="text-end">{{ number_format($order->shipping_fee) }}đ
+                                                    </td>
                                                 </tr>
 
                                                 @if ($order->coupon)
                                                     <tr>
-                                                        <td colspan="4" class="text-end text-danger">Mã giảm giá sản
+                                                        <td colspan="4" class="text-end text-danger">Mã giảm giá
+                                                            sản
                                                             phẩm ({{ $order->coupon->code }})</td>
                                                         <td class="text-end text-danger">
                                                             @if ($order->coupon->value_type === 'fixed')
@@ -946,7 +1091,8 @@
 
                                                 @if ($order->shippingCoupon)
                                                     <tr>
-                                                        <td colspan="4" class="text-end text-danger">Mã giảm giá vận
+                                                        <td colspan="4" class="text-end text-danger">Mã giảm giá
+                                                            vận
                                                             chuyển ({{ $order->shippingCoupon->code }})</td>
                                                         <td class="text-end text-danger">
                                                             @if ($order->shippingCoupon->value_type === 'fixed')
@@ -959,7 +1105,8 @@
                                                 @endif
 
                                                 <tr>
-                                                    <td colspan="4" class="fs-3 text-gray-900 text-end">Tổng cộng</td>
+                                                    <td colspan="4" class="fs-3 text-gray-900 text-end">Tổng cộng
+                                                    </td>
                                                     <td class="text-gray-900 fs-3 fw-bolder text-end">
                                                         {{ number_format($order->total_amount) }}đ</td>
                                                 </tr>
@@ -1004,7 +1151,8 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="4" class="text-center text-muted">Chưa có log vận
+                                                        <td colspan="4" class="text-center text-muted">Chưa có log
+                                                            vận
                                                             chuyển</td>
                                                     </tr>
                                                 @endforelse

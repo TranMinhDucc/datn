@@ -10,6 +10,7 @@ use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Models\Refund;
 
 class ReturnRequestItemActionController extends Controller
 {
@@ -96,13 +97,16 @@ class ReturnRequestItemActionController extends Controller
      */
     public function update(Request $request, $actionId)
     {
-        $action = ReturnRequestItemAction::with(['item.orderItem', 'item.returnRequest', 'item.actions'])->findOrFail($actionId);
-        $item   = $action->item;
-        $rr     = $item->returnRequest;
-        $oi     = $item->orderItem;
+        $action = ReturnRequestItemAction::with(['item.orderItem', 'item.returnRequest', 'item.actions'])
+            ->findOrFail($actionId);
 
-        // KHÓA khi không còn được phép chỉnh
+        $item = $action->item;
+        $rr   = $item->returnRequest;
+        $oi   = $item->orderItem;
+
+        // KHÓA khi không còn được phép chỉnh (rule riêng của bạn)
         if ($resp = $this->ensureEditable($rr)) return $resp;
+
 
         $data = $request->validate([
             'action'              => ['required', Rule::in(['exchange', 'refund', 'reject'])],
@@ -131,28 +135,39 @@ class ReturnRequestItemActionController extends Controller
             return back()->with('error', 'Vượt quá số lượng đã giao của sản phẩm.');
         }
 
+        // Nếu không phải exchange thì bỏ variant_id
         $exchangeVariantId = $data['action'] === 'exchange' ? ($data['exchange_variant_id'] ?? null) : null;
 
+        // Tính tiền hoàn & cờ nhập tay
         $refundAmount = null;
+        $isManual     = false;
+
         if ($data['action'] === 'refund') {
-            $refundAmount = $data['refund_amount'] ?? null;
-            if ($refundAmount === null) {
-                $unitPaid     = $item->unit_price_paid ?? ($oi->total_price / max(1, $oi->quantity));
-                $refundAmount = round($unitPaid * $qtyNew, 2);
-            }
+            $unitPaid = $item->unit_price_paid ?? (float) ($oi->total_price / max(1, $oi->quantity));
+            $autoAmt  = round($unitPaid * $qtyNew, 2);
+
+            // filled() => "0" vẫn là nhập tay; rỗng "" thì coi là auto
+            $isManual     = $request->filled('refund_amount');
+            $refundAmount = $isManual ? (float) $data['refund_amount'] : $autoAmt;
+
+            // (tuỳ chọn) chặn vượt trần auto nếu không muốn hoàn > tiền đã trả
+            // if ($refundAmount > $autoAmt) {
+            //     return back()->with('error', 'Số tiền hoàn vượt quá giá trị đã thanh toán.');
+            // }
         }
 
-        DB::transaction(function () use ($action, $item, $rr, $data, $qtyNew, $exchangeVariantId, $refundAmount) {
-            // 1) Update — dùng cột 'action'
+        DB::transaction(function () use ($action, $item, $rr, $data, $qtyNew, $exchangeVariantId, $refundAmount, $isManual) {
+            // 1) Update action
             $action->action              = $data['action'];
             $action->quantity            = $qtyNew;
             $action->exchange_variant_id = $exchangeVariantId;
-            $action->refund_amount       = $refundAmount;
+            $action->refund_amount       = $refundAmount;      // null nếu không phải refund
+            $action->is_manual_amount    = $isManual;          // << quan trọng
             $action->note                = $data['note'] ?? null;
             $action->updated_by          = auth()->id();
             $action->save();
 
-            // 2) Recompute
+            // 2) Recompute tổng theo item & request
             $this->recomputeItem($item->fresh(['actions']));
             $this->recomputeRequest($rr->fresh(['items.actions']));
         });
@@ -167,34 +182,28 @@ class ReturnRequestItemActionController extends Controller
      */
     public function destroy($actionId)
     {
-        // Lấy action + item + RR
         $action = ReturnRequestItemAction::with(['item.returnRequest', 'item.actions'])->findOrFail($actionId);
         $item   = $action->item;
         $rr     = $item->returnRequest;
 
-        // Chặn thao tác khi RR đã tạo đơn đổi hoặc đã kết thúc
-        if (!empty($rr->exchange_order_id) || in_array($rr->status, ['refunded', 'rejected'], true)) {
-            return back()->with('error', 'Yêu cầu này đã có đơn đổi/đã kết thúc, không thể xoá dòng xử lý.');
-        }
+        // KHÓA tập trung
+        if ($resp = $this->ensureEditable($rr)) return $resp;
 
-        // Re-check trong transaction + lock để chống double click
         return DB::transaction(function () use ($action) {
-            // Khoá RR để tránh thay đổi song song rồi mới xoá
+            // Recheck trong transaction (lock)
             $rrLocked = ReturnRequest::lockForUpdate()->find($action->item->return_request_id);
-            if (!empty($rrLocked->exchange_order_id) || in_array($rrLocked->status, ['refunded', 'rejected'], true)) {
-                return back()->with('error', 'Yêu cầu này đã có đơn đổi/đã kết thúc, không thể xoá dòng xử lý.');
-            }
+            if ($resp = $this->ensureEditable($rrLocked)) return $resp;
 
-            $item = $action->item; // cần lại để recompute sau khi delete
+            $item = $action->item; // giữ lại để recompute
             $action->delete();
 
-            // Tính lại tổng cho item + request
             $this->recomputeItem($item->fresh(['actions']));
             $this->recomputeRequest($rrLocked->fresh(['items.actions']));
 
             return back()->with('success', 'Đã xoá hành động.');
         });
     }
+
 
 
     /* ===================== Helpers ===================== */
@@ -231,15 +240,27 @@ class ReturnRequestItemActionController extends Controller
     }
     private function ensureEditable(ReturnRequest $rr)
     {
-        // khóa khi đã tạo đơn đổi hoặc đã refund/xử lý xong
+        // ĐÃ CÓ PHIẾU HOÀN -> KHÓA (pending/done)
+        $hasRefund = Refund::where('return_request_id', $rr->id)
+            ->whereIn('status', ['pending', 'done'])
+            ->exists();
+        if ($hasRefund) {
+            return back()->with('error', 'RMA đã có phiếu hoàn (pending/done), không thể sửa các dòng.');
+        }
+
+        // ĐÃ có đơn đổi
         if (!empty($rr->exchange_order_id)) {
             return back()->with('error', 'Yêu cầu đã có đơn đổi, không thể sửa các dòng xử lý nữa.');
         }
+
+        // ĐÃ kết thúc
         if (in_array($rr->status, ['refunded', 'rejected'], true)) {
             return back()->with('error', 'Yêu cầu đã kết thúc, không thể chỉnh sửa.');
         }
-        return null;
+
+        return null; // OK
     }
+
 
     /**
      * Recompute tổng tiền hoàn + trạng thái cấp request.
