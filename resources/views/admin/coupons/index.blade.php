@@ -99,32 +99,33 @@
                                     </td>
                                     
                                     {{-- Thao tác --}}
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-light btn-active-light-primary"
-                                                data-bs-toggle="dropdown">
-                                                <i class="fa-solid fa-ellipsis-h"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <a href="{{ route('admin.coupons.edit', $coupon->id) }}"
-                                                        class="dropdown-item">
-                                                        <i class="fa-solid fa-pen-to-square me-2 text-primary"></i> Sửa
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <form action="{{ route('admin.coupons.destroy', $coupon->id) }}"
-                                                        method="POST" onsubmit="return confirm('Xóa sản phẩm này?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="fa-solid fa-trash me-2 text-danger"></i> Xóa
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
+                                   <td class="text-end">
+    <div class="dropdown">
+        <button class="btn btn-sm btn-light btn-active-light-primary"
+            data-bs-toggle="dropdown">
+            Hành Động <i class="fa fa-chevron-down ms-1"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <!-- Sửa -->
+            <li>
+                <a href="{{ route('admin.coupons.edit', $coupon->id) }}" class="dropdown-item">
+                    <i class="fa-solid fa-pen-to-square me-2 text-primary"></i> Sửa
+                </a>
+            </li>
+            <!-- Xóa -->
+            <li>
+                <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST"
+                    onsubmit="return confirm('Bạn có chắc muốn xóa mã giảm giá này?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="fa-solid fa-trash me-2 text-danger"></i> Xóa
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</td>
                                 </tr>
                                 @empty
                                 <tr>

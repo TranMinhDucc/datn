@@ -69,12 +69,12 @@
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-light btn-active-light-primary"
                                                         data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                        Actions <i class="fa fa-chevron-down ms-1"></i>
+                                                        Hành Động <i class="fa fa-chevron-down ms-1"></i>
                                                     </button>
                                                     <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
                                                         <div class="menu-item px-3">
                                                             <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                                class="menu-link px-3">Edit</a>
+                                                                class="menu-link px-3">Sửa</a>
                                                         </div>
                                                         <div class="menu-item px-3">
 

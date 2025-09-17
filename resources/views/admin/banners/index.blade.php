@@ -16,7 +16,7 @@
                         </div>
 
                         <div class="card-toolbar">
-                            <a href="{{ route('admin.banners.create') }}" class="btn btn-primary">Add Banner</a>
+                            <a href="{{ route('admin.banners.create') }}" class="btn btn-primary">Thêm Banner</a>
                         </div>
                     </div>
 
@@ -84,17 +84,17 @@
     <div class="dropdown">
         <button class="btn btn-sm btn-light btn-active-light-primary"
             data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-            Actions <i class="fa fa-chevron-down ms-1"></i>
+            Hành Động <i class="fa fa-chevron-down ms-1"></i>
         </button>
         <div class="menu menu-sub menu-sub-dropdown w-125px" data-kt-menu="true">
             <!-- Edit -->
             <div class="menu-item px-3">
-                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="menu-link px-3">Edit</a>
+                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="menu-link px-3">Sửa</a>
             </div>
 
             <!-- Show -->
             <div class="menu-item px-3">
-                <a href="{{ route('admin.banners.show', $banner->id) }}" class="menu-link px-3">Show</a>
+                <a href="{{ route('admin.banners.show', $banner->id) }}" class="menu-link px-3">Xem</a>
             </div>
 
             <!-- Delete -->
@@ -103,8 +103,8 @@
                     onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này không?')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="menu-link px-3 text-primary w-100" style="background: none; border: none;">
-                        Delete
+                    <button type="submit" class="menu-link px-3 text-danger w-100" style="background: none; border: none;">
+                        Xóa
                     </button>
                 </form>
             </div>

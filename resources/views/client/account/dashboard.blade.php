@@ -2036,34 +2036,6 @@
 
 @section('js')
     <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('update-profile-form');
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Ngăn reload
-
-                const formData = new FormData(form);
-                const url = '{{ route('client.account.profile.update') }}';
-
-                // Xóa lỗi cũ
-                form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
-
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: formData
-                    })
-
-                    .catch(error => {
-                        console.error('Lỗi:', error);
-                    });
-            });
-        });
-    </script>
     {{-- EYE --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
