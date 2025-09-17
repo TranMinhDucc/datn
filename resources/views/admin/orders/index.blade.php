@@ -272,6 +272,11 @@
                                                                 'color' => 'warning',
                                                                 'icon' => 'ki-undo',
                                                             ],
+                                                            'exchanged' => [
+                                                                'label' => 'Đã đổi hàng',
+                                                                'color' => 'success',
+                                                                'icon' => 'ki-undo',
+                                                            ],
                                                         ];
 
                                                         $status = $order->status ?? 'pending';

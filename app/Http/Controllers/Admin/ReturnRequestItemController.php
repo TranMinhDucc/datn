@@ -213,49 +213,49 @@ class ReturnRequestItemController extends Controller
     public function handleExchange($id)
     {
         return DB::transaction(function () use ($id) {
-            // 1) Khóa RR để tránh tạo trùng khi double-click
-            $rr = ReturnRequest::with([
+            // 1) Lock RR để tránh double-click
+            $rr = \App\Models\ReturnRequest::with([
                 'order',
                 'items.orderItem.productVariant',
                 'items.orderItem.product',
                 'items.actions' => fn($q) => $q->where('action', 'exchange'),
-            ])
-                ->lockForUpdate()
-                ->findOrFail($id);
+            ])->lockForUpdate()->findOrFail($id);
 
-            // 2) Không cho tạo nếu trạng thái không hợp lệ
+            // 2) Trạng thái RR phải hợp lệ
             if (!in_array($rr->status, ['pending', 'approved'], true)) {
                 return back()->with('error', 'Yêu cầu không ở trạng thái có thể tạo đơn đổi.');
             }
 
-            // 3) Nếu RR đã link tới order đổi -> quay lại ngay
+            // 3) Nếu đã có link tới đơn đổi thì quay lại ngay
             if (!empty($rr->exchange_order_id)) {
                 return redirect()
                     ->route('admin.orders.show', $rr->exchange_order_id)
                     ->with('info', "Đơn đổi đã tồn tại #{$rr->exchange_order_id}.");
             }
 
-            // 4) Nếu bảng orders đã có đơn gắn RR này -> backfill & quay lại
-            if ($existingId = Order::where('exchange_of_return_request_id', $rr->id)->value('id')) {
+            // 4) Nếu trong bảng orders đã có đơn gắn RR này thì backfill & quay lại
+            if ($existingId = \App\Models\Order::where('exchange_of_return_request_id', $rr->id)->value('id')) {
                 if (empty($rr->exchange_order_id)) {
                     $rr->exchange_order_id = $existingId;
                     $rr->save();
                 }
-                return redirect()
-                    ->route('admin.orders.show', $existingId)
+                return redirect()->route('admin.orders.show', $existingId)
                     ->with('info', "Đơn đổi đã tồn tại #{$existingId}.");
             }
 
-            // 5) Gom các action EXCHANGE
+            // 5) Gom các action ĐỔI
             $exActions = $rr->items->flatMap(fn($it) => $it->actions)->where('action', 'exchange')->values();
             if ($exActions->isEmpty()) {
                 return back()->with('error', 'Chưa có dòng đổi nào.');
             }
 
-            // 6) Khóa luôn order gốc (phòng khi đồng thời có thao tác khác)
+            // 6) Lock đơn gốc
             $original = $rr->order()->lockForUpdate()->first();
+            if ($original->status === 'cancelled') {
+                return back()->with('error', 'Đơn gốc đã huỷ, không thể tạo đơn đổi.');
+            }
 
-            // 7) Tạo order mới
+            // 7) Tạo đơn đổi
             $newOrder = $original->replicate([
                 'subtotal',
                 'discount_amount',
@@ -274,8 +274,9 @@ class ReturnRequestItemController extends Controller
             $newOrder->order_code  = 'EXC' . now()->format('ymdHis');
             $newOrder->status      = 'pending';
             $newOrder->is_exchange = 1;
-            $newOrder->payment_status = $original->payment_status === 'paid' ? 'paid' : 'unpaid';
-            $newOrder->is_paid        = $original->payment_status === 'paid' ? 1 : 0;
+            // tuỳ policy của bạn, có thể luôn để unpaid để thu/hoàn phần chênh
+            $newOrder->payment_status = ($original->payment_status === 'paid') ? 'paid' : 'unpaid';
+            $newOrder->is_paid        = ($original->payment_status === 'paid') ? 1 : 0;
 
             // reset tiền
             $newOrder->subtotal = 0;
@@ -284,16 +285,15 @@ class ReturnRequestItemController extends Controller
             $newOrder->tax_amount = 0;
             $newOrder->total_amount = 0;
 
-            // **QUAN TRỌNG**: gắn RR id để đảm bảo idempotent
+            // gắn RR để đảm bảo idempotent
             $newOrder->exchange_of_return_request_id = $rr->id;
             $newOrder->save();
 
-            // 8) Dòng hàng
+            // 8) Thêm items
             $subtotalNew = 0;
             $subtotalOldEquiv = 0;
 
             foreach ($exActions as $act) {
-                /** @var \App\Models\ReturnRequestItem $rrItem */
                 $rrItem = $act->item;
                 $oi     = $rrItem->orderItem;
 
@@ -321,14 +321,15 @@ class ReturnRequestItemController extends Controller
                 $subtotalOldEquiv += $unitPaidOld * $new->quantity;
             }
 
-            // 9) Cập nhật tổng tiền đơn đổi
+            // 9) Tổng tiền đơn đổi
             $newOrder->subtotal     = $subtotalNew;
-            $newOrder->total_amount = $subtotalNew; // ship/tax xử lý sau
+            $newOrder->total_amount = $subtotalNew; // ship/tax tính sau
             $newOrder->save();
 
-            // 10) Ghi ngược vào RR + ghi chú chênh lệch
+            // 10) Cập nhật RR
             $diff = round($subtotalNew - $subtotalOldEquiv, 2);
-            $note = "Exchange order #{$newOrder->order_code}. Price diff: " . ($diff >= 0 ? '+' : '-') . number_format(abs($diff), 2);
+            $note = "Exchange order #{$newOrder->order_code}. Price diff: "
+                . ($diff >= 0 ? '+' : '-') . number_format(abs($diff), 2);
 
             $rr->admin_note        = trim(($rr->admin_note ? $rr->admin_note . "\n" : '') . $note);
             $rr->exchange_order_id = $newOrder->id;
@@ -340,11 +341,29 @@ class ReturnRequestItemController extends Controller
             }
             $rr->save();
 
+            // 11) **ĐỔI TRẠNG THÁI ĐƠN GỐC → exchange_requested** + log
+            if ($original->status !== 'exchange_requested') {
+                $original->status = 'exchange_requested';
+                $original->save();
+
+                \App\Models\ShippingLog::create([
+                    'order_id'    => $original->id,
+                    'provider'    => 'manual',
+                    'tracking_code' => null,
+                    'status'      => 'exchange_requested',
+                    'description' => 'Khách yêu cầu đổi hàng – đã tạo đơn đổi ' . $newOrder->order_code,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                    'received_at' => now(),
+                ]);
+            }
+
             return redirect()
                 ->route('admin.orders.show', $newOrder->id)
                 ->with('success', 'Đã tạo đơn đổi thành công.');
         });
     }
+
 
 
     public function setVariant(Request $request, $id)

@@ -10,6 +10,7 @@ use App\Models\PartnerLocationCode;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\ReturnRequest;
 use App\Models\ReturnRequestItem;
 use App\Models\ShippingLog;
 use App\Models\ShippingMethod;
@@ -303,7 +304,7 @@ class OrderController extends Controller
             'updated_at' => now(),
             'received_at' => now(),
         ]);
-
+        $this->markOriginExchangedIfNeeded($order, $to);
         $order->user->notify(new OrderStatusNotification(
             $order->id,
             $order->status,
@@ -725,35 +726,36 @@ class OrderController extends Controller
     }
 
 
-    // Phương thức tạo vận đơn GHN cho đơn mới
-    // private function createGHNOrder(Order $order)
-    // {
-    //     $data = [
-    //         'to_name' => $order->shipping_address->full_name,
-    //         'to_phone' => $order->shipping_address->phone,
-    //         'to_address' => $order->shipping_address->address,
-    //         'to_ward_code' => $order->shipping_address->ward_code,
-    //         'to_district_id' => $order->shipping_address->district_id,
-    //         'cod_amount' => $order->total, // Nếu có thu COD
-    //         'content' => 'Đơn đổi hàng - Đơn gốc #' . $order->original_order_id,
-    //         'weight' => 500, // gram
-    //         'length' => 20,
-    //         'width' => 15,
-    //         'height' => 10,
-    //         'service_type_id' => 2, // Giao hàng tiết kiệm
-    //     ];
+    private function markOriginExchangedIfNeeded(Order $order, string $to): void
+    {
+        // Chỉ xử lý khi đây là ĐƠN ĐỔI và trạng thái mới là delivered/completed
+        if (!in_array($to, ['delivered', 'completed'], true)) return;
+        if (!($order->is_exchange || $order->exchange_of_return_request_id)) return;
 
-    //     $response = Http::withToken(config('services.ghn.token'))
-    //         ->post('https://online-gateway.ghn.vn/shiip/public-api/v1/shipping-order/create', $data);
+        $rrId = $order->exchange_of_return_request_id;
+        if (!$rrId) return;
 
-    //     if ($response->successful()) {
-    //         $order->shipping_info = $response->json();
-    //         $order->save();
-    //     } else {
-    //         // Xử lý lỗi
-    //         throw new \Exception('Lỗi tạo đơn GHN: ' . $response->body());
-    //     }
-    // }
+        $rr = ReturnRequest::with('order')->find($rrId);
+        $origin = $rr?->order;
+        if (!$origin) return;
+
+        // Chỉ set khi đơn gốc đang ở exchange_requested (đã được set lúc tạo đơn đổi)
+        if ($origin->status === 'exchange_requested') {
+            $origin->status = 'exchanged';
+            $origin->save();
+
+            ShippingLog::create([
+                'order_id'     => $origin->id,
+                'provider'     => 'manual',
+                'tracking_code' => null,
+                'status'       => 'exchanged',
+                'description'  => "Đơn đổi #{$order->order_code} đã {$to}. Đánh dấu đơn gốc là exchanged.",
+                'created_at'   => now(),
+                'updated_at'   => now(),
+                'received_at'  => now(),
+            ]);
+        }
+    }
     private array $statusLabels = [
         'pending'            => '🕐 Chờ xác nhận',
         'confirmed'          => '✅ Đã xác nhận',

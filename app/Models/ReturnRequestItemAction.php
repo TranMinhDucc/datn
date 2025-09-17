@@ -15,12 +15,14 @@ class ReturnRequestItemAction extends Model
         'refund_amount',
         'note',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'is_manual_amount',        // <= thêm
     ];
 
     protected $casts = [
-        'quantity'      => 'integer',
-        'refund_amount' => 'decimal:2',
+        'quantity'         => 'integer',
+        'refund_amount'    => 'decimal:2',
+        'is_manual_amount' => 'boolean',       // <= thêm
     ];
 
     public function item(): BelongsTo
