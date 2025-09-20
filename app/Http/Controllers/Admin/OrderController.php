@@ -904,4 +904,6 @@ class OrderController extends Controller
         // Redirect sang link in PDF của GHN
         return redirect()->away("https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token={$token}");
     }
+
+    
 }
