@@ -12,46 +12,50 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SupportTicketReplied;
+use App\Mail\SupportTicketStatusChanged;
+
 
 class SupportTicketController extends Controller
 {
     public function index(Request $r)
-{
-    $q      = trim($r->q ?? '');
-    $status = $r->status ?? '';
-    $prio   = $r->priority ?? '';
-    $sort   = $r->sort ?? 'latest';
+    {
+        $q      = trim($r->q ?? '');
+        $status = $r->status ?? '';
+        $prio   = $r->priority ?? '';
+        $sort   = $r->sort ?? 'latest';
 
-    $tickets = SupportTicket::with(['user:id,fullname,email'])
-        ->when($q, function ($qr) use ($q) {
-            $qr->where(function ($x) use ($q) {
-                $x->where('subject', 'like', "%$q%")
-                  ->orWhere('order_code', 'like', "%$q%");
-                if (is_numeric($q)) {
-                    $x->orWhere('id', (int)$q);
-                }
-            });
-        })
-        ->when($status, fn($qr) => $qr->where('status', $status))
-        ->when($prio,   fn($qr) => $qr->where('priority', $prio));
+        $tickets = SupportTicket::with(['user:id,fullname,email'])
+            ->when($q, function ($qr) use ($q) {
+                $qr->where(function ($x) use ($q) {
+                    $x->where('subject', 'like', "%$q%")
+                        ->orWhere('order_code', 'like', "%$q%");
+                    if (is_numeric($q)) {
+                        $x->orWhere('id', (int)$q);
+                    }
+                });
+            })
+            ->when($status, fn($qr) => $qr->where('status', $status))
+            ->when($prio,   fn($qr) => $qr->where('priority', $prio));
 
-    if ($sort === 'oldest') {
-        $tickets->oldest('updated_at');
-    } elseif ($sort === 'priority') {
-        // urgent > high > normal > low, rồi mới updated_at desc
-        $tickets->orderByRaw("FIELD(priority,'urgent','high','normal','low') ASC")
+        if ($sort === 'oldest') {
+            $tickets->oldest('updated_at');
+        } elseif ($sort === 'priority') {
+            // urgent > high > normal > low, rồi mới updated_at desc
+            $tickets->orderByRaw("FIELD(priority,'urgent','high','normal','low') ASC")
                 ->latest('updated_at');
-    } else {
-        $tickets->latest('updated_at');
+        } else {
+            $tickets->latest('updated_at');
+        }
+
+        $tickets = $tickets->paginate(12)->withQueryString();
+
+
+
+        // Bỏ 'assigned' vì không dùng
+        return view('admin.support.index', compact('tickets', 'q', 'status', 'prio', 'sort'));
     }
-
-    $tickets = $tickets->paginate(12)->withQueryString();
-
-    
-
-    // Bỏ 'assigned' vì không dùng
-    return view('admin.support.index', compact('tickets','q','status','prio','sort'));
-}
 
 
 
@@ -131,12 +135,12 @@ class SupportTicketController extends Controller
             ->with('success', 'Tạo phiếu hỗ trợ thành công!');
     }
 
-   public function show(SupportTicket $ticket)
+    public function show(SupportTicket $ticket)
     {
         // Nạp user + messages + attachments + user của message (tránh N+1), theo thứ tự cũ -> mới
         $ticket->load([
             'user:id,fullname,email,username',
-            'messages' => fn ($q) => $q->oldest()->with([
+            'messages' => fn($q) => $q->oldest()->with([
                 'user:id,fullname,email',
                 'attachments:id,support_ticket_message_id,path,original_name,mime'
             ]),
@@ -150,36 +154,63 @@ class SupportTicketController extends Controller
     }
 
 
-   public function update(Request $r, SupportTicket $ticket)
-{
-    $data = $r->validate([
-        'status'   => 'nullable|in:open,waiting_staff,waiting_customer,resolved,closed',
-        'priority' => 'nullable|in:low,normal,high,urgent',
-    ]);
-
-    // Gán kiểu string thuần – tránh mọi DB::raw
-    if ($r->filled('status'))   { $ticket->status   = (string) $data['status']; }
-    if ($r->filled('priority')) { $ticket->priority = (string) $data['priority']; }
-    $ticket->save();
-
-    // Ghi note hệ thống khi có thay đổi
-    $sm = \App\Models\SupportTicket::statusMap();
-    $pm = \App\Models\SupportTicket::priorityMap();
-    $noteParts = [];
-    if ($r->filled('status'))   $noteParts[] = "Cập nhật trạng thái: " . ($sm[$r->status] ?? $r->status);
-    if ($r->filled('priority')) $noteParts[] = "Cập nhật ưu tiên: " . ($pm[$r->priority] ?? $r->priority);
-
-    if ($noteParts) {
-        SupportTicketMessage::create([
-            'support_ticket_id' => $ticket->id,
-            'user_id'           => Auth::id(),
-            'is_staff'          => true,
-            'body'              => '• ' . implode(' | ', $noteParts),
+    public function update(Request $r, SupportTicket $ticket)
+    {
+        $data = $r->validate([
+            'status'   => 'nullable|in:open,waiting_staff,waiting_customer,resolved,closed',
+            'priority' => 'nullable|in:low,normal,high,urgent',
         ]);
+
+        // Lấy giá trị cũ TRƯỚC khi cập nhật (để so sánh & gửi mail)
+        $oldStatus   = $ticket->status;
+        $oldPriority = $ticket->priority;
+
+        // Cập nhật
+        if ($r->filled('status')) {
+            $ticket->status   = (string) $data['status'];
+        }
+        if ($r->filled('priority')) {
+            $ticket->priority = (string) $data['priority'];
+        }
+        $ticket->save();
+
+        // Bản đồ label
+        $sm = \App\Models\SupportTicket::statusMap();
+        $pm = \App\Models\SupportTicket::priorityMap();
+
+        // Ghi note hệ thống nếu có thay đổi thật
+        $noteParts = [];
+        if ($r->filled('status') && $oldStatus !== $ticket->status) {
+            $noteParts[] = "Cập nhật trạng thái: " . ($sm[$ticket->status] ?? $ticket->status);
+        }
+        if ($r->filled('priority') && $oldPriority !== $ticket->priority) {
+            $noteParts[] = "Cập nhật ưu tiên: " . ($pm[$ticket->priority] ?? $ticket->priority);
+        }
+        if ($noteParts) {
+            SupportTicketMessage::create([
+                'support_ticket_id' => $ticket->id,
+                'user_id'           => Auth::id(),
+                'is_staff'          => true,
+                'body'              => '• ' . implode(' | ', $noteParts),
+            ]);
+        }
+
+        // ✉️ Gửi mail chỉ khi TRẠNG THÁI đổi
+        if ($r->filled('status') && $oldStatus !== $ticket->status) {
+            $oldLabel = $sm[$oldStatus]        ?? \Illuminate\Support\Str::headline($oldStatus ?? '');
+            $newLabel = $sm[$ticket->status]   ?? \Illuminate\Support\Str::headline($ticket->status);
+
+            $ticket->loadMissing('user:id,email,fullname');
+            if (!empty($ticket->user?->email)) {
+                Mail::to($ticket->user->email)
+                    ->queue(new SupportTicketStatusChanged($ticket, $oldLabel, $newLabel));
+                // ->onQueue('mail')->delay(now()->addSeconds(5)); // tùy chọn
+            }
+        }
+
+        return back()->with('success', 'Đã cập nhật phiếu.');
     }
 
-    return back()->with('success', 'Đã cập nhật phiếu.');
-}
 
 
     public function reply(Request $r, SupportTicket $ticket)
@@ -202,7 +233,10 @@ class SupportTicketController extends Controller
             'is_staff'          => true,
             'body'              => $data['body'],
         ]);
-
+        $ticket->loadMissing('user:id,email,fullname');
+        if (!empty($ticket->user?->email)) {
+            Mail::to($ticket->user->email)->queue(new SupportTicketReplied($ticket, $msg));
+        }
         // ✅ Lưu file đính kèm
         if ($r->hasFile('attachments')) {
             foreach ($r->file('attachments') as $file) {
