@@ -443,8 +443,14 @@ Route::prefix('admin')
         Route::prefix('return-requests')->name('return-requests.')->group(function () {
             Route::post('{id}/approve', [AdminReturnRequestController::class, 'approve'])->name('approve');
             Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
-            Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
+            // Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
         });
+        Route::post('/return-requests/{rr}/refund', [RefundController::class, 'createFromRR'])
+            ->name('return-requests.refund');
+        Route::post('return-items/{id}/qc', [ReturnRequestItemController::class, 'qc'])->name('return_items.qc');
+        Route::post('/return-actions/{action}/qc', [ReturnRequestItemActionController::class, 'updateQC'])
+            ->name('return-actions.qc');
+
         // Route::put('/return-requests/items/{id}', [ReturnRequestItemController::class, 'update'])
         //     ->name('return-requests.items.update');
         Route::post('/return-requests/{id}/exchange', [ReturnRequestItemController::class, 'handleExchange'])
@@ -653,4 +659,3 @@ Route::middleware('auth')->group(function () {
         return "✅ Low stock job dispatched at " . now();
     });
 });
-

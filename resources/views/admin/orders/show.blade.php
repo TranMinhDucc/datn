@@ -57,13 +57,28 @@
                                 'delivered' => '📬 Đã giao',
                                 'completed' => '🎉 Hoàn tất',
                                 'cancelled' => '❌ Đã hủy',
+
+                                // Return flow
                                 'return_requested' => '↩️ Yêu cầu trả hàng',
                                 'returning' => '📦 Đang trả hàng về',
                                 'returned' => '✅ Đã nhận hàng trả',
+
+                                // Exchange flow
                                 'exchange_requested' => '🔁 Yêu cầu đổi hàng',
+                                'exchange_in_progress' => '🔄 Đang xử lý đổi',
+                                'exchanged' => '✅ Đã đổi xong',
+
+                                // Refund flow
                                 'refund_processing' => '💳 Đang hoàn tiền',
                                 'refunded' => '✅ Đã hoàn tiền',
+
+                                // Kết hợp Exchange + Refund
+                                'exchange_and_refund_processing' => '🔄💳 Đang đổi + hoàn tiền',
+
+                                // Final closed
+                                'closed' => '🔒 Đã đóng yêu cầu',
                             ];
+
                             $availableStatuses =
                                 $availableStatuses ?? array_diff(array_keys($statusLabels), [$order->status]);
                             $currentLabel = $statusLabels[$order->status] ?? ucfirst($order->status);
@@ -220,18 +235,45 @@
                                             <td class="fw-bold text-end">{{ $order->created_at }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted"><i
-                                                    class="fa-solid fa-money-check-dollar fs-6 me-2 text-gray-400"></i>
-                                                Phương thức thanh toán</td>
-                                            <td class="fw-bold text-end">Online <img
-                                                    src="../../../assets/media/svg/card-logos/visa.svg"
-                                                    class="w-50px ms-2" /></td>
+                                            <td class="text-muted">
+                                                <i class="fa-solid fa-money-check-dollar fs-6 me-2 text-gray-400"></i>
+                                                Phương thức thanh toán
+                                            </td>
+                                            <td class="fw-bold text-end">
+                                                {{ $payment['label'] }}
+
+                                                @if ($payment['img'])
+                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZcQPC-zWVyFOu9J2OGl0j2D220D49D0Z7BQ&s"
+                                                        class="w-40px ms-2" alt="{{ $payment['label'] }}">
+                                                @elseif ($payment['icon'])
+                                                    <i class="{{ $payment['icon'] }} ms-2"></i>
+                                                @endif
+
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td class="text-muted"><i
-                                                    class="fa-solid fa-truck-moving fs-6 me-2 text-gray-400"></i> Phương
-                                                thức vận chuyển</td>
-                                            <td class="fw-bold text-end">Flat Shipping Rate</td>
+
+                                        </tr>
+                                        <td class="text-muted"><i
+                                                class="fa-solid fa-file-invoice text-gray-500 fs-6 me-2"></i> Thanh
+                                            toán</td>
+                                        <td class="fw-bold text-end">
+                                            @switch($order->payment_status)
+                                                @case('unpaid')
+                                                    <span class="badge badge-light-warning">Chưa thanh toán</span>
+                                                @break
+
+                                                @case('paid')
+                                                    <span class="badge badge-light-success">Đã thanh toán</span>
+                                                @break
+
+                                                @case('refunded')
+                                                    <span class="badge badge-light-danger">Đã hoàn tiền</span>
+                                                @break
+
+                                                @default
+                                                    <span class="badge badge-light">Không xác định</span>
+                                            @endswitch
+                                        </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -301,19 +343,43 @@
                                 <table class="table align-middle table-row-bordered mb-0 fs-6 gy-5 min-w-300px">
                                     <tbody class="fw-semibold text-gray-600">
                                         <tr>
-                                            <td class="text-muted"><i
-                                                    class="fa-solid fa-mobile fs-6 me-2 text-gray-400"></i> Invoice</td>
-                                            <td class="fw-bold text-end"><a href="#"
-                                                    class="text-gray-600 text-hover-primary">#INV-000414</a></td>
+                                            <td class="text-muted">
+                                                <i class="fa-solid fa-mobile fs-6 me-2 text-gray-400"></i> Invoice
+                                            </td>
+                                            <td class="fw-bold text-end">
+                                                @if ($onlineBill)
+                                                    {{-- Có bill online (MoMo) --}}
+                                                    <span class="badge badge-light-primary me-2">MoMo</span>
+                                                    <span>#{{ $onlineBill }}</span>
+                                                    {{-- Nếu sau này bạn có route xem chi tiết bill, đổi <span> ở trên thành <a href="..."> --}}
+                                                @else
+                                                    {{-- Không có bill online --}}
+                                                    <span class="text-muted">Thanh toán online mới có bill</span>
+                                                @endif
+                                            </td>
                                         </tr>
+
                                         <tr>
-                                            <td class="text-muted"><i
-                                                    class="fa-solid fa-truck-moving fs-6 text-gray-400 me-2"></i> Shipping
+                                            <td class="text-muted">
+                                                <i class="fa-solid fa-truck-moving fs-6 text-gray-400 me-2"></i> Shipping
                                             </td>
-                                            <td class="fw-bold text-end"><a href="#"
-                                                    class="text-gray-600 text-hover-primary">{{ $order->shippingOrder->shipping_code ?? 'Chưa tạo vận đơn' }}</a>
+                                            <td class="fw-bold text-end">
+                                                @php $shipCode = $order->shippingOrder->shipping_code ?? null; @endphp
+
+                                                @if ($shipCode)
+                                                    <p class="mb-0 text-gray-600 text-hover-primary copy-text"
+                                                        role="button" data-copy="{{ $shipCode }}"
+                                                        title="Nhấp để sao chép">
+                                                        {{ $shipCode }}
+                                                        <i class="fa-regular fa-copy ms-2"></i>
+                                                    </p>
+                                                @else
+                                                    <span class="text-muted">Chưa tạo vận đơn</span>
+                                                @endif
                                             </td>
                                         </tr>
+
+
                                         <tr>
                                             <td class="text-muted"><i
                                                     class="fa-solid fa-file-invoice text-gray-500 fs-6 me-2"></i> Thanh
@@ -343,57 +409,153 @@
                         </div>
                     </div>
                 </div>
+                {{-- Shipping address --}}
+                <div class="card card-flush py-4 flex-row-fluid shadow-sm">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shipping-fast text-primary me-3 fs-2"></i>
+                                <h2 class="fw-bold text-gray-800 mb-0">Địa chỉ giao hàng</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        @php $addr = $order->shippingAddress; @endphp
+
+                        @if ($addr)
+                            <div class="bg-light-primary rounded-3 p-4 mb-4">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold fs-5 text-gray-800 mb-1">
+                                            {{ $addr->full_name }}
+                                            @if ($addr->title)
+                                                <span class="badge badge-light-info ms-2">{{ $addr->title }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-muted fs-6 mb-2">
+                                            <i class="fas fa-phone me-1"></i>{{ $addr->phone }}
+                                        </div>
+                                        <div class="text-gray-700 fs-6 mb-1">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ $shipToFull }}
+                                        </div>
+                                        @if ($addr->pincode)
+                                            <div class="text-muted fs-7">
+                                                <i class="fas fa-mail-bulk me-1"></i>Mã bưu chính: {{ $addr->pincode }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- (Tuỳ chọn) Hiện toàn bộ địa chỉ đã lưu của KH --}}
+                            @if ($userAddresses->count())
+                                <div class="separator separator-dashed my-4"></div>
+                                <a class="btn btn-sm btn-light-primary" data-bs-toggle="collapse" href="#allAddresses">
+                                    <i class="fas fa-address-book me-2"></i>
+                                    Các địa chỉ đã lưu ({{ $userAddresses->count() }})
+                                </a>
+                                <div class="collapse mt-4" id="allAddresses">
+                                    <div class="bg-light rounded-3 p-4">
+                                        @foreach ($userAddresses as $a)
+                                            <div
+                                                class="d-flex align-items-start justify-content-between py-3 border-bottom border-gray-200">
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-semibold fs-6 text-gray-800 mb-1">
+                                                        {{ $a->full_name }}
+                                                        @if ($a->is_default)
+                                                            <span class="badge badge-light-success ms-2">Mặc định</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-muted fs-7">{{ $a->phone }} •
+                                                        {{ $a->full_address }}</div>
+                                                </div>
+                                                @if (($order->shipping_address_id ?? null) == $a->id)
+                                                    <span class="badge badge-success">
+                                                        <i class="fas fa-check me-1"></i>Đang dùng cho đơn
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-center py-8">
+                                <div class="text-muted fs-4 mb-2">
+                                    <i class="fas fa-map-marker-alt fs-2x text-gray-400 mb-3"></i>
+                                </div>
+                                <div class="text-muted fs-5">Chưa có địa chỉ giao hàng.</div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 {{-- Lưu ý – Ghi chú cho GHN --}}
-                <div class="card card-flush py-4">
-                    <div class="card-header">
-                        <h3 class="card-title">Lưu ý – Ghi chú giao hàng (GHN)</h3>
+                <div class="card card-flush py-4 shadow-sm">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-sticky-note text-warning me-3 fs-2"></i>
+                                <h3 class="fw-bold text-gray-800 mb-0">Lưu ý – Ghi chú giao hàng (GHN)</h3>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body pt-0">
                         <form method="POST" action="{{ route('admin.orders.updateGhnNote', $order->id) }}"
                             class="js-ghn-note-form">
                             @csrf
-
-                            <div class="row g-5">
+                            <div class="row g-6">
                                 <div class="col-md-6">
-                                    <label class="form-label required">Lưu ý giao hàng</label>
+                                    <label class="form-label fw-semibold fs-6 mb-4">
+                                        <span class="required">Lưu ý giao hàng</span>
+                                    </label>
                                     @php
                                         $required = $order->required_note_shipper ?? 'KHONGCHOXEMHANG';
                                     @endphp
-                                    <div class="d-flex flex-column gap-3">
-                                        <label class="d-flex align-items-center gap-3">
+                                    <div class="d-flex flex-column gap-4">
+                                        <label class="form-check form-check-custom form-check-solid cursor-pointer">
                                             <input type="radio" name="required_note_shipper" class="form-check-input"
                                                 value="KHONGCHOXEMHANG"
                                                 {{ $required === 'KHONGCHOXEMHANG' ? 'checked' : '' }}>
-                                            <span>Không cho xem hàng</span>
+                                            <span class="form-check-label fw-semibold text-gray-700">
+                                                <i class="fas fa-eye-slash me-2 text-danger"></i>Không cho xem hàng
+                                            </span>
                                         </label>
-                                        <label class="d-flex align-items-center gap-3">
+                                        <label class="form-check form-check-custom form-check-solid cursor-pointer">
                                             <input type="radio" name="required_note_shipper" class="form-check-input"
                                                 value="CHOXEMHANGKHONGTHU"
                                                 {{ $required === 'CHOXEMHANGKHONGTHU' ? 'checked' : '' }}>
-                                            <span>Cho xem hàng không cho thử</span>
+                                            <span class="form-check-label fw-semibold text-gray-700">
+                                                <i class="fas fa-eye me-2 text-info"></i>Cho xem hàng không cho thử
+                                            </span>
                                         </label>
-                                        <label class="d-flex align-items-center gap-3">
+                                        <label class="form-check form-check-custom form-check-solid cursor-pointer">
                                             <input type="radio" name="required_note_shipper" class="form-check-input"
                                                 value="CHOTHUHANG" {{ $required === 'CHOTHUHANG' ? 'checked' : '' }}>
-                                            <span>Cho thử hàng</span>
+                                            <span class="form-check-label fw-semibold text-gray-700">
+                                                <i class="fas fa-hand-holding me-2 text-success"></i>Cho thử hàng
+                                            </span>
                                         </label>
-                                        <div class="form-text">
-                                            * Cập nhật này yêu cầu đơn đã có mã GHN. Nếu chưa tạo vận đơn, hãy bấm “Xác nhận
-                                            & Gửi đơn Shipping”.
-                                        </div>
+                                    </div>
+                                    <div class="form-text mt-3 text-warning">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Cập nhật này yêu cầu đơn đã có mã GHN. Nếu chưa tạo vận đơn, hãy bấm "Xác nhận & Gửi
+                                        đơn Shipping".
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">Ghi chú</label>
-                                    <textarea name="note_shipper" class="form-control" rows="5"
+                                    <label class="form-label fw-semibold fs-6 mb-2">Ghi chú</label>
+                                    <textarea name="note_shipper" class="form-control form-control-solid" rows="7"
                                         placeholder="Ví dụ: Giao giờ hành chính, gọi trước 15 phút...">{{ old('note_shipper', $order->note_shipper) }}</textarea>
                                 </div>
                             </div>
 
-                            <div class="mt-5 d-flex justify-content-end">
+                            <div class="separator separator-dashed my-6"></div>
+                            <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary">
                                     <span class="js-saving d-none spinner-border spinner-border-sm me-2"></span>
+                                    <i class="fas fa-save me-2"></i>
                                     Cập nhật ghi chú GHN
                                 </button>
                             </div>
@@ -401,186 +563,157 @@
                     </div>
                 </div>
 
-                <div class="card card-flush py-4 mt-6">
-                    <div class="card-header">
-                        <h3 class="card-title">Điều chỉnh</h3>
+                {{-- Điều chỉnh --}}
+                <div class="card card-flush py-4 shadow-sm">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-cogs text-success me-3 fs-2"></i>
+                                <h3 class="fw-bold text-gray-800 mb-0">Điều chỉnh</h3>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body pt-0">
-                        <form class="row row-cols-lg-auto g-3 align-items-end" method="POST"
+                        <form class="bg-light-primary rounded-3 p-4 mb-6" method="POST"
                             action="{{ route('admin.orders.adjustments.store', $order) }}">
                             @csrf
-                            <div class="col-12">
-                                <label class="form-label">Nhãn</label>
-                                <input name="label" class="form-control" placeholder="Phí vệ sinh / Chiết khấu..."
-                                    required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Mã</label>
-                                <input name="code" class="form-control" placeholder="CLEANING / RETURN_SHIP">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Loại</label>
-                                <select name="type" class="form-select">
-                                    <option value="charge">Cộng</option>
-                                    <option value="discount">Trừ</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Số tiền</label>
-                                <input name="amount" type="number" step="0.01" min="0.01" class="form-control"
-                                    required>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary">Thêm</button>
+                            <div class="row g-4">
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Nhãn</label>
+                                    <input name="label" class="form-control form-control-solid"
+                                        placeholder="Phí vệ sinh / Chiết khấu..." required>
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Mã</label>
+                                    <input name="code" class="form-control form-control-solid" placeholder="CLEANING">
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Loại</label>
+                                    <select name="type" class="form-select form-select-solid">
+                                        <option value="charge">
+                                            <i class="fas fa-plus"></i> Cộng
+                                        </option>
+                                        <option value="discount">
+                                            <i class="fas fa-minus"></i> Trừ
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Số tiền</label>
+                                    <input name="amount" type="number" step="0.01" min="0.01"
+                                        class="form-control form-control-solid" required>
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Hiển thị KH</label>
+                                    <select name="visible_to_customer" class="form-select form-select-solid">
+                                        <option value="1">Có</option>
+                                        <option value="0">Không</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Phân loại</label>
+                                    <select name="category" class="form-select form-select-solid">
+                                        <option value="exchange_credit">Tín dụng đổi hàng</option>
+                                        <option value="price_diff">Chênh lệch giá</option>
+                                        <option value="shipping_fee">Phí vận chuyển</option>
+                                        <option value="manual_discount">Chiết khấu thủ công</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-2 col-md-12">
+                                    <label class="form-label opacity-0">Action</label>
+                                    <button class="btn btn-success w-100">
+                                        <i class="fas fa-plus me-1"></i>Thêm
+                                    </button>
+                                </div>
                             </div>
                         </form>
 
-                        <div class="table-responsive mt-5">
-                            <table class="table table-sm">
+                        <div class="table-responsive">
+                            <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
                                 <thead>
-                                    <tr>
-                                        <th>Nhãn</th>
+                                    <tr class="fw-bold text-muted bg-light">
+                                        <th class="ps-4 rounded-start">Nhãn</th>
                                         <th>Mã</th>
                                         <th>Loại</th>
+                                        <th>Phân loại</th>
+                                        <th>Hiển thị KH</th>
                                         <th class="text-end">Số tiền</th>
-                                        <th></th>
+                                        <th class="text-end pe-4 rounded-end">Hành động</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     @forelse($order->adjustments as $adj)
                                         <tr>
-                                            <td>{{ $adj->label }}</td>
-                                            <td><code>{{ $adj->code }}</code></td>
-                                            <td>{{ $adj->type === 'charge' ? 'Cộng' : 'Trừ' }}</td>
-                                            <td class="text-end">{{ number_format($adj->amount, 2) }}</td>
-                                            <td class="text-end">
+                                            <td class="ps-4">
+                                                <div class="fw-semibold text-gray-800">{{ $adj->label }}</div>
+                                            </td>
+                                            <td>
+                                                <code class="badge badge-light-info">{{ $adj->code }}</code>
+                                            </td>
+                                            <td>
+                                                @if ($adj->type === 'charge')
+                                                    <span class="badge badge-light-success">
+                                                        <i class="fas fa-plus me-1"></i>Cộng
+                                                    </span>
+                                                @else
+                                                    <span class="badge badge-light-danger">
+                                                        <i class="fas fa-minus me-1"></i>Trừ
+                                                    </span>
+                                                @endif
+                                            </td>
+
+                                            <td>
+                                                <span class="badge badge-light-primary">{{ $adj->category ?? '—' }}</span>
+                                            </td>
+                                            <td>
+                                                @if ($adj->visible_to_customer)
+                                                    <span class="badge bg-success">Có</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Không</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-end fw-bold">{{ number_format($adj->amount, 0, ',', '.') }}đ
+                                            </td>
+                                            <td class="text-end pe-4">
                                                 <form method="POST"
-                                                    action="{{ route('admin.orders.adjustments.destroy', $adj) }}">
+                                                    action="{{ route('admin.orders.adjustments.destroy', $adj) }}"
+                                                    class="d-inline">
                                                     @csrf @method('DELETE')
-                                                    <button class="btn btn-sm btn-light-danger">Xoá</button>
+                                                    <button class="btn btn-sm btn-light-danger"
+                                                        onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-muted text-center">Chưa có điều chỉnh</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th colspan="3" class="text-end">Tổng điều chỉnh</th>
-                                        <th class="text-end">{{ number_format($order->adjustments_total, 2) }}</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card card-flush py-4 mt-6">
-                    <div class="card-header">
-                        <h3 class="card-title">Thanh toán / Hoàn tiền</h3>
-                    </div>
-                    <div class="card-body pt-0">
-                        <form class="row row-cols-lg-auto g-3 align-items-end" method="POST"
-                            action="{{ route('admin.orders.payments.store', $order) }}">
-                            @csrf
-                            <div class="col-12">
-                                <label class="form-label">Loại</label>
-                                <select name="kind" class="form-select">
-                                    <option value="payment">Thu thêm</option>
-                                    <option value="refund">Hoàn lại</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Phương thức</label>
-                                <input name="method" class="form-control" placeholder="bank/cod/momo...">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Số tiền</label>
-                                <input name="amount" type="number" step="0.01" min="0.01" class="form-control"
-                                    required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Ghi chú</label>
-                                <input name="note" class="form-control">
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary">Ghi nhận</button>
-                            </div>
-                        </form>
-
-                        <div class="table-responsive mt-5">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Thời gian</th>
-                                        <th>Loại</th>
-                                        <th>PT</th>
-                                        <th class="text-end">Số tiền</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($order->payments as $p)
-                                        <tr>
-                                            <td>{{ $p->created_at->format('d/m/Y H:i') }}</td>
-                                            <td>{{ $p->kind === 'payment' ? 'Thu thêm' : 'Hoàn lại' }}</td>
-                                            <td>{{ $p->method }}</td>
-                                            <td class="text-end">{{ number_format($p->amount, 2) }}</td>
-                                            <td class="text-end">
-                                                <form method="POST"
-                                                    action="{{ route('admin.orders.payments.destroy', $p) }}">
-                                                    @csrf @method('DELETE')
-                                                    <button class="btn btn-sm btn-light-danger">Xoá</button>
-                                                </form>
+                                            <td colspan="5" class="text-center py-8">
+                                                <div class="text-muted">
+                                                    <i class="fas fa-inbox fs-2x mb-3 text-gray-400"></i>
+                                                    <div class="fs-5">Chưa có điều chỉnh</div>
+                                                </div>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="text-muted text-center">Chưa có giao dịch</td>
-                                        </tr>
                                     @endforelse
                                 </tbody>
+                                {{-- <tfoot>
+                                    <tr class="fw-bold fs-6 text-gray-800">
+                                        <th colspan="3" class="text-end ps-4">Tổng điều chỉnh</th>
+                                        <th class="text-end">{{ number_format($order->adjustments_total, 0, ',', '.') }}đ
+                                        </th>
+                                        <th class="pe-4"></th>
+                                    </tr>
+                                </tfoot> --}}
                             </table>
                         </div>
-
-                        <div class="mt-4 d-flex flex-column gap-1">
-                            <div class="d-flex justify-content-between">
-                                <span>Tổng hàng + VAT + ship</span>
-                                <strong>{{ number_format($order->subtotal + $order->tax_amount + $order->shipping_fee, 0, ',', '.') }}đ</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Tổng điều chỉnh</span>
-                                <strong>{{ number_format($order->adjustments_total, 0, ',', '.') }}đ</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span><u>Phải thu sau cùng</u></span>
-                                <strong>{{ number_format($order->net_total, 0, ',', '.') }}đ</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Đã thu (payment)</span>
-                                <strong>{{ number_format($order->paid_in, 0, ',', '.') }}đ</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Đã hoàn (refund)</span>
-                                <strong>{{ number_format($order->refunded_out, 0, ',', '.') }}đ</strong>
-                            </div>
-                            <div class="d-flex justify-content-between fs-5">
-                                <span><b>Số dư</b> (dương = KH còn thiếu, âm = cần hoàn)</span>
-                                <strong>{{ number_format($order->balance, 0, ',', '.') }}đ</strong>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
-                {{-- @php
-                    $refundLocked = \App\Models\Refund::where('return_request_id', $rr->id)
-                        ->whereIn('status', ['pending', 'done'])
-                        ->exists();
-                @endphp --}}
+
+
 
                 {{-- ======= Return/Exchange requests ======= --}}
                 @if ($returnRequests->count())
@@ -589,6 +722,21 @@
                             $refundPending = \App\Models\Refund::where('return_request_id', $rr->id)
                                 ->where('status', 'pending')
                                 ->first();
+
+                            if ($refundPending) {
+                                // Ghi đè amount hiển thị chỉ tính refund QC passed
+                                $amountQC = (float) $rr->items->sum(function ($it) {
+                                    return (float) ($it->actions
+                                        ?->where('action', 'refund')
+                                        ->where('qc_status', 'passed')
+                                        ->sum('refund_amount') ?? 0);
+                                });
+                                $refundPending->amount = $amountQC;
+                            }
+
+                            // $refundPending = \App\Models\Refund::where('return_request_id', $rr->id)
+                            //     ->where('status', 'pending')
+                            //     ->first();
 
                             $refundLocked = \App\Models\Refund::where('return_request_id', $rr->id)
                                 ->whereIn('status', ['pending', 'done'])
@@ -599,7 +747,6 @@
                                     0),
                             );
                         @endphp
-
 
                         {{-- Card chính cho Return Request --}}
                         <div class="card shadow-sm mb-6">
@@ -640,83 +787,79 @@
                                                 'rejected' => 'badge-danger',
                                                 default => 'badge-secondary',
                                             };
-                                        @endphp
-                                        <span
-                                            class="badge {{ $requestBadgeClass }} fs-7">{{ ucfirst($rr->status) }}</span>
 
-                                        {{-- Action buttons --}}
-                                        @php
                                             $canCreateExchange =
-                                                in_array($rr->status, ['pending', 'approved']) &&
+                                                in_array($rr->status, [
+                                                    'pending',
+                                                    'approved',
+                                                    'exchange_in_progress',
+                                                    'exchange_and_refund_processing',
+                                                    'rejected_temp',
+                                                ]) &&
                                                 empty($rr->exchange_order_id) &&
                                                 $rr->items->sum(
                                                     fn($i) => $i->actions
                                                         ?->where('action', 'exchange')
+                                                        ->whereIn('qc_status', [
+                                                            'passed',
+                                                            'passed_import',
+                                                            'passed_noimport',
+                                                        ])
+                                                        ->sum('quantity') ?? 0,
+                                                ) > 0;
+
+                                            $canCreateRefund =
+                                                in_array($rr->status, [
+                                                    'pending',
+                                                    'approved',
+                                                    'exchange_in_progress',
+                                                    'refund_processing',
+                                                    'exchange_and_refund_processing',
+                                                    'rejected_temp',
+                                                ]) &&
+                                                !$refundPending &&
+                                                $rr->items->sum(
+                                                    fn($i) => $i->actions
+                                                        ?->where('action', 'refund')
+                                                        ->whereIn('qc_status', [
+                                                            'passed',
+                                                            'passed_import',
+                                                            'passed_noimport',
+                                                        ])
                                                         ->sum('quantity') ?? 0,
                                                 ) > 0;
                                         @endphp
 
+                                        <span class="badge {{ $requestBadgeClass }} fs-7">
+                                            {{ ucfirst($rr->status) }}
+                                        </span>
+
+                                        {{-- Nút tạo đơn đổi --}}
                                         @if ($canCreateExchange)
                                             <form action="{{ route('admin.return-requests.exchange', $rr->id) }}"
                                                 method="POST" class="js-exchange-form">
                                                 @csrf
                                                 <button type="submit" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-plus me-1"></i>
-                                                    Tạo đơn đổi
+                                                    <i class="fas fa-plus me-1"></i> Tạo đơn đổi
                                                 </button>
                                             </form>
                                         @endif
+
+                                        {{-- Nút tạo phiếu hoàn --}}
+                                        @if ($canCreateRefund)
+                                            <form action="{{ route('admin.return-requests.refund', $rr->id) }}"
+                                                method="POST" class="js-refund-form">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-wallet me-1"></i> Tạo phiếu hoàn
+                                                </button>
+                                            </form>
+                                        @endif
+
                                     </div>
                                 </div>
 
-                                {{-- Refund section --}}
-                                @if ($refundPending)
-                                    {{-- ĐANG CHỜ CHUYỂN --}}
-                                    <div class="mt-4 p-4 bg-light-primary rounded border-primary border border-dashed">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-clock text-warning fs-2 me-3"></i>
-                                                <div>
-                                                    <div class="fw-bold text-gray-800">Phiếu hoàn đang chờ xử lý</div>
-                                                    <div class="text-muted fs-7">Phiếu #{{ $refundPending->id }} -
-                                                        {{ vnd($refundPending->amount) }}</div>
-                                                </div>
-                                            </div>
-                                            <form action="{{ route('admin.refunds.markDone', $refundPending) }}"
-                                                method="POST" class="d-flex align-items-center gap-2">
-                                                @csrf
-                                                <input name="bank_ref" class="form-control form-control-sm"
-                                                    placeholder="Mã giao dịch" style="width: 150px;" required>
-                                                <input type="datetime-local" name="transferred_at"
-                                                    class="form-control form-control-sm" style="width: 180px;">
-                                                <button class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i>Đã
-                                                    chuyển</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @elseif (!$refundLocked)
-                                    {{-- CHƯA CÓ PHIẾU HOÀN (pending/done) -> cho tạo --}}
-                                    <div class="mt-4 p-4 bg-light-warning rounded border-warning border border-dashed">
-                                        <form action="{{ route('admin.refunds.createFromRR', $rr) }}" method="POST"
-                                            class="d-flex align-items-center gap-3">
-                                            @csrf
-                                            <label class="form-label mb-0 fw-semibold text-gray-800">Tạo phiếu
-                                                hoàn:</label>
-                                            <input type="number" step="0.01" name="amount"
-                                                class="form-control form-control-sm w-200px"
-                                                placeholder="Số tiền (mặc định: {{ vnd($sumItemRefund) }})">
-                                            <button class="btn btn-warning btn-sm"><i class="fas fa-wallet me-1"></i>Tạo
-                                                phiếu</button>
-                                        </form>
-                                    </div>
-                                @else
-                                    {{-- ĐÃ CÓ PHIẾU DONE -> chỉ hiển thị thông tin, KHÔNG cho tạo lại --}}
-                                    <div class="mt-4 p-3 bg-light-success rounded border-success border border-dashed">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Đã có phiếu hoàn – đã khóa.
-                                    </div>
-                                @endif
-
+                                {{-- Nếu đã có phiếu hoàn pending thì hiển thị --}}
                                 @if ($refundPending)
                                     <div class="mt-4 p-4 bg-light-primary rounded border-primary border border-dashed">
                                         <div class="d-flex align-items-center justify-content-between">
@@ -724,8 +867,10 @@
                                                 <i class="fas fa-clock text-warning fs-2 me-3"></i>
                                                 <div>
                                                     <div class="fw-bold text-gray-800">Phiếu hoàn đang chờ xử lý</div>
-                                                    <div class="text-muted fs-7">Phiếu #{{ $refundPending->id }} -
-                                                        {{ vnd($refundPending->amount) }}</div>
+                                                    <div class="text-muted fs-7">
+                                                        Phiếu #{{ $refundPending->id }} -
+                                                        {{ vnd($refundPending->amount) }}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <form action="{{ route('admin.refunds.markDone', $refundPending) }}"
@@ -736,8 +881,7 @@
                                                 <input type="datetime-local" name="transferred_at"
                                                     class="form-control form-control-sm" style="width: 180px;">
                                                 <button class="btn btn-success btn-sm">
-                                                    <i class="fas fa-check me-1"></i>
-                                                    Đã chuyển
+                                                    <i class="fas fa-check me-1"></i> Đã chuyển
                                                 </button>
                                             </form>
                                         </div>
@@ -748,28 +892,37 @@
                             {{-- Body - Danh sách items --}}
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-row-dashed table-row-gray-300 gy-5 gs-7">
+                                    <table class="table table-hover align-middle">
                                         <thead>
-                                            <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200">
-                                                <th class="min-w-300px">Sản phẩm</th>
-                                                <th class="text-center min-w-80px">SL yêu cầu</th>
-                                                <th class="text-center min-w-120px">Đã xử lý</th>
-                                                <th class="text-center min-w-100px">Trạng thái</th>
-                                                <th class="text-end min-w-200px">Thao tác</th>
+                                            <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0 bg-light">
+                                                <th class="ps-4 min-w-300px rounded-start">
+                                                    <i class="fas fa-box fs-6 me-2"></i>
+                                                    Sản phẩm
+                                                </th>
+                                                <th class="min-w-100px text-center">SL yêu cầu</th>
+                                                <th class="min-w-150px text-center">Đã xử lý</th>
+                                                <th class="min-w-120px text-center">Trạng thái</th>
+                                                <th class="min-w-200px text-center">Ghi chú</th>
+                                                <th class="min-w-150px text-center">Số tiền</th>
+                                                <th class="min-w-250px text-end rounded-end pe-4">Thao tác</th>
                                             </tr>
                                         </thead>
+
                                         <tbody>
                                             @foreach ($rr->items as $it)
                                                 @php
-                                                    // Tính toán số lượng
                                                     $exQty =
                                                         (int) ($it->actions
                                                             ?->where('action', 'exchange')
+                                                            ->where('qc_status', 'passed')
                                                             ->sum('quantity') ?? 0);
+
                                                     $rfQty =
                                                         (int) ($it->actions
                                                             ?->where('action', 'refund')
+                                                            ->where('qc_status', 'passed')
                                                             ->sum('quantity') ?? 0);
+
                                                     $rjQty =
                                                         (int) ($it->actions
                                                             ?->where('action', 'reject')
@@ -777,6 +930,7 @@
                                                     $rfAmt =
                                                         (float) ($it->actions
                                                             ?->where('action', 'refund')
+                                                            ->where('qc_status', 'passed')
                                                             ->sum('refund_amount') ?? 0);
 
                                                     // Trạng thái item
@@ -795,22 +949,33 @@
 
                                                     $statusBadge = match ($itemStatus) {
                                                         'approved_exchange' => [
-                                                            'badge' => 'badge-success',
+                                                            'badge' => 'badge-light-success',
+                                                            'icon' => 'fa-exchange-alt',
                                                             'text' => 'Đồng ý đổi',
                                                         ],
                                                         'approved_refund' => [
-                                                            'badge' => 'badge-info',
+                                                            'badge' => 'badge-light-info',
+                                                            'icon' => 'fa-wallet',
                                                             'text' => 'Hoàn tiền',
                                                         ],
                                                         'approved_mixed' => [
-                                                            'badge' => 'badge-primary',
+                                                            'badge' => 'badge-light-primary',
+                                                            'icon' => 'fa-tasks',
                                                             'text' => 'Chia xử lý',
                                                         ],
-                                                        'rejected' => ['badge' => 'badge-danger', 'text' => 'Từ chối'],
-                                                        default => ['badge' => 'badge-warning', 'text' => 'Chờ xử lý'],
+                                                        'rejected' => [
+                                                            'badge' => 'badge-light-danger',
+                                                            'icon' => 'fa-times-circle',
+                                                            'text' => 'Từ chối',
+                                                        ],
+                                                        default => [
+                                                            'badge' => 'badge-light-warning',
+                                                            'icon' => 'fa-clock',
+                                                            'text' => 'Chờ xử lý',
+                                                        ],
                                                     };
 
-                                                    // Thuộc tính sản phẩm
+                                                    // Decode variant values
                                                     $attrs = '';
                                                     $raw = $it->orderItem->variant_values ?? null;
                                                     $vals = is_string($raw)
@@ -826,127 +991,234 @@
                                                                 : $k;
                                                             $pairs[] = $label . ': ' . $v;
                                                         }
-                                                        $attrs = ' • ' . implode(', ', $pairs);
+                                                        $attrs = implode(' • ', $pairs);
                                                     }
 
-                                                    // Lock logic
-                                                    $locked =
-                                                        $refundLocked ||
-                                                        !empty($rr->exchange_order_id) ||
-                                                        in_array($rr->status, ['refunded', 'rejected'], true);
+                                                    // ❌ KHÓA toàn bộ: chỉ khi request đã hoàn tất (refunded)
+                                                    // Chỉ khóa toàn bộ nếu đã hoàn tiền xong
+                                                    $locked = $rr->status === 'refunded';
+
+                                                    // SL đã xử lý / còn lại
                                                     $usedQty = (int) ($exQty + $rfQty + $rjQty);
                                                     $leftQty = max(0, (int) $it->quantity - $usedQty);
+
+                                                    // ❌ Khóa riêng item nếu hết số lượng
+                                                    $itemLocked = $leftQty <= 0;
                                                 @endphp
 
-                                                <tr>
-                                                    {{-- Tên sản phẩm --}}
-                                                    <td>
+                                                <tr class="border-bottom border-gray-200">
+                                                    {{-- Sản phẩm --}}
+                                                    <td class="ps-4">
                                                         <div class="d-flex align-items-center">
                                                             <div class="symbol symbol-50px me-3">
                                                                 <div class="symbol-label bg-light-primary">
-                                                                    <i class="fas fa-box text-primary fs-2"></i>
+                                                                    <i class="fas fa-cube fs-2x text-primary"></i>
                                                                 </div>
                                                             </div>
-                                                            <div class="ms-3">
-                                                                <div class="fw-bold text-gray-800 fs-6">
-                                                                    {{ $it->orderItem->product_name }}</div>
+                                                            <div class="d-flex flex-column">
+                                                                <span
+                                                                    class="text-gray-800 fw-bold text-hover-primary fs-6">
+                                                                    {{ $it->orderItem->product_name }}
+                                                                </span>
                                                                 @if ($attrs)
-                                                                    <div class="text-muted fs-7">{{ $attrs }}</div>
+                                                                    <span
+                                                                        class="text-gray-500 fw-semibold fs-7">{{ $attrs }}</span>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                    {{-- Số lượng yêu cầu --}}
+                                                    {{-- SL yêu cầu --}}
                                                     <td class="text-center">
-                                                        <span
-                                                            class="badge badge-light-primary fs-6">{{ $it->quantity }}</span>
+                                                        <div
+                                                            class="badge badge-circle badge-lg badge-light-primary fw-bold">
+                                                            {{ $it->quantity }}
+                                                        </div>
                                                     </td>
 
                                                     {{-- Đã xử lý --}}
                                                     <td class="text-center">
-                                                        <div class="d-flex flex-column gap-1">
+                                                        <div class="d-flex flex-column gap-2 align-items-center">
                                                             @if ($exQty > 0)
-                                                                <span class="badge badge-light-success fs-8">Đổi:
-                                                                    {{ $exQty }}</span>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i
+                                                                        class="fas fa-exchange-alt fs-6 text-success me-1"></i>
+                                                                    <span
+                                                                        class="badge badge-light-success fw-semibold">Đổi:
+                                                                        {{ $exQty }}</span>
+                                                                </div>
                                                             @endif
                                                             @if ($rfQty > 0)
-                                                                <span class="badge badge-light-info fs-8">Hoàn:
-                                                                    {{ $rfQty }}</span>
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fas fa-wallet fs-6 text-info me-1"></i>
+                                                                    <span class="badge badge-light-info fw-semibold">Hoàn:
+                                                                        {{ $rfQty }}</span>
+                                                                </div>
                                                             @endif
                                                             @if ($rjQty > 0)
-                                                                <span class="badge badge-light-danger fs-8">Từ chối:
-                                                                    {{ $rjQty }}</span>
-                                                            @endif
-                                                            @if ($rfAmt > 0)
-                                                                <div class="text-muted fs-8 mt-1">{{ vnd($rfAmt) }}
+                                                                <div class="d-flex align-items-center">
+                                                                    <i
+                                                                        class="fas fa-times-circle fs-6 text-danger me-1"></i>
+                                                                    <span class="badge badge-light-danger fw-semibold">Từ
+                                                                        chối: {{ $rjQty }}</span>
                                                                 </div>
+                                                            @endif
+                                                            @if (!$exQty && !$rfQty && !$rjQty)
+                                                                <span class="text-gray-400 fs-7">—</span>
                                                             @endif
                                                         </div>
                                                     </td>
 
                                                     {{-- Trạng thái --}}
                                                     <td class="text-center">
-                                                        <span
-                                                            class="badge {{ $statusBadge['badge'] }} fs-7">{{ $statusBadge['text'] }}</span>
+                                                        <div class="badge {{ $statusBadge['badge'] }} fw-bold px-4 py-3">
+                                                            <i class="fas {{ $statusBadge['icon'] }} fs-6 me-1"></i>
+                                                            {{ $statusBadge['text'] }}
+                                                        </div>
+                                                    </td>
+
+                                                    {{-- Ghi chú --}}
+                                                    <td class="text-center">
+                                                        @if ($it->actions->where('note', '!=', null)->count() > 0)
+                                                            <div class="d-flex flex-column gap-1">
+                                                                @foreach ($it->actions as $act)
+                                                                    @if ($act->note)
+                                                                        <div class="bg-light rounded p-2">
+                                                                            <i
+                                                                                class="fas fa-comment-dots fs-7 text-muted me-1"></i>
+                                                                            <span
+                                                                                class="text-gray-700 fs-7">{{ $act->note }}</span>
+                                                                        </div>
+                                                                    @endif
+                                                                @endforeach
+                                                            </div>
+                                                        @else
+                                                            <span class="text-gray-400 fs-7">—</span>
+                                                        @endif
+                                                    </td>
+
+                                                    {{-- Số tiền --}}
+                                                    <td class="text-center">
+                                                        @if ($rfAmt > 0)
+                                                            <div class="d-flex align-items-center justify-content-center">
+                                                                <i
+                                                                    class="fas fa-money-bill-wave text-success fs-6 me-1"></i>
+                                                                <span
+                                                                    class="text-dark fw-bold fs-6">{{ vnd($rfAmt) }}</span>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-gray-400 fs-7">—</span>
+                                                        @endif
                                                     </td>
 
                                                     {{-- Thao tác --}}
-                                                    <td class="text-end">
-                                                        {{-- Danh sách actions đã thêm --}}
+                                                    <td class="text-end pe-4">
+                                                        {{-- Các action đã thực hiện --}}
                                                         @if ($it->actions?->count())
-                                                            <div class="mb-3">
+                                                            <div class="d-flex flex-column gap-3">
                                                                 @foreach ($it->actions as $act)
-                                                                    <div
-                                                                        class="d-flex align-items-center justify-content-between bg-light-gray-200 rounded p-2 mb-2">
-                                                                        <div class="d-flex align-items-center">
-                                                                            @if ($act->action === 'exchange')
-                                                                                <span
-                                                                                    class="badge badge-success me-2">Đổi</span>
-                                                                                <span
-                                                                                    class="fs-7">{{ optional($act->variant)->variant_name ?? (optional($act->variant)->sku ?? 'SKU hiện tại') }}
-                                                                                    × {{ $act->quantity }}</span>
-                                                                            @elseif ($act->action === 'refund')
-                                                                                <span
-                                                                                    class="badge badge-info me-2">Hoàn</span>
-                                                                                <span class="fs-7">SL:
-                                                                                    {{ $act->quantity }} @if ($act->refund_amount)
-                                                                                        • {{ vnd($act->refund_amount) }}
-                                                                                    @endif
-                                                                                </span>
-                                                                            @else
-                                                                                <span class="badge badge-danger me-2">Từ
-                                                                                    chối</span>
-                                                                                <span class="fs-7">SL:
-                                                                                    {{ $act->quantity }}</span>
-                                                                            @endif
-                                                                            @if ($act->note)
-                                                                                <div class="text-muted fs-8 mt-1">
-                                                                                    {{ $act->note }}</div>
+                                                                    <div class="card border-0 shadow-sm">
+                                                                        <div
+                                                                            class="card-header d-flex justify-content-between align-items-center py-2 px-3
+                                    bg-{{ $act->action === 'exchange' ? 'success' : ($act->action === 'refund' ? 'info' : 'danger') }} bg-opacity-10">
+                                                                            <div class="d-flex align-items-center gap-2">
+                                                                                @if ($act->action === 'exchange')
+                                                                                    <span
+                                                                                        class="badge bg-success text-white">
+                                                                                        <i class="fas fa-exchange-alt"></i>
+                                                                                        Đổi
+                                                                                    </span>
+                                                                                    <span class="fw-semibold">
+                                                                                        {{ optional($act->variant)->variant_name ?? 'SKU hiện tại' }}
+                                                                                    </span>
+                                                                                @elseif ($act->action === 'refund')
+                                                                                    <span class="badge bg-info text-white">
+                                                                                        <i class="fas fa-wallet"></i> Hoàn
+                                                                                    </span>
+                                                                                    <span class="fw-semibold">1 sản
+                                                                                        phẩm</span>
+                                                                                @else
+                                                                                    <span
+                                                                                        class="badge bg-danger text-white">
+                                                                                        <i class="fas fa-times-circle"></i>
+                                                                                        Từ chối
+                                                                                    </span>
+                                                                                    <span class="fw-semibold">1 sản
+                                                                                        phẩm</span>
+                                                                                @endif
+                                                                            </div>
+
+                                                                            {{-- Xóa action --}}
+                                                                            @if (!$locked && !$itemLocked)
+                                                                                <form method="POST"
+                                                                                    action="{{ route('admin.return-requests.items.actions.destroy', $act->id) }}">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-sm btn-light-danger"
+                                                                                        title="Xóa">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                    </button>
+                                                                                </form>
                                                                             @endif
                                                                         </div>
-                                                                        @if (!$locked)
+
+                                                                        {{-- Body: QC --}}
+                                                                        <div class="card-body py-2 px-3">
                                                                             <form method="POST"
-                                                                                action="{{ route('admin.return-requests.items.actions.destroy', $act->id) }}"
-                                                                                onsubmit="return confirm('Xoá dòng xử lý này?');">
-                                                                                @csrf @method('DELETE')
-                                                                                <button
-                                                                                    class="btn btn-icon btn-sm btn-light-danger">
-                                                                                    <i
-                                                                                        class="fas fa-trash text-danger"></i>
-                                                                                </button>
+                                                                                action="{{ route('admin.return-actions.qc', $act->id) }}"
+                                                                                class="d-flex flex-column gap-2">
+                                                                                @csrf
+                                                                                <div class="btn-group">
+                                                                                    <button type="submit"
+                                                                                        name="qc_status"
+                                                                                        value="passed_import"
+                                                                                        class="btn btn-sm btn-outline-success {{ $act->qc_status === 'passed_import' ? 'active' : '' }}">
+                                                                                        <i class="fas fa-check"></i> QC đạt
+                                                                                        + Nhập kho
+                                                                                    </button>
+
+                                                                                    <button type="submit"
+                                                                                        name="qc_status"
+                                                                                        value="passed_noimport"
+                                                                                        class="btn btn-sm btn-outline-primary {{ $act->qc_status === 'passed_noimport' ? 'active' : '' }}">
+                                                                                        <i class="fas fa-check-double"></i>
+                                                                                        QC đạt (Không nhập kho)
+                                                                                    </button>
+
+                                                                                    <button type="submit"
+                                                                                        name="qc_status" value="failed"
+                                                                                        class="btn btn-sm btn-outline-danger {{ $act->qc_status === 'failed' ? 'active' : '' }}">
+                                                                                        <i class="fas fa-times"></i> QC
+                                                                                        hỏng
+                                                                                    </button>
+                                                                                </div>
+
+                                                                                <input type="text" name="qc_note"
+                                                                                    value="{{ $act->qc_note }}"
+                                                                                    class="form-control form-control-sm"
+                                                                                    placeholder="Ghi chú QC (nếu có)">
                                                                             </form>
-                                                                        @endif
+                                                                        </div>
                                                                     </div>
                                                                 @endforeach
                                                             </div>
                                                         @endif
 
-                                                        {{-- Nút thêm action --}}
-                                                        @if (!$locked && $leftQty > 0)
-                                                            <div class="btn-group">
+                                                        {{-- Nút thêm action mới --}}
+                                                        @if ($locked)
+                                                            <span class="badge badge-light-secondary">
+                                                                <i class="fas fa-lock fs-6 me-1"></i> Đã khóa (toàn bộ)
+                                                            </span>
+                                                        @elseif ($itemLocked)
+                                                            <span class="badge badge-light-secondary">
+                                                                <i class="fas fa-lock fs-6 me-1"></i> Đã xử lý hết
+                                                            </span>
+                                                        @else
+                                                            <div class="d-flex gap-2 justify-content-end">
+                                                                {{-- ⚡ Giữ nguyên cụm 3 nút của bạn --}}
                                                                 <button type="button"
-                                                                    class="btn btn-sm btn-light-primary"
+                                                                    class="btn btn-sm btn-light-success btn-active-success"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#addExchangeActionModal"
                                                                     data-item-id="{{ $it->id }}"
@@ -955,58 +1227,98 @@
                                                                     data-variants='@json(optional($it->orderItem->product)->variants?->map(fn($v) => [
                                                                                 'id' => $v->id,
                                                                                 'label' =>
-                                                                                    ($v->variant_name ?? trim(($v->color ?? '') . ' ' . ($v->size ?? ''))) .
+                                                                                    ($v->variant_name ?? $v->color . ' ' . $v->size) .
                                                                                     " — SKU: {$v->sku} — " .
                                                                                     number_format($v->price) .
                                                                                     'đ',
                                                                             ]) ?? []
                                                                     )'>
-                                                                    <i class="fas fa-exchange-alt me-1"></i>
-                                                                    Đổi
+                                                                    <i class="fas fa-exchange-alt me-1"></i> Đổi
                                                                 </button>
 
                                                                 <button type="button"
-                                                                    class="btn btn-sm btn-light-warning"
+                                                                    class="btn btn-sm btn-light-warning btn-active-warning"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#addRefundActionModal"
                                                                     data-item-id="{{ $it->id }}"
                                                                     data-qty="{{ $it->quantity }}"
                                                                     data-used="{{ $usedQty }}">
-                                                                    <i class="fas fa-wallet me-1"></i>
-                                                                    Hoàn
+                                                                    <i class="fas fa-wallet me-1"></i> Hoàn
                                                                 </button>
 
-                                                                <button type="button" class="btn btn-sm btn-light-danger"
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-light-danger btn-active-danger"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#addRejectActionModal"
                                                                     data-item-id="{{ $it->id }}"
                                                                     data-qty="{{ $it->quantity }}"
                                                                     data-used="{{ $usedQty }}">
-                                                                    <i class="fas fa-times me-1"></i>
-                                                                    Từ chối
+                                                                    <i class="fas fa-times me-1"></i> Từ chối
                                                                 </button>
-                                                            </div>
-                                                        @else
-                                                            <div class="text-muted fs-7 fst-italic">
-                                                                @if ($refundLocked)
-                                                                    Đã có phiếu hoàn - đã khóa
-                                                                @elseif (!empty($rr->exchange_order_id))
-                                                                    Đã có đơn đổi - đã khóa
-                                                                @elseif (in_array($rr->status, ['refunded', 'rejected'], true))
-                                                                    Yêu cầu đã kết thúc
-                                                                @else
-                                                                    Đã xử lý đủ số lượng
-                                                                @endif
                                                             </div>
                                                         @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
+
                                     </table>
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Refund history --}}
+                        @if ($order->refunds->count())
+                            <div class="card mt-4 shadow-sm border-0">
+                                <div class="card-header bg-white d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0 text-dark fw-bold">
+                                        <i class="fas fa-wallet me-2 text-success"></i> Lịch sử phiếu hoàn
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr class="fw-semibold text-muted text-uppercase">
+                                                    <th class="text-center" style="width: 60px">#</th>
+                                                    <th>Số tiền</th>
+                                                    <th>Mã giao dịch</th>
+                                                    <th>Ngày chuyển</th>
+                                                    <th>Người xử lý</th>
+                                                    <th class="text-center">Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($order->refunds as $rf)
+                                                    <tr>
+                                                        <td class="text-center fw-bold">{{ $rf->id }}</td>
+                                                        <td class="fw-bold text-success">{{ vnd($rf->amount) }}</td>
+                                                        <td>
+                                                            <span class="text-monospace">
+                                                                {{ $rf->bank_ref ?? '—' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>{{ $rf->transferred_at?->format('d/m/Y H:i') ?? '—' }}</td>
+                                                        <td>{{ $rf->processor?->name ?? '—' }}</td>
+                                                        <td class="text-center">
+                                                            @if ($rf->status === 'pending')
+                                                                <span class="badge bg-warning text-dark">
+                                                                    <i class="fas fa-clock me-1"></i> Chờ xử lý
+                                                                </span>
+                                                            @else
+                                                                <span class="badge bg-success">
+                                                                    <i class="fas fa-check-circle me-1"></i> Đã chuyển
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
                 @endif
 
@@ -1069,10 +1381,27 @@
                                                     <td class="text-end">{{ number_format($order->tax_amount) }}đ</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="4" class="text-end">Phí vận chuyển</td>
-                                                    <td class="text-end">{{ number_format($order->shipping_fee) }}đ
-                                                    </td>
+                                                    <td colspan="4" class="text-end">Phí vận chuyển (gốc)</td>
+                                                    <td class="text-end">{{ number_format($order->shipping_fee) }}đ</td>
                                                 </tr>
+                                                @foreach ($order->adjustments as $adj)
+                                                    @if ($adj->visible_to_customer)
+                                                        <tr>
+                                                            <td colspan="4" class="text-end">
+                                                                {{ $adj->label }}
+                                                                @if ($adj->category)
+                                                                    <span
+                                                                        class="badge bg-light-info text-dark ms-2">{{ strtoupper($adj->category) }}</span>
+                                                                @endif
+                                                            </td>
+                                                            <td
+                                                                class="text-end {{ $adj->type === 'charge' ? 'text-success' : 'text-danger' }}">
+                                                                {{ $adj->type === 'charge' ? '+' : '-' }}
+                                                                {{ number_format($adj->amount, 0, ',', '.') }}đ
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
 
                                                 @if ($order->coupon)
                                                     <tr>
@@ -1104,12 +1433,16 @@
                                                     </tr>
                                                 @endif
 
-                                                <tr>
-                                                    <td colspan="4" class="fs-3 text-gray-900 text-end">Tổng cộng
-                                                    </td>
+                                                {{-- <tr>
+                                                    <td colspan="4" class="fs-3 text-gray-900 text-end">Tổng số tiền
+                                                        phải
+                                                        thanh toán</td>
                                                     <td class="text-gray-900 fs-3 fw-bolder text-end">
-                                                        {{ number_format($order->total_amount) }}đ</td>
-                                                </tr>
+                                                        {{ number_format($order->balance, 0, ',', '.') }}đ
+                                                    </td>
+                                                </tr> --}}
+
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -1193,14 +1526,227 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                </div><!-- /tab-content -->
+                </div>
+                {{-- Thanh toán / Hoàn tiền & Tổng kết tài chính --}}
+                <div class="card card-flush py-4 shadow-sm">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title w-100">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-credit-card text-info me-3 fs-2"></i>
+                                    <div>
+                                        <h3 class="fw-bold text-gray-800 mb-0">Quản lý thanh toán</h3>
+                                        <p class="text-muted mb-0 fs-7">Theo dõi thanh toán và tài chính đơn hàng</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        {{-- Form thêm giao dịch --}}
+                        <form class="bg-light-info rounded-3 p-4 mb-6" method="POST"
+                            action="{{ route('admin.orders.payments.store', $order) }}">
+                            @csrf
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-plus-circle text-primary me-2 fs-4"></i>
+                                <h6 class="mb-0 fw-bold text-gray-800">Thêm giao dịch mới</h6>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Loại</label>
+                                    <select name="kind" class="form-select form-select-solid">
+                                        <option value="payment">
+                                            <i class="fas fa-arrow-down"></i> Thu thêm
+                                        </option>
+                                        <option value="refund">
+                                            <i class="fas fa-arrow-up"></i> Hoàn lại
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Phương thức</label>
+                                    <input name="method" class="form-control form-control-solid"
+                                        placeholder="bank/cod/momo...">
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Số tiền</label>
+                                    <input name="amount" type="number" step="0.01" min="0.01"
+                                        class="form-control form-control-solid" required>
+                                </div>
+                                <div class="col-lg-4 col-md-6">
+                                    <label class="form-label fw-semibold fs-6 mb-2">Ghi chú</label>
+                                    <input name="note" class="form-control form-control-solid"
+                                        placeholder="Ghi chú thêm...">
+                                </div>
+                                <div class="col-lg-2 col-md-12">
+                                    <label class="form-label opacity-0">Action</label>
+                                    <button class="btn btn-info w-100">
+                                        <i class="fas fa-save me-1"></i>Ghi nhận
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
 
-            </div><!-- /gap -->
-        </div><!-- /container -->
-    </div><!-- /content -->
+                        <div class="row">
+                            {{-- Lịch sử giao dịch --}}
+                            <div class="col-12">
+                                <div class="d-flex align-items-center mb-4">
+                                    <i class="fas fa-history text-info me-2 fs-4"></i>
+                                    <h5 class="mb-0 fw-bold text-gray-800">Lịch sử giao dịch</h5>
+                                </div>
+
+                                <div class="table-responsive mb-6" style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+                                        <thead class="sticky-top">
+                                            <tr class="fw-bold text-muted bg-light">
+                                                <th class="ps-4 rounded-start">Thời gian</th>
+                                                <th>Loại</th>
+                                                <th>PT</th>
+                                                <th class="text-end">Số tiền</th>
+                                                <th class="text-end pe-4 rounded-end">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($order->payments as $p)
+                                                <tr>
+                                                    <td class="ps-4">
+                                                        <div class="fw-semibold text-gray-700">
+                                                            {{ $p->created_at->format('d/m/Y H:i') }}</div>
+                                                        <div class="fs-7 text-muted">
+                                                            {{ $p->created_at->diffForHumans() }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if ($p->kind === 'payment')
+                                                            <span class="badge badge-light-success">
+                                                                <i class="fas fa-arrow-down me-1"></i>Thu thêm
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-light-warning">
+                                                                <i class="fas fa-arrow-up me-1"></i>Hoàn lại
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light">{{ $p->method }}</span>
+                                                    </td>
+                                                    <td class="text-end fw-bold">
+                                                        {{ number_format($p->amount, 0, ',', '.') }}đ
+                                                    </td>
+                                                    <td class="text-end pe-4">
+                                                        <form method="POST"
+                                                            action="{{ route('admin.orders.payments.destroy', $p) }}"
+                                                            class="d-inline">
+                                                            @csrf @method('DELETE')
+                                                            <button class="btn btn-sm btn-light-danger"
+                                                                onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="5" class="text-center py-8">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-money-bill-wave fs-2x mb-3 text-gray-400"></i>
+                                                            <div class="fs-5">Chưa có giao dịch</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {{-- Tổng kết tài chính --}}
+                            <div class="col-12">
+                                <div class="bg-light-secondary rounded-3 p-4 h-100">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <i class="fas fa-calculator text-primary me-2 fs-4"></i>
+                                        <h5 class="fw-bold text-gray-800 mb-0">Tổng kết tài chính</h5>
+                                    </div>
+
+                                    <div class="d-flex flex-column gap-3">
+                                        {{-- Tổng đơn hàng --}}
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-2 px-3 bg-white rounded">
+                                            <span class="text-gray-600 fs-7 fw-semibold">Tổng hàng + VAT + ship</span>
+                                            <strong
+                                                class="text-gray-800 fs-6">{{ number_format($order->subtotal + $order->tax_amount + $order->shipping_fee, 0, ',', '.') }}đ</strong>
+                                        </div>
+
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-2 px-3 bg-white rounded">
+                                            <span class="text-gray-600 fs-7 fw-semibold">Tổng điều chỉnh</span>
+                                            <strong
+                                                class="text-gray-800 fs-6">{{ number_format($order->adjustments_total, 0, ',', '.') }}đ</strong>
+                                        </div>
+
+                                        {{-- Divider --}}
+                                        <div class="separator border-gray-300 my-2"></div>
+
+                                        {{-- Phải thu --}}
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-3 px-3 bg-light-primary rounded border border-primary border-dashed">
+                                            <span class="fw-bold text-gray-800 fs-6">Phải thu sau cùng</span>
+                                            <strong
+                                                class="text-primary fs-5">{{ number_format($order->net_total, 0, ',', '.') }}đ</strong>
+                                        </div>
+
+                                        {{-- Divider --}}
+                                        <div class="separator border-gray-300 my-2"></div>
+
+                                        {{-- Đã thu/hoàn --}}
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-2 px-3 bg-white rounded">
+                                            <span class="text-gray-600 fs-7 fw-semibold">Đã thu (payment)</span>
+                                            <strong
+                                                class="text-success fs-6">{{ number_format($order->paid_in, 0, ',', '.') }}đ</strong>
+                                        </div>
+
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-2 px-3 bg-white rounded">
+                                            <span class="text-gray-600 fs-7 fw-semibold">Đã hoàn (refund)</span>
+                                            <strong
+                                                class="text-warning fs-6">{{ number_format($order->refunded_out, 0, ',', '.') }}đ</strong>
+                                        </div>
+
+                                        {{-- Divider --}}
+                                        <div class="separator border-gray-300 my-2"></div>
+
+                                        {{-- Số dư --}}
+                                        <div
+                                            class="d-flex justify-content-between align-items-center py-3 px-3 bg-white rounded border border-2 {{ $order->balance > 0 ? 'border-danger' : ($order->balance < 0 ? 'border-info' : 'border-success') }}">
+                                            <span class="fw-bold text-gray-800 fs-5">Số dư</span>
+                                            <strong
+                                                class="fs-4 {{ $order->balance > 0 ? 'text-danger' : ($order->balance < 0 ? 'text-info' : 'text-success') }}">
+                                                {{ number_format($order->balance, 0, ',', '.') }}đ
+                                            </strong>
+                                        </div>
+
+                                        {{-- Chú thích --}}
+                                        <div class="alert alert-light-info mt-3 mb-0 py-3">
+                                            <div class="d-flex align-items-start">
+                                                <i class="fas fa-info-circle text-info me-2 mt-1"></i>
+                                                <div class="text-info fs-7">
+                                                    <strong>Chú thích:</strong> Số dương = KH còn thiếu, Số âm = cần hoàn
+                                                    lại, Số 0 = đã thanh toán đủ
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Modals --}}
     <div class="modal fade" id="rejectItemModal" tabindex="-1" aria-hidden="true">
@@ -1588,4 +2134,192 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('click', async (e) => {
+            const el = e.target.closest('.copy-text');
+            if (!el) return;
+
+            const text = el.dataset.copy?.trim();
+            if (!text) return;
+
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback cho browser cũ / không https
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                // Phản hồi nhỏ: đổi icon trong 1s
+                const icon = el.querySelector('i');
+                const old = icon?.className;
+                if (icon) {
+                    icon.className = 'fa-solid fa-check ms-2';
+                    setTimeout(() => icon.className = old, 1200);
+                }
+                el.classList.add('text-success');
+                setTimeout(() => el.classList.remove('text-success'), 1200);
+            } catch (err) {
+                console.error('Copy failed', err);
+                alert('Không thể sao chép, vui lòng thử lại.');
+            }
+        });
+    </script>
+@endpush
+@push('style')
+    <style>
+        /* Hover effect for table rows */
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f5f8fa !important;
+            transform: translateX(2px);
+        }
+
+        /* Badge circle styling */
+        .badge-circle {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        /* Button hover effects */
+        .btn-active-success:hover {
+            background-color: #50cd89 !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(80, 205, 137, 0.35);
+        }
+
+        .btn-active-success:hover i {
+            animation: rotate 0.5s ease;
+        }
+
+        .btn-active-warning:hover {
+            background-color: #ffc700 !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 199, 0, 0.35);
+        }
+
+        .btn-active-danger:hover {
+            background-color: #f1416c !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(241, 65, 108, 0.35);
+        }
+
+        /* Icon animations */
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(180deg);
+            }
+        }
+
+        /* Smooth transitions */
+        .btn,
+        .badge {
+            transition: all 0.2s ease;
+        }
+
+        /* Better spacing for actions */
+        .table td:last-child {
+            white-space: nowrap;
+        }
+
+        /* Symbol styling */
+        .symbol-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.475rem;
+        }
+
+        /* Action cards hover */
+        .bg-light-success,
+        .bg-light-info,
+        .bg-light-danger {
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .bg-light-success:hover {
+            background-color: rgba(80, 205, 137, 0.15) !important;
+        }
+
+        .bg-light-info:hover {
+            background-color: rgba(114, 57, 234, 0.15) !important;
+        }
+
+        .bg-light-danger:hover {
+            background-color: rgba(241, 65, 108, 0.15) !important;
+        }
+
+        /* Delete button animation */
+        .btn-icon:hover i.fa-trash {
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            75% {
+                transform: translateX(2px);
+            }
+        }
+
+        /* Status badge pulse */
+        .badge-light-warning {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 199, 0, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 199, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 199, 0, 0);
+            }
+        }
+
+        /* Responsive font sizes */
+        @media (max-width: 768px) {
+            .fs-6 {
+                font-size: 0.9rem !important;
+            }
+
+            .fs-7 {
+                font-size: 0.85rem !important;
+            }
+        }
+    </style>
 @endpush
