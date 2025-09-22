@@ -11,6 +11,13 @@ class OrderAdjustmentController extends Controller
 {
     public function store(Request $r, Order $order)
     {
+        $hasGhn = \App\Models\ShippingOrder::where('order_id', $order->id)
+            ->whereNotNull('shipping_code')
+            ->exists();
+
+        if ($hasGhn) {
+            return back()->with('error', '❌ Đơn đã gửi sang GHN, không thể thêm điều chỉnh.');
+        }
         $data = $r->validate([
             'label' => 'required|string|max:255',
             'code'  => 'nullable|string|max:50',
@@ -24,9 +31,25 @@ class OrderAdjustmentController extends Controller
         return back()->with('success', 'Đã thêm điều chỉnh.');
     }
 
-    public function destroy(OrderAdjustment $adj)
+    public function destroy(OrderAdjustment $adjustment)
     {
-        $adj->delete();
-        return back()->with('success', 'Đã xoá điều chỉnh.');
+        $orderId = $adjustment->order_id;
+
+        // Nếu không có order_id thì báo lỗi luôn
+        if (!$orderId) {
+            return back()->with('error', '❌ Điều chỉnh không gắn với đơn hàng nào.');
+        }
+
+        // Kiểm tra có vận đơn GHN chưa
+        $hasGhn = \App\Models\ShippingOrder::where('order_id', $orderId)
+            ->whereNotNull('shipping_code')
+            ->exists();
+
+        if ($hasGhn) {
+            return back()->with('error', '❌ Đơn đã gửi sang GHN, không thể xóa điều chỉnh.');
+        }
+
+        $adjustment->delete();
+        return back()->with('success', '✅ Đã xoá điều chỉnh.');
     }
 }

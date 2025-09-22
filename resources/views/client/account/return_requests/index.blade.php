@@ -18,14 +18,33 @@
                             'pending' => 'Đang chờ xử lý',
                             'approved' => 'Đã chấp nhận',
                             'rejected' => 'Đã từ chối',
-                            'exchanged' => 'Đã đổi hàng',
+                            'refunded' => 'Đã hoàn tiền',
+                            'exchange_requested' => 'Khách yêu cầu đổi hàng',
+                            'exchange_in_progress' => 'Đang xử lý đổi hàng',
+                            'refund_processing' => 'Đang xử lý hoàn tiền',
+                            'exchange_and_refund_processing' => 'Đang xử lý đổi & hoàn tiền',
+                            'rejected_temp' => 'Tạm từ chối (một phần)',
+                            'closed' => 'Đã đóng yêu cầu',
+                        ];
+
+                        $statusClass = [
+                            'pending' => 'bg-warning',
+                            'approved' => 'bg-primary',
+                            'rejected' => 'bg-danger',
+                            'refunded' => 'bg-success',
+                            'exchange_requested' => 'bg-info',
+                            'exchange_in_progress' => 'bg-info',
+                            'refund_processing' => 'bg-purple text-white',
+                            'exchange_and_refund_processing' => 'bg-teal text-white',
+                            'rejected_temp' => 'bg-dark text-white',
+                            'closed' => 'bg-secondary',
                         ];
                     @endphp
-                    <span
-                        class="badge 
-                {{ $req->status === 'pending' ? 'bg-warning' : ($req->status === 'approved' ? 'bg-success' : 'bg-danger') }}">
-                        {{ $statusText[$req->status] ?? $req->status }}
+
+                    <span class="badge {{ $statusClass[$req->status] ?? 'bg-secondary' }}">
+                        {{ $statusText[$req->status] ?? ucfirst($req->status) }}
                     </span>
+
 
                     <div class="mt-3 text-end">
                         <a href="{{ route('client.account.return_requests.show', $req->id) }}"

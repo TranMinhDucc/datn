@@ -505,113 +505,162 @@
                             {{-- KẾT NỐI  --}}
                             <!--begin:::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_settings_localization" role="tabpanel">
-                                <!--begin::Form-->
+                                <!--begin::Card-->
+                                <div class="card">
+                                    <!--begin::Card header-->
+                                    <div class="card-header border-0 pt-6">
+                                        <div class="card-title">
+                                            <h2 class="fw-bold">Third Party Integrations</h2>
+                                        </div>
+                                    </div>
+                                    <!--end::Card header-->
 
-                                <form id="kt_ecommerce_settings_general_localization" class="form"
-                                    action="{{ route('admin.settings.update') }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
+                                    <!--begin::Card body-->
+                                    <div class="card-body py-4">
+                                        <!--begin::Form-->
+                                        <form id="kt_ecommerce_settings_general_localization" class="form"
+                                            action="{{ route('admin.settings.update') }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
 
-                                    <!-- Xác định tab để controller biết -->
-                                    <input type="hidden" name="tab" value="integrations">
+                                            <!-- Xác định tab để controller biết -->
+                                            <input type="hidden" name="tab" value="integrations">
 
-                                    <div class="row push mb-3">
+                                            <!--begin::Row-->
+                                            <div class="row g-9">
 
-                                        <!-- ================= SMTP ================= -->
-                                        <div class="row">
-                                            <!-- SMTP -->
-                                            <div class="col-md-6">
-                                                <table class="table table-bordered table-striped table-hover mb-3">
-                                                    <thead class="table-dark text-center">
-                                                        <tr>
-                                                            <th colspan="2">
-                                                                <img src="https://sieustore.com/assets/img/icon-smtp.png"
-                                                                    width="20px" class="me-1">
-                                                                SMTP
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td><i class="fa fa-toggle-on text-success"></i> SMTP Mail</td>
-                                                            <td>
-                                                                <select class="form-control" name="smtp_status">
+                                                <!--begin::Col - SMTP Settings-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-primary">
+                                                                            <i
+                                                                                class="fas fa-envelope fs-2 text-primary"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">SMTP Configuration</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group - Status-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label fw-semibold">SMTP Status</label>
+                                                                <select class="form-select form-select-solid"
+                                                                    name="smtp_status">
                                                                     <option value="1"
                                                                         {{ setting('smtp_status') == 1 ? 'selected' : '' }}>
-                                                                        ON</option>
+                                                                        Enabled</option>
                                                                     <option value="0"
                                                                         {{ setting('smtp_status') == 0 ? 'selected' : '' }}>
-                                                                        OFF</option>
+                                                                        Disabled</option>
                                                                 </select>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><i class="fas fa-server text-primary"></i> SMTP Host</td>
-                                                            <td>
-                                                                <input type="text" name="smtp_host"
-                                                                    class="form-control"
-                                                                    value="{{ setting('smtp_host') }}"
-                                                                    placeholder="VD: smtp.gmail.com">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><i class="fas fa-shield-alt text-warning"></i> SMTP
-                                                                Encryption</td>
-                                                            <td>
-                                                                <input type="text" name="smtp_encryption"
-                                                                    class="form-control"
-                                                                    value="{{ setting('smtp_encryption') }}"
-                                                                    placeholder="VD: ssl/tls">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><i class="fas fa-network-wired text-info"></i> SMTP Port
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="smtp_port"
-                                                                    class="form-control"
-                                                                    value="{{ setting('smtp_port') }}"
-                                                                    placeholder="VD: 465, 587">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><i class="fa fa-envelope text-danger"></i> SMTP Email</td>
-                                                            <td>
-                                                                <input type="text" name="smtp_email"
-                                                                    class="form-control"
-                                                                    value="{{ setting('smtp_email') }}"
-                                                                    placeholder="VD: yourmail@gmail.com">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><i class="fas fa-key text-secondary"></i> SMTP Password
-                                                            </td>
-                                                            <td>
-                                                                <input type="password" name="smtp_password"
-                                                                    class="form-control"
-                                                                    value="{{ setting('smtp_password') }}"
-                                                                    placeholder="Nhập mật khẩu SMTP...">
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                            </div>
+                                                            <!--end::Form group-->
 
-                                            <!-- Telegram -->
-                                            <div class="col-md-6">
-                                                <table class="table table-bordered table-striped table-hover mb-3">
-                                                    <thead class="table-dark text-center">
-                                                        <tr>
-                                                            <th colspan="2">
-                                                                <i class="fab fa-telegram text-primary"></i> Telegram
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Status</td>
-                                                            <td>
-                                                                <select class="form-control" name="telegram_status">
+                                                            <!--begin::Form group - Mail Name-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label">Mail Name</label>
+                                                                <input type="text" name="smtp_from_name"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('smtp_from_name') }}"
+                                                                    placeholder="VD: Shop bán quần áo" />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - SMTP Host-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label">SMTP Host</label>
+                                                                <input type="text" name="smtp_host"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('smtp_host') }}"
+                                                                    placeholder="VD: smtp.gmail.com" />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Row for Port and Encryption-->
+                                                            <div class="row mb-10">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">SMTP Port</label>
+                                                                    <input type="text" name="smtp_port"
+                                                                        class="form-control form-control-solid"
+                                                                        value="{{ setting('smtp_port') }}"
+                                                                        placeholder="VD: 465, 587" />
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Encryption</label>
+                                                                    <input type="text" name="smtp_encryption"
+                                                                        class="form-control form-control-solid"
+                                                                        value="{{ setting('smtp_encryption') }}"
+                                                                        placeholder="VD: ssl/tls" />
+                                                                </div>
+                                                            </div>
+                                                            <!--end::Row-->
+
+                                                            <!--begin::Form group - SMTP Email-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label">SMTP Email</label>
+                                                                <input type="text" name="smtp_email"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('smtp_email') }}"
+                                                                    placeholder="VD: yourmail@gmail.com" />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - SMTP Password-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">SMTP Password</label>
+                                                                <input type="password" name="smtp_password"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('smtp_password') }}"
+                                                                    placeholder="Nhập mật khẩu SMTP..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - Telegram Settings-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-info">
+                                                                            <i class="fab fa-telegram fs-2 text-info"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Telegram</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group - Status-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label fw-semibold">Status</label>
+                                                                <select class="form-select form-select-solid"
+                                                                    name="telegram_status">
                                                                     <option value="1"
                                                                         {{ setting('telegram_status') == 1 ? 'selected' : '' }}>
                                                                         ON</option>
@@ -619,173 +668,299 @@
                                                                         {{ setting('telegram_status') == 0 ? 'selected' : '' }}>
                                                                         OFF</option>
                                                                 </select>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Telegram Token</td>
-                                                            <td>
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - Token-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label">Telegram Token</label>
                                                                 <input type="text" name="telegram_token"
-                                                                    class="form-control"
+                                                                    class="form-control form-control-solid"
                                                                     value="{{ setting('telegram_token') }}"
-                                                                    placeholder="Nhập Telegram Bot Token...">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Chat ID</td>
-                                                            <td>
+                                                                    placeholder="Nhập Telegram Bot Token..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - Chat ID-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label">Chat ID</label>
                                                                 <input type="text" name="telegram_chat_id"
-                                                                    class="form-control"
+                                                                    class="form-control form-control-solid"
                                                                     value="{{ setting('telegram_chat_id') }}"
-                                                                    placeholder="Nhập Chat ID...">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Telegram URL</td>
-                                                            <td>
+                                                                    placeholder="Nhập Chat ID..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - URL-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Telegram URL</label>
                                                                 <input type="text" name="telegram_url"
-                                                                    class="form-control"
+                                                                    class="form-control form-control-solid"
                                                                     value="{{ setting('telegram_url') }}"
-                                                                    placeholder="Nhập Telegram API URL...">
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                                    placeholder="Nhập Telegram API URL..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - Google Analytics-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-success">
+                                                                            <i class="fab fa-google fs-2 text-success"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Google Analytics</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group - Status-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label fw-semibold">Status</label>
+                                                                <select class="form-select form-select-solid"
+                                                                    name="google_analytics_status">
+                                                                    <option value="1"
+                                                                        {{ setting('google_analytics_status') == 1 ? 'selected' : '' }}>
+                                                                        ON</option>
+                                                                    <option value="0"
+                                                                        {{ setting('google_analytics_status') == 0 ? 'selected' : '' }}>
+                                                                        OFF</option>
+                                                                </select>
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - Tracking ID-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Tracking ID</label>
+                                                                <input type="text" name="google_analytics_id"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('google_analytics_id') }}"
+                                                                    placeholder="VD: G-XXXXXXX" />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - Google Ads-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-warning">
+                                                                            <i class="fab fa-google fs-2 text-warning"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Google Ads</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Ads ID</label>
+                                                                <input type="text" name="google_ads_id"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('google_ads_id') }}"
+                                                                    placeholder="VD: AW-XXXXXXX" />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - ChatGPT-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-dark">
+                                                                            <i class="fas fa-robot fs-2 text-dark"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">ChatGPT</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">API Key</label>
+                                                                <input type="text" name="chatgpt_api_key"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('chatgpt_api_key') }}"
+                                                                    placeholder="Nhập API Key của OpenAI..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--begin::Col - ChatGPT-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-dark">
+                                                                            <i class="fas fa-robot fs-2 text-dark"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Gemini</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">API Key</label>
+                                                                <input type="text" name="gemini_api_key"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('gemini_api_key') }}"
+                                                                    placeholder="Nhập API Key của OpenAI..." />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - Gmail Check-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-danger">
+                                                                            <i
+                                                                                class="fas fa-envelope fs-2 text-danger"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Gmail Check</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Email</label>
+                                                                <input type="text" name="gmail_check"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('gmail_check') }}"
+                                                                    placeholder="VD: check@gmail.com" />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
+
+                                                <!--begin::Col - Instagram Check-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label"
+                                                                            style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);">
+                                                                            <i
+                                                                                class="fab fa-instagram fs-2 text-white"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">Instagram Check</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
+
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Username</label>
+                                                                <input type="text" name="instagram_check"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('instagram_check') }}"
+                                                                    placeholder="VD: @username" />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
+                                                <!--end::Col-->
                                             </div>
-                                        </div>
+                                            <!--end::Row-->
 
-
-                                        <!-- ================= Google Analytics ================= -->
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered table-striped table-hover mb-3">
-                                                <thead class="table-dark text-center">
-                                                    <tr>
-                                                        <th colspan="2"><i class="fab fa-google text-primary"></i>
-                                                            Google Analytics</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Status</td>
-                                                        <td>
-                                                            <select class="form-control" name="google_analytics_status">
-                                                                <option value="1"
-                                                                    {{ setting('google_analytics_status') == 1 ? 'selected' : '' }}>
-                                                                    ON</option>
-                                                                <option value="0"
-                                                                    {{ setting('google_analytics_status') == 0 ? 'selected' : '' }}>
-                                                                    OFF</option>
-                                                            </select>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Tracking ID</td>
-                                                        <td>
-                                                            <input type="text" name="google_analytics_id"
-                                                                class="form-control"
-                                                                value="{{ setting('google_analytics_id') }}"
-                                                                placeholder="VD: G-XXXXXXX">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <!-- ================= Google Ads ================= -->
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered table-striped table-hover mb-3">
-                                                <thead class="table-dark text-center">
-                                                    <tr>
-                                                        <th colspan="2"><i class="fab fa-google text-success"></i>
-                                                            Google Ads</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Ads ID</td>
-                                                        <td>
-                                                            <input type="text" name="google_ads_id"
-                                                                class="form-control"
-                                                                value="{{ setting('google_ads_id') }}"
-                                                                placeholder="VD: AW-XXXXXXX">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <!-- ================= ChatGPT ================= -->
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered table-striped table-hover mb-3">
-                                                <thead class="table-dark text-center">
-                                                    <tr>
-                                                        <th colspan="2"><i class="fas fa-robot text-info"></i> ChatGPT
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>API Key</td>
-                                                        <td>
-                                                            <input type="text" name="chatgpt_api_key"
-                                                                class="form-control"
-                                                                value="{{ setting('chatgpt_api_key') }}"
-                                                                placeholder="Nhập API Key của OpenAI...">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <!-- ================= Gmail Check ================= -->
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered table-striped table-hover mb-3">
-                                                <thead class="table-dark text-center">
-                                                    <tr>
-                                                        <th colspan="2"><i class="fas fa-envelope text-danger"></i>
-                                                            Gmail Check</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Email</td>
-                                                        <td>
-                                                            <input type="text" name="gmail_check" class="form-control"
-                                                                value="{{ setting('gmail_check') }}"
-                                                                placeholder="VD: check@gmail.com">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <!-- ================= Instagram Check ================= -->
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered table-striped table-hover mb-3">
-                                                <thead class="table-dark text-center">
-                                                    <tr>
-                                                        <th colspan="2"><i class="fab fa-instagram text-warning"></i>
-                                                            Instagram Check</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Username</td>
-                                                        <td>
-                                                            <input type="text" name="instagram_check"
-                                                                class="form-control"
-                                                                value="{{ setting('instagram_check') }}"
-                                                                placeholder="VD: @username">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                    <!-- Action buttons -->
-                                    <div class="row py-5">
-                                        <div class="col-md-9 offset-md-3">
-                                            <div class="d-flex">
+                                            <!--begin::Actions-->
+                                            <div class="card-footer d-flex justify-content-end py-6 px-9">
                                                 <button type="reset" class="btn btn-light me-3">Cancel</button>
                                                 <button type="submit" class="btn btn-primary">
                                                     <span class="indicator-label">Save</span>
@@ -795,12 +970,13 @@
                                                     </span>
                                                 </button>
                                             </div>
-                                        </div>
+                                            <!--end::Actions-->
+                                        </form>
+                                        <!--end::Form-->
                                     </div>
-                                </form>
-
-
-                                <!--end::Form-->
+                                    <!--end::Card body-->
+                                </div>
+                                <!--end::Card-->
                             </div>
                             <!--end:::Tab pane-->
                             <!--begin:::Tab pane Telegram Notifications-->

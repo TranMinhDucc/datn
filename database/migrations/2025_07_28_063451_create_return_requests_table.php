@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
+    public function up(): void
     {
         Schema::create('return_requests', function (Blueprint $table) {
             $table->id();
@@ -18,7 +18,18 @@ return new class extends Migration
             $table->text('reason');
             $table->json('attachments')->nullable(); // ảnh + video
 
-            $table->enum('status', ['pending', 'approved', 'rejected', 'refunded'])->default('pending');
+            $table->enum('status', [
+                'pending',
+                'approved',
+                'rejected',
+                'exchange_in_progress',
+                'refund_processing',
+                'exchange_and_refund_processing',
+                'refunded',
+                'exchanged',
+                'exchanged_and_refunded',
+                'closed'
+            ])->default('pending')->change();
 
             $table->foreignId('handled_by')->nullable()->constrained('users')->nullOnDelete(); // admin xử lý
             $table->timestamp('handled_at')->nullable();
