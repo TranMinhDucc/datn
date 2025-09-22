@@ -82,7 +82,7 @@ use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestCont
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Http\Controllers\Admin\ReturnRequestItemController;
 use App\Http\Controllers\Admin\ReturnRequestItemActionController;
-
+use App\Http\Controllers\Admin\BestSellerSectionController;
 
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
@@ -543,6 +543,8 @@ Route::prefix('admin')
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
 
+        // Best seller 
+         Route::resource('best-seller', BestSellerSectionController::class)->names('best-seller');
         // Hỗ trợ
         Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
         Route::get('support/tickets/create',            [AdminTicket::class, 'create'])->name('support.tickets.create');
