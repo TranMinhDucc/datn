@@ -25,10 +25,15 @@ class ReturnRequestItem extends Model
         'status',
         'reason',
         'attachments',
+        'unit_price_paid',
+        'qc_status',
+        'qc_note',
     ];
 
     protected $casts = [
         'attachments' => 'array',
+        'unit_price_paid' => 'float',
+        'qc_status' => 'string',
     ];
 
     // Mỗi item thuộc về một yêu cầu đổi/trả
@@ -62,5 +67,16 @@ class ReturnRequestItem extends Model
     public function actions(): HasMany
     {
         return $this->hasMany(ReturnRequestItemAction::class);
+    }
+
+    // Helper cho QC
+    public function isQcPassed(): bool
+    {
+        return $this->qc_status === 'passed';
+    }
+
+    public function isQcFailed(): bool
+    {
+        return $this->qc_status === 'failed';
     }
 }

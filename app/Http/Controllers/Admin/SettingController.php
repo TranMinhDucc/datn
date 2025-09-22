@@ -57,6 +57,7 @@ class SettingController extends Controller
                     'smtp_encryption' => 'nullable|string|max:50',
                     'smtp_port' => 'nullable|integer',
                     'smtp_email' => 'nullable|email|max:255',
+                    'smtp_from_name' => 'nullable|max:255',
                     'smtp_password' => 'nullable|string|max:255',
 
                     // Google Analytics
@@ -70,6 +71,9 @@ class SettingController extends Controller
                     // ChatGPT
                     'chatgpt_api_key' => 'nullable|string|max:255',
                     'chatgpt_model' => 'nullable|string|max:50',
+
+                    // Gemini
+                    'gemini_api_key' => 'nullable|string|max:255',
 
                     // Telegram
                     'telegram_status' => 'nullable|in:0,1',

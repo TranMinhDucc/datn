@@ -82,7 +82,7 @@ use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestCont
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Http\Controllers\Admin\ReturnRequestItemController;
 use App\Http\Controllers\Admin\ReturnRequestItemActionController;
-
+use App\Http\Controllers\Admin\BestSellerSectionController;
 
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
@@ -443,8 +443,14 @@ Route::prefix('admin')
         Route::prefix('return-requests')->name('return-requests.')->group(function () {
             Route::post('{id}/approve', [AdminReturnRequestController::class, 'approve'])->name('approve');
             Route::post('{id}/reject', [AdminReturnRequestController::class, 'reject'])->name('reject');
-            Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
+            // Route::post('{id}/refund', [AdminReturnRequestController::class, 'refund'])->name('refund');
         });
+        Route::post('/return-requests/{rr}/refund', [RefundController::class, 'createFromRR'])
+            ->name('return-requests.refund');
+        Route::post('return-items/{id}/qc', [ReturnRequestItemController::class, 'qc'])->name('return_items.qc');
+        Route::post('/return-actions/{action}/qc', [ReturnRequestItemActionController::class, 'updateQC'])
+            ->name('return-actions.qc');
+
         // Route::put('/return-requests/items/{id}', [ReturnRequestItemController::class, 'update'])
         //     ->name('return-requests.items.update');
         Route::post('/return-requests/{id}/exchange', [ReturnRequestItemController::class, 'handleExchange'])
@@ -537,8 +543,13 @@ Route::prefix('admin')
         Route::post('inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
 
+        // Best seller 
+         Route::resource('best-seller', BestSellerSectionController::class)->names('best-seller');
         // Hỗ trợ
         Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('support/tickets/create',            [AdminTicket::class, 'create'])->name('support.tickets.create');
+        Route::post('support/tickets',               [AdminTicket::class, 'store'])->name('support.tickets.store');
+
         Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
         Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
         Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
@@ -562,6 +573,11 @@ Route::prefix('admin')
             ->name('refunds.createFromRR');
         Route::post('/refunds/{refund}/mark-done', [RefundController::class, 'markDone'])
             ->name('refunds.markDone');
+
+        // AJAX search users
+        Route::get('ajax/users/search',              [UserController::class, 'ajaxSearch'])->name('ajax.users.search');
+        // AJAX search orders
+        Route::get('ajax/orders/search', [OrderController::class, 'ajaxSearch'])->name('ajax.orders.search');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
@@ -653,4 +669,3 @@ Route::middleware('auth')->group(function () {
         return "✅ Low stock job dispatched at " . now();
     });
 });
-

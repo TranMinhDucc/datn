@@ -149,6 +149,16 @@
                         </a>
                         <!--end:Menu link-->
                     </div>
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="menu-link" href="{{ route('admin.best-seller.index') }}" target="_blank">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-box-open"></i>
+                            </span>
+                            <span class="menu-title">Trưng bày</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
                                     class="fa-solid fa-location-arrow fs-4"></i><span class="path1"></span><span

@@ -37,15 +37,27 @@
       @endforeach
     </div>
 
-    <form method="POST" action="{{ route('support.tickets.thread.reply',$ticket) }}" enctype="multipart/form-data" style="margin-top:10px;">
-      @csrf
-      <textarea name="body" required rows="3" placeholder="Nhập nội dung phản hồi..."
-        style="width:100%;padding:10px;border:1px solid #eee;border-radius:10px;"></textarea>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-        <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.webp,.mp4,.pdf">
-        <button type="submit" style="padding:8px 14px;border:0;border-radius:10px;background:#c69c6d;color:#fff;font-weight:800;cursor:pointer;">Gửi</button>
-      </div>
-    </form>
+    {{-- client/tickets/show.blade.php --}}
+@if($ticket->status === 'closed')
+  <div style="margin-top:10px;padding:12px;border:1px solid #fde7e7;background:#fff6f6;border-radius:10px;color:#b91c1c;">
+    Phiếu đã <b>đóng</b>. Vui lòng tạo phiếu mới nếu cần hỗ trợ thêm.
+  </div>
+@else
+  <form method="POST" action="{{ route('support.tickets.thread.reply',$ticket) }}"
+        enctype="multipart/form-data" style="margin-top:10px;">
+    @csrf
+    <textarea name="body" required rows="3" placeholder="Nhập nội dung phản hồi..."
+      style="width:100%;padding:10px;border:1px solid #eee;border-radius:10px;"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.webp,.mp4,.pdf">
+      <button type="submit"
+        style="padding:8px 14px;border:0;border-radius:10px;background:#c69c6d;color:#fff;font-weight:800;cursor:pointer;">
+        Gửi
+      </button>
+    </div>
+  </form>
+@endif
+
   </div>
 </div>
 <script>document.getElementById('thread').scrollTop = 999999;</script>
