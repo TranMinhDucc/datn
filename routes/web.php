@@ -545,6 +545,9 @@ Route::prefix('admin')
 
         // Hỗ trợ
         Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
+        Route::get('support/tickets/create',            [AdminTicket::class, 'create'])->name('support.tickets.create');
+        Route::post('support/tickets',               [AdminTicket::class, 'store'])->name('support.tickets.store');
+
         Route::get('/support/tickets/{ticket}',       [AdminTicket::class, 'show'])->name('support.tickets.show');
         Route::patch('/support/tickets/{ticket}',     [AdminTicket::class, 'update'])->name('support.tickets.update');
         Route::post('/support/tickets/{ticket}/reply', [AdminTicket::class, 'reply'])->name('support.tickets.reply');
@@ -568,6 +571,11 @@ Route::prefix('admin')
             ->name('refunds.createFromRR');
         Route::post('/refunds/{refund}/mark-done', [RefundController::class, 'markDone'])
             ->name('refunds.markDone');
+
+        // AJAX search users
+        Route::get('ajax/users/search',              [UserController::class, 'ajaxSearch'])->name('ajax.users.search');
+        // AJAX search orders
+        Route::get('ajax/orders/search', [OrderController::class, 'ajaxSearch'])->name('ajax.orders.search');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {

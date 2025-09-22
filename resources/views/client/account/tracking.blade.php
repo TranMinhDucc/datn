@@ -423,9 +423,9 @@
       (function() {
         /* ==== Tuning ==== */
         const BASE_SPEED = 0.026; // %/frame (~14s về đích)
-        const BOOST_STEP   = 0.20;   // mỗi lần cổ vũ +0.20 (nhẹ hơn)
-const BOOST_MAX    = 0.60;   // trần tối đa của boost
-const BOOST_DECAY  = 0.992;  // giảm boost dần mỗi frame
+        const BOOST_STEP = 0.20; // mỗi lần cổ vũ +0.20 (nhẹ hơn)
+        const BOOST_MAX = 0.60; // trần tối đa của boost
+        const BOOST_DECAY = 0.992; // giảm boost dần mỗi frame
         const SPAWN_OBS_MS = 1100; // spawn chướng ngại (ms)
         const SPAWN_GIF_MS = 1500; // spawn quà (ms)
 
@@ -697,8 +697,10 @@ const BOOST_DECAY  = 0.992;  // giảm boost dần mỗi frame
                       <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product_name }}">
                     </a>
                     <div>
-                      <a href="">
-                        <h5>{{ $item->product_name }}</h5>
+                      <a href="{{ route('client.products.show', $item->product_id) }}">
+                        <h5 title="{{ $item->product_name }}">
+                          {{ Str::limit($item->product_name, 40, '…') }}
+                        </h5>
                       </a>
                       <p>Brand: <span>{{ $item->product->brand->name ?? 'N/A' }}</span></p>
 
@@ -713,54 +715,89 @@ const BOOST_DECAY  = 0.992;  // giảm boost dần mỗi frame
                   </div>
                 </td>
                 <td>{{ $item->quantity }}</td>
-                <td>${{ number_format($item->price, 2) }}</td>
-                <td>${{ number_format($item->price * $item->quantity, 2) }}</td>
+                <td>{{ number_format($item->price, 0, ',', '.') }}₫</td>
+                <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</td>
+
               </tr>
               @endforeach
             </tbody>
           </table>
-          <div style="max-width: 600px; margin-left: auto; padding: 20px; border: 1px solid #eee; background-color: #fff;">
-            {{-- Phương thức thanh toán --}}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-weight: 500;">Phương thức thanh toán:</span>
-              <span style="font-weight: 600;">{{ $order->paymentMethod->name ?? '---' }}</span>
-            </div>
+          <div style="width:100%;margin:18px 0 0;">
+            <div style="width:100%;background:#fff;border:1px solid #e7e7e7;border-radius:18px;
+              box-shadow:0 10px 28px rgba(17,24,39,.10),0 2px 6px rgba(17,24,39,.05);overflow:hidden;">
 
-            {{-- Tạm tính --}}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span>Tạm tính:</span>
-              <span>{{ number_format($order->subtotal, 0, ',', '.') }}đ</span>
-            </div>
+              <!-- dải màu -->
+              <div style="height:8px;background:linear-gradient(90deg,#c69c6d,#e3c39f,#c69c6d);"></div>
 
-            {{-- Giảm giá nếu có --}}
-            @if ($order->discount_amount > 0)
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span>Mã giảm giá:</span>
-              <span style="color: green;">-{{ number_format($order->discount_amount, 0, ',', '.') }}đ</span>
-            </div>
-            @endif
+              <!-- header + phương thức -->
+              <div style="padding:22px 24px 14px;display:flex;justify-content:space-between;align-items:center;">
+                <!-- Tiêu đề: bự & rất đậm (giống header bảng) -->
+<h4>Chi tiết thanh toán</h4>
+                <!-- Badge phương thức: chữ vừa, đậm -->
+                <div style="font-size:14px;font-weight:800;text-transform:uppercase;
+                  padding:9px 14px;border-radius:999px;background:rgba(198,156,109,.12);
+                  color:#6f4b2a;border:1px solid rgba(198,156,109,.35);">
+                  {{ $order->paymentMethod->name ?? '---' }}
+                </div>
+              </div>
 
-            {{-- Thuế nếu có --}}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span>Thuế (VAT):</span>
-              <span>{{ number_format($order->tax_amount, 0, ',', '.') }}đ</span>
-            </div>
+              <!-- các dòng số liệu -->
+              <div style="padding:8px 24px 0;">
+                <!-- Label & Value: cùng size 20px, label đậm 700, value đậm 800 -->
+                <div style="display:flex;justify-content:space-between;align-items:center;
+                  padding:14px 16px;border-radius:14px;background:#fafafa;">
+                  <span style="font-size:20px;color:#0f172a;">Tạm tính</span>
+                  <span style="font-size:20px;">
+                    {{ number_format($order->subtotal, 0, ',', '.') }}đ
+                  </span>
+                </div>
 
-            {{-- Phí vận chuyển --}}
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span>Phí vận chuyển:</span>
-              <span>{{ number_format($order->shipping_fee, 0, ',', '.') }}đ</span>
-            </div>
+                @if(($order->discount_amount ?? 0) > 0)
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+                  padding:14px 16px;border-radius:14px;background:linear-gradient(0deg,#f6fffb,#ffffff);
+                  border:1px dashed #bfead5;">
+                  <span style="font-size:20px;">Giảm giá</span>
+                  <span style="font-size:20px;color:#059669;">
+                    -{{ number_format($order->discount_amount, 0, ',', '.') }}đ
+                  </span>
+                </div>
+                @endif
 
-            {{-- Đường gạch ngang --}}
-            <hr style="margin: 16px 0; border-top: 1px solid #ddd;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+                  padding:14px 16px;border-radius:14px;">
+                  <span style="font-size:20px;">Thuế (VAT)</span>
+                  <span style="font-size:20px;{{ ($order->tax_amount ?? 0)==0 ? 'opacity:.6;' : '' }}">
+                    {{ number_format($order->tax_amount, 0, ',', '.') }}đ
+                  </span>
+                </div>
 
-            {{-- Tổng cộng --}}
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px;">
-              <span style="text-transform: uppercase;">Tổng cộng:</span>
-              <span style="color: #e53935;">{{ number_format($order->total_amount, 0, ',', '.') }}đ</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+                  padding:14px 16px;border-radius:14px;background:#fafafa;">
+                  <span style="font-size:20px;">Phí vận chuyển</span>
+                  <span style="font-size:20px;{{ ($order->shipping_fee ?? 0)==0 ? 'opacity:.6;' : '' }}">
+                    {{ number_format($order->shipping_fee, 0, ',', '.') }}đ
+                  </span>
+                </div>
+              </div>
+
+              <!-- đường phân cách chấm -->
+              <div style="height:1px;margin:18px 24px;background:linear-gradient(90deg,#d7d7d7 60%,transparent 0) repeat-x;background-size:14px 1px;"></div>
+
+              <!-- Tổng cộng: to rõ 30px & rất đậm 900 -->
+              <div style="padding:0 24px 22px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;">
+                  <span style="text-transform:uppercase;font-size:20px;letter-spacing:.35px;color:#0f172a;">
+                    Tổng cộng
+                  </span>
+                  <span style="font-size:25px;font-weight:600;color:#e53935;line-height:1;">
+                    {{ number_format($order->total_amount, 0, ',', '.') }}đ
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
+
+
 
         </div>
       </div>
