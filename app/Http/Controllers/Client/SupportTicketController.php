@@ -19,6 +19,12 @@ class SupportTicketController extends Controller
         $status = $request->input('status', '');
         $sort   = $request->input('sort', 'latest'); // latest|oldest|priority
 
+        // Đánh dấu tin nhắn admin đã xem
+        \App\Models\SupportTicketMessage::where('user_id', auth()->id())
+            ->where('is_staff', 1)
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
+
         $tickets = \App\Models\SupportTicket::where('user_id', \Auth::id())
             ->when($q, function ($qr) use ($q) {
                 $qr->where(function ($xx) use ($q) {
@@ -33,7 +39,6 @@ class SupportTicketController extends Controller
         if ($sort === 'oldest') {
             $tickets->oldest('updated_at');
         } elseif ($sort === 'priority') {
-            // urgent > high > normal
             $tickets->orderByRaw("FIELD(priority,'urgent','high','normal') ASC")
                 ->latest('updated_at');
         } else {
@@ -44,6 +49,7 @@ class SupportTicketController extends Controller
 
         return view('client.support.index', compact('tickets', 'q', 'status', 'sort'));
     }
+
 
 
     public function create()

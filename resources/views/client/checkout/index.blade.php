@@ -119,6 +119,22 @@
                                 </span>
 
                                 </li> --}}
+                                
+<li class="product-coupon-line d-none d-flex justify-content-between align-items-center">
+  <div class="flex-grow-1 text-truncate">
+    Giảm giá SP <small class="text-muted coupon-code-text"></small>
+  </div>
+  <div class="coupon-amount text-danger fw-semibold text-nowrap">- 0 đ</div>
+</li>
+
+<li class="shipping-coupon-line d-none d-flex justify-content-between align-items-center">
+  <div class="flex-grow-1 text-truncate">
+    Giảm phí ship <small class="text-muted coupon-code-text"></small>
+  </div>
+  <div class="coupon-amount text-danger fw-semibold text-nowrap">- 0 đ</div>
+</li>
+
+
                                 <li>
                                     <p>Phí vận chuyển:</p>
                                     <span class="shipping-fee-amount ">
@@ -134,10 +150,7 @@
                                         0 ₫
                                     </span>
                                 </li>
-                                <li>
-                                    <p>Ví của bạn</p>
-                                    <span>{{ number_format(auth()->user()->balance) }} ₫</span>
-                                </li>
+                                
                             </ul>
                             {{-- <div class="coupon-code">
                                     <input type="text" placeholder="Enter Coupon Code">
@@ -365,10 +378,11 @@
                         .join(' / ');
 
                     // ✅ Gán HTML cho sản phẩm
+                    const cut = (s, max=40) => s.length > max ? s.slice(0, max-1) + '…' : s;
                     li.innerHTML = `
         <img src="${item.image}" width="50" alt="${item.name}">
         <div>
-            <h6>${item.name}</h6>
+            <h6>${cut(item.name, 40)}</h6>
             <span>${attributes}</span>
         </div>
     `;
@@ -737,5 +751,72 @@
     }
   });
 </script>
+
+
+<script>
+  const fVND = n => Number(n || 0).toLocaleString('vi-VN') + ' ₫';
+
+  function renderCouponLines() {
+    const productCoupon  = JSON.parse(sessionStorage.getItem('productCoupon')  || '{}');
+    const shippingCoupon = JSON.parse(sessionStorage.getItem('shippingCoupon') || '{}');
+    const productDiscount  = Number(sessionStorage.getItem('productDiscountAmount')  || 0);
+    const shippingDiscount = Number(sessionStorage.getItem('shippingDiscountAmount') || 0);
+
+    const productLine  = document.querySelector('.product-coupon-line');
+    const shippingLine = document.querySelector('.shipping-coupon-line');
+
+    // sản phẩm
+    if (productCoupon?.code && productDiscount > 0) {
+      productLine.classList.remove('d-none');
+      productLine.querySelector('.coupon-code-text').textContent = `(${productCoupon.code})`;
+      productLine.querySelector('.coupon-amount').textContent = '- ' + fVND(productDiscount);
+    } else {
+      productLine.classList.add('d-none');
+    }
+
+    // vận chuyển
+    if (shippingCoupon?.code && shippingDiscount > 0) {
+      shippingLine.classList.remove('d-none');
+      shippingLine.querySelector('.coupon-code-text').textContent = `(${shippingCoupon.code})`;
+      shippingLine.querySelector('.coupon-amount').textContent = '- ' + fVND(shippingDiscount);
+    } else {
+      shippingLine.classList.add('d-none');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', renderCouponLines);
+
+  const fVNDNoWrap = n => Number(n || 0).toLocaleString('vi-VN') + '\u00A0đ';
+
+function renderCouponLines() {
+  const productCoupon  = JSON.parse(sessionStorage.getItem('productCoupon')  || '{}');
+  const shippingCoupon = JSON.parse(sessionStorage.getItem('shippingCoupon') || '{}');
+  const productDiscount  = Number(sessionStorage.getItem('productDiscountAmount')  || 0);
+  const shippingDiscount = Number(sessionStorage.getItem('shippingDiscountAmount') || 0);
+
+  const pLine = document.querySelector('.product-coupon-line');
+  const sLine = document.querySelector('.shipping-coupon-line');
+
+  if (pLine) {
+    if (productCoupon?.code && productDiscount > 0) {
+      pLine.classList.remove('d-none');
+      pLine.querySelector('.coupon-code-text').textContent = `(${productCoupon.code})`;
+      pLine.querySelector('.coupon-amount').textContent = `- ${fVNDNoWrap(productDiscount)}`;
+    } else pLine.classList.add('d-none');
+  }
+
+  if (sLine) {
+    if (shippingCoupon?.code && shippingDiscount > 0) {
+      sLine.classList.remove('d-none');
+      sLine.querySelector('.coupon-code-text').textContent = `(${shippingCoupon.code})`;
+      sLine.querySelector('.coupon-amount').textContent = `- ${fVNDNoWrap(shippingDiscount)}`;
+    } else sLine.classList.add('d-none');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderCouponLines);
+
+</script>
+
 
 @endsection
