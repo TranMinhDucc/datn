@@ -83,6 +83,45 @@
     border:1px solid var(--line);border-radius:16px;background:#fff;padding:28px;text-align:center;box-shadow:var(--soft)
   }
   @media (max-width:980px){ .card{grid-template-columns:1fr;align-items:flex-start} .right,.meta{text-align:left}}
+
+
+
+  /* ==== EQUAL HEIGHT + CỘT CỐ ĐỊNH ==== */
+.card{
+  height: 124px !important;            /* đổi 116/128/136 tuỳ mắt */
+  overflow: hidden;
+  align-items: stretch !important;
+  grid-template-columns: minmax(0,1fr) 190px 160px 200px !important;
+  /*          (nội dung)        (trạng thái) (tạo lúc) (cập nhật)  */
+}
+.card > div{
+  min-width: 0;                         /* NGĂN cột 1 bị nở */
+  display: flex;
+  align-items: center;                   /* giữa theo trục dọc */
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ==== KHÔNG CHO XUỐNG DÒNG Ở NHỮNG CỘT DỄ LỆCH ==== */
+.status{
+  width: 180px;                          /* đủ chứa 'Chờ bạn phản hồi' */
+  white-space: nowrap;
+  justify-content: center;
+  text-align: center;
+}
+.meta > div, .right > div, .right .sub{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* ==== CẮT GỌN TIÊU ĐỀ & CHIPS VỀ 1 HÀNG ==== */
+.chips{ flex-wrap: nowrap; overflow: hidden; }
+.chip{ white-space: nowrap; max-width: 100%; }
+.card .title-row, .card .subject, .card .chips{ min-width: 0; }
+
+
 </style>
 
 <div class="page">

@@ -42,7 +42,10 @@
                                     @foreach ($campaigns as $campaign)
                                         <tr>
                                             <td>{{ $campaign->campaign_name }}</td>
-                                            <td>{{ $campaign->email_subject }}</td>
+                                            <td class="ellipsis" style=" white-space: nowrap; 
+                                                overflow: hidden; 
+                                                text-overflow: ellipsis; 
+                                                max-width: 250px; ">{{ $campaign->email_subject }}</td>
                                             <td>
                                                 <span
                                                     class="badge {{ $campaign->status === 'completed' ? 'badge-success' : ($campaign->status === 'processing' ? 'badge-warning' : 'badge-secondary') }}">
@@ -75,4 +78,16 @@
             </div>
         </div>
     </div>
+
+
+@endsection
+@section('css')
+    <style>
+        .ellipsis {
+            width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 @endsection

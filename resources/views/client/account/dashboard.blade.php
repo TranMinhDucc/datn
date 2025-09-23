@@ -486,14 +486,28 @@
                                             @php
                                                 $orderStatus = [
                                                     'all' => 'Tất cả',
-                                                    'pending' => 'Chờ duyệt',
+                                                    'pending' => 'Chờ xác nhận',
                                                     'confirmed' => 'Đã xác nhận',
+                                                    'processing' => 'Đang xử lý',
+                                                    'ready_for_dispatch' => 'Sẵn sàng giao hàng',
                                                     'shipping' => 'Đang giao',
-                                                    'completed' => 'Hoàn thành',
+                                                    'delivery_failed' => 'Giao hàng thất bại',
+                                                    'delivered' => 'Đã giao hàng',
+                                                    'completed' => 'Hoàn tất',
                                                     'cancelled' => 'Đã hủy',
-                                                    'returning' => 'Đang trả',
-                                                    'returned' => 'Đã trả',
+                                                    'return_requested' => 'Yêu cầu trả hàng',
+                                                    'returning' => 'Đang trả hàng',
+                                                    'returned' => 'Đã trả hàng',
+                                                    'exchange_requested' => 'Yêu cầu đổi hàng',
+                                                    'exchange_in_progress' => 'Đang xử lý đổi hàng',
+                                                    'exchanged' => 'Đã đổi hàng',
+                                                    'refund_processing' => 'Đang hoàn tiền',
+                                                    'refunded' => 'Đã hoàn tiền',
+                                                    'exchange_and_refund_processing' => 'Đang xử lý đổi & hoàn tiền',
+                                                    'exchanged_and_refunded' => 'Đã đổi & hoàn tiền',
+                                                    'closed' => 'Đã đóng',
                                                 ];
+
                                                 $orderAfterSort = [];
                                                 foreach ($orders as $order) {
                                                     if (!isset($orderAfterSort[$order->status])) {
@@ -504,6 +518,7 @@
                                                     }
                                                 }
                                             @endphp
+
                                             <ul class="nav nav-pills order-tab mb-2" id="order-status-pills-tab"
                                                 role="tablist" aria-orientation="horizontal">
                                                 @php
@@ -582,15 +597,22 @@
                                                                                         'completed' => 'Đã hoàn tất',
                                                                                         'cancelled' => 'Đã hủy',
                                                                                         'return_requested'
-                                                                                            => 'Yêu cầu trả hàng',
+                                                                                            => 'Khách yêu cầu trả hàng',
                                                                                         'returning' => 'Đang trả hàng',
                                                                                         'returned' => 'Đã trả hàng',
                                                                                         'exchange_requested'
-                                                                                            => 'Yêu cầu đổi hàng',
+                                                                                            => 'Khách yêu cầu đổi hàng',
+                                                                                        'exchange_in_progress'
+                                                                                            => 'Đang xử lý đổi hàng',
                                                                                         'exchanged' => 'Đã đổi hàng',
                                                                                         'refund_processing'
                                                                                             => 'Đang hoàn tiền',
                                                                                         'refunded' => 'Đã hoàn tiền',
+                                                                                        'exchange_and_refund_processing'
+                                                                                            => 'Đang xử lý đổi & hoàn tiền',
+                                                                                        'exchanged_and_refunded'
+                                                                                            => 'Đã đổi & hoàn tiền',
+                                                                                        'closed' => 'Đã đóng',
                                                                                         default
                                                                                             => 'Không rõ trạng thái',
                                                                                     };
@@ -996,6 +1018,34 @@
                                                                             {{-- <h6>* Exchange/Return window closed on 20 Mar</h6> --}}
                                                                         </div>
                                                                     @endforeach
+                                                                    {{-- 🔽 Điều chỉnh chỉ hiển thị nếu visible_to_customer = 1 --}}
+                                                                    @if ($order->adjustments->where('visible_to_customer', 1)->count() > 0)
+                                                                        <div class="mt-3">
+                                                                            <h6 class="fw-bold">Điều chỉnh</h6>
+                                                                            <table class="table table-sm">
+                                                                                <tbody>
+                                                                                    @foreach ($order->adjustments->where('visible_to_customer', 1) as $adj)
+                                                                                        <tr>
+                                                                                            <td>{{ $adj->label }}</td>
+                                                                                            <td>
+                                                                                                <span
+                                                                                                    class="badge {{ $adj->type === 'discount' ? 'bg-danger' : 'bg-success' }}">
+                                                                                                    {{ $adj->type === 'discount' ? 'Trừ' : 'Cộng' }}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                class="text-end {{ $adj->type === 'discount' ? 'text-danger' : 'text-success' }}">
+                                                                                                {{ $adj->type === 'discount' ? '-' : '+' }}
+                                                                                                {{ number_format($adj->amount, 0, ',', '.') }}đ
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    @endif
+
+
                                                                 </div>
                                                             </div>
                                                         @endforeach
@@ -1007,58 +1057,6 @@
                                             </div>
                                         </div>
 
-                                        {{-- <div class="col-12">
-                                            <div class="order-box">
-                                                <div class="order-container">
-                                                    <div class="order-icon"><i class="iconsax" data-icon="undo"></i>
-                                                        <div class="couplet"><i class="fa-solid fa-check"></i></div>
-                                                    </div>
-                                                    <div class="order-detail">
-                                                        <h5>Refund Credited</h5>
-                                                        <p>
-                                                            Your Refund Of <b> $389.00 </b>For then return has been
-                                                            processed Successfully on 4th Apr.<a href="#"> View
-                                                                Refund details</a></p>
-                                                    </div>
-                                                </div>
-                                                <div class="product-order-detail">
-                                                    <div class="product-box"> <a href="product.html"> <img
-                                                                src="{{ asset('assets/client/images/notification/9.jpg') }}"
-                                                                alt=""></a>
-                                                        <div class="order-wrap">
-                                                            <h5>Rustic Minidress with Halterneck</h5>
-                                                            <p>Versatile sporty slogans short sleeve quirky laid back orange
-                                                                lux hoodies vests pins
-                                                                badges.</p>
-                                                            <ul>
-                                                                <li>
-                                                                    <p>Prize : </p><span>$20.00</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Size : </p><span>M</span>
-                                                                </li>
-                                                                <li>
-                                                                    <p>Order Id :</p><span>ghat56han50</span>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="return-box">
-                                                    <div class="review-box">
-                                                        <ul class="rating">
-                                                            <li> <i class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i><i
-                                                                    class="fa-regular fa-star"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                    <h6>
-                                                        * Exchange/Return window closed on 20 mar</h6>
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -2322,8 +2320,8 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                                                                                                                                <<<<<<< HEAD
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
+                                                                                                                                                                                                                                                                                                                <<<<<<< HEAD
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
 
                 ===
                 ===

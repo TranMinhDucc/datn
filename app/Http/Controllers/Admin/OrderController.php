@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ReturnRequest;
 use App\Models\ReturnRequestItem;
+use App\Models\ShippingAddress;
 use App\Models\ShippingLog;
 use App\Models\ShippingMethod;
 use App\Models\ShippingOrder;
@@ -187,39 +188,6 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-
-    // public function show($id)
-    // {
-    //     $order = Order::with([
-    //         'user',
-    //         'shippingLogs',
-    //         'orderItems.product',
-    //         'paymentMethod',
-    //         'shippingAddress.province',
-    //         'shippingAddress.district',
-    //         'shippingAddress.ward',
-    //         // Load các yêu cầu đổi/trả hàng và item liên quan
-    //         'returnRequests.items.orderItem.product',
-    //         'returnRequests.items.orderItem.productVariant',
-    //     ])->findOrFail($id);
-
-    //     // Lấy tất cả yêu cầu đổi/trả (nếu có)
-    //     $returnRequests = $order->returnRequests ?? collect();
-
-    //     // Lấy danh sách tất cả sản phẩm (để hiển thị/thêm đơn mới)
-    //     $products = Product::where('is_active', 1)
-    //         ->with('variants')
-    //         ->get();
-
-    //     return view('admin.orders.show', [
-    //         'order' => $order,
-    //         'returnRequests' => $returnRequests,
-    //         'products' => $products,
-    //     ]);
-    // }
 
     public function show($id)
     {
@@ -254,7 +222,58 @@ class OrderController extends Controller
             'id',
             $exchangesByRR->pluck('exchange_order_id')->toArray()
         )->get(['id', 'order_code', 'status', 'created_at']);
+        // ====== TÍNH SẴN THÔNG TIN THANH TOÁN TRUYỀN RA VIEW ======
+        $pmCodeRaw = $order->payment_method ?? ($order->paymentMethod->code ?? '');
+        $pmCode    = strtolower(trim($pmCodeRaw));
+        $payment = [
+            'code'  => $pmCode,
+            'label' => null,
+            'icon'  => null, // class FA nếu không dùng ảnh
+            'img'   => null, // đường dẫn ảnh nếu có
+            'paid'  => ($order->payment_status === 'paid') || (int)($order->is_paid ?? 0) === 1,
+        ];
+        if (str_contains($pmCode, 'momo')) {
+            $payment['label'] = 'MoMo';
+            $payment['img']   = asset('assets/media/svg/card-logos/momo.svg'); // đặt file nếu bạn có
+        } elseif ($pmCode === 'cod' || str_contains($pmCode, 'cod')) {
+            $payment['label'] = 'COD';
+            $payment['icon']  = 'fa-solid fa-hand-holding-dollar';
+        } else {
+            $payment['label'] = $order->paymentMethod->name
+                ?? ($pmCode ? ucfirst($pmCode) : 'Không rõ');
+        }
+        $formatAddress = function ($a) {
+            if (!$a) return '';
+            $parts = [
+                trim($a->address ?? ''),
+                $a->ward?->name,
+                $a->district?->name,
+                $a->province?->name,
+                $a->country ?: 'Việt Nam',
+            ];
+            return implode(', ', array_filter($parts));
+        };
 
+        $shipToFull = $formatAddress($order->shippingAddress);
+
+        $userAddresses = collect();
+        if ($order->user_id) {
+            $userAddresses = ShippingAddress::with(['province', 'district', 'ward'])
+                ->where('user_id', $order->user_id)
+                ->orderByDesc('is_default')
+                ->get();
+
+            // gắn sẵn chuỗi full_address để Blade chỉ hiển thị
+            $userAddresses->each(function ($a) use ($formatAddress) {
+                $a->full_address = $formatAddress($a);
+            });
+        }
+        $onlineBill = null;
+        if (str_contains($pmCode, 'momo')) {
+            // tuỳ DB của bạn đang dùng cột nào:
+            $onlineBill = $order->payment_reference
+                ?? null;
+        }
         return view('admin.orders.show', [
             'order'             => $order,
             'returnRequests'    => $returnRequests,
@@ -263,6 +282,10 @@ class OrderController extends Controller
             'availableStatuses' => $availableStatuses,
             'exchangesByRR'     => $exchangesByRR,
             'exchangeOrders'    => $exchangeOrders,
+            'payment'           => $payment,
+            'shipToFull'     => $shipToFull,
+            'userAddresses'  => $userAddresses,
+            'onlineBill'     => $onlineBill,
         ]);
     }
 
@@ -541,34 +564,42 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Đơn hàng không thể gửi đi do trạng thái không hợp lệ.');
         }
 
-        // Xác định phương thức thanh toán
-        $pmName    = strtolower(trim(($order->paymentMethod->code ?? '') . ' ' . ($order->paymentMethod->name ?? '')));
-        $isCOD     = str_contains($pmName, 'cod') || str_contains($pmName, 'cash on delivery') || str_contains($pmName, 'khi nhận');
-        $isPrepaid = !$isCOD || ($order->payment_status === 'paid');
-
         // ======= TÍNH SỐ DƯ (để gửi cod_amount) =======
         $gross = (float)($order->subtotal ?? 0)
             + (float)($order->tax_amount ?? 0)
             + (float)($order->shipping_fee ?? 0)
             - (float)($order->discount_amount ?? 0);
 
+        // Điều chỉnh: charge = cộng, discount = trừ
         $adjTotal = (float)$order->adjustments->sum(function ($a) {
             return $a->type === 'charge' ? $a->amount : -$a->amount;
         });
 
-        $net          = $gross + $adjTotal;
-        $paidIn       = (float)$order->payments->where('kind', 'payment')->sum('amount');
-        $refundedOut  = (float)$order->payments->where('kind', 'refund')->sum('amount');
-        $balance      = $net - $paidIn + $refundedOut;                 // dương = KH còn thiếu
-        $codAmount    = $isPrepaid ? 0 : max(0, (int) round($balance)); // GHN cần số nguyên không âm
+        $net         = $gross + $adjTotal;
+        $paidIn      = (float)$order->payments->where('kind', 'payment')->sum('amount');
+        $refundedOut = (float)$order->payments->where('kind', 'refund')->sum('amount');
+
+        // dương = KH còn thiếu, âm/0 = không thu COD
+        $balance   = $net - $paidIn + $refundedOut;
+        $codAmount = max(0, (int) round($balance)); // GHN cần số nguyên không âm
+
+        Log::info('GHN COD breakdown', [
+            'gross'        => $gross,
+            'adjustments'  => $adjTotal,
+            'net'          => $net,
+            'paid_in'      => $paidIn,
+            'refunded_out' => $refundedOut,
+            'balance'      => $balance,
+            'cod_amount'   => $codAmount,
+        ]);
 
         // Ai trả phí ship: 1=Shop, 2=Người nhận
         $paymentTypeId = 1;
 
         // ======= TÍNH KHỐI LƯỢNG/KÍCH THƯỚC GỬI GHN =======
         $totalWeight = 0;
-        $maxLength = 0;
-        $maxWidth = 0;
+        $maxLength   = 0;
+        $maxWidth    = 0;
         $totalHeight = 0;
 
         foreach ($order->items as $item) {
@@ -593,14 +624,14 @@ class OrderController extends Controller
 
         // ======= MAP ĐỊA CHỈ GHN =======
         $toDistrictId = PartnerLocationCode::where([
-            'type' => 'district',
-            'location_id' => $order->address->district_id,
+            'type'         => 'district',
+            'location_id'  => $order->address->district_id,
             'partner_code' => 'ghn'
         ])->value('partner_id');
 
         $toWardCode = PartnerLocationCode::where([
-            'type' => 'ward',
-            'location_id' => $order->address->ward_id,
+            'type'         => 'ward',
+            'location_id'  => $order->address->ward_id,
             'partner_code' => 'ghn'
         ])->value('partner_id');
 
@@ -614,7 +645,7 @@ class OrderController extends Controller
         $shop = ShopSetting::with(['province', 'district', 'ward'])->first();
 
         $availableServices = Http::withHeaders([
-            'Token' => config('services.ghn.token'),
+            'Token'       => config('services.ghn.token'),
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services', [
             'shop_id'       => (int) config('services.ghn.shop_id'),
@@ -641,11 +672,11 @@ class OrderController extends Controller
             'note'            => $order->note_shipper ?? 'Giao hàng cho khách',
             'required_note'   => $order->required_note_shipper ?? 'KHONGCHOXEMHANG',
 
-            'to_name'       => $order->address->full_name,
-            'to_phone'      => $order->address->phone,
-            'to_address'    => $order->address->address,
+            'to_name'        => $order->address->full_name,
+            'to_phone'       => $order->address->phone,
+            'to_address'     => $order->address->address,
             'to_district_id' => $toDistrictId,
-            'to_ward_code'  => (string) $toWardCode,
+            'to_ward_code'   => (string) $toWardCode,
 
             'weight' => $totalWeight ?: 100,
             'length' => $maxLength  ?: 10,
@@ -696,6 +727,7 @@ class OrderController extends Controller
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
     }
+
 
     private function mapGhnStatus($status)
     {
@@ -757,23 +789,38 @@ class OrderController extends Controller
         }
     }
     private array $statusLabels = [
-        'pending'            => '🕐 Chờ xác nhận',
-        'confirmed'          => '✅ Đã xác nhận',
-        'processing'         => '📦 Đang chuẩn bị hàng',
-        'ready_for_dispatch' => '📮 Chờ bàn giao vận chuyển',
-        'shipping'           => '🚚 Đang giao',
-        'delivery_failed'    => '⚠️ Giao thất bại – chờ xử lý',
-        'delivered'          => '📬 Đã giao',
-        'completed'          => '🎉 Hoàn tất',
-        'cancelled'          => '❌ Đã hủy',
-        'return_requested'   => '↩️ Yêu cầu trả hàng',
-        'returning'          => '📦 Đang trả hàng về',
-        'returned'           => '✅ Đã nhận hàng trả',
-        'exchange_requested' => '🔁 Yêu cầu đổi hàng',
-        'exchanged'          => '✅ Đã đổi xong',
-        'refund_processing'  => '💳 Đang hoàn tiền',
-        'refunded'           => '✅ Đã hoàn tiền',
+        'pending'                     => '🕐 Chờ xác nhận',
+        'confirmed'                   => '✅ Đã xác nhận',
+        'processing'                  => '📦 Đang chuẩn bị hàng',
+        'ready_for_dispatch'          => '📮 Chờ bàn giao vận chuyển',
+        'shipping'                    => '🚚 Đang giao',
+        'delivery_failed'             => '⚠️ Giao thất bại – chờ xử lý',
+        'delivered'                   => '📬 Đã giao',
+        'completed'                   => '🎉 Hoàn tất',
+        'cancelled'                   => '❌ Đã hủy',
+
+        // Return
+        'return_requested'            => '↩️ Yêu cầu trả hàng',
+        'returning'                   => '📦 Đang trả hàng về',
+        'returned'                    => '✅ Đã nhận hàng trả',
+
+        // Exchange
+        'exchange_requested'          => '🔁 Yêu cầu đổi hàng',
+        'exchange_in_progress'        => '🔄 Đang xử lý đổi hàng',
+        'exchanged'                   => '✅ Đã đổi xong',
+
+        // Refund
+        'refund_processing'           => '💳 Đang hoàn tiền',
+        'refunded'                    => '✅ Đã hoàn tiền',
+
+        // Trạng thái kết hợp
+        'exchange_and_refund_processing' => '🔄💳 Đang đổi & hoàn tiền',
+        'exchanged_and_refunded'         => '✅ Đã đổi & hoàn tất hoàn tiền',
+
+        // Final
+        'closed'                     => '🔒 Đã đóng đơn',
     ];
+
 
     // 2) Ma trận chuyển trạng thái (tối thiểu, bạn có thể nới thêm)
     private array $allowedTransitions = [
@@ -904,4 +951,6 @@ class OrderController extends Controller
         // Redirect sang link in PDF của GHN
         return redirect()->away("https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token={$token}");
     }
+
+    
 }

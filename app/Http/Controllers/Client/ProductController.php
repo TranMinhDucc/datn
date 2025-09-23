@@ -15,10 +15,9 @@ use App\Models\Category;
 use App\Models\ProductVariantOption;
 use App\Models\AttributeValue;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+
 use App\Models\SearchHistory;
 use App\Models\Setting;
-use App\Models\Tag;
 
 class ProductController extends Controller
 {
@@ -191,204 +190,135 @@ class ProductController extends Controller
 
         return response()->json(['status' => 'not_found']);
     }
-
     public function search(Request $request)
     {
-        $keywordRaw = trim((string)$request->input('keyword', ''));
+        $keyword = $request->input('keyword');
+
         $query = Product::query()
             ->where('is_active', 1)
             ->with(['brand', 'variants']);
 
-        if ($keywordRaw !== '') {
-            $slugKey = Str::slug($keywordRaw, '-');     // "áo thun" -> "ao-thun"
-            $likeKey = mb_strtolower($keywordRaw);      // fallback cho name/sku
-
-            // 1) Ưu tiên match theo tag
-            $tagIds = Tag::where('is_active', 1)
-                ->where(function ($q) use ($slugKey, $likeKey) {
-                    $q->where('slug', 'like', "%{$slugKey}%")
-                        ->orWhereRaw('LOWER(name) like ?', ["%{$likeKey}%"]);
-                })
-                ->pluck('id');
-
-            if ($tagIds->isNotEmpty()) {
-                $query->whereHas('tags', fn($t) => $t->whereIn('tags.id', $tagIds));
-            } else {
-                // 2) Fallback tìm trong name/sku
-                $query->where(function ($q) use ($likeKey) {
-                    $q->whereRaw('LOWER(name) like ?', ["%{$likeKey}%"])
-                        ->orWhereRaw('LOWER(sku) like ?', ["%{$likeKey}%"]);
-                });
-            }
-
-            // 3) Lưu lịch sử tìm kiếm (đếm +1)
-            $normKey = Str::slug($keywordRaw, '-');
-            $hist = SearchHistory::firstOrCreate(['keyword' => $normKey], ['count' => 0]);
-            $hist->increment('count');
+        // Tìm kiếm đúng từ
+        if ($keyword) {
+            $keyword = strtolower(trim($keyword));
+            $regex = '[[:<:]]' . $keyword . '[[:>:]]';
+            $query->whereRaw("CONCAT(' ', LOWER(name), ' ') LIKE ?", ['% ' . strtolower($keyword) . ' %']);
         }
-
+        // Ghi lại lịch sử tìm kiếm
+        SearchHistory::updateOrCreate(
+            ['keyword' => $keyword],
+            ['count' => DB::raw('count + 1')]
+        );
         $products = $query->latest()->paginate(8)->withQueryString();
-
-        // Gợi ý tag phổ biến (cho khu "Tìm kiếm phổ biến")
-        $popularTags = Tag::where('is_active', 1)
-            ->withCount('products')
-            ->orderBy('sort_order')      // bạn đã có cột này
-            ->orderByDesc('products_count')
-            ->limit(10)
-            ->get();
 
         $recommendedProducts = $this->getRecommendedProducts();
 
-        return view('client.products.search', [
-            'products'            => $products,
-            'keyword'             => $keywordRaw,
-            'popularTags'         => $popularTags,
-            'recommendedProducts' => $recommendedProducts,
-        ]);
+        return view('client.products.search', compact('products', 'keyword', 'recommendedProducts'));
     }
-
     public function filter(Request $request)
     {
         $query = Product::with(['brand', 'images', 'variants.options.attribute', 'variants.options.value'])
             ->where('is_active', 1);
+        $keyword = $request->input('keyword');
+        // 🔍 Từ khóa
+        if ($request->filled('keyword')) {
+            $keyword = strtolower(trim($request->input('keyword')));
+            $regex = '[[:<:]]' . $keyword . '[[:>:]]';
 
-        // ===================== 🔎 KEYWORD =====================
-        $keywordRaw = trim((string) $request->input('keyword', ''));
-        if ($keywordRaw !== '') {
-            $likeKey = mb_strtolower($keywordRaw);
-            $slugKey = Str::slug($keywordRaw, '-'); // để bắt tag theo slug
+            $query->where(function ($q) use ($keyword) {
+                // Tìm chính xác từ trong tên sản phẩm
+                $q->whereRaw("CONCAT(' ', LOWER(name), ' ') LIKE ?", ['% ' . $keyword . ' %']);
 
-            // Ưu tiên match theo Tag (slug/name)
-            $tagIds = Tag::where('is_active', 1)
-                ->where(function ($w) use ($slugKey, $likeKey) {
-                    $w->where('slug', 'like', "%{$slugKey}%")
-                        ->orWhereRaw('LOWER(name) like ?', ["%{$likeKey}%"]);
-                })
-                ->pluck('id');
-
-            // Gộp điều kiện: có tag thì ưu tiên, kèm fallback name/sku
-            $query->where(function ($q) use ($tagIds, $likeKey) {
-                if ($tagIds->isNotEmpty()) {
-                    $q->whereHas('tags', fn($t) => $t->whereIn('tags.id', $tagIds));
-                    $q->orWhere(function ($qq) use ($likeKey) {
-                        $qq->whereRaw('LOWER(name) like ?', ["%{$likeKey}%"])
-                            ->orWhereRaw('LOWER(sku)  like ?', ["%{$likeKey}%"]);
-                    });
-                } else {
-                    $q->whereRaw('LOWER(name) like ?', ["%{$likeKey}%"])
-                        ->orWhereRaw('LOWER(sku)  like ?', ["%{$likeKey}%"]);
+                // Gợi ý lọc theo danh mục nếu nhận ra keyword phù hợp
+                if (str_contains($keyword, 'áo')) {
+                    $q->where('category_id', 1); // Danh mục Áo
+                } elseif (str_contains($keyword, 'quần')) {
+                    $q->where('category_id', 2); // Danh mục Quần
                 }
+                // Bạn có thể thêm các điều kiện khác ở đây nếu cần
             });
-
-            // (tuỳ chọn) Heuristic: nếu người dùng gõ "áo"/"quần" thì thêm gợi ý danh mục
-            $low = Str::lower($keywordRaw);
-            if (str_contains($low, 'áo')) {
-                $query->where('category_id', 1);
-            }  // ID danh mục Áo
-            if (str_contains($low, 'quần')) {
-                $query->where('category_id', 2);
-            }  // ID danh mục Quần
-
-            // Lưu lịch sử tìm kiếm (an toàn, không dùng DB::raw)
-            $hist = SearchHistory::firstOrCreate(['keyword' => $slugKey], ['count' => 0]);
-            $hist->increment('count');
         }
-
-        // ===================== 🏷 TAG FILTER (checkbox) =====================
-        // Nhận ?tags[]=ao-thun&tags[]=retro&tags_mode=all|any
-        $tagSlugs = array_values(array_unique(array_filter((array) $request->input('tags', []))));
-        $tagsMode = $request->input('tags_mode', 'any');
-        if (!empty($tagSlugs)) {
-            // map theo cả slug raw (có dấu) và slug hoá (không dấu)
-            $normalized = array_map(fn($s) => Str::slug($s, '-'), $tagSlugs);
-
-            $tagIds = Tag::whereIn('slug', $tagSlugs)                  // raw trong DB
-                ->orWhereIn('slug', $normalized)              // nếu DB đã chuẩn hoá
-                ->pluck('id')
-                ->all();
-
-            if (!empty($tagIds)) {
-                $expected = count($tagSlugs); // số tag user chọn, không phải số ID tìm được
-                if ($tagsMode === 'all') {
-                    $query->whereHas('tags', fn($t) => $t->whereIn('tags.id', $tagIds), '>=', $expected);
-                } else {
-                    $query->whereHas('tags', fn($t) => $t->whereIn('tags.id', $tagIds));
-                }
-            } else {
-                // Không map được tag nào -> trong chế độ ALL nên trả về rỗng
-                if ($tagsMode === 'all') $query->whereRaw('1=0');
-            }
+        // Ghi lại từ khóa tìm kiếm
+        if ($keyword) {
+            SearchHistory::updateOrCreate(
+                ['keyword' => $keyword],
+                ['count' => DB::raw('count + 1')]
+            );
         }
-
-        // ===================== 💰 GIÁ =====================
+        // 💰 Giá
         if ($request->filled('min_price') && $request->filled('max_price')) {
-            $minPrice = (float) $request->input('min_price');
-            $maxPrice = (float) $request->input('max_price');
+            $minPrice = floatval($request->input('min_price'));
+            $maxPrice = floatval($request->input('max_price'));
             if ($minPrice <= $maxPrice) {
                 $query->whereBetween('sale_price', [$minPrice, $maxPrice]);
             }
         }
 
-        // ===================== 📁 DANH MỤC =====================
-        $categoryIds = (array) $request->input('category', []);
+        // 🏷 Danh mục (bảo vệ không lọc nếu không có checkbox nào được chọn)
+        // 🏷 Danh mục (bao gồm cả danh mục con nếu có)
+        $categoryIds = $request->input('category', []);
         if (!empty($categoryIds)) {
-            $query->whereIn('category_id', $categoryIds);
+            $allCategoryIds = [];
+
+            foreach ($categoryIds as $id) {
+                $allCategoryIds[] = $id;
+                $allCategoryIds = array_merge($allCategoryIds, Category::getAllChildIds($id)); // lấy id con, cháu
+            }
+
+            $query->whereIn('category_id', $allCategoryIds);
         }
 
-        // ===================== 🏢 THƯƠNG HIỆU =====================
-        $brandIds = (array) $request->input('brand', []);
-        if (!empty($brandIds)) {
-            $query->whereIn('brand_id', $brandIds);
+
+        // 🏢 Thương hiệu
+        if ($request->filled('brand')) {
+            $query->whereIn('brand_id', $request->brand);
         }
 
-        // ===================== 🎨 MÀU =====================
+        // 🎨 Màu sắc (lọc theo value_id)
         if ($request->filled('color')) {
-            $colorIds = (array) $request->input('color');
-            $query->whereHas('variants.options', function ($q) use ($colorIds) {
+            $query->whereHas('variants.options', function ($q) use ($request) {
                 $q->whereHas('attribute', fn($attr) => $attr->where('name', 'Màu sắc'))
-                    ->whereIn('value_id', $colorIds);
+                    ->whereIn('value_id', $request->color);
             });
         }
 
-        // ===================== 👕 SIZE =====================
+        // 👕 Kích cỡ (lọc theo value_id)
         if ($request->filled('size')) {
-            $sizeIds = (array) $request->input('size');
-            $query->whereHas('variants.options', function ($q) use ($sizeIds) {
+            $query->whereHas('variants.options', function ($q) use ($request) {
                 $q->whereHas('attribute', fn($attr) => $attr->where('name', 'Size'))
-                    ->whereIn('value_id', $sizeIds);
+                    ->whereIn('value_id', $request->size);
             });
         }
-
-        // ===================== 👤 GIỚI TÍNH =====================
+        // 👤 Giới tính (lọc theo value_id)
         if ($request->filled('gender')) {
-            // nếu gender có thể nhiều giá trị, đổi thành whereIn
-            $gender = $request->input('gender');
-            $query->whereHas('variants.options', function ($q) use ($gender) {
-                $q->whereHas('attribute', fn($attr) => $attr->where('name', 'Giới tính'))
-                    ->whereIn('value_id', (array) $gender);
+            $query->whereHas('variants.options', function ($q) use ($request) {
+                $q->whereHas('attribute', function ($attr) {
+                    $attr->where('name', 'Giới tính');
+                })->where('value_id', $request->gender);
             });
         }
-
-        // ===================== ✅ TỒN KHO =====================
+        // ✅ Tình trạng còn hàng / hết hàng
         if ($request->filled('availability')) {
             if ($request->availability === 'in_stock') {
                 $query->where(function ($q) {
                     $q->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0))
                         ->orWhere(function ($q2) {
-                            $q2->doesntHave('variants')->where('stock_quantity', '>', 0);
+                            $q2->doesntHave('variants')
+                                ->where('stock_quantity', '>', 0); // sản phẩm không có variant nhưng vẫn còn hàng
                         });
                 });
             } elseif ($request->availability === 'out_of_stock') {
                 $query->where(function ($q) {
                     $q->whereHas('variants', fn($q) => $q->where('stock_quantity', '<=', 0))
                         ->orWhere(function ($q2) {
-                            $q2->doesntHave('variants')->where('stock_quantity', '<=', 0);
+                            $q2->doesntHave('variants')
+                                ->where('stock_quantity', '<=', 0); // sản phẩm không có variant và cũng hết hàng
                         });
                 });
             }
         }
 
-        // ===================== ⚙️ SẮP XẾP =====================
+        // ⚙️ Sắp xếp theo yêu cầu
         switch ($request->input('sort_by')) {
             case 'price_desc':
                 $query->orderBy('sale_price', 'desc');
@@ -402,56 +332,62 @@ class ProductController extends Controller
             case 'alpha_asc':
                 $query->orderBy('name', 'asc');
                 break;
+            case 'featured':
+                $query->orderBy('created_at', 'desc');
+                break;
             case 'popularity':
                 $query->withCount('reviews')->orderBy('reviews_count', 'desc');
                 break;
             case 'best_selling':
-                $query->orderBy('sale_times', 'desc');
-                break; // nếu có cột sale_times
+                $query->orderBy('sale_times', 'desc'); // giả sử bạn có trường sale_times
+                break;
             case 'discount_desc':
                 $query->orderByRaw('(base_price - sale_price) DESC');
                 break;
-            case 'featured':
             default:
                 $query->orderBy('created_at', 'desc');
                 break;
         }
 
-        // ===================== KẾT QUẢ & DỮ LIỆU HIỂN THỊ =====================
-        $products   = $query->paginate(8)->withQueryString();
-        $categories = Category::all();
-        $brands     = Brand::all();
 
-        // Màu sắc
+        $products = $query->paginate(8)->withQueryString();
+
+        // Dữ liệu hiển thị
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+
+        $brands = Brand::all();
+
+        // 🎨 Màu sắc
         $colors = AttributeValue::whereHas('variantOptions.attribute', fn($q) => $q->where('name', 'Màu sắc'))
             ->select('attribute_values.id', 'attribute_values.value')
-            ->distinct()->get();
+            ->distinct()
+            ->get();
 
-        // Size
+        // 👕 Kích cỡ
         $sizes = [];
+
         $options = ProductVariantOption::with(['attribute', 'value'])
             ->whereHas('attribute', fn($q) => $q->where('name', 'Size'))
             ->get();
+
+        $genders = AttributeValue::whereHas('variantOptions.attribute', fn($q) => $q->where('name', 'Giới tính'))
+            ->select('attribute_values.id', 'attribute_values.value')
+            ->distinct()
+            ->get();
         foreach ($options as $option) {
             $value = $option->value;
+
             if (!collect($sizes)->contains('id', $value->id)) {
                 $sizes[] = $value;
             }
         }
+        $wishlistProductIds = [];
 
-        // Giới tính
-        $genders = AttributeValue::whereHas('variantOptions.attribute', fn($q) => $q->where('name', 'Giới tính'))
-            ->select('attribute_values.id', 'attribute_values.value')
-            ->distinct()->get();
-
-        // Wishlist
-        $wishlistProductIds = auth()->check()
-            ? \App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')->toArray()
-            : [];
-
-        // (tuỳ chọn) danh sách tag để render checkbox filter
-        $allTags = Tag::where('is_active', 1)->orderBy('sort_order')->get();
-
+        if (auth()->check()) {
+            $wishlistProductIds = \App\Models\Wishlist::where('user_id', auth()->id())
+                ->pluck('product_id')
+                ->toArray();
+        }
         return view('client.products.filter-sidebar', compact(
             'products',
             'categories',
@@ -460,186 +396,8 @@ class ProductController extends Controller
             'sizes',
             'genders',
             'wishlistProductIds',
-            'allTags'
         ));
     }
-
-
-
-
-    // public function filter(Request $request)
-    // {
-    //     $query = Product::with(['brand', 'images', 'variants.options.attribute', 'variants.options.value'])
-    //         ->where('is_active', 1);
-    //     $keyword = $request->input('keyword');
-    //     // 🔍 Từ khóa
-    //     if ($request->filled('keyword')) {
-    //         $keyword = strtolower(trim($request->input('keyword')));
-    //         $regex = '[[:<:]]' . $keyword . '[[:>:]]';
-
-    //         $query->where(function ($q) use ($keyword) {
-    //             // Tìm chính xác từ trong tên sản phẩm
-    //             $q->whereRaw("CONCAT(' ', LOWER(name), ' ') LIKE ?", ['% ' . $keyword . ' %']);
-
-    //             // Gợi ý lọc theo danh mục nếu nhận ra keyword phù hợp
-    //             if (str_contains($keyword, 'áo')) {
-    //                 $q->where('category_id', 1); // Danh mục Áo
-    //             } elseif (str_contains($keyword, 'quần')) {
-    //                 $q->where('category_id', 2); // Danh mục Quần
-    //             }
-    //             // Bạn có thể thêm các điều kiện khác ở đây nếu cần
-    //         });
-    //     }
-    //     // Ghi lại từ khóa tìm kiếm
-    //     if ($keyword) {
-    //         SearchHistory::updateOrCreate(
-    //             ['keyword' => $keyword],
-    //             ['count' => DB::raw('count + 1')]
-    //         );
-    //     }
-    //     // 💰 Giá
-    //     if ($request->filled('min_price') && $request->filled('max_price')) {
-    //         $minPrice = floatval($request->input('min_price'));
-    //         $maxPrice = floatval($request->input('max_price'));
-    //         if ($minPrice <= $maxPrice) {
-    //             $query->whereBetween('sale_price', [$minPrice, $maxPrice]);
-    //         }
-    //     }
-
-    //     // 🏷 Danh mục (bảo vệ không lọc nếu không có checkbox nào được chọn)
-    //     $categoryIds = $request->input('category', []); // luôn trả array (nếu không có -> rỗng)
-    //     if (!empty($categoryIds)) {
-    //         $query->whereIn('category_id', $categoryIds);
-    //     }
-
-    //     // 🏢 Thương hiệu
-    //     if ($request->filled('brand')) {
-    //         $query->whereIn('brand_id', $request->brand);
-    //     }
-
-    //     // 🎨 Màu sắc (lọc theo value_id)
-    //     if ($request->filled('color')) {
-    //         $query->whereHas('variants.options', function ($q) use ($request) {
-    //             $q->whereHas('attribute', fn($attr) => $attr->where('name', 'Màu sắc'))
-    //                 ->whereIn('value_id', $request->color);
-    //         });
-    //     }
-
-    //     // 👕 Kích cỡ (lọc theo value_id)
-    //     if ($request->filled('size')) {
-    //         $query->whereHas('variants.options', function ($q) use ($request) {
-    //             $q->whereHas('attribute', fn($attr) => $attr->where('name', 'Size'))
-    //                 ->whereIn('value_id', $request->size);
-    //         });
-    //     }
-    //     // 👤 Giới tính (lọc theo value_id)
-    //     if ($request->filled('gender')) {
-    //         $query->whereHas('variants.options', function ($q) use ($request) {
-    //             $q->whereHas('attribute', function ($attr) {
-    //                 $attr->where('name', 'Giới tính');
-    //             })->where('value_id', $request->gender);
-    //         });
-    //     }
-    //     // ✅ Tình trạng còn hàng / hết hàng
-    //     if ($request->filled('availability')) {
-    //         if ($request->availability === 'in_stock') {
-    //             $query->where(function ($q) {
-    //                 $q->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0))
-    //                     ->orWhere(function ($q2) {
-    //                         $q2->doesntHave('variants')
-    //                             ->where('stock_quantity', '>', 0); // sản phẩm không có variant nhưng vẫn còn hàng
-    //                     });
-    //             });
-    //         } elseif ($request->availability === 'out_of_stock') {
-    //             $query->where(function ($q) {
-    //                 $q->whereHas('variants', fn($q) => $q->where('stock_quantity', '<=', 0))
-    //                     ->orWhere(function ($q2) {
-    //                         $q2->doesntHave('variants')
-    //                             ->where('stock_quantity', '<=', 0); // sản phẩm không có variant và cũng hết hàng
-    //                     });
-    //             });
-    //         }
-    //     }
-
-    //     // ⚙️ Sắp xếp theo yêu cầu
-    //     switch ($request->input('sort_by')) {
-    //         case 'price_desc':
-    //             $query->orderBy('sale_price', 'desc');
-    //             break;
-    //         case 'price_asc':
-    //             $query->orderBy('sale_price', 'asc');
-    //             break;
-    //         case 'alpha_desc':
-    //             $query->orderBy('name', 'desc');
-    //             break;
-    //         case 'alpha_asc':
-    //             $query->orderBy('name', 'asc');
-    //             break;
-    //         case 'featured':
-    //             $query->orderBy('created_at', 'desc');
-    //             break;
-    //         case 'popularity':
-    //             $query->withCount('reviews')->orderBy('reviews_count', 'desc');
-    //             break;
-    //         case 'best_selling':
-    //             $query->orderBy('sale_times', 'desc'); // giả sử bạn có trường sale_times
-    //             break;
-    //         case 'discount_desc':
-    //             $query->orderByRaw('(base_price - sale_price) DESC');
-    //             break;
-    //         default:
-    //             $query->orderBy('created_at', 'desc');
-    //             break;
-    //     }
-
-
-    //     $products = $query->paginate(8)->withQueryString();
-
-    //     // Dữ liệu hiển thị
-    //     $categories = Category::all();
-    //     $brands = Brand::all();
-
-    //     // 🎨 Màu sắc
-    //     $colors = AttributeValue::whereHas('variantOptions.attribute', fn($q) => $q->where('name', 'Màu sắc'))
-    //         ->select('attribute_values.id', 'attribute_values.value')
-    //         ->distinct()
-    //         ->get();
-
-    //     // 👕 Kích cỡ
-    //     $sizes = [];
-
-    //     $options = ProductVariantOption::with(['attribute', 'value'])
-    //         ->whereHas('attribute', fn($q) => $q->where('name', 'Size'))
-    //         ->get();
-
-    //     $genders = AttributeValue::whereHas('variantOptions.attribute', fn($q) => $q->where('name', 'Giới tính'))
-    //         ->select('attribute_values.id', 'attribute_values.value')
-    //         ->distinct()
-    //         ->get();
-    //     foreach ($options as $option) {
-    //         $value = $option->value;
-
-    //         if (!collect($sizes)->contains('id', $value->id)) {
-    //             $sizes[] = $value;
-    //         }
-    //     }
-    //     $wishlistProductIds = [];
-
-    //     if (auth()->check()) {
-    //         $wishlistProductIds = \App\Models\Wishlist::where('user_id', auth()->id())
-    //             ->pluck('product_id')
-    //             ->toArray();
-    //     }
-    //     return view('client.products.filter-sidebar', compact(
-    //         'products',
-    //         'categories',
-    //         'brands',
-    //         'colors',
-    //         'sizes',
-    //         'genders',
-    //         'wishlistProductIds',
-    //     ));
-    // }
 
     private function getRecommendedProducts($limit = 6)
     {

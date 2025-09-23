@@ -144,8 +144,7 @@
 
                                 <!--begin::Switch-->
                                 <div class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" value="" name="notifications"
-                                        checked />
+                                    <input class="form-check-input" type="checkbox" value="" name="notifications" checked />
                                     <label class="form-check-label">
                                         Enabled
                                     </label>
@@ -204,7 +203,8 @@
                             <input type="hidden" name="module" value="products"> <!-- module phải được gửi -->
                             <input id="order-search" type="text" data-kt-ecommerce-order-filter="search"
                                 class="form-control form-control-solid w-250px ps-12" placeholder="Search Order"
-                                autocomplete="off" />
+                                autocomplete="off" value="{{ request('search') }}" />
+
                         </div>
                     </div>
 
@@ -279,8 +279,7 @@
                                         {{-- Checkbox --}}
                                         <td class="text-center">
                                             <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $product->id }}" />
+                                                <input class="form-check-input" type="checkbox" value="{{ $product->id }}" />
                                             </div>
                                         </td>
 
@@ -291,8 +290,8 @@
                                         <td class="text-center" style="min-width: 150px;">
                                             <a href="{{ route('admin.products.edit', $product->id) }}">
                                                 <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/80' }}"
-                                                    width="80" height="80" class="rounded shadow-sm"
-                                                    style="object-fit: cover;" alt="{{ $product->name }}">
+                                                    width="80" height="80" class="rounded shadow-sm" style="object-fit: cover;"
+                                                    alt="{{ $product->name }}">
                                             </a>
                                         </td>
 
@@ -343,7 +342,7 @@
 
                                                 {{-- <span class="badge bg-light-info text-dark">
                                                     {{ $product->category->name ?? 'Chưa phân loại' }}
-                                        </span> --}}
+                                                </span> --}}
                                             </a>
                                         </td>
 
@@ -405,18 +404,7 @@
 
                         </table>
                     </div>
-                    {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
-                    <!--end::Table-->
-                    <!--begin::Pagination-->
-                    {{-- <div class="d-flex justify-content-end mt-5">
-                        {!! $products->appends(request()->query())->links('pagination::bootstrap-5') !!}
-                    </div> --}}
-                    <!--end::Pagination-->
-
-                    {{-- <div class="d-flex justify-content-end">
-                        {{ $products->links() }}
-            </div> --}}
-
+                    {!! $products->appends(['search' => request('search')])->links('pagination::bootstrap-5') !!}
                 </div>
                 <!--end::Card body-->
             </div>
@@ -430,25 +418,18 @@
     <!--end::Content wrapper-->
 
     <script>
-        const input = document.querySelector('[data-kt-ecommerce-order-filter="search"]');
-        const norm = s => (s || '').toString()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase().trim();
-        const deb = (fn, w = 250) => {
-            let t;
-            return (...a) => {
-                clearTimeout(t);
-                t = setTimeout(() => fn(...a), w)
-            }
-        };
 
-        input.addEventListener('input', deb(e => {
-            const q = norm(e.target.value);
-            document.querySelectorAll('#orders_tbody tr').forEach(tr => {
-                const hay = norm(tr.dataset.search || tr.textContent);
-                tr.style.display = (!q || hay.includes(q)) ? '' : 'none';
-            });
-        }, 250));
+        const input = document.querySelector('[data-kt-ecommerce-order-filter="search"]');
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                // Tạo lại URL với từ khóa tìm kiếm và load lại trang
+                let searchTerm = input.value;
+                let url = new URL(window.location.href);
+                url.searchParams.set('search', searchTerm);
+                window.location.href = url.toString(); // Điều hướng lại trang với từ khóa tìm kiếm
+            }
+        });
+
     </script>
 
 @endsection

@@ -36,18 +36,29 @@ class AccountController extends Controller
             ->get();
 
         if ($request->filled('order_code')) {
-            $orders = Order::with(['orderItems.product', 'returnRequests'])
+            $orders = Order::with([
+                'orderItems.product',
+                'returnRequests',
+                'adjustments' => function ($q) {
+                    $q->where('visible_to_customer', 1);
+                }
+            ])
                 ->where('user_id', auth()->id())
                 ->whereLike('order_code', '%' . $request->get('order_code') . '%')
                 ->latest()
                 ->get();
         } else {
-            $orders = Order::with(['orderItems.product', 'returnRequests'])
+            $orders = Order::with([
+                'orderItems.product',
+                'returnRequests',
+                'adjustments' => function ($q) {
+                    $q->where('visible_to_customer', 1);
+                }
+            ])
                 ->where('user_id', auth()->id())
                 ->latest()
                 ->get();
         }
-
 
         if (Auth::check()) {
             Auth::user()->unreadNotifications->markAsRead();
@@ -77,24 +88,6 @@ class AccountController extends Controller
         return view('client.account.change-password');
     }
 
-    // public function changePassword(Request $request)
-    // {
-    //     $request->validate([
-    //         'current_password' => 'required',
-    //         'new_password' => 'required|min:6|confirmed',
-    //     ]);
-
-    //     $user = Auth::user();
-
-    //     if (!Hash::check($request->current_password, $user->password)) {
-    //         return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
-    //     }
-
-    //     $user->password = Hash::make($request->new_password);
-    //     $user->save();
-
-    //     return back()->with('success', 'Đổi mật khẩu thành công!');
-    // }
 
     public function resetPasswordForm()
     {
@@ -168,7 +161,7 @@ class AccountController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi cập nhật thông tin!',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ], 500);
         }
     }

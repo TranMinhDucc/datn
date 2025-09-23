@@ -47,72 +47,65 @@ class RefundController extends Controller
         $rr->save();
     }
 
-    /** Tạo phiếu hoàn (snapshot) từ ReturnRequest */
-    public function createFromRR(ReturnRequest $rr, Request $req)
+    public function createFromRR(Request $request, $rr)
     {
-        // Không cho tạo nếu đã có phiếu pending/done
-        if (Refund::where('return_request_id', $rr->id)->whereIn('status', ['pending', 'done'])->exists()) {
-            return back()->with('error', 'Đã có phiếu hoàn cho yêu cầu này.');
-        }
+        $returnRequest = ReturnRequest::with(['order', 'items.actions'])->findOrFail($rr);
+        $order = $returnRequest->order;
 
-        // Tính lại các dòng auto trước khi snapshot
-        $this->recalcAuto($rr);
-
-        // Nạp quan hệ để lấy user_id khách
-        $rr->loadMissing([
-            'items.actions',
-            'order:id,user_id',
-            'order.user:id',
-        ]);
-
-        // Tổng hoàn theo các dòng refund
-        $itemRefund = (float) $rr->items->sum(
-            fn($it) => (float) ($it->actions?->where('action', 'refund')->sum('refund_amount') ?? 0)
-        );
-
-        $breakdown = [
-            'item_refund' => $itemRefund,
-            'ship_refund' => (float) ($rr->ship_refund ?? 0),
-            'restocking'  => (float) ($rr->restocking ?? 0),
-            'extra'       => (float) ($rr->extra_adjustments ?? 0),
-        ];
-
-        $recommended = round(
-            $breakdown['item_refund'] + $breakdown['ship_refund'] - $breakdown['restocking'] + $breakdown['extra'],
-            2
-        );
-
-        $amount = (float) ($req->input('amount') ?: $recommended);
-
-        // Xác định user_id khách
-        $userId = $rr->user_id
-            ?? optional($rr->order)->user_id
-            ?? optional($rr->order?->user)->id;
-
-        if (!$userId) {
-            return back()->with('error', 'Không xác định được khách hàng của đơn hàng này.');
-        }
-
-        DB::transaction(function () use ($rr, $breakdown, $recommended, $amount, $req, $userId) {
-            Refund::create([
-                'return_request_id' => $rr->id,
-                'order_id'          => $rr->order_id,
-                'user_id'           => $userId,
-                'amount'            => $amount,
-                'breakdown'         => array_merge($breakdown, ['recommended' => $recommended]),
-                'method'            => $req->input('method', 'bank'),
-                'status'            => 'pending',
-                'created_by'        => auth()->id(),
-            ]);
-
-            // RR sang trạng thái đang xử lý hoàn
-            $rr->update(['status' => 'refund_processing']);
+        // Số tiền mặc định = tổng refund_amount chỉ của action refund QC đạt
+        $defaultAmount = (float) $returnRequest->items->sum(function ($it) {
+            return (float) ($it->actions
+                ?->where('action', 'refund')
+                ->filter(fn($act) => str_starts_with($act->qc_status, 'passed'))
+                ->sum('refund_amount') ?? 0);
         });
 
-        return back()->with('success', 'Đã tạo phiếu hoàn (pending).');
+
+
+        $amount = (float) ($request->input('amount') ?? $defaultAmount);
+        if ($amount <= 0) {
+            return back()->with('error', 'Số tiền hoàn không hợp lệ.');
+        }
+
+        // Không cho tạo trùng phiếu (pending/done) cho cùng RR
+        $exists = Refund::where('return_request_id', $returnRequest->id)
+            ->whereIn('status', ['pending', 'done'])
+            ->exists();
+        if ($exists) {
+            return back()->with('error', 'Yêu cầu này đã có phiếu hoàn (pending/done).');
+        }
+
+        // Tạo phiếu hoàn
+        $refund = Refund::create([
+            'order_id'          => $order->id,
+            'return_request_id' => $returnRequest->id,
+            'user_id'           => $order->user_id,
+            'amount'            => $amount,
+            'currency'          => 'VND',
+            'method'            => 'bank',
+            'status'            => 'pending',
+            'note'              => 'Hoàn tiền cho yêu cầu #' . $returnRequest->id,
+            'breakdown'         => json_encode([
+                'source' => 'return_request',
+                'rr_id'  => $returnRequest->id,
+            ]),
+            'processed_by'      => auth()->id(),
+        ]);
+
+        // Cập nhật trạng thái đơn
+        if ($returnRequest->items->contains(fn($it) => $it->qty_exchange > 0)) {
+            $order->update(['status' => 'exchange_and_refund_processing']);
+        } else {
+            $order->update(['status' => 'refund_processing']);
+        }
+
+        return back()->with(
+            'success',
+            '✅ Đã tạo phiếu hoàn #' . $refund->id .
+                ' (' . number_format($refund->amount, 0, ',', '.') . 'đ).'
+        );
     }
 
-    /** Đánh dấu phiếu hoàn DONE (đã chuyển khoản) */
     public function markDone(Refund $refund, Request $req)
     {
         $data = $req->validate([
@@ -126,7 +119,7 @@ class RefundController extends Controller
                 'status'         => 'done',
                 'bank_ref'       => $data['bank_ref'],
                 'transferred_at' => $data['transferred_at'] ?? now(),
-                'updated_by'     => auth()->id(),
+                'processed_by'   => auth()->id(),
             ]);
 
             // 2) Cập nhật Return Request
@@ -134,27 +127,41 @@ class RefundController extends Controller
                 ->lockForUpdate()
                 ->findOrFail($refund->return_request_id);
 
-            // Kiểm tra còn "Đổi" mà CHƯA có đơn đổi hay không
             $exQty = (int) $rr->items->sum(
                 fn($it) => (int) ($it->actions?->where('action', 'exchange')->sum('quantity') ?? 0)
             );
             $hasExchangeOrder = !empty($rr->exchange_order_id);
 
-            // Nếu còn phần ĐỔI chưa tạo đơn → để 'approved' để hiển thị nút "Tạo đơn đổi"
             $nextStatus = ($exQty > 0 && !$hasExchangeOrder) ? 'approved' : 'refunded';
 
             $rr->update([
                 'status'      => $nextStatus,
-                'refunded_at' => now(), // thời điểm hoàn tiền (vẫn có thể còn bước ĐỔI)
+                'refunded_at' => now(),
             ]);
 
-            // 3) Cập nhật Order (theo schema hiện tại)
+            // 3) Cập nhật Order
             $order = \App\Models\Order::lockForUpdate()->find($refund->order_id);
             if ($order) {
-                // đánh dấu đã hoàn (tuỳ nghiệp vụ của bạn)
                 $order->payment_status = 'refunded';
-                $order->refunded_at = $order->refunded_at ?? now();
+                $order->refunded_at    = $order->refunded_at ?? now();
+
+                if ($exQty > 0) {
+                    if ($hasExchangeOrder) {
+                        $order->status = 'exchanged_and_refunded';
+                    } else {
+                        $order->status = 'exchange_and_refund_processing';
+                    }
+                } else {
+                    $order->status = 'refunded';
+                }
+
                 $order->save();
+
+                // 🔹 Gửi thông báo email + DB cho khách hàng
+                $user = $order->user;
+                if ($user) {
+                    $user->notify(new \App\Notifications\RefundCompleted($refund));
+                }
             }
         });
 

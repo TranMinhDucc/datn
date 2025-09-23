@@ -42,6 +42,36 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    public function ajaxSearch(\Illuminate\Http\Request $r)
+    {
+        $q     = trim($r->q ?? '');
+        $page  = max(1, (int)($r->page ?? 1));
+        $per   = 20;
+
+        $base = \App\Models\User::query()
+            ->when($q !== '', function ($qr) use ($q) {
+                $qr->where(function ($x) use ($q) {
+                    $x->where('fullname', 'like', "%{$q}%")
+                        ->orWhere('email', 'like', "%{$q}%");
+                });
+            });
+
+        $total = (clone $base)->count();
+        $users = $base->orderBy('fullname')
+            ->skip(($page - 1) * $per)
+            ->take($per)
+            ->get(['id', 'fullname', 'email']);
+
+        return response()->json([
+            'results' => $users->map(fn($u) => [
+                'id'       => $u->id,
+                'text'     => "{$u->fullname} — {$u->email}", // fallback
+                'fullname' => $u->fullname,
+                'email'    => $u->email,
+            ]),
+            'pagination' => ['more' => $page * $per < $total],
+        ]);
+    }
 
     /**
      * Hiển thị form tạo user (nếu dùng)

@@ -92,6 +92,18 @@ class SyncGHNOrderStatus extends Command
             if ($mapped === 'cancelled' && Schema::hasColumn('orders', 'cancelled_at') && !$order->cancelled_at) {
                 $order->cancelled_at = now();
             }
+            if ($mapped === 'delivered') {
+                // Nếu đơn chưa thanh toán (COD) → cập nhật thành paid
+                if (Schema::hasColumn('orders', 'payment_status') && $order->payment_status !== 'paid') {
+                    $order->payment_status = 'paid';
+                    if (Schema::hasColumn('orders', 'is_paid')) {
+                        $order->is_paid = 1;
+                    }
+                    if (Schema::hasColumn('orders', 'paid_at') && !$order->paid_at) {
+                        $order->paid_at = now();
+                    }
+                }
+            }
             // completed thường do cron khác xử lý sau delivered → completed
             $order->status = $mapped;
             $changed = true;

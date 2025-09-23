@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -14,7 +15,7 @@ class SupportTicketThreadController extends Controller
     public function show(SupportTicket $ticket)
     {
         abort_if($ticket->user_id !== Auth::id(), 403);
-        $ticket->load(['messages.user','messages.attachments']);
+        $ticket->load(['messages.user', 'messages.attachments']);
         return view('client.support.thread', compact('ticket'));
     }
 
@@ -26,6 +27,9 @@ class SupportTicketThreadController extends Controller
             'body' => 'required|string|min:2',
             'attachments.*' => 'nullable|file|max:5120|mimes:jpg,jpeg,png,webp,mp4,pdf',
         ]);
+        if ($ticket->status === 'closed') {
+            return back()->withErrors('Phiếu đã đóng, không thể gửi thêm tin nhắn.');
+        }
 
         $msg = SupportTicketMessage::create([
             'support_ticket_id' => $ticket->id,
@@ -48,7 +52,7 @@ class SupportTicketThreadController extends Controller
         }
 
         // client trả lời → ticket quay lại in_progress
-        if (in_array($ticket->status, ['waiting_customer','open'])) {
+        if (in_array($ticket->status, ['waiting_customer', 'open'])) {
             $ticket->update(['status' => 'in_progress']);
         }
 

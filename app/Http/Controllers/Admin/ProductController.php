@@ -27,9 +27,39 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with(['category', 'brand'])->orderByDesc('id')->paginate(10);
+        $search = trim($request->input('search'));
+
+        $products = Product::with(['category', 'brand'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    // 1. Tìm theo tên sản phẩm (chứa từ khóa)
+                    $q->where('products.name', 'like', '%' . $search . '%');
+
+                    // 2. Tìm theo danh mục (chứa từ khóa, cả danh mục con)
+                    $q->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('categories.name', 'like', '%' . $search . '%')
+                            ->orWhereHas('children', function ($q3) use ($search) {
+                                $q3->where('categories.name', 'like', '%' . $search . '%');
+                            });
+                    });
+                });
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
+
         return view('admin.products.index', compact('products'));
     }
+
+
+
+
+
+
+
+
+
+
+
 
     public function create()
     {

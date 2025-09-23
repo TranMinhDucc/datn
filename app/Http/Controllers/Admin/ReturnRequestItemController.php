@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\InventoryTransaction;
 use App\Models\Order;
+use App\Models\OrderAdjustment;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
+use App\Models\Refund;
 use App\Models\ReturnRequest;
 use App\Models\ReturnRequestItem;
 use App\Models\ReturnRequestItemAction;
@@ -95,6 +98,7 @@ class ReturnRequestItemController extends Controller
                     ]);
                 }
 
+
                 // ---- 4) ghi action reject (1 dòng) ----
                 if ($rejectQty > 0) {
                     ReturnRequestItemAction::create([
@@ -172,6 +176,7 @@ class ReturnRequestItemController extends Controller
                 $item->item_status   = 'approved_refund';
                 $item->save();
 
+
                 $rr->total_refund_amount = ($rr->total_refund_amount ?? 0) + $rfAmount;
                 if ($rr->status === 'pending') $rr->status = 'approved';
                 $rr->save();
@@ -210,11 +215,13 @@ class ReturnRequestItemController extends Controller
      * - Tạo order mới, tính chênh lệch giá (giá hiện tại - giá đã trả), ghi vào admin_note.
      * - Không thay đổi status cấp request ngoài 'approved'.
      */
+
+
     public function handleExchange($id)
     {
         return DB::transaction(function () use ($id) {
             // 1) Lock RR để tránh double-click
-            $rr = \App\Models\ReturnRequest::with([
+            $rr = ReturnRequest::with([
                 'order',
                 'items.orderItem.productVariant',
                 'items.orderItem.product',
@@ -222,9 +229,17 @@ class ReturnRequestItemController extends Controller
             ])->lockForUpdate()->findOrFail($id);
 
             // 2) Trạng thái RR phải hợp lệ
-            if (!in_array($rr->status, ['pending', 'approved'], true)) {
+            if (!in_array($rr->status, [
+                'pending',
+                'approved',
+                'exchange_in_progress',
+                'exchange_and_refund_processing',
+                'refund_processing',     // ✅ thêm vào
+                'rejected_temp',         // ✅ nếu muốn cho phép sau QC fail 1 phần
+            ], true)) {
                 return back()->with('error', 'Yêu cầu không ở trạng thái có thể tạo đơn đổi.');
             }
+
 
             // 3) Nếu đã có link tới đơn đổi thì quay lại ngay
             if (!empty($rr->exchange_order_id)) {
@@ -243,11 +258,17 @@ class ReturnRequestItemController extends Controller
                     ->with('info', "Đơn đổi đã tồn tại #{$existingId}.");
             }
 
-            // 5) Gom các action ĐỔI
-            $exActions = $rr->items->flatMap(fn($it) => $it->actions)->where('action', 'exchange')->values();
+            // 5) Gom các action ĐỔI (chỉ lấy QC passed)
+            $exActions = $rr->items
+                ->flatMap(fn($it) => $it->actions)
+                ->where('action', 'exchange')
+                ->filter(fn($act) => str_starts_with($act->qc_status, 'passed'))
+                ->values();
+
             if ($exActions->isEmpty()) {
-                return back()->with('error', 'Chưa có dòng đổi nào.');
+                return back()->with('error', 'Chưa có dòng đổi nào QC đạt.');
             }
+
 
             // 6) Lock đơn gốc
             $original = $rr->order()->lockForUpdate()->first();
@@ -274,7 +295,6 @@ class ReturnRequestItemController extends Controller
             $newOrder->order_code  = 'EXC' . now()->format('ymdHis');
             $newOrder->status      = 'pending';
             $newOrder->is_exchange = 1;
-            // tuỳ policy của bạn, có thể luôn để unpaid để thu/hoàn phần chênh
             $newOrder->payment_status = ($original->payment_status === 'paid') ? 'paid' : 'unpaid';
             $newOrder->is_paid        = ($original->payment_status === 'paid') ? 1 : 0;
 
@@ -285,7 +305,6 @@ class ReturnRequestItemController extends Controller
             $newOrder->tax_amount = 0;
             $newOrder->total_amount = 0;
 
-            // gắn RR để đảm bảo idempotent
             $newOrder->exchange_of_return_request_id = $rr->id;
             $newOrder->save();
 
@@ -315,48 +334,88 @@ class ReturnRequestItemController extends Controller
                 $new->quantity           = (int) $act->quantity;
                 $new->total_price        = $new->price * $new->quantity;
                 $new->save();
+                if ($variant) {
+                    InventoryTransaction::create([
+                        'product_id'         => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                        'type'               => 'export',
+                        'quantity'           => $new->quantity,
+                        'note'               => "Xuất kho cho đơn đổi #{$newOrder->order_code}",
+                        'created_by'         => auth()->id(),
+                    ]);
+
+                    $variant->decrement('quantity', $new->quantity);
+                }
 
                 $subtotalNew      += $new->total_price;
                 $unitPaidOld       = $rrItem->unit_price_paid ?? ($oi->total_price / max(1, $oi->quantity));
                 $subtotalOldEquiv += $unitPaidOld * $new->quantity;
             }
 
-            // 9) Tổng tiền đơn đổi
-            $newOrder->subtotal     = $subtotalNew;
-            $newOrder->total_amount = $subtotalNew; // ship/tax tính sau
+            // 9) Tổng & credit đổi hàng
+            $credit = round($subtotalOldEquiv, 2);
+            $diff   = round($subtotalNew - $credit, 2);
+
+            $newOrder->subtotal = $subtotalNew;
+            $newOrder->shipping_fee = 0;
+            $newOrder->tax_amount   = 0;
+            $newOrder->total_amount = $subtotalNew - $credit;
+
+            if ($diff > 0) {
+                $newOrder->payment_status = 'unpaid';
+                $newOrder->is_paid = 0;
+            } else {
+                $newOrder->payment_status = 'paid';
+                $newOrder->is_paid = 1;
+            }
             $newOrder->save();
 
-            // 10) Cập nhật RR
-            $diff = round($subtotalNew - $subtotalOldEquiv, 2);
-            $note = "Exchange order #{$newOrder->order_code}. Price diff: "
-                . ($diff >= 0 ? '+' : '-') . number_format(abs($diff), 2);
-
-            $rr->admin_note        = trim(($rr->admin_note ? $rr->admin_note . "\n" : '') . $note);
+            $rr->status = 'exchange_in_progress';
             $rr->exchange_order_id = $newOrder->id;
-            if ($rr->status === 'pending') $rr->status = 'approved';
-            $rr->handled_by = auth()->id();
-            $rr->handled_at = now();
-            if ($diff < 0) {
-                $rr->total_refund_amount = ($rr->total_refund_amount ?? 0) + abs($diff);
-            }
             $rr->save();
+            $user = $rr->order->user;
+            $user->notify(new \App\Notifications\ExchangeOrderCreatedNotification($newOrder));
 
-            // 11) **ĐỔI TRẠNG THÁI ĐƠN GỐC → exchange_requested** + log
-            if ($original->status !== 'exchange_requested') {
-                $original->status = 'exchange_requested';
-                $original->save();
+            // 9.1) Credit
+            OrderAdjustment::create([
+                'order_id' => $newOrder->id,
+                'label'    => 'Tín dụng đổi hàng từ ' . $original->order_code,
+                'code'     => 'EXCHANGE_CREDIT',
+                'type'     => 'discount',
+                'amount'   => $credit,
+                'visible_to_customer' => true,       // hiển thị cho khách
+                'category' => 'exchange_credit',     // phân loại (vd: exchange_credit, price_diff, shipping_fee,…)
+                'created_by' => auth()->id(),        // nếu muốn log lại admin thực hiện
+            ]);
 
-                \App\Models\ShippingLog::create([
-                    'order_id'    => $original->id,
-                    'provider'    => 'manual',
-                    'tracking_code' => null,
-                    'status'      => 'exchange_requested',
-                    'description' => 'Khách yêu cầu đổi hàng – đã tạo đơn đổi ' . $newOrder->order_code,
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
-                    'received_at' => now(),
+
+            // (nếu diff < 0 => tạo phiếu hoàn tiền chênh lệch)
+            if ($diff < 0) {
+                Refund::create([
+                    'order_id'          => $newOrder->id,
+                    'return_request_id' => $rr->id,
+                    'user_id'           => $original->user_id,
+                    'amount'            => abs($diff),
+                    'status'            => 'pending',
+                    'note'              => 'Hoàn chênh khi đổi hàng ' . $newOrder->order_code,
+                    'currency'          => 'VND',
+                    'method'            => 'bank',
+                    'created_by'        => auth()->id(),
+                    'processed_by'      => null,
                 ]);
             }
+
+            // 10) Update trạng thái đơn gốc
+            $hasRefund = \App\Models\Refund::where('order_id', $original->id)
+                ->whereIn('status', ['pending', 'done'])
+                ->exists();
+
+            if ($hasRefund) {
+                $original->status = 'exchange_and_refund_processing';
+            } else {
+                $original->status = 'exchange_in_progress';
+            }
+            $original->save();
 
             return redirect()
                 ->route('admin.orders.show', $newOrder->id)
@@ -388,5 +447,41 @@ class ReturnRequestItemController extends Controller
         $item->save();
 
         return back()->with('success', 'Đã chọn size/màu để đổi.');
+    }
+
+    public function qc(Request $request, $id)
+    {
+        $item = ReturnRequestItem::with(['orderItem.productVariant'])->findOrFail($id);
+        $status = $request->input('qc_status'); // passed | failed
+        $note   = $request->input('qc_note');
+
+        if (!in_array($status, ['passed', 'failed'])) {
+            return back()->with('error', 'Trạng thái QC không hợp lệ.');
+        }
+
+        return DB::transaction(function () use ($item, $status, $note) {
+            $item->qc_status = $status;
+            $item->qc_note   = $note;
+            $item->save();
+            $user = $item->returnRequest->order->user;
+            $user->notify(new \App\Notifications\QcCompletedNotification($item->returnRequest));
+
+            $oi = $item->orderItem;
+
+            if ($status === 'passed') {
+            } else {
+                // Hàng hỏng → không nhập kho, chỉ ghi log
+                InventoryTransaction::create([
+                    'product_id'         => $oi->product_id,
+                    'product_variant_id' => $oi->product_variant_id,
+                    'type'               => 'discard',
+                    'quantity'           => $item->qty_refund,
+                    'note'               => "QC Failed - loại bỏ hàng từ RR #{$item->return_request_id}",
+                    'created_by'         => auth()->id(),
+                ]);
+            }
+
+            return back()->with('success', 'Đã cập nhật kết quả QC.');
+        });
     }
 }
