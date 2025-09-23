@@ -44,34 +44,64 @@ class ProductController extends Controller
     {
         // 1. Validate
         $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
+            'name'        => 'required|string|max:255|unique:products,name',
+            'slug'        => 'required|string|max:255|unique:products,slug',
             'category_id' => 'required|integer',
-            'brand_id' => 'required|integer',
-            'import_price' => 'required|numeric',
-            'base_price' => 'required|numeric',
-            'sale_price' => 'required|numeric',
-            'stock_quantity' => 'required|integer',
-            'variants' => 'nullable|array',
+            'brand_id'    => 'required|integer',
+
+            'import_price' => 'required|numeric|min:0',
+            'base_price'   => 'required|numeric|min:0|gte:import_price',
+            'sale_price'   => 'required|numeric|min:0|lte:base_price|gte:import_price',
+
+            'variants'              => 'required|array|min:1',
+            'variants.*.sku'        => 'required|string|max:255',
+            'variants.*.price'      => 'required|numeric|min:0',
+            'variants.*.quantity'   => 'required|integer|min:0',
+            'variants.*.weight'     => 'required|numeric|min:0',
+            'variants.*.length'     => 'required|numeric|min:0',
+            'variants.*.width'      => 'required|numeric|min:0',
+            'variants.*.height'     => 'required|numeric|min:0',
+
             'attributeGroups' => 'nullable|array',
-            'starts_at' => 'nullable|date',
-            'ends_at' => 'nullable|date|after:starts_at',
-            'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'starts_at'       => 'nullable|date',
+            'ends_at'         => 'nullable|date|after:starts_at',
+            'size_chart'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'name.required'  => 'Tên sản phẩm không được để trống.',
+            'name.unique'    => 'Tên sản phẩm đã tồn tại.',
+            'slug.required'  => 'Slug không được để trống.',
+            'slug.unique'    => 'Slug đã tồn tại, vui lòng chọn slug khác.',
+
+            'category_id.required' => 'Vui lòng chọn danh mục.',
+            'brand_id.required'    => 'Vui lòng chọn thương hiệu.',
+
+            'import_price.required' => 'Giá nhập không được để trống.',
+            'base_price.gte'        => 'Giá gốc phải lớn hơn hoặc bằng giá nhập.',
+            'sale_price.lte'        => 'Giá sale phải nhỏ hơn hoặc bằng giá gốc.',
+            'sale_price.gte'        => 'Giá sale phải lớn hơn hoặc bằng giá nhập.',
+
+            'variants.required'            => 'Sản phẩm phải có ít nhất một biến thể.',
+            'variants.*.sku.required'      => 'Mã SKU không được để trống.',
+            'variants.*.price.required'    => 'Giá biến thể không được để trống.',
+            'variants.*.quantity.required' => 'Số lượng biến thể không được để trống.',
+            'variants.*.weight.required'   => 'Cân nặng không được để trống.',
+            'variants.*.length.required'   => 'Chiều dài không được để trống.',
+            'variants.*.width.required'    => 'Chiều rộng không được để trống.',
+            'variants.*.height.required'   => 'Chiều cao không được để trống.',
         ]);
+
+
+
+
 
         // 2. Tạo slug duy nhất
         $slug = Str::slug($request->slug);
-        $originalSlug = $slug;
-        $counter = 1;
-        while (Product::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $counter++;
-        }
 
+        $totalStock = collect($request->variants ?? [])->sum('quantity');
         // 3. Tạo sản phẩm
         $product = Product::create([
             'name' => $request->name,
             'slug' => $slug,
-            'sku' => $request->sku,
             'description' => $request->description,
             'detailed_description' => $request->detailed_description, // ✅ thêm dòng này
             'category_id' => $request->category_id,
@@ -80,7 +110,7 @@ class ProductController extends Controller
             'import_price' => $request->import_price,
             'base_price' => $request->base_price,
             'sale_price' => $request->sale_price,
-            'stock_quantity' => $request->stock_quantity,
+            'stock_quantity' => $totalStock,
             'starts_at' => $request->starts_at,
             'ends_at' => $request->ends_at,
             'sale_times' => $request->sale_times ?? 0,
@@ -138,20 +168,53 @@ class ProductController extends Controller
         if ($request->has('tags')) {
             $product->tags()->sync($request->tags);
         }
+        $manualVariants = array_values($request->input('variants', []) ?? []);
+        $errors = [];
+
+        // 1. Check trùng SKU trong form (giữa các dòng nhập vào)
+        $seen = [];
+        foreach ($manualVariants as $i => $row) {
+            $sku = trim($row['sku'] ?? '');
+            if ($sku === '') continue;
+
+            if (isset($seen[$sku])) {
+                $errors["variants.$i.sku"] = 'SKU bị trùng lặp giữa các biến thể.';
+            } else {
+                $seen[$sku] = true;
+            }
+        }
+
+        // 2. Check trùng SKU với DB (toàn bảng product_variants)
+        $inputSkus = array_keys($seen);
+        if (!empty($inputSkus)) {
+            $conflicts = ProductVariant::query()
+                ->whereIn('sku', $inputSkus)
+                ->pluck('id', 'sku'); // [sku => id]
+
+            foreach ($manualVariants as $i => $row) {
+                $sku = trim($row['sku'] ?? '');
+                if ($sku !== '' && $conflicts->has($sku)) {
+                    $errors["variants.$i.sku"] = 'Mã SKU đã tồn tại trong hệ thống.';
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            return back()->withErrors($errors)->withInput();
+        }
 
 
         // 6. Lưu biến thể và liên kết thuộc tính
         if ($request->has('variants')) {
-            foreach ($request->variants as $index => $variant) {
+            foreach ($request->variants as $variant) {
                 // SKU xử lý tránh trùng
-                $sku = $variant['sku'] ?? null;
-                if ($sku) {
-                    $originalSku = $sku;
-                    $skuCounter = 1;
-                    while (ProductVariant::where('sku', $sku)->exists()) {
-                        $sku = $originalSku . '-' . $skuCounter++;
-                    }
+                $sku = $variant['sku'];
+                $originalSku = $sku;
+                $skuCounter = 1;
+                while (ProductVariant::where('sku', $sku)->exists()) {
+                    $sku = $originalSku . '-' . $skuCounter++;
                 }
+
 
                 // Tạo biến thể
                 $variantModel = ProductVariant::create([
@@ -160,10 +223,10 @@ class ProductController extends Controller
                     'price' => $variant['price'],
                     'quantity' => $variant['quantity'],
                     'sku' => $sku,
-                    'weight' => $variant['weight'],
-                    'length' => $variant['length'],
-                    'width' => $variant['width'],
-                    'height' => $variant['height'],
+                    'weight' => $variant['weight'] ?? null,
+                    'length' => $variant['length'] ?? null,
+                    'width' => $variant['width'] ?? null,
+                    'height' => $variant['height'] ?? null,
                 ]);
 
                 // Tách thuộc tính
@@ -459,30 +522,70 @@ class ProductController extends Controller
             'request_all' => $request->all()
         ]);
 
+        $product = Product::findOrFail($id);
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name,' . $id,
+            'slug' => 'required|string|max:255|unique:products,slug,' . $id,
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'import_price' => 'required|numeric|min:0',
-            'base_price' => 'required|numeric|min:0',
-            'sale_price' => 'nullable|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            'base_price'   => 'required|numeric|min:0|gte:import_price',
+            'sale_price' => 'nullable|numeric|min:0|lte:base_price|gte:import_price',
+
             'description' => 'nullable|string',
             'detailed_description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'variants' => 'nullable|array',
+
+            'variants' => 'required|array|min:1',
             'variants.*.attributes' => 'nullable|array|min:1',
-            'variants.*.price' => 'required_with:variants|numeric|min:0.01',
-            'variants.*.quantity' => 'required_with:variants|integer|min:0',
-            'variants.*.sku' => 'required_with:variants|string|max:100',
+            'variants.*.sku' => 'required|string|max:100',
+            'variants.*.price' => 'required|numeric|min:0.01',
+            'variants.*.quantity' => 'required|integer|min:0',
+            'variants.*.weight' => 'nullable|numeric|min:0',
+            'variants.*.length' => 'nullable|numeric|min:0',
+            'variants.*.width'  => 'nullable|numeric|min:0',
+            'variants.*.height' => 'nullable|numeric|min:0',
+
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
             'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'tags'   => 'nullable|array',
             'tags.*' => 'nullable|string',
+        ], [
+            // Thông báo tiếng Việt
+            'name.required' => 'Tên sản phẩm không được để trống.',
+            'category_id.required' => 'Danh mục không được để trống.',
+            'brand_id.required' => 'Thương hiệu không được để trống.',
+            'import_price.required' => 'Giá nhập không được để trống.',
+            'base_price.required' => 'Giá gốc không được để trống.',
+            'base_price.gte' => 'Giá gốc phải lớn hơn hoặc bằng giá nhập.',
+            'sale_price.lt' => 'Giá khuyến mãi phải nhỏ hơn giá gốc.',
+
+            'variants.required' => 'Sản phẩm phải có ít nhất một biến thể.',
+            'variants.*.sku.required' => 'Mã SKU của biến thể không được để trống.',
+            'variants.*.price.required' => 'Giá của biến thể không được để trống.',
+            'variants.*.quantity.required' => 'Số lượng của biến thể không được để trống.',
+            'variants.*.weight.min' => 'Cân nặng không được nhỏ hơn 0.',
+            'variants.*.length.min' => 'Chiều dài không được nhỏ hơn 0.',
+            'variants.*.width.min'  => 'Chiều rộng không được nhỏ hơn 0.',
+            'variants.*.height.min' => 'Chiều cao không được nhỏ hơn 0.',
+            'name.unique' => 'Tên sản phẩm đã tồn tại.',
+            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác.',
+        ], [
+            // Custom attributes tiếng Việt
+            'variants' => 'Biến thể',
+            'variants.*.sku' => 'Mã SKU',
+            'variants.*.price' => 'Giá biến thể',
+            'variants.*.quantity' => 'Số lượng biến thể',
+            'variants.*.weight' => 'Cân nặng',
+            'variants.*.length' => 'Chiều dài',
+            'variants.*.width'  => 'Chiều rộng',
+            'variants.*.height' => 'Chiều cao',
         ]);
+
+
 
         $product = Product::findOrFail($id);
 
@@ -543,7 +646,7 @@ class ProductController extends Controller
                 'is_active' => $request->is_active ?? 0,
                 'starts_at' => $request->starts_at,
                 'ends_at' => $request->ends_at,
-                'sale_times' => $request->sale_times,
+                'sale_times' => $request->sale_times ?? 0,
             ]);
 
             \Log::info('✅ PRODUCT UPDATED', ['product_id' => $product->id]);
