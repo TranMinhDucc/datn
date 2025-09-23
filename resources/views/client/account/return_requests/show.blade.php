@@ -18,15 +18,29 @@
                             'pending' => 'Đang chờ xử lý',
                             'approved' => 'Đã chấp nhận',
                             'rejected' => 'Đã từ chối',
-                            'exchanged' => 'Đã đổi hàng',
+                            'refunded' => 'Đã hoàn tiền',
+                            'exchange_requested' => 'Khách yêu cầu đổi hàng',
+                            'exchange_in_progress' => 'Đang xử lý đổi hàng',
+                            'refund_processing' => 'Đang xử lý hoàn tiền',
+                            'exchange_and_refund_processing' => 'Đang xử lý đổi & hoàn tiền',
+                            'rejected_temp' => 'Tạm từ chối (một phần)',
+                            'closed' => 'Đã đóng yêu cầu',
                         ];
+
                         $statusClass = [
                             'pending' => 'bg-warning',
-                            'approved' => 'bg-success',
+                            'approved' => 'bg-primary',
                             'rejected' => 'bg-danger',
-                            'exchanged' => 'bg-info',
+                            'refunded' => 'bg-success',
+                            'exchange_requested' => 'bg-info',
+                            'exchange_in_progress' => 'bg-info',
+                            'refund_processing' => 'bg-purple', // cần custom màu, VD: text-white bg-secondary
+                            'exchange_and_refund_processing' => 'bg-teal',
+                            'rejected_temp' => 'bg-dark',
+                            'closed' => 'bg-secondary',
                         ];
                     @endphp
+
                     <span class="badge {{ $statusClass[$returnRequest->status] ?? 'bg-secondary' }}">
                         {{ $statusText[$returnRequest->status] ?? $returnRequest->status }}
                     </span>

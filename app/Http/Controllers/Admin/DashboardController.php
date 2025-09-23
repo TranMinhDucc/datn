@@ -141,33 +141,37 @@ class DashboardController extends Controller
         $totalOrdersAll = Order::count();
 
         // Danh sách trạng thái và nhãn hiển thị
-        $orderStatuses = [
-            'pending'            => 'Chờ xử lý',
-            'confirmed'          => 'Đã xác nhận',
-            'processing'         => 'Đang xử lý',
-            'ready_for_dispatch' => 'Sẵn sàng gửi đi',
-            'shipping'           => 'Đang vận chuyển',
-            'delivery_failed'    => 'Giao hàng thất bại',
-            'delivered'          => 'Đã giao hàng',
-            'completed'          => 'Hoàn tất',
-            'cancelled'          => 'Đã hủy',
-            'return_requested'   => 'Yêu cầu trả hàng',
-            'returning'          => 'Đang trả hàng',
-            'returned'           => 'Đã trả hàng',
-            'exchange_requested' => 'Yêu cầu đổi hàng',
-            'exchanged'          => 'Đã đổi hàng',
-            'refund_processing'  => 'Đang hoàn tiền',
-            'refunded'           => 'Đã hoàn tiền',
+        $orderStatusGroups = [
+            'Chờ xử lý' => ['pending', 'confirmed', 'processing', 'ready_for_dispatch'],
+            'Đang vận chuyển' => ['shipping'],
+            'Đã giao / Hoàn tất' => ['delivered', 'completed'],
+            'Đã hủy' => ['cancelled'],
+            'Trả hàng / Hoàn tiền' => [
+                'return_requested',
+                'returning',
+                'returned',
+                'refund_processing',
+                'refunded'
+            ],
+            'Đổi hàng' => ['exchange_requested', 'exchange_in_progress', 'exchanged'],
+            'Đóng / Kết hợp' => ['exchange_and_refund_processing', 'exchanged_and_refunded', 'closed'],
         ];
-
-
-        // Tạo labels và counts tương ứng
         $orderLabels = [];
         $orderCounts = [];
-        foreach ($orderStatuses as $key => $label) {
+
+        foreach ($orderStatusGroups as $label => $statuses) {
+            $count = collect($statuses)->sum(fn($st) => $orderStatusData[$st] ?? 0);
             $orderLabels[] = $label;
-            $orderCounts[] = $orderStatusData[$key] ?? 0;
+            $orderCounts[] = $count;
         }
+
+        // // Tạo labels và counts tương ứng
+        // $orderLabels = [];
+        // $orderCounts = [];
+        // foreach ($orderStatuses as $key => $label) {
+        //     $orderLabels[] = $label;
+        //     $orderCounts[] = $orderStatusData[$key] ?? 0;
+        // }
         // 8. Doanh thu
         $revenue = Order::whereIn('status', ['delivered', 'completed'])
             ->sum('total_amount'); // giả sử cột lưu tổng tiền là total_amount
@@ -216,7 +220,6 @@ class DashboardController extends Controller
             'currentUsers' => $currentUsers,
             'totalCustomerLabels' => $totalCustomerLabels,
             'totalCustomerCounts' => $totalCustomerCounts,
-            'newCustomers' => $newCustomers,  // ✅ mới thêm
             'newCustomers'       => $newCustomers,
             'newCustomerLabels'  => $newCustomerLabels,
             'newCustomerCounts'  => $newCustomerCounts,
