@@ -12,13 +12,33 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-   public function index()
-{
-    $reviews = Review::with(['user', 'product'])->latest('created_at')->paginate(10);
-    $badwords = BadWord::all()->pluck('word'); // Lấy danh sách từ khóa bị cấm
+    public function index(Request $request)
+    {
+        $query = Review::with(['user', 'product']);
 
-    return view('admin.reviews.index', compact('reviews', 'badwords'));
-}
+        // Nếu có từ khóa tìm kiếm
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+
+            $query->where(function ($q) use ($keyword) {
+                // Tìm theo username, fullname hoặc email người dùng
+                $q->whereHas('user', function ($sub) use ($keyword) {
+                    $sub->where('username', 'like', "%$keyword%")
+                        ->orWhere('fullname', 'like', "%$keyword%")
+                        ->orWhere('email', 'like', "%$keyword%");
+                })
+                    // Tìm theo nội dung bình luận
+                    ->orWhere('comment', 'like', "%$keyword%");
+            });
+        }
+
+        $reviews = $query->latest('created_at')->paginate(10)->appends($request->all());
+
+        $badwords = BadWord::pluck('word');
+
+        return view('admin.reviews.index', compact('reviews', 'badwords'));
+    }
+
 
     public function create()
     {
@@ -27,30 +47,30 @@ class ReviewController extends Controller
         return view('admin.reviews.create', compact('products', 'users'));
     }
 
-   public function store(Request $request)
-{
-    $validated = $request->validate([
-        'user_id'           => 'required|exists:users,id',
-        'product_id'        => 'required|exists:products,id',
-        'rating'            => 'required|integer|min:1|max:5',
-        'comment'           => 'required|string|max:1000',
-        'verified_purchase' => 'required|boolean',
-    ], [
-        'user_id.required' => 'Vui lòng chọn người dùng.',
-        'product_id.required' => 'Vui lòng chọn sản phẩm.',
-        'rating.required' => 'Vui lòng chọn số sao.',
-        'comment.required' => 'Vui lòng nhập nội dung đánh giá.',
-        'verified_purchase.required' => 'Vui lòng chọn trạng thái xác minh.',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id'           => 'required|exists:users,id',
+            'product_id'        => 'required|exists:products,id',
+            'rating'            => 'required|integer|min:1|max:5',
+            'comment'           => 'required|string|max:1000',
+            'verified_purchase' => 'required|boolean',
+        ], [
+            'user_id.required' => 'Vui lòng chọn người dùng.',
+            'product_id.required' => 'Vui lòng chọn sản phẩm.',
+            'rating.required' => 'Vui lòng chọn số sao.',
+            'comment.required' => 'Vui lòng nhập nội dung đánh giá.',
+            'verified_purchase.required' => 'Vui lòng chọn trạng thái xác minh.',
+        ]);
 
-    // Set giá trị mặc định cho approved (0 = chưa duyệt)
-    $validated['approved'] = 0;
+        // Set giá trị mặc định cho approved (0 = chưa duyệt)
+        $validated['approved'] = 0;
 
-    Review::create($validated);
+        Review::create($validated);
 
-    return redirect()->route('admin.reviews.index')
-        ->with('success', 'Thêm đánh giá thành công!');
-}
+        return redirect()->route('admin.reviews.index')
+            ->with('success', 'Thêm đánh giá thành công!');
+    }
 
 
     public function show(Review $review)
@@ -62,8 +82,8 @@ class ReviewController extends Controller
     {
         $products = Product::all();
         $users = User::all();
-         $badwords = BadWord::all()->pluck('word'); 
-        return view('admin.reviews.edit', compact('review', 'products', 'users','badwords'));
+        $badwords = BadWord::pluck('word');
+        return view('admin.reviews.edit', compact('review', 'products', 'users', 'badwords'));
     }
 
     public function update(Request $request, Review $review)

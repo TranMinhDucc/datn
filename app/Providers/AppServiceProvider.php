@@ -132,9 +132,9 @@ class AppServiceProvider extends ServiceProvider
                         'mail.mailers.smtp.host'       => setting('smtp_host'),
                         'mail.mailers.smtp.port'       => setting('smtp_port'),
                         'mail.mailers.smtp.encryption' => setting('smtp_encryption'),
-                        'mail.mailers.smtp.username'   => setting('smtp_username'),
+                        'mail.mailers.smtp.username'   => setting('smtp_email'),
                         'mail.mailers.smtp.password'   => setting('smtp_password'),
-                        'mail.from.address'            => setting('smtp_from_address'),
+                        'mail.from.address'            => setting('smtp_email'),
                         'mail.from.name'               => setting('smtp_from_name'),
                     ]);
                 }

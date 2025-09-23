@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\InventoryTransaction;
 use App\Models\ReturnRequest;
 use App\Models\ReturnRequestItem;
 use App\Models\ReturnRequestItemAction;
@@ -27,11 +28,15 @@ class ReturnRequestItemActionController extends Controller
         // KHÓA khi không còn được phép chỉnh
         if ($resp = $this->ensureEditable($rr)) return $resp;
 
+        // Merge lại để '' thành null (tránh lỗi exists khi giữ SKU hiện tại)
+        $request->merge([
+            'exchange_variant_id' => $request->input('exchange_variant_id') ?: null,
+        ]);
+
         $data = $request->validate([
             'action'              => ['required', Rule::in(['exchange', 'refund', 'reject'])],
             'quantity'            => ['required', 'integer', 'min:1'],
-            // nếu muốn allow giữ SKU cũ khi exchange: bỏ required_if
-            'exchange_variant_id' => ['nullable', 'integer', 'exists:product_variants,id', 'required_if:action,exchange'],
+            'exchange_variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
             'refund_amount'       => ['nullable', 'numeric', 'min:0'],
             'note'                => ['nullable', 'string', 'max:2000'],
         ]);
@@ -56,39 +61,44 @@ class ReturnRequestItemActionController extends Controller
             return back()->with('error', 'Vượt quá số lượng đã giao của sản phẩm.');
         }
 
-        // Lấy variant đích với exchange (đã validate exists)
+        // Lấy variant đích với exchange (có thể null = giữ SKU hiện tại)
         $exchangeVariantId = $data['action'] === 'exchange' ? ($data['exchange_variant_id'] ?? null) : null;
 
-        // Tính refund_amount (nếu không nhập -> prorate)
-        $refundAmount = null;
-        if ($data['action'] === 'refund') {
-            $refundAmount = $data['refund_amount'] ?? null;
-            if ($refundAmount === null) {
-                $unitPaid     = $item->unit_price_paid ?? ($oi->total_price / max(1, $oi->quantity));
-                $refundAmount = round($unitPaid * $qtyNew, 2);
+        DB::transaction(function () use ($item, $rr, $data, $qtyNew, $exchangeVariantId, $oi) {
+            // Nếu là refund mà không nhập tiền thì tính theo đơn giá
+            $unitPaid = $item->unit_price_paid ?? ($oi->total_price / max(1, $oi->quantity));
+            $refundAmount = null;
+
+            if ($data['action'] === 'refund') {
+                $refundAmount = $data['refund_amount'] ?? null;
+                if ($refundAmount === null) {
+                    $refundAmount = round($unitPaid * $qtyNew, 2);
+                }
             }
-        }
 
-        DB::transaction(function () use ($item, $rr, $data, $qtyNew, $exchangeVariantId, $refundAmount) {
-            // 1) Tạo action — dùng cột 'action'
-            $action = new ReturnRequestItemAction();
-            $action->return_request_item_id = $item->id;
-            $action->action                 = $data['action']; // exchange|refund|reject
-            $action->quantity               = $qtyNew;
-            $action->exchange_variant_id    = $exchangeVariantId;
-            $action->refund_amount          = $refundAmount;
-            $action->note                   = $data['note'] ?? null;
-            $action->created_by             = auth()->id();
-            $action->updated_by             = null;
-            $action->save();
+            // Nếu số lượng > 1 => tạo nhiều record (mỗi cái 1 record)
+            for ($i = 0; $i < $qtyNew; $i++) {
+                $action = new ReturnRequestItemAction();
+                $action->return_request_item_id = $item->id;
+                $action->action                 = $data['action'];
+                $action->quantity               = 1; // luôn 1 để QC riêng từng sp
+                $action->exchange_variant_id    = $exchangeVariantId;
+                $action->refund_amount          = $refundAmount ? round($refundAmount / $qtyNew, 2) : null; // prorate nếu refund
+                $action->note                   = $data['note'] ?? null;
+                $action->created_by             = auth()->id();
+                $action->updated_by             = null;
+                $action->save();
+            }
 
-            // 2) Cộng gộp lại
+            // Cộng gộp lại
             $this->recomputeItem($item->fresh(['actions']));
             $this->recomputeRequest($rr->fresh(['items.actions']));
         });
 
         return back()->with('success', 'Đã thêm hành động xử lý.');
     }
+
+
 
 
     /**
@@ -104,9 +114,8 @@ class ReturnRequestItemActionController extends Controller
         $rr   = $item->returnRequest;
         $oi   = $item->orderItem;
 
-        // KHÓA khi không còn được phép chỉnh (rule riêng của bạn)
+        // KHÓA khi không còn được phép chỉnh
         if ($resp = $this->ensureEditable($rr)) return $resp;
-
 
         $data = $request->validate([
             'action'              => ['required', Rule::in(['exchange', 'refund', 'reject'])],
@@ -120,10 +129,10 @@ class ReturnRequestItemActionController extends Controller
         $deliveredQty = (int) ($oi->quantity_delivered ?? $oi->quantity);
         $originalQty  = (int) ($item->quantity ?? $oi->quantity);
 
-        // Tổng của CHÍNH item này (trừ action hiện tại)
+        // Tổng của item này (trừ action đang sửa)
         $sumThisItemOthers = (int) $item->actions()->where('id', '!=', $action->id)->sum('quantity');
 
-        // Tổng đã dùng cho CÙNG order_item ở item KHÁC
+        // Tổng đã dùng cho CÙNG order_item ở item khác
         $sumOthersSameOI = (int) ReturnRequestItemAction::whereHas('item', function ($q) use ($item, $oi) {
             $q->where('order_item_id', $oi->id)->where('id', '!=', $item->id);
         })->sum('quantity');
@@ -135,10 +144,9 @@ class ReturnRequestItemActionController extends Controller
             return back()->with('error', 'Vượt quá số lượng đã giao của sản phẩm.');
         }
 
-        // Nếu không phải exchange thì bỏ variant_id
         $exchangeVariantId = $data['action'] === 'exchange' ? ($data['exchange_variant_id'] ?? null) : null;
 
-        // Tính tiền hoàn & cờ nhập tay
+        // Refund tính lại tiền
         $refundAmount = null;
         $isManual     = false;
 
@@ -146,28 +154,30 @@ class ReturnRequestItemActionController extends Controller
             $unitPaid = $item->unit_price_paid ?? (float) ($oi->total_price / max(1, $oi->quantity));
             $autoAmt  = round($unitPaid * $qtyNew, 2);
 
-            // filled() => "0" vẫn là nhập tay; rỗng "" thì coi là auto
             $isManual     = $request->filled('refund_amount');
             $refundAmount = $isManual ? (float) $data['refund_amount'] : $autoAmt;
-
-            // (tuỳ chọn) chặn vượt trần auto nếu không muốn hoàn > tiền đã trả
-            // if ($refundAmount > $autoAmt) {
-            //     return back()->with('error', 'Số tiền hoàn vượt quá giá trị đã thanh toán.');
-            // }
         }
 
         DB::transaction(function () use ($action, $item, $rr, $data, $qtyNew, $exchangeVariantId, $refundAmount, $isManual) {
-            // 1) Update action
-            $action->action              = $data['action'];
-            $action->quantity            = $qtyNew;
-            $action->exchange_variant_id = $exchangeVariantId;
-            $action->refund_amount       = $refundAmount;      // null nếu không phải refund
-            $action->is_manual_amount    = $isManual;          // << quan trọng
-            $action->note                = $data['note'] ?? null;
-            $action->updated_by          = auth()->id();
-            $action->save();
+            // Xoá action cũ
+            $action->delete();
 
-            // 2) Recompute tổng theo item & request
+            // Nếu quantity > 1 → tạo nhiều record (mỗi cái = 1)
+            for ($i = 0; $i < $qtyNew; $i++) {
+                $newAct = new ReturnRequestItemAction();
+                $newAct->return_request_item_id = $item->id;
+                $newAct->action                 = $data['action'];
+                $newAct->quantity               = 1;
+                $newAct->exchange_variant_id    = $exchangeVariantId;
+                $newAct->refund_amount          = $refundAmount ? round($refundAmount / $qtyNew, 2) : null;
+                $newAct->is_manual_amount       = $isManual;
+                $newAct->note                   = $data['note'] ?? null;
+                $newAct->created_by             = $action->created_by;
+                $newAct->updated_by             = auth()->id();
+                $newAct->save();
+            }
+
+            // Recompute
             $this->recomputeItem($item->fresh(['actions']));
             $this->recomputeRequest($rr->fresh(['items.actions']));
         });
@@ -253,10 +263,11 @@ class ReturnRequestItemActionController extends Controller
             return back()->with('error', 'Yêu cầu đã có đơn đổi, không thể sửa các dòng xử lý nữa.');
         }
 
-        // ĐÃ kết thúc
-        if (in_array($rr->status, ['refunded', 'rejected'], true)) {
-            return back()->with('error', 'Yêu cầu đã kết thúc, không thể chỉnh sửa.');
+        // ĐÃ kết thúc hoàn tiền
+        if ($rr->status === 'refunded') {
+            return back()->with('error', 'Yêu cầu đã hoàn tiền xong, không thể chỉnh sửa.');
         }
+
 
         return null; // OK
     }
@@ -277,23 +288,119 @@ class ReturnRequestItemActionController extends Controller
         foreach ($items as $it) {
             foreach ($it->actions as $ac) {
                 $hasAnyAction = true;
-                if ($ac->action !== 'reject') {
+
+                // Chỉ tính các action QC đạt
+                $isPassed = ($ac->qc_status ?? null) === 'passed';
+
+                if ($ac->action !== 'reject' && $isPassed) {
                     $allReject = false;
                     $hasPositiveAction = true;
                 }
-                if ($ac->action === 'refund') {
+
+                if ($ac->action === 'refund' && $isPassed) {
                     $totalRefund += (float) $ac->refund_amount;
                 }
             }
         }
 
+
         $rr->total_refund_amount = $totalRefund;
 
         if ($hasPositiveAction) {
-            $rr->status = $rr->status === 'pending' ? 'approved' : $rr->status;
+            // Nếu có cả hoàn và đổi
+            $hasRefund   = $items->sum(fn($it) => $it->actions->where('action', 'refund')->count()) > 0;
+            $hasExchange = $items->sum(fn($it) => $it->actions->where('action', 'exchange')->count()) > 0;
+
+            if ($hasRefund && $hasExchange) {
+                $rr->status = 'exchange_and_refund_processing';
+            } elseif ($hasExchange) {
+                $rr->status = 'exchange_in_progress';
+            } elseif ($hasRefund) {
+                $rr->status = 'refund_processing';
+            } else {
+                $rr->status = 'approved';
+            }
         } elseif ($hasAnyAction && $allReject) {
-            $rr->status = 'rejected';
+            $rr->status = 'rejected_temp'; // chỉ QC fail, chưa chốt
         }
+
         $rr->save();
+    }
+    public function updateQC(Request $request, $actionId)
+    {
+        $action = ReturnRequestItemAction::with('item.returnRequest')->findOrFail($actionId);
+        $rr     = $action->item->returnRequest;
+
+        // KHÓA nếu request đã kết thúc
+        if ($resp = $this->ensureEditable($rr)) return $resp;
+
+        $data = $request->validate([
+            'qc_status' => ['required', Rule::in(['passed_import', 'passed_noimport', 'failed'])],
+            'qc_note'   => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        DB::transaction(function () use ($action, $data) {
+            $oi = $action->item->orderItem;
+
+            // Nếu trước đó đã có QC status khác thì rollback tồn kho
+            if ($action->qc_status === 'passed_import') {
+                // rollback nhập kho
+                InventoryTransaction::create([
+                    'product_id'         => $oi->product_id,
+                    'product_variant_id' => $oi->product_variant_id,
+                    'type'               => 'adjust',
+                    'quantity'           => -$action->quantity,
+                    'note'               => "Rollback QC Passed (Nhập kho) - RR #{$action->item->return_request_id}",
+                    'created_by'         => auth()->id(),
+                ]);
+                $oi->productVariant->decrement('quantity', $action->quantity);
+            } elseif ($action->qc_status === 'failed') {
+                // rollback discard (thực tế không cộng kho, chỉ để lưu lịch sử audit)
+                InventoryTransaction::create([
+                    'product_id'         => $oi->product_id,
+                    'product_variant_id' => $oi->product_variant_id,
+                    'type'               => 'adjust',
+                    'quantity'           => +$action->quantity,
+                    'note'               => "Rollback QC Failed (Discard) - RR #{$action->item->return_request_id}",
+                    'created_by'         => auth()->id(),
+                ]);
+                // ❌ Không chỉnh stock thật, vì discard không ảnh hưởng tới tồn kho
+            }
+
+            // Cập nhật trạng thái QC mới
+            $action->qc_status = $data['qc_status'];
+            $action->qc_note   = $data['qc_note'] ?? null;
+            $action->save();
+
+            // Ghi transaction theo trạng thái mới
+            if ($data['qc_status'] === 'passed_import') {
+                if ($action->action === 'refund') {
+                    InventoryTransaction::create([
+                        'product_id'         => $oi->product_id,
+                        'product_variant_id' => $oi->product_variant_id,
+                        'type'               => 'import',
+                        'quantity'           => $action->quantity,
+                        'note'               => "QC Passed (Nhập kho) - RR #{$action->item->return_request_id}",
+                        'created_by'         => auth()->id(),
+                    ]);
+                    $oi->productVariant->increment('quantity', $action->quantity);
+                }
+                // Nếu exchange thì chưa nhập lại kho, chỉ xử lý khi tạo đơn đổi
+            } elseif ($data['qc_status'] === 'passed_noimport') {
+                // QC đạt nhưng KHÔNG nhập kho → không ảnh hưởng stock
+            } elseif ($data['qc_status'] === 'failed') {
+                InventoryTransaction::create([
+                    'product_id'         => $oi->product_id,
+                    'product_variant_id' => $oi->product_variant_id,
+                    'type'               => 'discard',
+                    'quantity'           => $action->quantity,
+                    'note'               => "QC Failed - loại bỏ hàng từ RR #{$action->item->return_request_id}",
+                    'created_by'         => auth()->id(),
+                ]);
+                // discard chỉ để ghi nhận → không thay đổi tồn kho thật
+            }
+        });
+
+        return back()->with('success', 'Đã cập nhật QC cho hành động.');
     }
 }

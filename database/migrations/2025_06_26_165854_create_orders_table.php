@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -20,7 +21,28 @@ return new class extends Migration {
             $table->decimal('shipping_fee', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
 
-            $table->enum('status', ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', [
+                'pending',
+                'confirmed',
+                'processing',
+                'ready_for_dispatch',
+                'shipping',
+                'delivery_failed',
+                'delivered',
+                'completed',
+                'cancelled',
+                'return_requested',
+                'returning',
+                'returned',
+                'exchange_requested',
+                'exchanged',
+                'refund_processing',
+                'refunded',
+                'exchange_in_progress',
+                'exchange_and_refund_processing',
+                'exchanged_and_refunded',
+                'closed'
+            ])->default('pending')->change();
             $table->boolean('is_paid')->default(false);
             $table->enum('payment_status', ['unpaid', 'paid', 'refunded'])->default('unpaid');
             $table->string('payment_reference', 100)->nullable();
@@ -40,7 +62,8 @@ return new class extends Migration {
         });
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         Schema::dropIfExists('orders');
     }
 };

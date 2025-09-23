@@ -18,7 +18,10 @@ class OrderAdjustment extends Model
         'taxable',
         'meta',
         'created_by',
+        'visible_to_customer',
+        'category',
     ];
+
 
     protected $casts = [
         'amount'  => 'decimal:2',

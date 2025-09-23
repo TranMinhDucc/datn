@@ -28,8 +28,24 @@ class CartController extends Controller
                 // Nếu per_user_limit = 0 thì không giới hạn số lần dùng mỗi user
                 return $coupon->per_user_limit == 0 || $userUsage < $coupon->per_user_limit;
             });
+        // ---------------------- LOGIC GỢI Ý ----------------------
+        $cartItems = session()->get('cart', []);   // lấy giỏ hàng từ session
+        $cartCategoryIds = collect($cartItems)->pluck('category_id')->unique();
 
-        return view('client.cart.index', compact('products', 'availableCoupons'));
+        if ($cartCategoryIds->count() <= 1) {
+            // Nếu chỉ có 1 danh mục → loại bỏ nó để gợi ý các danh mục khác
+            $suggestCategoryIds = \App\Models\Category::whereNotIn('id', $cartCategoryIds)->pluck('id');
+        } else {
+            // Nếu có >= 2 danh mục → gợi ý tất cả danh mục (bao gồm cả đang mua)
+            $suggestCategoryIds = \App\Models\Category::pluck('id');
+        }
+
+        $suggestions = Product::whereIn('category_id', $suggestCategoryIds)
+            ->inRandomOrder()
+            ->take(8) // số lượng gợi ý muốn hiển thị
+            ->get();
+        // --------------------------------------------------------
+        return view('client.cart.index', compact('products', 'availableCoupons', 'suggestions'));
     }
 
     public function checkStock(Request $request)
@@ -72,5 +88,17 @@ class CartController extends Controller
         }
 
         return response()->json(['message' => 'Tất cả sản phẩm còn hàng']);
+    }
+    public function add(Request $request)
+    {
+        $product = Product::findOrFail($request->product_id);
+
+        // thêm vào session/cart service
+        Cart::add($product->id, $product->name, 1, $product->price);
+
+        return response()->json([
+            'cart_count' => Cart::count(),
+            'cart_html'  => view('partials.cart_items', ['cart' => Cart::content()])->render()
+        ]);
     }
 }

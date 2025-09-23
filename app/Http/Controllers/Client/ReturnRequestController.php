@@ -53,12 +53,13 @@ class ReturnRequestController extends Controller
         }
 
         if (
-            $order->status !== 'completed' ||
+            !in_array($order->status, ['completed', 'delivered']) ||
             !$order->delivered_at ||
             now()->diffInDays($order->delivered_at) > 3
         ) {
             return redirect()->back()->with('error', 'Không thể gửi yêu cầu đổi/trả cho đơn hàng này.');
         }
+
 
         // Lấy danh sách sản phẩm trong đơn hàng
         $orderItems = $order->items; // Giả sử có quan hệ order->items
