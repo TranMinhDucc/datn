@@ -95,8 +95,7 @@
                             <li>
                                 <button class="nav-link" id="saved-card-tab" data-bs-toggle="pill"
                                     data-bs-target="#saved-card" role="tab" aria-controls="saved-card"
-                                    aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Thẻ
-                                    Đã Lưu </button>
+                                    aria-selected="false"> <i class="iconsax" data-icon="bank-card"></i>Lịch sử hoàn tiền</button>
                             </li>
                             <li>
                                 <button class="nav-link" id="address-tab" data-bs-toggle="pill" data-bs-target="#address"
@@ -670,7 +669,7 @@
 
                                                                         <!-- Modal -->
                                                                         @if ($order->delivered_at && now()->diffInDays($order->delivered_at) <= 3)
-                                                                            @if ($order->returnRequests->isEmpty())
+                                                                            @if ($order->returnRequests->whereIn('status', ['pending', 'approved', 'exchange_in_progress', 'refund_processing'])->isEmpty())
                                                                                 <a href="{{ route('client.account.return_requests.create', $order->id) }}"
                                                                                     class="btn btn-danger">
                                                                                     Hoàn / Đổi hàng
@@ -682,6 +681,7 @@
                                                                                 </a>
                                                                             @endif
                                                                         @endif
+
 
 
 
@@ -1063,111 +1063,338 @@
                                 <div class="saved-card">
                                     <div class="sidebar-title">
                                         <div class="loader-line"></div>
-                                        <h4>My Card Details</h4>
+                                         <h4>Lịch Sử Hoàn Tiền</h4>
                                     </div>
-                                    <div class="payment-section">
-                                        <div class="row gy-3">
-                                            <div class="col-xxl-4 col-md-6">
-                                                <div class="payment-card">
-                                                    <div class="bank-info"><img class="bank"
-                                                            src="{{ asset('assets/client/images/bank-card/bank1.png') }}"
-                                                            alt="bank1">
-                                                        <div class="card-type"><img class="bank-card"
-                                                                src="{{ asset('assets/client/images/bank-card/1.png') }}"
-                                                                alt="card"></div>
-                                                    </div>
-                                                    <div class="card-details"><span>Card Number</span>
-                                                        <h5>6458 50XX XXXX 0851</h5>
-                                                    </div>
-                                                    <div class="card-details-wrap">
-                                                        <div class="card-details"><span>Name On Card</span>
-                                                            <h5>Josephin water</h5>
-                                                        </div>
-                                                        <div class="text-center card-details"><span>Validity</span>
-                                                            <h5>XX/XX</h5>
-                                                        </div>
-                                                        <div class="btn-box"><span data-bs-toggle="modal"
-                                                                data-bs-target="#edit-bank-card" title="Quick View"
-                                                                tabindex="0"><i class="iconsax"
-                                                                    data-icon="edit-1"></i></span><span
-                                                                data-bs-toggle="modal" data-bs-target="#bank-card-modal"
-                                                                title="Quick View" tabindex="0"><i class="iconsax"
-                                                                    data-icon="trash"></i></span></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-4 col-md-6">
-                                                <div class="payment-card">
-                                                    <div class="bank-info"><img class="bank"
-                                                            src="{{ asset('assets/client/images/bank-card/bank2.png') }}"
-                                                            alt="bank1">
-                                                        <div class="card-type"><img class="bank-card"
-                                                                src="{{ asset('assets/client/images/bank-card/2.png') }}"
-                                                                alt="card"></div>
-                                                    </div>
-                                                    <div class="card-details"><span>Card Number</span>
-                                                        <h5>6458 50XX XXXX 0851</h5>
-                                                    </div>
-                                                    <div class="card-details-wrap">
-                                                        <div class="card-details"><span>Name On Card</span>
-                                                            <h5>Josephin water</h5>
-                                                        </div>
-                                                        <div class="text-center card-details"><span>Validity</span>
-                                                            <h5>XX/XX</h5>
-                                                        </div>
-                                                        <div class="btn-box"><span data-bs-toggle="modal"
-                                                                data-bs-target="#edit-bank-card" title="Quick View"
-                                                                tabindex="0"><i class="iconsax"
-                                                                    data-icon="edit-1"></i></span><span
-                                                                data-bs-toggle="modal" data-bs-target="#bank-card-modal"
-                                                                title="Quick View" tabindex="0"><i class="iconsax"
-                                                                    data-icon="trash"></i></span></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-4 col-md-6">
-                                                <div class="payment-card">
-                                                    <div class="bank-info"><img class="bank"
-                                                            src="{{ asset('assets/client/images/bank-card/bank3.png') }}"
-                                                            alt="bank1">
-                                                        <div class="card-type"><img class="bank-card"
-                                                                src="{{ asset('assets/client/images/bank-card/3.png') }}"
-                                                                alt="card"></div>
-                                                    </div>
-                                                    <div class="card-details"><span>Card Number</span>
-                                                        <h5>6458 50XX XXXX 0851</h5>
-                                                    </div>
-                                                    <div class="card-details-wrap">
-                                                        <div class="card-details"><span>Name On Card</span>
-                                                            <h5>Josephin water</h5>
-                                                        </div>
-                                                        <div class="text-center card-details"><span>Validity</span>
-                                                            <h5>XX/XX</h5>
-                                                        </div>
-                                                        <div class="btn-box"><span data-bs-toggle="modal"
-                                                                data-bs-target="#edit-bank-card" title="Quick View"
-                                                                tabindex="0"><i class="iconsax"
-                                                                    data-icon="edit-1"></i></span><span
-                                                                data-bs-toggle="modal" data-bs-target="#bank-card-modal"
-                                                                title="Quick View" tabindex="0"><i class="iconsax"
-                                                                    data-icon="trash"></i></span></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-4 col-md-6">
-                                                <div class="payment-card">
-                                                    <div class="add-card">
-                                                        <h6 data-bs-toggle="modal" data-bs-target="#add-bank-card"
-                                                            title="Quick View" tabindex="0">+
-                                                            Add Card</h6>
+                                    <div class="refund-section">
+                                        <!-- Filter Section -->
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                                                    <div class="d-flex gap-2">
+                                                        <select class="form-select form-select-sm" style="width: auto;">
+                                                            <option value="">Tất cả trạng thái</option>
+                                                            <option value="pending">Đang xử lý</option>
+                                                            <option value="completed">Hoàn thành</option>
+                                                            <option value="rejected">Từ chối</option>
+                                                        </select>
+                                                        <input type="date" class="form-control form-control-sm" style="width: auto;">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Refund History List -->
+                                       <div class="row gy-3">
+    @forelse ($refunds as $rf)
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        {{-- Icon + mã refund --}}
+                        <div class="col-md-2 text-center">
+                            <i class="fas fa-undo-alt fa-2x text-primary mb-2"></i>
+                            <small class="text-muted d-block">#RF{{ $rf->id }}</small>
+                        </div>
+
+                        {{-- Order info --}}
+                        <div class="col-md-3">
+                            <span class="text-muted small">Đơn hàng</span>
+                            <h6 class="mb-1">#{{ $rf->order?->id }}</h6>
+                            <p class="text-muted small mb-0">
+                                {{ $rf->order?->orderItems?->first()?->product_name ?? '—' }}
+                            </p>
+                        </div>
+
+                        {{-- Amount --}}
+                        <div class="col-md-2">
+                            <span class="text-muted small">Số tiền</span>
+                            <h5 class="text-danger mb-0">{{ number_format($rf->amount, 0, ',', '.') }}đ</h5>
+                        </div>
+
+                        {{-- Date --}}
+                        <div class="col-md-2">
+                            <span class="text-muted small">Ngày yêu cầu</span>
+                            <h6 class="mb-0">{{ $rf->created_at->format('d/m/Y') }}</h6>
+                            <small class="text-muted">{{ $rf->created_at->format('H:i') }}</small>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="col-md-2">
+                            @php
+                                $statusMap = [
+                                    'pending'  => ['badge bg-warning', 'Đang xử lý'],
+                                    'done'     => ['badge bg-success', 'Hoàn thành'],
+                                    'failed'   => ['badge bg-danger', 'Thất bại'],
+                                    'canceled' => ['badge bg-secondary', 'Đã hủy'],
+                                ];
+                                [$class, $label] = $statusMap[$rf->status] ?? ['badge bg-light', $rf->status];
+                            @endphp
+                            <span class="{{ $class }} rounded-pill">{{ $label }}</span>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="col-md-1 text-end">
+                            <button class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#refund-detail-{{ $rf->id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Note nếu có --}}
+                    @if ($rf->note)
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="alert alert-light py-2 mb-0">
+                                    <small><strong>Lý do:</strong> {{ $rf->note }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal chi tiết --}}
+        <div class="modal fade" id="refund-detail-{{ $rf->id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết hoàn tiền #RF{{ $rf->id }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Số tiền:</strong> {{ number_format($rf->amount, 0, ',', '.') }}đ</p>
+                        <p><strong>Phương thức:</strong> {{ $rf->method ?? '—' }}</p>
+                        <p><strong>Mã giao dịch:</strong> {{ $rf->bank_ref ?? '—' }}</p>
+                        <p><strong>Ngày chuyển:</strong> {{ $rf->transferred_at?->format('d/m/Y H:i') ?? '—' }}</p>
+                        <p><strong>Ghi chú:</strong> {{ $rf->note ?? '—' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @empty
+        <p class="text-muted">Chưa có yêu cầu hoàn tiền nào.</p>
+    @endforelse
+</div>
+
+{{-- Pagination --}}
+<div class="mt-4 d-flex justify-content-center">
+    {{ $refunds->links() }}
+</div>
+
+                                        
+                                       
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+<!-- Refund Detail Modals -->
+<!-- Modal 1 -->
+<div class="modal fade" id="refund-detail-modal-1" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết hoàn tiền #RF001</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <strong>Mã đơn hàng:</strong> #ORD12345
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Số tiền hoàn:</strong> 29.990.000đ
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày yêu cầu:</strong> 20/09/2025 14:30
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Trạng thái:</strong> 
+                        <span class="badge bg-success">Hoàn thành</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày hoàn tiền:</strong> 22/09/2025 10:15
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Phương thức hoàn:</strong> Chuyển khoản ngân hàng
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do hoàn tiền:</strong>
+                        <p class="mt-1">Khách hàng đổi ý sau khi mua, sản phẩm còn nguyên seal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="refund-detail-modal-2" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết hoàn tiền #RF002</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <strong>Mã đơn hàng:</strong> #ORD12346
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Số tiền hoàn:</strong> 35.990.000đ
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày yêu cầu:</strong> 18/09/2025 09:15
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Trạng thái:</strong> 
+                        <span class="badge bg-warning">Đang xử lý</span>
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do hoàn tiền:</strong>
+                        <p class="mt-1">Sản phẩm bị lỗi màn hình sau 2 ngày sử dụng</p>
+                    </div>
+                    <div class="col-12">
+                        <strong>Ghi chú từ admin:</strong>
+                        <p class="mt-1">Đang chờ bộ phận kỹ thuật kiểm tra sản phẩm</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 3 -->
+<div class="modal fade" id="refund-detail-modal-3" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết hoàn tiền #RF003</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <strong>Mã đơn hàng:</strong> #ORD12347
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Số tiền hoàn:</strong> 28.990.000đ
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày yêu cầu:</strong> 15/09/2025 16:45
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Trạng thái:</strong> 
+                        <span class="badge bg-danger">Từ chối</span>
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do hoàn tiền:</strong>
+                        <p class="mt-1">Không hài lòng với chất lượng camera</p>
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do từ chối:</strong>
+                        <p class="mt-1">Sản phẩm đã sử dụng quá 7 ngày theo quy định đổi trả</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 4 -->
+<div class="modal fade" id="refund-detail-modal-4" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết hoàn tiền #RF004</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <strong>Mã đơn hàng:</strong> #ORD12348
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Số tiền hoàn:</strong> 6.990.000đ
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày yêu cầu:</strong> 12/09/2025 11:20
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Trạng thái:</strong> 
+                        <span class="badge bg-success">Hoàn thành</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày hoàn tiền:</strong> 14/09/2025 15:30
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Phương thức hoàn:</strong> Ví điện tử MoMo
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do hoàn tiền:</strong>
+                        <p class="mt-1">Sản phẩm bị lỗi kỹ thuật, không kết nối được với thiết bị</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 5 -->
+<div class="modal fade" id="refund-detail-modal-5" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết hoàn tiền #RF005</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row gy-3">
+                    <div class="col-md-6">
+                        <strong>Mã đơn hàng:</strong> #ORD12349
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Số tiền hoàn:</strong> 45.990.000đ
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ngày yêu cầu:</strong> 10/09/2025 08:30
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Trạng thái:</strong> 
+                        <span class="badge bg-warning">Đang xử lý</span>
+                    </div>
+                    <div class="col-12">
+                        <strong>Lý do hoàn tiền:</strong>
+                        <p class="mt-1">Giao hàng không đúng model đã đặt</p>
+                    </div>
+                    <div class="col-12">
+                        <strong>Ghi chú từ admin:</strong>
+                        <p class="mt-1">Đã xác nhận lỗi từ phía shop, đang xử lý hoàn tiền</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
                         <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                             <div class="dashboard-right-box">
                                 <div class="address-tab">
@@ -2345,8 +2572,8 @@
             Swal.fire({
                 icon: 'success',
                 title: '{{ session('
-                                                                                                                                                                                                                                                                                                                <<<<<<< HEAD
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
+                                                                                                                                                                                                                                                                                                                                <<<<<<< HEAD
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    success ') }}',
 
                 ===
                 ===

@@ -421,6 +421,10 @@ Route::prefix('admin')
         Route::get('/ajax/users/{user}/addresses', [OrderController::class, 'addresses'])->name('ajax.user.addresses');
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);
+Route::get('users/{id}/addresses', function ($id) {
+    $user = \App\Models\User::with('shippingAddresses')->findOrFail($id);
+    return response()->json($user->shippingAddresses);
+})->name('users.addresses');
 
 
         Route::resource('coupons', CouponController::class);
@@ -450,6 +454,8 @@ Route::prefix('admin')
         Route::post('return-items/{id}/qc', [ReturnRequestItemController::class, 'qc'])->name('return_items.qc');
         Route::post('/return-actions/{action}/qc', [ReturnRequestItemActionController::class, 'updateQC'])
             ->name('return-actions.qc');
+        Route::post('/orders/{id}/cancel-exchange', [OrderController::class, 'cancelExchangeOrder'])
+            ->name('orders.cancel-exchange');
 
         // Route::put('/return-requests/items/{id}', [ReturnRequestItemController::class, 'update'])
         //     ->name('return-requests.items.update');
@@ -544,7 +550,7 @@ Route::prefix('admin')
         Route::get('inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
 
         // Best seller 
-         Route::resource('best-seller', BestSellerSectionController::class)->names('best-seller');
+        Route::resource('best-seller', BestSellerSectionController::class)->names('best-seller');
         // Hỗ trợ
         Route::get('/support/tickets',                [AdminTicket::class, 'index'])->name('support.tickets.index');
         Route::get('support/tickets/create',            [AdminTicket::class, 'create'])->name('support.tickets.create');

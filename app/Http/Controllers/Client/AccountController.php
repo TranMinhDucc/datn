@@ -15,6 +15,7 @@ use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Refund;
 
 class AccountController extends Controller
 {
@@ -46,7 +47,10 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-
+$refunds = Refund::with(['order', 'rr'])
+        ->where('user_id', $user->id)
+        ->latest()
+        ->paginate(10);
 
         if (Auth::check()) {
             Auth::user()->unreadNotifications->markAsRead();
@@ -61,7 +65,7 @@ class AccountController extends Controller
 
         $provinces = Province::all();
 
-        return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces'));
+        return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces','refunds'));
     }
 
 

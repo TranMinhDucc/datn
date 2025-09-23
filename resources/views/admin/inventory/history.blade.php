@@ -35,8 +35,13 @@
                             <tr class="text-gray-500 fw-bold fs-7 text-uppercase">
                                 <th>Sản phẩm</th>
                                 <th>Biến thể</th>
+                                <th>SKU</th>
                                 <th>Loại</th>
-                                <th>Số lượng</th>
+                                 <th>Số lượng thay đổi</th>
+        <th>Số lượng ban đầu</th>   
+        <th>Số lượng sau</th>      
+        <th>Số lượng loại bỏ</th>
+
                                 <th>Ghi chú</th>
                                 <th>Người thao tác</th>
                                 <th>Thời gian</th>
@@ -57,6 +62,9 @@
                                             Không có biến thể
                                         @endif
                                     </td>
+                                     <td>
+                {{ $tran->productVariant?->sku ?? $tran->product?->sku ?? '-' }}
+            </td>
                                     <td>
                                         @php
                                             $typeLabels = [
@@ -78,6 +86,16 @@
 
                                     </td>
                                     <td>{{ $tran->quantity }}</td>
+                                    <td>{{ $tran->before_quantity ?? '—' }}</td>  {{-- ✅ --}}
+            <td>{{ $tran->after_quantity ?? '—' }}</td>   {{-- ✅ --}}
+            <td>
+    @if($tran->type === 'discard')
+        {{ $tran->discard_quantity ?? $tran->quantity }}
+    @else
+        —
+    @endif
+</td>
+
                                     <td>{{ $tran->note ?? '-' }}</td>
                                     <td>{{ $tran->user->username ?? 'System' }}</td>
                                     <td>{{ $tran->created_at->format('d/m/Y H:i') }}</td>

@@ -3,6 +3,7 @@
 namespace App\Services\Shipping;
 
 use Illuminate\Support\Facades\Http;
+use App\Models\Setting;   // 👈 thêm dòng này
 
 class GhnService
 {
@@ -11,8 +12,8 @@ class GhnService
 
     public function __construct()
     {
-        $this->token = config('services.ghn.token');
-        $this->shopId = config('services.ghn.shop_id');
+        $this->token  = Setting::getValue('ghn_token');
+        $this->shopId = Setting::getValue('ghn_shop_id');
     }
 
     public function getShippingFee(array $data)

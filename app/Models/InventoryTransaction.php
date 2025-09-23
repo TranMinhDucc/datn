@@ -11,6 +11,8 @@ class InventoryTransaction extends Model
         'product_variant_id',
         'type',
         'quantity',
+        'before_quantity',
+    'after_quantity',
         'note',
         'created_by',
     ];
