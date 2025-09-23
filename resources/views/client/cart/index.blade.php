@@ -3,6 +3,47 @@
 @section('title', 'Giỏ hàng')
 
 @section('content')
+<style>
+/* Ghi đè radio trong voucher-card */
+.voucher-card .form-check-input {
+  appearance: none;              /* ẩn radio mặc định */
+  -webkit-appearance: none;
+  position: absolute;
+  right: 14px;
+  top: 16px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cfd3d7;     /* viền xám nhạt */
+  border-radius: 50%;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  transition: all .15s ease;
+  margin: 0;                     /* bỏ margin mặc định của bootstrap */
+}
+
+/* hover + focus */
+.voucher-card .form-check-input:hover {
+  border-color: #b8bec4;
+}
+.voucher-card .form-check-input:focus {
+  box-shadow: none;              /* bỏ viền xanh Bootstrap */
+}
+
+/* checked: nền đỏ, chấm trắng */
+.voucher-card .form-check-input:checked {
+  border-color: #ea1b2c;
+  background: #ea1b2c;
+}
+.voucher-card .form-check-input:checked::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+</style>
 <div id="stock-alert" class="d-none">Một số sản phẩm không còn hàng.</div>
 
 <!-- Container cho toast -->
@@ -175,6 +216,10 @@
 
                                                         <!-- Nội dung chính -->
                                                         <div class="voucher-body flex-grow-1 px-3 py-2">
+                                                            Mã: <code class="px-2 py-1 rounded bg-light text-danger fw-bold" style="font-family: monospace;">
+    {{ $coupon->code }}
+</code>
+
                                                             <div>Giảm tối đa
                                                                 {{ number_format($coupon->discount_value) }}đ
                                                             </div>
@@ -200,10 +245,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- x10 góc trên phải -->
-                                                        <div
-                                                            class="position-absolute top-0 end-0 text-danger small me-2 mt-2">
-                                                            x10</div>
+                                                        
 
                                                         <!-- Input ẩn -->
                                                         <input type="radio"
@@ -252,6 +294,10 @@
                                                         </div>
 
                                                         <div class="voucher-body flex-grow-1 px-3 py-2">
+                                                           Mã: <code class="px-2 py-1 rounded bg-light text-danger fw-bold" style="font-family: monospace;">
+    {{ $coupon->code }}
+</code>
+
                                                             <div>
                                                                 @if ($coupon->value_type === 'percentage')
                                                                 Giảm {{ $coupon->discount_value }}%
@@ -536,26 +582,35 @@ function fullReload() {
 
                 // HTML row
                 const tr = document.createElement('tr');
+                const cut = (s = '', max = 40) => s.length > max ? s.slice(0, max - 1) + '…' : s;
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+
+const name = item?.name ?? '';
+const h5Html = `<h5 class="mb-1" title="${escapeHtml(name)}">${escapeHtml(cut(name, 40))}</h5>`;
+const link = item.productUrl || `/products/${encodeURIComponent(item.slug)}`;
                 tr.innerHTML = `
         <td>
             <div class="cart-box d-flex align-items-start gap-3">
-                <a href="product.html">
+                <a href="${link}">
                     <img src="${item.image}" alt="${item.name}"
                         style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
                 </a>
                 <div>
-                    <a href="product.html">
-                        <h5 class="mb-1">${item.name}</h5>
+                    <a href="${link}">
+                        <h5 class="mb-1">${h5Html}</h5>
                     </a>
                     <p class="mb-0">Brand: <span>${item.brand || 'Unknown'}</span></p>
                     ${attributesHtml}
                 </div>
             </div>
         </td>
-        <td>
-            ${item.price.toLocaleString('vi-VN')}
-            <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
-        </td>
+<td>
+  ${parseFloat(item.price).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+  <span style="font-size: 0.75em; vertical-align: super; color: #666;">đ</span>
+</td>
+
         <td class="align-middle">
             <div class="quantity d-flex align-items-center gap-2">
                 <button class="minus btn btn-sm btn-outline-secondary" data-index="${index}">
@@ -835,19 +890,35 @@ function fullReload() {
                     .map(([k, v]) => `${k}:${v}`).join('|');
                 const key = `${item.id}_${attributeString}`;
                 const li = document.createElement('li');
+                const cut = (s, max = 40) => s.length > max ? s.slice(0, max - 1) + '…' : s;
+                const formatPrice = (price) => {
+  return Number(price).toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+};
                 li.innerHTML = `
     <a href="#"><img src="${item.image}" alt="" style="width: 70px; height: 70px; object-fit: cover;"></a>
     <div>
-    <h6 class="mb-0">${item.name}</h6>
-    <p class="mb-1">$${item.price.toLocaleString()}
-    ${item.originalPrice ? `<del>$${item.originalPrice.toLocaleString()}</del>` : ''}
-    <span class="btn-cart">$<span class="btn-cart__total">${(item.price * quantity).toLocaleString()}</span></span></p>
+    <h6 class="mb-0" title="${item.name}">
+  ${cut(item.name, 40)}
+</h6>
+<p class="mb-1">
+  ${formatPrice(item.price)}
+  ${item.originalPrice ? `<del>${formatPrice(item.originalPrice)}</del>` : ''}
+  <span class="btn-cart">
+    <span class="btn-cart__total">
+      ${formatPrice(item.price * quantity)}
+    </span>
+  </span>
+</p>
+
     ${Object.entries(item.attributes || {}).map(([key, value]) => {
-    return ` < p class = "mb-1" > $ {
+    return `<p class = "mb-1"> ${
                     key
-                }: < span > $ {
+                }:<span> ${
                     value
-                } < /span></p > `;}).join('')}
+                }</span></p> `;}).join('')}
     <div class="btn-containter">
     <div class="btn-control">
     <button class="btn-control__remove" data-key="${key}">−</button>

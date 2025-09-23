@@ -276,9 +276,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('category_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            
                             <div class="text-muted fs-7 mb-7">Add product to a category.</div>
                         </div>
                     </div>
@@ -301,9 +299,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('brand_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            
                             <div class="text-muted fs-7 mb-7">Add product to a brand.</div>
                         </div>
                     </div>
@@ -322,7 +318,6 @@
                                 <label class="form-label required">Tên Sản phẩm</label>
                                 <input type="text" id="product-name" name="name" class="form-control mb-2"
                                     placeholder="Tên Sản Phẩm" value="{{ old('name', $product->name ?? '') }}">
-                                @error('name') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="row g-4"> {{-- 👈 gutter cho 2 cột --}}
@@ -330,7 +325,6 @@
                                     <label class="form-label">Slug</label>
                                     <input type="text" name="slug" id="product-slug" class="form-control"
                                         placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
-                                    @error('slug') <div class="text-danger">{{ $message }}</div> @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Tồn kho</label>

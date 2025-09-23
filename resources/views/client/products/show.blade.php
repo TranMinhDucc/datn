@@ -153,7 +153,10 @@
                                         data-original-price="{{ $product->base_price }}"
                                         data-image="{{ asset('storage/' . $product->image) }}"
                                         data-brand="{{ $product->brand->name ?? 'Unknown' }}"
+                                        data-slug="{{ $product->slug }}"
+   data-product-url="{{ route('client.products.show', $product->slug) }}"
                                         aria-controls="offcanvasRight">
+                                        
                                         Thêm vào giỏ hàng
                                     </a>
 
@@ -1294,6 +1297,9 @@
                         return;
                     }
 
+                    const slug = this.dataset.slug;
+const productUrl = this.dataset.productUrl;
+
                     // ✅ Thêm hoặc cập nhật vào giỏ
                     if (index !== -1) {
                         cartItems[index].quantity += quantity;
@@ -1308,7 +1314,10 @@
                             quantity,
                             brand,
                             attributes: selectedAttributes,
-                            max_quantity: matchedVariant.quantity
+                            max_quantity: matchedVariant.quantity,
+                            slug,                        // <—
+  productUrl 
+                            
                         });
                     }
 

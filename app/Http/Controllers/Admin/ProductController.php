@@ -40,56 +40,140 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories', 'brands', 'attributes', 'tags'));
     }
 
-    public function store(Request $request)
+
+
+
+
+    public function edit($id)
+    {
+        $productCheck = Product::with('category')->findOrFail($id);
+
+        if ($productCheck->category && $productCheck->category->trashed()) {
+            return redirect()->route('admin.products.index')
+                ->with('error', 'Danh mục của sản phẩm đã bị xoá. Không thể chỉnh sửa sản phẩm này.');
+        }
+
+        $product = Product::with([
+            'variants' => function ($q) {
+                $q->withCount('orderItems');
+            },
+            'tags:id,name' // nạp sẵn tag của sản phẩm
+        ])->findOrFail($id);
+
+        $details     = ProductDetail::where('product_id', $id)->get();
+        $variants    = $product->variants;
+        $variantIds  = $variants->pluck('id');
+
+        $attributeNames = Attribute::pluck('name', 'id')->toArray();
+        $valueNames     = AttributeValue::pluck('value', 'id')->toArray();
+
+        $attributeGroupsRaw = DB::table('product_variant_options')
+            ->join('attributes', 'product_variant_options.attribute_id', '=', 'attributes.id')
+            ->join('attribute_values', 'product_variant_options.value_id', '=', 'attribute_values.id')
+            ->whereIn('product_variant_options.product_variant_id', $variantIds)
+            ->select('attributes.name as group_name', 'attribute_values.value as value')
+            ->get()
+            ->groupBy('group_name');
+
+        $attributeGroups = $attributeGroupsRaw->map(function ($items, $groupName) {
+            return [
+                'name'   => $groupName,
+                'values' => $items->pluck('value')->unique()->values()->toArray()
+            ];
+        })->values()->all();
+
+        $productVariants = $variants->map(function ($variant) use ($attributeNames, $valueNames) {
+            $optionsRaw = DB::table('product_variant_options')
+                ->where('product_variant_id', $variant->id)
+                ->get();
+
+            $attribute_map = [];
+            foreach ($optionsRaw as $opt) {
+                $attrName = $attributeNames[$opt->attribute_id] ?? null;
+                $val      = $valueNames[$opt->value_id] ?? null;
+
+                if ($attrName && $val) {
+                    $attribute_map[$attrName] = $val;
+                }
+            }
+
+            return [
+                'id'          => $variant->id,
+                'attribute_map' => $attribute_map,
+                'price'       => $variant->price,
+                'quantity'    => $variant->quantity,
+                'sku'         => $variant->sku,
+                'weight'      => $variant->weight,
+                'length'      => $variant->length,
+                'width'       => $variant->width,
+                'height'      => $variant->height,
+                'is_active'   => (bool) $variant->is_active,
+                'has_orders'  => $variant->order_items_count > 0,
+            ];
+        });
+
+        $attributeValues = Attribute::with('values')->get()->mapWithKeys(function ($attr) {
+            return [$attr->name => $attr->values->pluck('value')->toArray()];
+        });
+
+        $categories = Category::all();
+        $brands     = Brand::all();
+
+        // 🔹 LẤY DANH SÁCH TAG ĐỂ ĐỔ VÀO SELECT2
+        $tags = Tag::orderBy('sort_order')->get(['id', 'name']);
+
+        return view('admin.products.edit', compact(
+            'product',
+            'productVariants',
+            'attributeGroups',
+            'attributeValues',
+            'categories',
+            'brands',
+            'details',
+            'tags' // nhớ truyền vào view
+        ));
+    }
+
+public function store(Request $request)
     {
         // 1. Validate
         $request->validate([
-            'name'        => 'required|string|max:255|unique:products,name',
-            'slug'        => 'required|string|max:255|unique:products,slug',
+            'name' => 'required|string|max:255|unique:products,name',
+            'slug' => 'required|string|max:255|unique:products,slug',
             'category_id' => 'required|integer',
-            'brand_id'    => 'required|integer',
-
+            'brand_id' => 'required|integer',
             'import_price' => 'required|numeric|min:0',
             'base_price'   => 'required|numeric|min:0|gte:import_price',
             'sale_price'   => 'required|numeric|min:0|lte:base_price|gte:import_price',
 
-            'variants'              => 'required|array|min:1',
-            'variants.*.sku'        => 'required|string|max:255',
-            'variants.*.price'      => 'required|numeric|min:0',
-            'variants.*.quantity'   => 'required|integer|min:0',
-            'variants.*.weight'     => 'required|numeric|min:0',
-            'variants.*.length'     => 'required|numeric|min:0',
-            'variants.*.width'      => 'required|numeric|min:0',
-            'variants.*.height'     => 'required|numeric|min:0',
+            'variants' => 'required|array|min:1',
+            'variants.*.sku' => 'required|string|max:255',
+            'variants.*.price' => 'required|numeric|min:0',
+            'variants.*.quantity' => 'required|integer|min:0',
+            'variants.*.weight' => 'required|numeric|min:0',
+            'variants.*.length' => 'required|numeric|min:0',
+            'variants.*.width'  => 'required|numeric|min:0',
+            'variants.*.height' => 'required|numeric|min:0',
 
             'attributeGroups' => 'nullable|array',
-            'starts_at'       => 'nullable|date',
-            'ends_at'         => 'nullable|date|after:starts_at',
-            'size_chart'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'starts_at' => 'nullable|date',
+            'ends_at' => 'nullable|date|after:starts_at',
+            'size_chart' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
-            'name.required'  => 'Tên sản phẩm không được để trống.',
-            'name.unique'    => 'Tên sản phẩm đã tồn tại.',
-            'slug.required'  => 'Slug không được để trống.',
-            'slug.unique'    => 'Slug đã tồn tại, vui lòng chọn slug khác.',
-
-            'category_id.required' => 'Vui lòng chọn danh mục.',
-            'brand_id.required'    => 'Vui lòng chọn thương hiệu.',
-
-            'import_price.required' => 'Giá nhập không được để trống.',
-            'base_price.gte'        => 'Giá gốc phải lớn hơn hoặc bằng giá nhập.',
-            'sale_price.lte'        => 'Giá sale phải nhỏ hơn hoặc bằng giá gốc.',
-            'sale_price.gte'        => 'Giá sale phải lớn hơn hoặc bằng giá nhập.',
-
-            'variants.required'            => 'Sản phẩm phải có ít nhất một biến thể.',
-            'variants.*.sku.required'      => 'Mã SKU không được để trống.',
-            'variants.*.price.required'    => 'Giá biến thể không được để trống.',
+            'variants.required' => 'Sản phẩm phải có ít nhất một biến thể.',
+            'variants.*.sku.required' => 'Mã SKU không được để trống.',
+            'variants.*.price.required' => 'Giá biến thể không được để trống.',
             'variants.*.quantity.required' => 'Số lượng biến thể không được để trống.',
-            'variants.*.weight.required'   => 'Cân nặng không được để trống.',
-            'variants.*.length.required'   => 'Chiều dài không được để trống.',
-            'variants.*.width.required'    => 'Chiều rộng không được để trống.',
-            'variants.*.height.required'   => 'Chiều cao không được để trống.',
+            'variants.*.weight.required' => 'Cân nặng không được để trống.',
+            'variants.*.length.required' => 'Chiều dài không được để trống.',
+            'variants.*.width.required'  => 'Chiều rộng không được để trống.',
+            'variants.*.height.required' => 'Chiều cao không được để trống.',
+            'base_price.gte'   => 'Giá gốc phải lớn hơn hoặc bằng giá nhập.',
+            'sale_price.lte'   => 'Giá sale phải nhỏ hơn hoặc bằng giá gốc.',
+            'sale_price.gte'   => 'Giá sale phải lớn hơn hoặc bằng giá nhập.',
+            'name.unique' => 'Tên sản phẩm đã tồn tại.',
+            'slug.unique' => 'Slug đã tồn tại, vui lòng chọn slug khác.',
         ]);
-
 
 
 
@@ -256,97 +340,6 @@ class ProductController extends Controller
         }
 
         return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công!');
-    }
-
-
-    public function edit($id)
-    {
-        $productCheck = Product::with('category')->findOrFail($id);
-
-        if ($productCheck->category && $productCheck->category->trashed()) {
-            return redirect()->route('admin.products.index')
-                ->with('error', 'Danh mục của sản phẩm đã bị xoá. Không thể chỉnh sửa sản phẩm này.');
-        }
-
-        $product = Product::with([
-            'variants' => function ($q) {
-                $q->withCount('orderItems');
-            },
-            'tags:id,name' // nạp sẵn tag của sản phẩm
-        ])->findOrFail($id);
-
-        $details     = ProductDetail::where('product_id', $id)->get();
-        $variants    = $product->variants;
-        $variantIds  = $variants->pluck('id');
-
-        $attributeNames = Attribute::pluck('name', 'id')->toArray();
-        $valueNames     = AttributeValue::pluck('value', 'id')->toArray();
-
-        $attributeGroupsRaw = DB::table('product_variant_options')
-            ->join('attributes', 'product_variant_options.attribute_id', '=', 'attributes.id')
-            ->join('attribute_values', 'product_variant_options.value_id', '=', 'attribute_values.id')
-            ->whereIn('product_variant_options.product_variant_id', $variantIds)
-            ->select('attributes.name as group_name', 'attribute_values.value as value')
-            ->get()
-            ->groupBy('group_name');
-
-        $attributeGroups = $attributeGroupsRaw->map(function ($items, $groupName) {
-            return [
-                'name'   => $groupName,
-                'values' => $items->pluck('value')->unique()->values()->toArray()
-            ];
-        })->values()->all();
-
-        $productVariants = $variants->map(function ($variant) use ($attributeNames, $valueNames) {
-            $optionsRaw = DB::table('product_variant_options')
-                ->where('product_variant_id', $variant->id)
-                ->get();
-
-            $attribute_map = [];
-            foreach ($optionsRaw as $opt) {
-                $attrName = $attributeNames[$opt->attribute_id] ?? null;
-                $val      = $valueNames[$opt->value_id] ?? null;
-
-                if ($attrName && $val) {
-                    $attribute_map[$attrName] = $val;
-                }
-            }
-
-            return [
-                'id'          => $variant->id,
-                'attribute_map' => $attribute_map,
-                'price'       => $variant->price,
-                'quantity'    => $variant->quantity,
-                'sku'         => $variant->sku,
-                'weight'      => $variant->weight,
-                'length'      => $variant->length,
-                'width'       => $variant->width,
-                'height'      => $variant->height,
-                'is_active'   => (bool) $variant->is_active,
-                'has_orders'  => $variant->order_items_count > 0,
-            ];
-        });
-
-        $attributeValues = Attribute::with('values')->get()->mapWithKeys(function ($attr) {
-            return [$attr->name => $attr->values->pluck('value')->toArray()];
-        });
-
-        $categories = Category::all();
-        $brands     = Brand::all();
-
-        // 🔹 LẤY DANH SÁCH TAG ĐỂ ĐỔ VÀO SELECT2
-        $tags = Tag::orderBy('sort_order')->get(['id', 'name']);
-
-        return view('admin.products.edit', compact(
-            'product',
-            'productVariants',
-            'attributeGroups',
-            'attributeValues',
-            'categories',
-            'brands',
-            'details',
-            'tags' // nhớ truyền vào view
-        ));
     }
 
 
@@ -606,6 +599,22 @@ class ProductController extends Controller
             }
         }
 
+        // --- 2. Cập nhật ảnh đại diện ---
+        if ($request->hasFile('image')) {
+            // Xoá file cũ nếu có
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            // Lưu file mới (ví dụ theo thư mục products/{id})
+            $path = $request->file('image')->store("products/{$product->id}", 'public');
+
+            // Cập nhật cột image
+            $product->image = $path;
+            $product->save();
+        }
+
+
         // 2.2 Trùng SKU với DB (toàn bảng product_variants), bỏ qua chính biến thể đang sửa
         $inputSkus = array_keys($seen);
         if (!empty($inputSkus)) {
@@ -655,6 +664,29 @@ class ProductController extends Controller
             if ($request->hasFile('image')) {
                 \Log::info('🖼 Cập nhật ảnh đại diện');
             }
+
+            // --- 2b. Ảnh phụ (gallery) ---
+            // Xoá ảnh phụ được chọn xoá
+            $deleteIds = (array) $request->input('delete_image_ids', []);
+            if (!empty($deleteIds)) {
+                $toDelete = $product->images()->whereIn('id', $deleteIds)->get();
+                foreach ($toDelete as $img) {
+                    if ($img->image_url) {
+                        Storage::disk('public')->delete($img->image_url);
+                    }
+                    $img->delete();
+                }
+            }
+
+            // Thêm ảnh phụ mới
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    if (!$file || !$file->isValid()) continue;
+                    $p = $file->store("products/{$product->id}/gallery", 'public');
+                    $product->images()->create(['image_url' => $p]); // <-- dùng image_url
+                }
+            }
+
 
             // --- 3. Cập nhật biến thể ---
             $existingVariants = $product->variants()->with('options')->get();
@@ -758,6 +790,8 @@ class ProductController extends Controller
                 $path = $request->file('size_chart')->store('size_charts', 'public');
                 $product->size_chart = $path;
             }
+
+
 
             // --- 3.1 Đồng bộ Tag ---
             if ($request->has('tags')) {
