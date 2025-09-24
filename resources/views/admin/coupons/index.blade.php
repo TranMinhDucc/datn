@@ -59,6 +59,7 @@
                                             </div>
                                         </th>
                                         <th class="min-w-40px">#</th>
+                                        <th class="min-w-40px">Tên</th>
                                         <th class="min-w-150px">Mã</th>
                                         <th class="min-w-100px">Loại</th>
                                         <th class="min-w-100px">Đã dùng</th>
@@ -76,6 +77,7 @@
                                                 </div>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $coupon->code }}</td>
                                             <td>
                                                 @switch($coupon->type)
                                                     @case('product_discount')

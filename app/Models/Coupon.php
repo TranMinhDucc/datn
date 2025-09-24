@@ -85,4 +85,24 @@ class Coupon extends Model
             ->withPivot('status')
             ->withTimestamps();
     }
+    // App\Models\Coupon.php
+public function scopeAvailableForUser($q, $user = null) {
+    $now = now();
+    $q->where('active',1)
+      ->where(fn($q)=>$q->whereNull('start_date')->orWhere('start_date','<=',$now))
+      ->where(fn($q)=>$q->whereNull('end_date')->orWhere('end_date','>=',$now))
+      ->where(fn($q)=>$q->where('usage_limit',0)->orWhereColumn('used_count','<','usage_limit'))
+      ->when($user, function($q) use($user,$now){
+          $q->where(fn($q)=>$q->where('only_for_new_users',0)
+              ->orWhere(fn($q)=>$q->where('only_for_new_users',1)
+                                  ->whereRaw('TIMESTAMPDIFF(DAY, ?, ?) <= 7', [$user->created_at,$now])))
+            ->where(fn($q)=>$q->whereNull('eligible_user_roles')
+                              ->orWhereJsonContains('eligible_user_roles',$user->role))
+            ->where(fn($q)=>$q->where('per_user_limit',0)
+                ->orWhereRaw('(SELECT COUNT(*) FROM coupon_user cu
+                               WHERE cu.coupon_id = coupons.id AND cu.user_id = ?) < per_user_limit', [$user->id]));
+      })
+      ->when(!$user, fn($q)=>$q->where('only_for_new_users',0)->whereNull('eligible_user_roles'));
+}
+
 }

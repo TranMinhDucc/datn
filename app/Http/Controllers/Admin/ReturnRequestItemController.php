@@ -221,11 +221,17 @@ class ReturnRequestItemController extends Controller
     {
         return DB::transaction(function () use ($id) {
             // 1) Lock RR để tránh double-click
+            // $rr = ReturnRequest::with([
+            //     'order',
+            //     'items.orderItem.productVariant',
+            //     'items.orderItem.product',
+            //     'items.actions' => fn($q) => $q->where('action', 'exchange'),
+            // ])->lockForUpdate()->findOrFail($id);
             $rr = ReturnRequest::with([
                 'order',
                 'items.orderItem.productVariant',
                 'items.orderItem.product',
-                'items.actions' => fn($q) => $q->where('action', 'exchange'),
+                'items.actions', // load tất cả action (refund/exchange/reject)
             ])->lockForUpdate()->findOrFail($id);
 
             // 2) Trạng thái RR phải hợp lệ
@@ -259,14 +265,66 @@ class ReturnRequestItemController extends Controller
             }
 
             // 5) Gom các action ĐỔI (chỉ lấy QC passed)
-            $exActions = $rr->items
-                ->flatMap(fn($it) => $it->actions)
-                ->where('action', 'exchange')
-                ->filter(fn($act) => str_starts_with($act->qc_status, 'passed'))
-                ->values();
+            // $exActions = $rr->items
+            //     ->flatMap(fn($it) => $it->actions)
+            //     ->where('action', 'exchange')
+            //     ->filter(fn($act) => str_starts_with($act->qc_status, 'passed'))
+            //     ->values();
+            // 5) Gom các action ĐỔI (chỉ lấy QC passed)
+$exActions = $rr->items
+    ->flatMap(fn($it) => $it->actions)
+    ->where('action', 'exchange')
+    ->filter(fn($act) => str_starts_with($act->qc_status ?? '', 'passed'))
+    ->values();
 
-            if ($exActions->isEmpty()) {
-                return back()->with('error', 'Chưa có dòng đổi nào QC đạt.');
+if ($exActions->isEmpty()) {
+    return back()->with('error', 'Chưa có dòng đổi nào QC đạt.');
+}
+
+// 🚨 Bổ sung: bắt buộc mọi action refund/exchange phải QC xong
+$allActions = $rr->items->flatMap(fn($it) => $it->actions);
+$hasUnqc = $allActions->contains(
+    fn($ac) =>
+        in_array($ac->action, ['refund', 'exchange']) &&
+        !in_array($ac->qc_status, ['passed_import', 'passed_noimport', 'failed'])
+);
+
+if ($hasUnqc || $allActions->isEmpty()) {
+    return back()->with('error', 'Bạn phải QC toàn bộ sản phẩm (mọi action hoàn/đổi) trước khi tạo đơn đổi.');
+}
+
+            // 5.0) Check bắt buộc mọi item có action
+            $hasItemWithoutAction = $rr->items->contains(fn($it) => $it->actions->isEmpty());
+            if ($hasItemWithoutAction) {
+                return back()->with('error', 'Bạn phải xử lý tất cả sản phẩm (tạo action hoàn/đổi/từ chối) trước khi tạo đơn đổi.');
+            }
+            // 5.1) Check toàn bộ action đã QC
+            // Lấy toàn bộ action liên quan (exchange/refund) của RR
+            $allActions = $rr->items->flatMap(fn($it) => $it->actions);
+
+            // Nếu còn action nào chưa QC thì fail
+            $hasUnqc = $allActions->contains(
+                fn($ac) =>
+                in_array($ac->action, ['refund', 'exchange']) && empty($ac->qc_status)
+            );
+
+
+            if ($hasUnqc || $allActions->isEmpty()) {
+                return back()->with('error', 'Bạn phải QC tất cả sản phẩm trước khi tạo đơn đổi.');
+            }
+            // 5.2) Check mỗi item phải có đủ action + đã QC
+            foreach ($rr->items as $it) {
+                $sumActionQty = (int) $it->actions->sum('quantity');
+                $itemQty = (int) ($it->quantity ?? $it->orderItem->quantity);
+
+                if ($sumActionQty < $itemQty) {
+                    return back()->with('error', "Sản phẩm {$it->orderItem->product_name} chưa xử lý đủ số lượng.");
+                }
+
+                $hasUnqcThis = $it->actions->contains(fn($ac) => empty($ac->qc_status));
+                if ($hasUnqcThis) {
+                    return back()->with('error', "Sản phẩm {$it->orderItem->product_name} còn action chưa QC.");
+                }
             }
 
 
@@ -334,19 +392,10 @@ class ReturnRequestItemController extends Controller
                 $new->quantity           = (int) $act->quantity;
                 $new->total_price        = $new->price * $new->quantity;
                 $new->save();
+                // ✅ Giữ chỗ tồn kho cho đơn đổi
                 if ($variant) {
-                    InventoryTransaction::create([
-                        'product_id'         => $variant->product_id,
-                        'product_variant_id' => $variant->id,
-                        'type'               => 'export',
-                        'quantity'           => $new->quantity,
-                        'note'               => "Xuất kho cho đơn đổi #{$newOrder->order_code}",
-                        'created_by'         => auth()->id(),
-                    ]);
-
-                    $variant->decrement('quantity', $new->quantity);
+                    $variant->increment('reserved_quantity', $new->quantity);
                 }
-
                 $subtotalNew      += $new->total_price;
                 $unitPaidOld       = $rrItem->unit_price_paid ?? ($oi->total_price / max(1, $oi->quantity));
                 $subtotalOldEquiv += $unitPaidOld * $new->quantity;
@@ -415,6 +464,7 @@ class ReturnRequestItemController extends Controller
             } else {
                 $original->status = 'exchange_in_progress';
             }
+            $original->is_closed = true;
             $original->save();
 
             return redirect()
@@ -468,20 +518,54 @@ class ReturnRequestItemController extends Controller
 
             $oi = $item->orderItem;
 
-            if ($status === 'passed') {
-            } else {
-                // Hàng hỏng → không nhập kho, chỉ ghi log
-                InventoryTransaction::create([
-                    'product_id'         => $oi->product_id,
-                    'product_variant_id' => $oi->product_variant_id,
-                    'type'               => 'discard',
-                    'quantity'           => $item->qty_refund,
-                    'note'               => "QC Failed - loại bỏ hàng từ RR #{$item->return_request_id}",
-                    'created_by'         => auth()->id(),
-                ]);
-            }
 
             return back()->with('success', 'Đã cập nhật kết quả QC.');
+        });
+    }
+    public function cancelExchange($orderId)
+    {
+        return DB::transaction(function () use ($orderId) {
+            $exchangeOrder = Order::with('items')->lockForUpdate()->findOrFail($orderId);
+
+            if (!$exchangeOrder->is_exchange) {
+                return back()->with('error', 'Đơn này không phải đơn đổi.');
+            }
+            if (!in_array($exchangeOrder->status, ['pending', 'cancelled'])) {
+                return back()->with('error', 'Đơn đổi đã xử lý shipping, không thể huỷ.');
+            }
+
+            // Lấy RR gốc
+            $rr = ReturnRequest::lockForUpdate()->find($exchangeOrder->exchange_of_return_request_id);
+            if ($rr) {
+                $rr->exchange_order_id = null;
+                $rr->status = 'approved'; // hoặc 'pending' tuỳ policy
+                $rr->save();
+            }
+
+            // Rollback kho cho từng item
+            foreach ($exchangeOrder->items as $it) {
+                if ($it->product_variant_id) {
+                    // ✅ Rollback reserved_quantity thay vì cộng quantity
+                    InventoryTransaction::create([
+                        'product_id'         => $it->product_id,
+                        'product_variant_id' => $it->product_variant_id,
+                        'type'               => 'adjust',
+                        'quantity'           => -$it->quantity,
+                        'note'               => "Rollback huỷ đơn đổi #{$exchangeOrder->order_code} (giảm reserved_quantity)",
+                        'created_by'         => auth()->id(),
+                    ]);
+
+                    $it->productVariant->decrement('reserved_quantity', $it->quantity);
+                }
+            }
+
+            $exchangeOrder->status = 'cancelled';
+            $exchangeOrder->is_closed = true;
+            $exchangeOrder->save();
+
+            return redirect()
+                ->route('admin.return-requests.show', $rr?->id)
+                ->with('success', "Đã huỷ đơn đổi #{$exchangeOrder->order_code}, rollback về RMA.");
         });
     }
 }

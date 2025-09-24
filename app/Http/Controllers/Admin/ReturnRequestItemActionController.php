@@ -248,29 +248,39 @@ class ReturnRequestItemActionController extends Controller
 
         $item->save();
     }
-    private function ensureEditable(ReturnRequest $rr)
+    private function ensureEditable(ReturnRequest $rr, string $mode = 'full')
     {
-        // ĐÃ CÓ PHIẾU HOÀN -> KHÓA (pending/done)
-        $hasRefund = Refund::where('return_request_id', $rr->id)
-            ->whereIn('status', ['pending', 'done'])
+        // 1. Nếu có phiếu hoàn đã DONE → khóa toàn bộ
+        $hasRefundDone = Refund::where('return_request_id', $rr->id)
+            ->where('status', 'done')
             ->exists();
-        if ($hasRefund) {
-            return back()->with('error', 'RMA đã có phiếu hoàn (pending/done), không thể sửa các dòng.');
+        if ($hasRefundDone) {
+            return back()->with('error', 'Yêu cầu đã có phiếu hoàn tất (done), không thể chỉnh sửa.');
         }
 
-        // ĐÃ có đơn đổi
+        // 2. Nếu có phiếu hoàn PENDING
+        if ($mode === 'full') {
+            $hasRefundPending = Refund::where('return_request_id', $rr->id)
+                ->where('status', 'pending')
+                ->exists();
+            if ($hasRefundPending) {
+                return back()->with('error', 'Yêu cầu đã có phiếu hoàn chờ xử lý (pending), không thể thay đổi hành động.');
+            }
+        }
+
+        // 3. Nếu đã có đơn đổi
         if (!empty($rr->exchange_order_id)) {
-            return back()->with('error', 'Yêu cầu đã có đơn đổi, không thể sửa các dòng xử lý nữa.');
+            return back()->with('error', 'Yêu cầu đã có đơn đổi, không thể chỉnh sửa.');
         }
 
-        // ĐÃ kết thúc hoàn tiền
+        // 4. Nếu RMA đã kết thúc hoàn tiền
         if ($rr->status === 'refunded') {
             return back()->with('error', 'Yêu cầu đã hoàn tiền xong, không thể chỉnh sửa.');
         }
 
-
         return null; // OK
     }
+
 
 
     /**
@@ -290,15 +300,15 @@ class ReturnRequestItemActionController extends Controller
                 $hasAnyAction = true;
 
                 // Chỉ tính các action QC đạt
-                $isPassed = ($ac->qc_status ?? null) === 'passed';
-
-                if ($ac->action !== 'reject' && $isPassed) {
-                    $allReject = false;
-                    $hasPositiveAction = true;
-                }
-
-                if ($ac->action === 'refund' && $isPassed) {
-                    $totalRefund += (float) $ac->refund_amount;
+                if (in_array($ac->action, ['refund', 'exchange'])) {
+                    $isPassed = str_starts_with($ac->qc_status ?? '', 'passed');
+                    if ($isPassed) {
+                        $hasPositiveAction = true;
+                        if ($ac->action === 'refund') {
+                            $totalRefund += (float) $ac->refund_amount;
+                        }
+                    }
+                } elseif ($ac->action === 'reject') {
                 }
             }
         }
@@ -330,6 +340,10 @@ class ReturnRequestItemActionController extends Controller
     {
         $action = ReturnRequestItemAction::with('item.returnRequest')->findOrFail($actionId);
         $rr     = $action->item->returnRequest;
+        if ($action->action === 'reject') {
+            return back()->with('error', '❌ Hành động từ chối không yêu cầu QC.');
+        }
+
 
         // KHÓA nếu request đã kết thúc
         if ($resp = $this->ensureEditable($rr)) return $resp;
@@ -341,7 +355,9 @@ class ReturnRequestItemActionController extends Controller
 
         DB::transaction(function () use ($action, $data) {
             $oi = $action->item->orderItem;
-
+            $variant = $oi->productVariant;
+            $beforeQty = $variant ? $variant->quantity : 0;
+            $afterQty  = $beforeQty; // mặc định không đổi
             // Nếu trước đó đã có QC status khác thì rollback tồn kho
             if ($action->qc_status === 'passed_import') {
                 // rollback nhập kho
@@ -350,6 +366,8 @@ class ReturnRequestItemActionController extends Controller
                     'product_variant_id' => $oi->product_variant_id,
                     'type'               => 'adjust',
                     'quantity'           => -$action->quantity,
+                    'before_quantity'  => $beforeQty,
+                    'after_quantity'   => $afterQty,
                     'note'               => "Rollback QC Passed (Nhập kho) - RR #{$action->item->return_request_id}",
                     'created_by'         => auth()->id(),
                 ]);
@@ -361,6 +379,8 @@ class ReturnRequestItemActionController extends Controller
                     'product_variant_id' => $oi->product_variant_id,
                     'type'               => 'adjust',
                     'quantity'           => +$action->quantity,
+                    'before_quantity'  => $beforeQty,
+                    'after_quantity'   => $afterQty,
                     'note'               => "Rollback QC Failed (Discard) - RR #{$action->item->return_request_id}",
                     'created_by'         => auth()->id(),
                 ]);
@@ -373,31 +393,76 @@ class ReturnRequestItemActionController extends Controller
             $action->save();
 
             // Ghi transaction theo trạng thái mới
+            // if ($data['qc_status'] === 'passed_import') {
+            //     if ($action->action === 'refund') {
+            //         InventoryTransaction::create([
+            //             'product_id'         => $oi->product_id,
+            //             'product_variant_id' => $oi->product_variant_id,
+            //             'type'               => 'import',
+            //             'quantity'           => $action->quantity,
+            //             'note'               => "QC Passed (Nhập kho) - RR #{$action->item->return_request_id}",
+            //             'created_by'         => auth()->id(),
+            //         ]);
+            //         $oi->productVariant->increment('quantity', $action->quantity);
+            //     }
+            //     // Nếu exchange thì chưa nhập lại kho, chỉ xử lý khi tạo đơn đổi
+            // } elseif ($data['qc_status'] === 'passed_noimport') {
+            //     // QC đạt nhưng KHÔNG nhập kho → không ảnh hưởng stock
+            // } elseif ($data['qc_status'] === 'failed') {
+            //     InventoryTransaction::create([
+            //         'product_id'         => $oi->product_id,
+            //         'product_variant_id' => $oi->product_variant_id,
+            //         'type'               => 'discard',
+            //         'quantity'           => $action->quantity,
+            //         'note'               => "QC Failed - loại bỏ hàng từ RR #{$action->item->return_request_id}",
+            //         'created_by'         => auth()->id(),
+            //     ]);
+            //     // discard chỉ để ghi nhận → không thay đổi tồn kho thật
+            // }
             if ($data['qc_status'] === 'passed_import') {
-                if ($action->action === 'refund') {
+                if (in_array($action->action, ['refund', 'exchange'])) {
+                    $beforeQty = $oi->productVariant->quantity;
+
+                    // tăng tồn kho
+                    $oi->productVariant->increment('quantity', $action->quantity);
+
+                    // sau khi tăng, lấy lại số lượng
+                    $afterQty = $oi->productVariant->quantity;
                     InventoryTransaction::create([
                         'product_id'         => $oi->product_id,
                         'product_variant_id' => $oi->product_variant_id,
                         'type'               => 'import',
                         'quantity'           => $action->quantity,
+                        'before_quantity'  => $beforeQty,
+                        'after_quantity'   => $afterQty,
                         'note'               => "QC Passed (Nhập kho) - RR #{$action->item->return_request_id}",
                         'created_by'         => auth()->id(),
                     ]);
-                    $oi->productVariant->increment('quantity', $action->quantity);
                 }
-                // Nếu exchange thì chưa nhập lại kho, chỉ xử lý khi tạo đơn đổi
             } elseif ($data['qc_status'] === 'passed_noimport') {
-                // QC đạt nhưng KHÔNG nhập kho → không ảnh hưởng stock
+                InventoryTransaction::create([
+                    'product_id'         => $oi->product_id,
+                    'product_variant_id' => $oi->product_variant_id,
+                    'type'               => 'discard',
+                    'quantity'           => $action->quantity,
+                    'before_quantity'  => $beforeQty,
+                    'after_quantity'   => $afterQty,
+                    'note'               => "Chất lượng sản phẩm đạt (Không nhập kho - lỗi từ NSX, ghi nhận loại bỏ) - RR #{$action->item->return_request_id}",
+                    'created_by'         => auth()->id(),
+                ]);
+                // ❌ không cộng stock, chỉ log loại bỏ
             } elseif ($data['qc_status'] === 'failed') {
                 InventoryTransaction::create([
                     'product_id'         => $oi->product_id,
                     'product_variant_id' => $oi->product_variant_id,
                     'type'               => 'discard',
                     'quantity'           => $action->quantity,
-                    'note'               => "QC Failed - loại bỏ hàng từ RR #{$action->item->return_request_id}",
+                    'before_quantity'  => $beforeQty,
+                    'after_quantity'   => $afterQty,
+                    'note'               => "QC Failed (Loại bỏ) - RR #{$action->item->return_request_id}",
                     'created_by'         => auth()->id(),
                 ]);
-                // discard chỉ để ghi nhận → không thay đổi tồn kho thật
+                // ❌ không cộng stock
             }
         });
 

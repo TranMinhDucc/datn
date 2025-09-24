@@ -46,6 +46,24 @@
                                 aria-controls="offcanvasTop"><i class="iconsax"
                                     data-icon="search-normal-2"></i></button>
                         </li>
+                        <li class="nav-item position-relative">
+                            <a href="{{ route('support.tickets.index') }}" class="position-relative">
+                                <i class="fa-regular fa-message fs-5"></i>
+                                @php
+                                $unseenCount = \App\Models\SupportTicketMessage::where('user_id', auth()->id())
+                                ->where('is_staff', 1) // chỉ admin trả lời
+                                ->whereNull('seen_at') // chưa xem
+                                ->count();
+                                @endphp
+
+
+                                @if($unseenCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">New alerts</span>
+                                </span>
+                                @endif
+                            </a>
+                        </li>
 
                         <li>
                             <a href="{{ route('client.account.wishlist.index') }}">
@@ -60,22 +78,22 @@
                             <div class="onhover-show-div user">
                                 <ul>
                                     @auth
-                                        @if (Auth::user()->role === 'admin')
-                                            <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                                        @endif
-                                        <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
-                                        <li>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-link text-start p-0"
-                                                    style="color: #000; text-decoration: none;">
-                                                    Đăng xuất
-                                                </button>
-                                            </form>
-                                        </li>
+                                    @if (Auth::user()->role === 'admin')
+                                    <li><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+                                    @endif
+                                    <li><a href="{{ route('client.account.dashboard') }}">Thông tin tài khoản</a></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link text-start p-0"
+                                                style="color: #000; text-decoration: none;">
+                                                Đăng xuất
+                                            </button>
+                                        </form>
+                                    </li>
                                     @else
-                                        <li><a href="{{ route('login') }}">Đăng nhập</a></li>
-                                        <li><a href="{{ route('register') }}">Đăng ký</a></li>
+                                    <li><a href="{{ route('login') }}">Đăng nhập</a></li>
+                                    <li><a href="{{ route('register') }}">Đăng ký</a></li>
                                     @endauth
                                 </ul>
                             </div>

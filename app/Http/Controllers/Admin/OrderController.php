@@ -18,12 +18,15 @@ use App\Models\ShippingMethod;
 use App\Models\ShippingOrder;
 use App\Models\ShopSetting;
 use App\Models\User;
+use App\Models\InventoryTransaction;
 use App\Services\GhnService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -118,6 +121,12 @@ class OrderController extends Controller
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.variant_id' => 'nullable|exists:product_variants,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'shipping_fee' => 'nullable|numeric|min:0',
+            'tax_amount' => 'nullable|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'note' => 'nullable|string|max:2000',
+            'note_shipper' => 'nullable|string|max:255',
+            'required_note_shipper' => 'nullable|string|in:KHONGCHOXEMHANG,CHOXEMHANGKHONGTHU,CHOTHUHANG',
         ]);
 
         DB::beginTransaction();
@@ -125,27 +134,40 @@ class OrderController extends Controller
             // Tạo đơn hàng
             $order = Order::create([
                 'user_id' => $validated['user_id'],
-                'order_code' => 'ORD-' . strtoupper(uniqid()),
+                'order_code' => 'ORD' . strtoupper(uniqid()),
                 'address_id' => $validated['address_id'],
                 'payment_method_id' => $validated['payment_method_id'],
                 'shipping_method' => $validated['shipping_method'],
+
                 'subtotal' => 0,
+                'tax_amount' => $request->input('tax_amount', 0),
+                'shipping_fee' => $request->input('shipping_fee', 0),
+                'discount_amount' => $request->input('discount_amount', 0),
+
                 'total_amount' => 0,
                 'status' => 'pending',
-                'note_shipper'       => $request->input('note_shipper'),          // ✅ thêm
-                'required_note_shipper' => $request->input('required_note_shipper', 'KHONGCHOXEMHANG')
+                'is_paid' => false,
+                'payment_status' => 'unpaid',
+
+                'note' => $request->input('note'),
+                'note_shipper' => $request->input('note_shipper'),
+                'required_note_shipper' => $request->input('required_note_shipper', 'KHONGCHOXEMHANG'),
             ]);
 
             $subtotal = 0;
+
             // Thêm các mục đơn hàng
             foreach ($validated['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
                 $variant = $item['variant_id'] ? ProductVariant::findOrFail($item['variant_id']) : null;
 
-                // Kiểm tra tồn kho
-                $availableStock = $variant ? $variant->stock : $product->stock;
+                // Kiểm tra tồn kho thực tế + giữ chỗ
+                $availableStock = $variant
+                    ? $variant->quantity - $variant->reserved_quantity
+                    : $product->quantity - $product->reserved_quantity;
+
                 if ($availableStock < $item['quantity']) {
-                    throw new \Exception("Sản phẩm {$product->name} không đủ tồn kho.");
+                    throw new \Exception("Sản phẩm {$product->name} không đủ tồn kho khả dụng.");
                 }
 
                 $price = $variant ? $variant->price : $product->sale_price;
@@ -157,7 +179,9 @@ class OrderController extends Controller
                     'product_variant_id' => $variant?->id,
                     'product_name' => $product->name,
                     'sku' => $variant?->sku ?? $product->sku,
-                    'image_url' => $product->image,
+                    'image_url' => $product->image
+                        ? Storage::url($product->image)
+                        : null,
                     'variant_values' => $variant ? json_encode($variant->options->pluck('value_id')->toArray()) : null,
                     'price' => $price,
                     'quantity' => $item['quantity'],
@@ -166,27 +190,31 @@ class OrderController extends Controller
 
                 $subtotal += $totalPrice;
 
-                // Cập nhật tồn kho
+                // ✅ Giữ chỗ (tăng reserved_quantity, không giảm quantity)
                 if ($variant) {
-                    $variant->decrement('stock', $item['quantity']);
+                    $variant->increment('reserved_quantity', $item['quantity']);
                 } else {
-                    $product->decrement('stock', $item['quantity']);
+                    $product->increment('reserved_quantity', $item['quantity']);
                 }
             }
 
             // Cập nhật tổng tiền đơn hàng
             $order->update([
                 'subtotal' => $subtotal,
-                'total_amount' => $subtotal + ($order->shipping_fee ?? 0),
+                'total_amount' => $subtotal
+                    + $order->shipping_fee
+                    + $order->tax_amount
+                    - $order->discount_amount,
             ]);
 
             DB::commit();
-            return redirect()->route('admin.orders.index')->with('success', 'Tạo đơn hàng thành công.');
+            return redirect()->route('admin.orders.index')->with('success', 'Tạo đơn hàng thành công (giữ chỗ kho).');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi tạo đơn hàng: ' . $e->getMessage());
         }
     }
+
 
 
     public function show($id)
@@ -203,7 +231,11 @@ class OrderController extends Controller
             'returnRequests.items.orderItem.productVariant',
         ])->findOrFail($id);
 
-        $returnRequests = $order->returnRequests ?? collect();
+         $returnRequests = $order->returnRequests()
+        ->with(['items', 'exchangeOrder'])
+        ->orderByDesc('id')
+        ->get();
+
         $products = Product::where('is_active', 1)->with('variants')->get();
 
         // chỉ các trạng thái hợp lệ kế tiếp
@@ -507,41 +539,41 @@ class OrderController extends Controller
 
     public function createShippingOrder(array $data)
     {
-        // Ghi log debug Token và ShopId
+        $token  = Setting::getValue('ghn_token');
+        $shopId = Setting::getValue('ghn_shop_id');
+
         Log::info('GHN Token + ShopID', [
-            'token' => env('GHN_TOKEN'),
-            'shop_id' => env('GHN_SHOP_ID'),
+            'token'   => $token,
+            'shop_id' => $shopId,
         ]);
 
-        // Ghi log payload gửi GHN
-        Log::info('GHN Payload gửi đi', $data);
+        if (!$token || !$shopId) {
+            Log::error('❌ GHN Token hoặc ShopID chưa được cấu hình trong bảng settings');
+            return false;
+        }
 
-        // Gửi yêu cầu POST
         $response = Http::withHeaders([
-            'Token' => env('GHN_TOKEN'),
+            'Token' => $token,
             'Content-Type' => 'application/json',
-            'ShopId' => env('GHN_SHOP_ID'),
-        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', $data);
+            'ShopId' => $shopId,
+        ])->post(
+            'https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create',
+            $data
+        );
 
-        // Ghi lại phản hồi đầy đủ từ GHN
         Log::info('GHN Response Raw', [
             'status' => $response->status(),
-            'body' => $response->body(),
+            'body'   => $response->body(),
         ]);
 
-        // Nếu thành công
         if ($response->successful() && isset($response['data']['order_code'])) {
-            Log::info('GHN Order Created', [
-                'order_code' => $response['data']['order_code'],
-            ]);
             return $response['data']['order_code'];
         }
 
-        // Nếu thất bại, ghi log chi tiết để điều tra
-        Log::error('GHN Order Error', [
+        Log::error('❌ GHN Order Error', [
             'request' => $data,
             'response_status' => $response->status(),
-            'response_body' => $response->body(),
+            'response_body'   => $response->body(),
         ]);
 
         return false;
@@ -721,9 +753,32 @@ class OrderController extends Controller
                 'request_payload'  => json_encode($data),
                 'response_payload' => json_encode(['order_code' => $ghnOrderCode]),
             ]);
+            // ======= XUẤT KHO SAU KHI XÁC NHẬN =======
+            foreach ($order->items as $item) {
+                $variant = $item->productVariant;
+                if ($variant) {
+                    $beforeQty = $variant->quantity;
+                    $afterQty  = max(0, $beforeQty - $item->quantity);
 
+                    // Giảm tồn kho
+                    $variant->update(['quantity' => $afterQty]);
+
+                    // Ghi lịch sử xuất kho
+                    InventoryTransaction::create([
+                        'product_id'         => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                        'type'               => 'export',
+                        'quantity'           => $item->quantity,
+                        'before_quantity'    => $beforeQty,
+                        'after_quantity'     => $afterQty,
+                        'note'               => "Xuất kho khi gửi GHN - Order #{$order->order_code} - ID: $order->id",
+                        'created_by'         => auth()->id(),
+                    ]);
+                }
+            }
             return redirect()->back()->with('success', 'Đã gửi đơn hàng sang GHN!');
         }
+
 
         return redirect()->back()->with('error', '❌ Gửi đơn hàng đến GHN thất bại.');
     }
@@ -867,7 +922,6 @@ class OrderController extends Controller
     }
     public function updateGhnNote(Request $request, $id)
     {
-        // Validate input
         $request->validate([
             'note_shipper' => 'nullable|string|max:255',
             'required_note_shipper' => 'required|string|in:KHONGCHOXEMHANG,CHOXEMHANGKHONGTHU,CHOTHUHANG',
@@ -875,7 +929,6 @@ class OrderController extends Controller
 
         $order = Order::findOrFail($id);
 
-        // Tìm đơn GHN trong shipping_orders
         $shippingOrder = ShippingOrder::where('order_id', $order->id)
             ->where('shipping_partner', 'ghn')
             ->latest()
@@ -885,16 +938,26 @@ class OrderController extends Controller
             return back()->with('error', '❌ Không tìm thấy mã vận đơn GHN cho đơn hàng này.');
         }
 
-        $orderCode = $shippingOrder->shipping_code;
+        // ✅ Danh sách trạng thái cho phép update
+        $updatableStatuses = [
+            'pending',
+            'confirmed',
+            'processing',
+            'ready_for_dispatch',
+            'shipping',
+            'delivery_failed',
+        ];
 
-        // Payload gửi GHN
+        if (!in_array($order->status, $updatableStatuses, true)) {
+            return back()->with('error', '❌ Đơn hàng đã ở trạng thái "' . $order->status . '" nên không thể chỉnh sửa ghi chú nữa.');
+        }
+
         $payload = [
-            'order_code'    => $orderCode,
+            'order_code'    => $shippingOrder->shipping_code,
             'note'          => $request->note_shipper ?? $order->note_shipper,
             'required_note' => $request->required_note_shipper,
         ];
 
-        // Gọi API GHN
         $response = Http::withHeaders([
             'Token' => config('services.ghn.token'),
             'Content-Type' => 'application/json',
@@ -905,21 +968,19 @@ class OrderController extends Controller
             return back()->with('error', '❌ GHN trả lỗi: ' . $response->body());
         }
 
-        // ✅ Cập nhật lại DB (orders table)
         $order->update([
             'note_shipper'          => $payload['note'],
             'required_note_shipper' => $payload['required_note'],
-            // 'shipping_status'       => 'note_updated', // cần thêm cột shipping_status trong bảng orders nếu muốn track
         ]);
 
-        // ✅ Lưu log vào shipping_orders để debug dễ dàng
         $shippingOrder->update([
             'last_note_update' => now(),
             'note_payload'     => json_encode($payload),
         ]);
 
-        return back()->with('success', 'Đã cập nhật ghi chú cho phía giao hàng!');
+        return back()->with('success', '✅ Đã cập nhật ghi chú cho GHN!');
     }
+
     public function printShippingLabel($id)
     {
         $order = Order::findOrFail($id);
@@ -951,6 +1012,46 @@ class OrderController extends Controller
         // Redirect sang link in PDF của GHN
         return redirect()->away("https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token={$token}");
     }
+    public function cancelExchangeOrder($id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $order = Order::with('items')->findOrFail($id);
 
-    
+            if (!$order->exchange_of_return_request_id || !$order->is_exchange) {
+                return back()->with('error', 'Đơn này không phải đơn đổi.');
+            }
+
+            // Cập nhật trạng thái đơn đổi
+            $order->status = 'cancelled';
+            $order->cancelled_at = now();
+            $order->cancel_reason_by_admin = $request->input('cancel_reason') ?? 'Admin huỷ đơn đổi';
+            $order->save();
+
+            // Rollback về ReturnRequest
+            $rr = ReturnRequest::find($order->exchange_of_return_request_id);
+            if ($rr) {
+                $rr->exchange_order_id = null;   // xoá liên kết để có thể tạo lại
+                $rr->status = 'approved';        // quay lại trạng thái có thể xử lý tiếp
+                $rr->save();
+            }
+
+            // Rollback tồn kho (sản phẩm đã xuất ra để tạo đơn đổi → trả lại)
+            foreach ($order->items as $item) {
+                if ($item->product_variant_id) {
+                    ProductVariant::where('id', $item->product_variant_id)
+                        ->increment('quantity', $item->quantity);
+                } else {
+                    Product::where('id', $item->product_id)
+                        ->increment('quantity', $item->quantity);
+                }
+            }
+
+            DB::commit();
+            return back()->with('success', 'Huỷ đơn đổi thành công, yêu cầu RMA đã được mở lại.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi huỷ đơn đổi: ' . $e->getMessage());
+        }
+    }
 }

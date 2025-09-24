@@ -212,12 +212,12 @@
                                 data-kt-image-input="true">
                                 <div class="image-input-wrapper w-150px h-150px"></div>
                                 <label
-                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute top-0 end-0 translate-middle"
                                     data-kt-image-input-action="change">
-                                    <i class="ki-duotone ki-pencil fs-7"></i>
-                                    <input type="file" name="image" accept=".png, .jpg, .jpeg"
-                                        class="form-control mb-2" />
+                                    <i class="bi bi-pencil-square fs-7"></i>
+                                    <input type="file" name="image" accept=".png, .jpg, .jpeg" class="d-none" />
                                 </label>
+
                                 @error('images')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -302,9 +302,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('category_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            
                             <div class="text-muted fs-7 mb-7">Add product to a category.</div>
                         </div>
                     </div>
@@ -327,9 +325,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('brand_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            
                             <div class="text-muted fs-7 mb-7">Add product to a brand.</div>
                         </div>
                     </div>
@@ -348,7 +344,6 @@
                                 <label class="form-label required">Tên Sản phẩm</label>
                                 <input type="text" id="product-name" name="name" class="form-control mb-2"
                                     placeholder="Tên Sản Phẩm" value="{{ old('name', $product->name ?? '') }}">
-                                @error('name') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="row g-4"> {{-- 👈 gutter cho 2 cột --}}
@@ -356,14 +351,14 @@
                                     <label class="form-label">Slug</label>
                                     <input type="text" name="slug" id="product-slug" class="form-control"
                                         placeholder="slug-tu-dong" value="{{ old('slug', $product->slug ?? '') }}">
-                                    @error('slug') <div class="text-danger">{{ $message }}</div> @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">SKU</label>
-                                    <input type="text" name="sku" class="form-control"
-                                        placeholder="Mã sản phẩm" value="{{ old('sku', $product->sku ?? '') }}">
-                                    @error('sku') <div class="text-danger">{{ $message }}</div> @enderror {{-- 👈 sửa key --}}
+                                    <label class="form-label">Tồn kho</label>
+                                    <input type="number" id="stock_quantity_display" class="form-control"
+                                        value="{{ $product->stock_quantity ?? 0 }}" readonly>
+                                    <small class="text-muted">Tự động tính từ các biến thể</small>
                                 </div>
+
                             </div>
 
                             <div class="row g-4">
@@ -382,34 +377,10 @@
                                     <input type="number" name="sale_price" class="form-control"
                                         value="{{ old('sale_price', $product->sale_price ?? '') }}">
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Tồn kho</label>
-                                    <input type="number" id="stock_quantity" name="stock_quantity" class="form-control"
-                                        value="{{ old('stock_quantity', $product->stock_quantity ?? '') }}">
-                                    <small class="text-muted">Tự động tính từ các biến thể (nếu có)</small>
-                                </div>
-                            </div>
-
-                            <div class="row g-4">
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">Thời gian bắt đầu</label>
-                                    <input type="datetime-local" name="starts_at" class="form-control"
-                                        value="{{ old('starts_at', $product->starts_at ?? '') }}">
-                                </div>
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">Thời gian kết thúc</label>
-                                    <input type="datetime-local" name="ends_at" class="form-control"
-                                        value="{{ old('ends_at', $product->ends_at ?? '') }}">
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label">Phần trăm / giá tiền</label>
-                                    <input type="number" name="sale_times" class="form-control"
-                                        value="{{ old('sale_times', $product->sale_times ?? '') }}">
-                                </div>
-
-
 
                             </div>
+
+
                             <div>
                                 {{-- Thêm chọn Tag --}}
                                 <div class="col-md-12 mb-4">
@@ -535,28 +506,6 @@
                         </div>
                     </div>
 
-                    <div id="product-dimensions-wrapper" class="row">
-                        <div class="col-md-3">
-                            <label class="form-label">Cân nặng (g) <span class="text-danger">*</span></label>
-                            <input type="number" name="weight" class="form-control"
-                                value="{{ old('weight', $product->weight ?? '') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Dài (cm) <span class="text-danger">*</span></label>
-                            <input type="number" name="length" class="form-control"
-                                value="{{ old('length', $product->length ?? '') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Rộng (cm) <span class="text-danger">*</span></label>
-                            <input type="number" name="width" class="form-control"
-                                value="{{ old('width', $product->width ?? '') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Cao (cm) <span class="text-danger">*</span></label>
-                            <input type="number" name="height" class="form-control"
-                                value="{{ old('height', $product->height ?? '') }}">
-                        </div>
-                    </div>
 
 
                     <!-- Submit -->
@@ -844,17 +793,18 @@
         tbody.innerHTML = "";
         // Tạo dòng áp dụng cho tất cả
         const headerRow = document.createElement("tr");
-        headerRow.innerHTML = `
+headerRow.innerHTML = `
     <td class="fw-semibold text-muted">Áp dụng cho tất cả</td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào"></td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_price" placeholder="₫ Nhập vào" min="0"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_quantity" placeholder="0" min="0"></td>
     <td><input type="text" class="form-control form-control-sm" id="pf_apply_sku" placeholder="Nhập vào"></td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_weight" placeholder="gram"></td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_length" placeholder="cm"></td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_width" placeholder="cm"></td>
-    <td><input type="number" class="form-control form-control-sm" id="pf_apply_height" placeholder="cm"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_weight" placeholder="gram" min="0"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_length" placeholder="cm" min="0"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_width" placeholder="cm" min="0"></td>
+    <td><input type="number" class="form-control form-control-sm" id="pf_apply_height" placeholder="cm" min="0"></td>
     <td><button type="button" class="btn btn-danger btn-sm" onclick="pfApplyToAllVariants()">Áp dụng</button></td>
 `;
+
         tbody.appendChild(headerRow);
 
         const valueLists = groupIds.map(id => pfAttributeGroups[id].values);
@@ -863,21 +813,22 @@
         combinations.forEach((combo, i) => {
             const label = combo.join(" / ");
             const row = document.createElement("tr");
-            row.innerHTML = `
+row.innerHTML = `
     <td>${label}<input type="hidden" name="variants[${i}][attributes]" value="${label}"></td>
-    <td><input type="number" name="variants[${i}][price]" class="form-control"></td>
-    <td><input type="number" name="variants[${i}][quantity]" class="form-control"></td>
+    <td><input type="number" name="variants[${i}][price]" class="form-control" min="0"></td>
+    <td><input type="number" name="variants[${i}][quantity]" class="form-control" min="0"></td>
     <td><input type="text" name="variants[${i}][sku]" class="form-control"></td>
-    <td><input type="number" name="variants[${i}][weight]" class="form-control" placeholder="gram"></td>
-    <td><input type="number" name="variants[${i}][length]" class="form-control" placeholder="cm"></td>
-    <td><input type="number" name="variants[${i}][width]" class="form-control" placeholder="cm"></td>
-    <td><input type="number" name="variants[${i}][height]" class="form-control" placeholder="cm"></td>
+    <td><input type="number" name="variants[${i}][weight]" class="form-control" placeholder="gram" min="0"></td>
+    <td><input type="number" name="variants[${i}][length]" class="form-control" placeholder="cm" min="0"></td>
+    <td><input type="number" name="variants[${i}][width]" class="form-control" placeholder="cm" min="0"></td>
+    <td><input type="number" name="variants[${i}][height]" class="form-control" placeholder="cm" min="0"></td>
     <td class="text-center">
         <button type="button" class="btn btn-sm btn-light-danger" onclick="removeVariantRow(this)">
             <i class="bi bi-trash"></i>
         </button>
     </td>
 `;
+
 
             tbody.appendChild(row);
             row.querySelectorAll('input[name$="[quantity]"]').forEach(input => {

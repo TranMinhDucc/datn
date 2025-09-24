@@ -461,6 +461,9 @@ class CheckoutController extends Controller
                         }
                     }
 
+                    $this->consumeCouponAtomic($orderData['coupon_id'] ?? null, $order->user_id, $order->id);
+                    $this->consumeCouponAtomic($orderData['shipping_coupon_id'] ?? null, $order->user_id, $order->id);
+
                     Cache::forget($cacheKey);
 
                     try {
@@ -537,7 +540,8 @@ class CheckoutController extends Controller
                         $product->decrement('stock_quantity', $item['quantity']);
                     }
                 }
-
+                $this->consumeCouponAtomic($orderData['coupon_id'] ?? null, $order->user_id, $order->id);
+                $this->consumeCouponAtomic($orderData['shipping_coupon_id'] ?? null, $order->user_id, $order->id);
                 Cache::forget($cacheKey);
                 return $order;
             });
@@ -568,11 +572,16 @@ class CheckoutController extends Controller
         // Giới hạn mỗi user
         if ($coupon->per_user_limit > 0) {
             $usedByUser = DB::table('coupon_user')
-                ->where('coupon_id', $coupon->id)
-                ->where('user_id', $user->id)
+                ->join('orders', 'orders.id', '=', 'coupon_user.order_id')
+                ->where('coupon_user.coupon_id', $coupon->id)
+                ->where('coupon_user.user_id', $user->id)
+                ->where('orders.payment_status', 'paid') // chỉ tính đơn đã trả tiền
                 ->count();
+
+
             if ($usedByUser >= $coupon->per_user_limit) return 0;
         }
+
 
         if ($coupon->only_for_new_users && !$user->is_new_user) return 0;
         if ($subtotal < $coupon->min_order_amount) return 0;
@@ -592,6 +601,86 @@ class CheckoutController extends Controller
         return 0;
     }
 
+
+
+
+
+
+
+    private function consumeCouponAtomic(?int $couponId, int $userId, int $orderId): void
+    {
+        if (!$couponId) return;
+
+        // 1) Check giới hạn mỗi user (đếm đơn đã thanh toán)
+        $perUserUsed = DB::table('coupon_user')
+            ->join('orders', 'orders.id', '=', 'coupon_user.order_id')
+            ->where('coupon_user.coupon_id', $couponId)
+            ->where('coupon_user.user_id', $userId)
+            ->where('orders.payment_status', 'paid')
+            ->count();
+
+        $coupon = DB::table('coupons')->where('id', $couponId)->first();
+        if (!$coupon) {
+            throw new \RuntimeException('Mã giảm giá không tồn tại.');
+        }
+        if (($coupon->per_user_limit ?? 0) > 0 && $perUserUsed >= $coupon->per_user_limit) {
+            throw new \RuntimeException('Bạn đã dùng hết lượt cho mã này.');
+        }
+
+        // 2) Tăng used_count CHỈ KHI còn slot (atomic)
+        // usage_limit = 0 nghĩa là không giới hạn
+        $affected = DB::update("
+    UPDATE coupons
+    SET used_count = COALESCE(used_count,0) + 1
+    WHERE id = ?
+      AND (
+            usage_limit IS NULL
+         OR usage_limit = 0
+         OR COALESCE(used_count,0) < usage_limit
+      )
+", [$couponId]);
+
+        if ($affected === 0) {
+            throw new \RuntimeException('Mã giảm giá đã hết lượt sử dụng.');
+        }
+
+
+        // 3) Ghi nhận vào coupon_user (idempotent)
+        $exists = DB::table('coupon_user')
+            ->where('coupon_id', $couponId)
+            ->where('order_id', $orderId)
+            ->exists();
+
+        if (!$exists) {
+            DB::table('coupon_user')->insert([
+                'coupon_id'  => $couponId,
+                'user_id'    => $userId,
+                'order_id'   => $orderId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function releaseCouponUsageAtomic(?int $couponId, int $orderId): void
+    {
+        if (!$couponId) return;
+
+        // Xóa liên kết sử dụng cho đơn này (nếu có)
+        $deleted = DB::table('coupon_user')
+            ->where('coupon_id', $couponId)
+            ->where('order_id', $orderId)
+            ->delete();
+
+        if ($deleted > 0) {
+            // Chỉ khi xóa được bản ghi thì mới trả lượt
+            DB::update("
+            UPDATE coupons
+            SET used_count = GREATEST(COALESCE(used_count,0) - 1, 0)
+            WHERE id = ?
+        ", [$couponId]);
+        }
+    }
 
 
     public function placeOrder(Request $request)
@@ -690,27 +779,8 @@ class CheckoutController extends Controller
             }
 
             // ✅ 3. Lưu coupon_user SAU khi có order_id
-            if ($couponId) {
-                DB::table('coupon_user')->insert([
-                    'coupon_id'  => $couponId,
-                    'user_id'    => $user->id,
-                    'order_id'   => $order->id,   // bây giờ chắc chắn có order_id
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                DB::table('coupons')->where('id', $couponId)->increment('used_count');
-            }
-
-            if ($shippingCouponId) {
-                DB::table('coupon_user')->insert([
-                    'coupon_id'  => $shippingCouponId,
-                    'user_id'    => $user->id,
-                    'order_id'   => $order->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                DB::table('coupons')->where('id', $shippingCouponId)->increment('used_count');
-            }
+            $this->consumeCouponAtomic($couponId, $user->id, $order->id);
+            $this->consumeCouponAtomic($shippingCouponId, $user->id, $order->id);
 
             DB::commit();
             session()->put('order_id', $order->id);
@@ -728,6 +798,42 @@ class CheckoutController extends Controller
         }
     }
 
+    public function cancel(Order $order)
+    {
+        DB::transaction(function () use ($order) {
+
+            // 2.1) Nếu là MoMo/ví và đã paid -> bạn nên hoàn tiền trước (gọi API refund),
+            //      sau khi refund thành công thì set payment_status='refunded'.
+            //      (Đoạn call API refund để TODO theo cổng bạn dùng)
+            if (in_array($order->payment_method, ['momo', 'wallet']) && $order->payment_status === 'paid') {
+                // TODO: refund logic tại đây (thành công thì đổi payment_status)
+                $order->payment_status = 'refunded';
+            }
+
+            // 2.2) Đổi trạng thái đơn
+            $order->status = 'cancelled';
+            $order->save();
+
+            // 2.3) QUY TẮC trả lượt:
+            // - Trả nếu đơn CHƯA thanh toán (unpaid)   -> ví dụ COD khách không nhận
+            // - HOẶC đã hoàn tiền (payment_status='refunded')
+            if ($order->payment_status !== 'paid' || $order->payment_status === 'refunded') {
+                $this->releaseCouponUsageAtomic($order->coupon_id, $order->id);
+                $this->releaseCouponUsageAtomic($order->shipping_coupon_id, $order->id);
+            }
+
+            // 2.4) Hoàn kho nếu cần
+            foreach ($order->orderItems as $it) {
+                if ($it->product_variant_id) {
+                    \App\Models\ProductVariant::where('id', $it->product_variant_id)->increment('quantity', $it->quantity);
+                } else {
+                    \App\Models\Product::where('id', $it->product_id)->increment('stock_quantity', $it->quantity);
+                }
+            }
+        });
+
+        return back()->with('success', 'Đã hủy đơn và xử lý mã giảm giá/kho.');
+    }
 
 
     public function success()
@@ -752,32 +858,5 @@ class CheckoutController extends Controller
     }
 
 
-    private function calculateDiscount($couponId, $userId, $cartSubtotal)
-    {
-        if (!$couponId) return 0;
 
-        $coupon = Coupon::find($couponId);
-        $user = User::find($userId);
-        if (!$coupon || !$coupon->active) return 0;
-        if (now()->lt($coupon->start_date) || now()->gt($coupon->end_date)) return 0;
-        if ($coupon->usage_limit > 0 && $coupon->used_count >= $coupon->usage_limit) return 0;
-        if ($coupon->per_user_limit > 0) {
-            $usedByUser = DB::table('coupon_user')->where('coupon_id', $couponId)->where('user_id', $userId)->count();
-            if ($usedByUser >= $coupon->per_user_limit) return 0;
-        }
-        if ($coupon->only_for_new_users && !$user->is_new_user) return 0;
-        if ($coupon->eligible_user_roles) {
-            $allowedRoles = json_decode($coupon->eligible_user_roles, true);
-            if (!in_array($user->role, $allowedRoles)) return 0;
-        }
-        if ($cartSubtotal < $coupon->min_order_amount) return 0;
-
-        if ($coupon->value_type === 'percentage') {
-            $discount = $cartSubtotal * ($coupon->discount_value / 100);
-            return $coupon->max_discount_amount ? min($discount, $coupon->max_discount_amount) : $discount;
-        }
-
-        if ($coupon->value_type === 'fixed') return $coupon->discount_value;
-        return 0;
-    }
 }

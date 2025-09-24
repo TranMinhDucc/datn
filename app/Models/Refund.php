@@ -19,6 +19,7 @@ class Refund extends Model
         'transferred_at',
         'created_by',
         'processed_by',
+        'note',
     ];
 
     protected $casts = [

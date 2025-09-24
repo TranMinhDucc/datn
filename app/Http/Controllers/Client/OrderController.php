@@ -9,6 +9,7 @@ use App\Models\ProductVariant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use App\Services\InventoryService;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -40,28 +41,38 @@ class OrderController extends Controller
             ? $request->cancel_reason_other
             : $request->cancel_reason;
 
-        if ($order->status === 'pending') {
-            $order->status = 'cancelled';
-            $order->cancelled_at = now();
-            $order->cancel_reason = $reason;
-            $order->save();
+        return DB::transaction(function () use ($order, $reason) {
+            if ($order->status === 'pending') {
+                // Đổi trạng thái
+                $order->status        = 'cancelled';
+                $order->cancelled_at  = now();
+                $order->cancel_reason = $reason;
+                $order->save();
 
-            // ✅ Hoàn lại số lượng vào kho
-            $this->restoreStock($order);
+                // ✅ Trả lượt mã: chỉ khi đơn chưa thanh toán HOẶC đã refund
+                if ($order->payment_status !== 'paid' || $order->payment_status === 'refunded') {
+                    $this->releaseCouponUsageAtomic($order->coupon_id, $order->id);
+                    $this->releaseCouponUsageAtomic($order->shipping_coupon_id, $order->id);
+                }
 
-            return back()->with('success', 'Đơn hàng đã được hủy và sản phẩm đã hoàn kho.');
-        }
+                // ✅ Hoàn kho
+                $this->restoreStock($order);
 
-        if ($order->status === 'confirmed' && !$order->cancel_request) {
-            $order->cancel_request = true;
-            $order->cancel_reason = $reason;
-            $order->save();
+                return back()->with('success', 'Đã hủy đơn, hoàn kho và hoàn lượt mã (nếu có).');
+            }
 
-            return back()->with('success', 'Yêu cầu hủy đơn đã được gửi. Vui lòng chờ duyệt.');
-        }
+            if ($order->status === 'confirmed' && !$order->cancel_request) {
+                $order->cancel_request = true;
+                $order->cancel_reason  = $reason;
+                $order->save();
 
-        return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
+                return back()->with('success', 'Yêu cầu hủy đơn đã được gửi. Vui lòng chờ duyệt.');
+            }
+
+            return back()->with('error', 'Không thể hủy hoặc gửi yêu cầu hủy đơn.');
+        });
     }
+
 
     public function downloadInvoice(Order $order)
     {
@@ -158,5 +169,26 @@ class OrderController extends Controller
         }
 
         return view('client.account.return-form', compact('order')); // ✅ đúng đường dẫn Blade
+    }
+
+
+    private function releaseCouponUsageAtomic(?int $couponId, int $orderId): void
+    {
+        if (!$couponId) return;
+
+        // Xóa liên kết mã với đơn này
+        $deleted = DB::table('coupon_user')
+            ->where('coupon_id', $couponId)
+            ->where('order_id', $orderId)
+            ->delete();
+
+        // Nếu có xóa thì giảm used_count (không âm)
+        if ($deleted > 0) {
+            DB::update("
+            UPDATE coupons
+            SET used_count = GREATEST(COALESCE(used_count,0) - 1, 0)
+            WHERE id = ?
+        ", [$couponId]);
+        }
     }
 }

@@ -6,7 +6,6 @@ use App\Models\Blog;
 use App\Models\Brand;
 use App\Models\Banner;
 use App\Models\Product;
-use App\Models\Setting;
 use App\Models\Category;
 use App\Models\BestSellerSection;
 use Illuminate\Http\Request;
@@ -92,7 +91,7 @@ class HomeController extends Controller
             ->latest('published_at')
             ->take(3)
             ->get();
-    $brands = Brand::where('status', 1)->get();
+        $brands = Brand::where('status', 1)->get();
 
         $unreadNotifications = collect();
 

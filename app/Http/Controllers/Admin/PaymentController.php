@@ -11,6 +11,10 @@ class PaymentController extends Controller
 {
     public function store(Request $r, Order $order)
     {
+        if ($order->is_closed) {
+            return back()->with('error', 'Đơn hàng đã bị khóa, không thể thêm giao dịch.');
+        }
+
         $data = $r->validate([
             'kind'   => 'required|in:payment,refund',
             'method' => 'nullable|string|max:50',

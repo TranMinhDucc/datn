@@ -57,7 +57,46 @@
                     </div>
                     <!--end::Page title-->
                     <!--begin::Actions-->
+                    <div class="d-flex align-items-center gap-2 gap-lg-3" bis_skin_checked="1">
+                        <!--begin::Filter menu-->
+                        <div class="m-0" bis_skin_checked="1">
+                            <!--begin::Menu toggle-->
 
+                            <!--end::Menu toggle-->
+
+
+
+                            <!--begin::Menu 1-->
+                            <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
+                                id="kt_menu_683db6e8d632c" bis_skin_checked="1">
+                                <!--begin::Header-->
+                                <div class="px-7 py-5" bis_skin_checked="1">
+                                    <div class="fs-5 text-gray-900 fw-bold" bis_skin_checked="1">Filter Options</div>
+                                </div>
+                                <!--end::Header-->
+
+                                <!--begin::Menu separator-->
+                                <div class="separator border-gray-200" bis_skin_checked="1"></div>
+                                <!--end::Menu separator-->
+
+
+                                <!--begin::Form-->
+                                <!--end::Form-->
+                            </div>
+                            <!--end::Menu 1-->
+                        </div>
+                        <!--end::Filter menu-->
+
+
+                        <!--begin::Secondary button-->
+                        <!--end::Secondary button-->
+
+                        <!--begin::Primary button-->
+                        <a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#kt_modal_create_app">
+                            Tạo đơn hàng </a>
+                        <!--end::Primary button-->
+                    </div>
                     <!--end::Actions-->
                 </div>
                 <!--end::Toolbar container-->
@@ -109,43 +148,91 @@
                                     <!-- Dropdown trạng thái bên phải -->
                                     <div class="w-100 mw-150px">
                                         <select class="form-select form-select-solid" name="status"
-                                            onchange="this.form.submit()"> <!-- tự submit khi đổi -->
+                                            onchange="this.form.submit()">
                                             <option value="">Tất cả trạng thái</option>
+
                                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
-                                                Đang
-                                                chờ xác nhận</option>
-                                            <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã
-                                                xác nhận</option>
-                                            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>
-                                                Đang xử lý</option>
-                                            <option value="shipping" {{ request('status') == 'shipping' ? 'selected' : '' }}>
-                                                Đang
-                                                giao hàng</option>
-                                            <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Đã
-                                                giao hàng</option>
-                                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
-                                                Hoàn thành</option>
-                                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã
-                                                hủy</option>
-                                            <option value="returned" {{ request('status') == 'returned' ? 'selected' : '' }}>
-                                                Đã
-                                                trả hàng</option>
-                                            <option value="refunded" {{ request('status') == 'refunded' ? 'selected' : '' }}>
-                                                Đã
-                                                hoàn tiền</option>
+                                                Đang chờ xác nhận
+                                            </option>
+                                            <option value="confirmed"
+                                                {{ request('status') == 'confirmed' ? 'selected' : '' }}>
+                                                Đã xác nhận
+                                            </option>
+                                            <option value="processing"
+                                                {{ request('status') == 'processing' ? 'selected' : '' }}>
+                                                Đang xử lý
+                                            </option>
+                                            <option value="ready_for_dispatch"
+                                                {{ request('status') == 'ready_for_dispatch' ? 'selected' : '' }}>
+                                                Chờ bàn giao vận chuyển
+                                            </option>
+                                            <option value="shipping"
+                                                {{ request('status') == 'shipping' ? 'selected' : '' }}>
+                                                Đang giao hàng
+                                            </option>
+                                            <option value="delivery_failed"
+                                                {{ request('status') == 'delivery_failed' ? 'selected' : '' }}>
+                                                Giao thất bại
+                                            </option>
+                                            <option value="delivered"
+                                                {{ request('status') == 'delivered' ? 'selected' : '' }}>
+                                                Đã giao hàng
+                                            </option>
+                                            <option value="completed"
+                                                {{ request('status') == 'completed' ? 'selected' : '' }}>
+                                                Hoàn thành
+                                            </option>
+                                            <option value="cancelled"
+                                                {{ request('status') == 'cancelled' ? 'selected' : '' }}>
+                                                Đã hủy
+                                            </option>
+                                            <option value="return_requested"
+                                                {{ request('status') == 'return_requested' ? 'selected' : '' }}>
+                                                Khách yêu cầu trả hàng
+                                            </option>
+                                            <option value="returning"
+                                                {{ request('status') == 'returning' ? 'selected' : '' }}>
+                                                Đang trả hàng về
+                                            </option>
+                                            <option value="returned"
+                                                {{ request('status') == 'returned' ? 'selected' : '' }}>
+                                                Đã nhận hàng trả
+                                            </option>
+                                            <option value="exchange_requested"
+                                                {{ request('status') == 'exchange_requested' ? 'selected' : '' }}>
+                                                Khách yêu cầu đổi hàng
+                                            </option>
+                                            <option value="exchange_in_progress"
+                                                {{ request('status') == 'exchange_in_progress' ? 'selected' : '' }}>
+                                                Đơn đổi đang xử lý
+                                            </option>
+                                            <option value="exchanged"
+                                                {{ request('status') == 'exchanged' ? 'selected' : '' }}>
+                                                Đã đổi xong
+                                            </option>
+                                            <option value="refund_processing"
+                                                {{ request('status') == 'refund_processing' ? 'selected' : '' }}>
+                                                Đang hoàn tiền
+                                            </option>
+                                            <option value="refunded"
+                                                {{ request('status') == 'refunded' ? 'selected' : '' }}>
+                                                Đã hoàn tiền
+                                            </option>
+                                            <option value="exchange_and_refund_processing"
+                                                {{ request('status') == 'exchange_and_refund_processing' ? 'selected' : '' }}>
+                                                Đang xử lý đổi & hoàn tiền
+                                            </option>
+                                            <option value="exchanged_and_refunded"
+                                                {{ request('status') == 'exchanged_and_refunded' ? 'selected' : '' }}>
+                                                Đã đổi và hoàn tiền
+                                            </option>
+                                            <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>
+                                                Đã đóng đơn
+                                            </option>
                                         </select>
                                     </div>
-
-
-
-
-                                    <!--end::Add product-->
-
                             </form>
                             <!--begin::Add product-->
-                            <a href="{{ route('admin.orders.cancel') }}" class="btn btn-warning">
-                                Yêu cầu hủy đơn
-                            </a>
                         </div>
                         <!--end::Card header-->
 
@@ -514,7 +601,8 @@
                                         <tr>
                                             <td class="text-start">
                                                 <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value="{{ $order->id }}" />
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $order->id }}" />
                                                 </div>
                                             </td>
                                             <td class="text-start">
@@ -525,7 +613,8 @@
                                             </td>
                                             <td>
                                                 <div class="text-center d-flex align-items-center">
-                                                    <a href="#" class="text-gray-800 text-hover-primary fs-5 fw-bold">
+                                                    <a href="#"
+                                                        class="text-gray-800 text-hover-primary fs-5 fw-bold">
                                                         {{ $order->user->fullname ?? 'Khách lẻ' }}
                                                     </a>
                                                 </div>
@@ -556,7 +645,7 @@
                                                             'icon' => 'ki-settings',
                                                         ],
                                                         'ready_for_dispatch' => [
-                                                            'label' => 'Sẵn sàng giao hàng',
+                                                            'label' => 'Chờ bàn giao vận chuyển',
                                                             'color' => 'info',
                                                             'icon' => 'ki-truck',
                                                         ],
@@ -564,6 +653,11 @@
                                                             'label' => 'Đang giao hàng',
                                                             'color' => 'info',
                                                             'icon' => 'ki-truck',
+                                                        ],
+                                                        'delivery_failed' => [
+                                                            'label' => 'Giao hàng thất bại',
+                                                            'color' => 'danger',
+                                                            'icon' => 'ki-close-circle',
                                                         ],
                                                         'delivered' => [
                                                             'label' => 'Đã giao hàng',
@@ -580,35 +674,60 @@
                                                             'color' => 'danger',
                                                             'icon' => 'ki-cross-circle',
                                                         ],
-                                                        'delivery_failed' => [
-                                                            'label' => 'Giao hàng thất bại',
-                                                            'color' => 'danger',
-                                                            'icon' => 'ki-close-circle',
-                                                        ],
-                                                        'returning' => [
-                                                            'label' => 'Đang trả hàng',
+                                                        'return_requested' => [
+                                                            'label' => 'Yêu cầu trả hàng',
                                                             'color' => 'warning',
                                                             'icon' => 'ki-undo',
                                                         ],
-                                                        'returned' => [
-                                                            'label' => 'Đã trả hàng',
-                                                            'color' => 'secondary',
+                                                        'returning' => [
+                                                            'label' => 'Đang trả hàng về',
+                                                            'color' => 'warning',
                                                             'icon' => 'ki-rotate-cw',
                                                         ],
-                                                        'refunded' => [
-                                                            'label' => 'Đã hoàn tiền',
+                                                        'returned' => [
+                                                            'label' => 'Đã nhận hàng trả',
                                                             'color' => 'secondary',
-                                                            'icon' => 'ki-undo',
+                                                            'icon' => 'ki-rotate-cw',
                                                         ],
                                                         'exchange_requested' => [
                                                             'label' => 'Yêu cầu đổi hàng',
                                                             'color' => 'warning',
                                                             'icon' => 'ki-refresh',
                                                         ],
-                                                        'return_requested' => [
-                                                            'label' => 'Yêu cầu trả hàng',
+                                                        'exchange_in_progress' => [
+                                                            'label' => 'Đơn đổi đang xử lý',
+                                                            'color' => 'primary',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'exchanged' => [
+                                                            'label' => 'Đã đổi xong',
+                                                            'color' => 'success',
+                                                            'icon' => 'ki-check-circle',
+                                                        ],
+                                                        'refund_processing' => [
+                                                            'label' => 'Đang hoàn tiền',
+                                                            'color' => 'info',
+                                                            'icon' => 'ki-wallet',
+                                                        ],
+                                                        'refunded' => [
+                                                            'label' => 'Đã hoàn tiền',
+                                                            'color' => 'secondary',
+                                                            'icon' => 'ki-wallet',
+                                                        ],
+                                                        'exchange_and_refund_processing' => [
+                                                            'label' => 'Đang xử lý đổi & hoàn tiền',
                                                             'color' => 'warning',
-                                                            'icon' => 'ki-undo',
+                                                            'icon' => 'ki-refresh',
+                                                        ],
+                                                        'exchanged_and_refunded' => [
+                                                            'label' => 'Đã đổi & hoàn tiền',
+                                                            'color' => 'success',
+                                                            'icon' => 'ki-check-circle',
+                                                        ],
+                                                        'closed' => [
+                                                            'label' => 'Đã đóng đơn',
+                                                            'color' => 'dark',
+                                                            'icon' => 'ki-lock',
                                                         ],
                                                     ];
 
@@ -625,8 +744,8 @@
                                                     <i class="ki-duotone {{ $orderStatus['icon'] }} fs-6 me-1"></i>
                                                     {{ $orderStatus['label'] }}
                                                 </span>
-
                                             </td>
+
 
                                             {{-- <td class="text-center">
                                                 <span class="fw-bold">{{ $order->updated_at->format('d/m/Y') }}</span>
@@ -670,8 +789,7 @@
                                                             'icon' => 'ki-cross-circle',
                                                         ],
                                                         'returning' => [
-                                                            'label' =>
-                                                                'Đơn hàng đang trong tiến trình đang hoàn hàng',
+                                                            'label' => 'Đơn hàng đang trong tiến trình đang hoàn hàng',
                                                             'color' => 'warning',
                                                             'icon' => 'ki-refresh',
                                                         ],
@@ -727,8 +845,7 @@
                                                             'icon' => 'ki-ban',
                                                         ],
                                                         'picked' => [
-                                                            'label' =>
-                                                                'Đơn hàng đã được bên vận chuyển lấy thành công',
+                                                            'label' => 'Đơn hàng đã được bên vận chuyển lấy thành công',
                                                             'color' => 'dark',
                                                             'icon' => 'ki-ban',
                                                         ],
@@ -819,7 +936,7 @@
 @endsection
 @section('js')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             const table = $('#kt_ecommerce_sales_table').DataTable({
                 // order: [
                 //     [4, 'desc']

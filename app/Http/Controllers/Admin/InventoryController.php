@@ -58,27 +58,39 @@ class InventoryController extends Controller
         return view('admin.inventory.index', compact('variants', 'productsWithoutVariants'));
     }
 
-    public function adjust(Request $request, InventoryService $inventory)
-    {
-        $request->validate([
-            'id' => 'required|integer',
-            'type_target' => 'required|in:product,variant',
-            'type' => 'required|in:import,export,adjust,return',
-            'quantity' => 'required|integer|min:1',
-            'note' => 'nullable|string',
-        ]);
+  public function adjust(Request $request, InventoryService $inventory)
+{
+    $request->validate([
+        'id' => 'required|integer',
+        'type_target' => 'required|in:product,variant',
+        'type' => 'required|in:import,export,adjust,return,discard',
+        'quantity' => 'required|integer|min:1',
+        'note' => 'nullable|string',
+    ]);
 
-        $inventory->adjustStockGeneral(
-            typeTarget: $request->type_target,
-            id: $request->id,
-            quantity: $request->quantity,
-            type: $request->type,
-            note: $request->note,
-            userId: auth()->id()
-        );
-
-        return redirect()->back()->with('success', 'Cập nhật kho thành công');
+    // Xác định model target (Product hoặc Variant)
+    if ($request->type_target === 'variant') {
+        $target = ProductVariant::findOrFail($request->id);
+        $beforeQty = (int) $target->stock;
+    } else {
+        $target = Product::findOrFail($request->id);
+        $beforeQty = (int) $target->stock;
     }
+
+    // Thực hiện điều chỉnh
+    $inventory->adjustStockGeneral(
+        typeTarget: $request->type_target,
+        id: $request->id,
+        quantity: $request->quantity,
+        type: $request->type,
+        note: $request->note,
+        userId: auth()->id(),
+        beforeQty: $beforeQty, // ✅ truyền vào service để nó lưu
+    );
+
+    return redirect()->back()->with('success', 'Cập nhật kho thành công');
+}
+
     public function history(Request $request)
     {
         if ($request->ajax()) {
