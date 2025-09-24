@@ -888,7 +888,7 @@
                                                                                 <div class="order-wrap">
                                                                                     <h5>{{ $orderItem->product_name }}</h5>
                                                                                     <p style="overflow:hidden;width:100%;">
-                                                                                        {{ $orderItem->product->description ?? 'Không có mô tả' }}
+                                                                                        {!! $orderItem->product->description ?? 'Không có mô tả' !!}
                                                                                     </p>
                                                                                     <ul
                                                                                         style="list-style: none; padding-left: 0;">

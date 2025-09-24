@@ -143,7 +143,13 @@
                             <div class="quantity-box d-flex align-items-center gap-3">
                                 <div class="quantity">
                                     <button class="minus" type="button"><i class="fa-solid fa-minus"></i></button>
-                                    <input type="number" value="1" min="1" max="20">
+                                    <input 
+    type="number" 
+    value="1" 
+    min="1" 
+    max="20" 
+    oninput="if(this.value < 1) this.value = 1;"
+>
                                     <button class="plus" type="button"><i class="fa-solid fa-plus"></i></button>
                                 </div>
                                 <div class="d-flex align-items-center gap-3 w-100">

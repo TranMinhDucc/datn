@@ -287,6 +287,31 @@ class CheckoutController extends Controller
             return response()->json(['success' => false, 'message' => 'Số tiền tối thiểu để thanh toán MoMo là 1.000đ.'], 400);
         }
 
+        $cartItems = $request->input('cartItems', []);
+
+        DB::beginTransaction();
+        try {
+            foreach ($cartItems as $item) {
+                $product = Product::lockForUpdate()->find($item['id']);
+                $variant = $item['variant_id']
+                    ? ProductVariant::lockForUpdate()->find($item['variant_id'])
+                    : null;
+
+                $stock = $variant ? $variant->quantity : $product->stock_quantity;
+
+                if ($stock < $item['quantity']) {
+                    throw new \Exception("Sản phẩm {$item['name']} không đủ số lượng tồn kho.");
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+
         // 2) TẠO orderId/requestId duy nhất ở SERVER (không phụ thuộc client)
         $orderId   = 'ORD' . now()->format('YmdHis') . Str::random(6);
         $requestId = $orderId;
@@ -756,8 +781,16 @@ class CheckoutController extends Controller
             session()->put('order_id', $order->id);
             // ✅ 2. Thêm chi tiết đơn hàng + trừ kho
             foreach ($cartItems as $item) {
-                $product = Product::find($item['id']);
-                $variant = $item['variant_id'] ? ProductVariant::find($item['variant_id']) : null;
+                $product = Product::lockForUpdate()->find($item['id']);
+                $variant = $item['variant_id']
+                    ? ProductVariant::lockForUpdate()->find($item['variant_id'])
+                    : null;
+
+                $stock = $variant ? $variant->quantity : $product->stock_quantity;
+
+                if ($stock < $item['quantity']) {
+                    throw new \Exception("Sản phẩm {$item['name']} không đủ số lượng tồn kho.");
+                }
 
                 $order->orderItems()->create([
                     'product_id'         => $product->id,
@@ -791,10 +824,23 @@ class CheckoutController extends Controller
                 'message'  => 'Đặt hàng thành công!',
                 'order_id' => $order->id
             ]);
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
+
+            // Nếu lỗi là do hết hàng
+            if (str_contains($e->getMessage(), 'không đủ số lượng tồn kho')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(), // gửi thẳng nội dung lỗi ra
+                ], 400);
+            }
+
+            // Các lỗi khác
             Log::error('❌ Lỗi đặt hàng: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['success' => false, 'message' => 'Lỗi hệ thống khi xử lý đơn hàng.'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã có lỗi xảy ra, vui lòng thử lại sau.'
+            ], 500);
         }
     }
 
@@ -856,7 +902,4 @@ class CheckoutController extends Controller
         session()->flash('success', '🎉 Đặt hàng thành công!');
         return view('client.checkout.success', compact('order'));
     }
-
-
-
 }
