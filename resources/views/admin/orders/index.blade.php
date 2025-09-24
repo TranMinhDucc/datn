@@ -28,7 +28,7 @@
                             <!--begin::Item-->
                             <li class="breadcrumb-item text-muted">
                                 <a href="../../../index.html" class="text-muted text-hover-primary">
-                                    Home </a>
+                                    Trang chủ </a>
                             </li>
                             <!--end::Item-->
                             <!--begin::Item-->
@@ -39,17 +39,10 @@
 
                             <!--begin::Item-->
                             <li class="breadcrumb-item text-muted">
-                                eCommerce </li>
+                                Danh sách đơn hàng </li>
                             <!--end::Item-->
                             <!--begin::Item-->
-                            <li class="breadcrumb-item">
-                                <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                            </li>
-                            <!--end::Item-->
-
-                            <!--begin::Item-->
-                            <li class="breadcrumb-item text-muted">
-                                Sales </li>
+                            
                             <!--end::Item-->
 
                         </ul>
@@ -131,21 +124,6 @@
                                 </div>
                                 <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
 
-                                    <!--end::Card title-->
-
-                                    <!--begin::Card toolbar-->
-
-                                    <!--begin::Flatpickr-->
-                                    {{-- <div class="input-group w-250px">
-                                        <input class="form-control form-control-solid rounded rounded-end-0"
-                                            placeholder="Pick date range" id="kt_ecommerce_sales_flatpickr" />
-                                        <button class="btn btn-icon btn-light" id="kt_ecommerce_sales_flatpickr_clear">
-                                            <i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span
-                                                    class="path2"></span></i> </button>
-                                    </div> --}}
-                                    <!--end::Flatpickr-->
-
-                                    <!-- Dropdown trạng thái bên phải -->
                                     <div class="w-100 mw-150px">
                                         <select class="form-select form-select-solid" name="status"
                                             onchange="this.form.submit()">
@@ -236,24 +214,13 @@
                         </div>
                         <!--end::Card toolbar-->
                     </div>
-                    <!--end::Card header-->
 
-                    <!--begin::Card body-->
                     <div class="card-body pt-0">
-
-                        <!--begin::Table-->
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_sales_table"
                                 style="min-width: 1300px;">
                                 <thead>
                                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                        <th class="text-start w-10px pe-2">
-                                            <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                                <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                                    data-kt-check-target="#kt_ecommerce_sales_table .form-check-input"
-                                                    value="1" />
-                                            </div>
-                                        </th>
                                         <th class="text-start">Mã đơn </th>
                                         <th class="text-start">Khách hàng</th>
                                         <th class="text-center min-w-100px">Tổng tiền</th>
@@ -267,12 +234,7 @@
                                 <tbody class="fw-semibold text-gray-600">
                                     @foreach ($orders as $order)
                                         <tr>
-                                            <td class="text-start">
-                                                <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $order->id }}" />
-                                                </div>
-                                            </td>
+                                          
                                             <td class="text-start">
                                                 <a href="{{ route('admin.orders.show', $order->id) }}"
                                                     class="text-gray-800 text-hover-primary fw-bold">
@@ -414,10 +376,6 @@
                                                 </span>
                                             </td>
 
-
-                                            {{-- <td class="text-center">
-                                                <span class="fw-bold">{{ $order->updated_at->format('d/m/Y') }}</span>
-                                            </td> --}}
                                             <td class="text-center">
                                                 @php
                                                     $shippingStatuses = [
@@ -561,15 +519,15 @@
                                                 <a href="#"
                                                     class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary"
                                                     data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                    Actions
+                                                    Hành động
                                                 </a>
                                                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
                                                     data-kt-menu="true">
                                                     <div class="menu-item px-3">
                                                         <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                            class="menu-link px-3">View</a>
+                                                            class="menu-link px-3">Xem</a>
                                                     </div>
-                                                    <div class="menu-item px-3">
+                                                    {{-- <div class="menu-item px-3">
                                                         <a href="" class="menu-link px-3">Edit</a>
                                                     </div>
                                                     <div class="menu-item px-3">
@@ -579,7 +537,7 @@
                                                             <button type="submit"
                                                                 class="menu-link px-3 bg-transparent border-0">Delete</button>
                                                         </form>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             </td>
                                         </tr>

@@ -142,7 +142,7 @@
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.banners.index') }}" target="_blank">
                             <span class="menu-icon">
-                                <i class="fa-solid fa-star fs-4"><span class="path1"></span><span
+                                <i class="fa-solid fa-images fs-4"><span class="path1"></span><span
                                         class="path2"></span></i>
                             </span>
                             <span class="menu-title">Banner</span>
@@ -184,7 +184,7 @@
                         </div>
                         <!--end:Menu sub-->
                     </div>
-                    <div class="menu-item">
+                    {{-- <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.shipping-addresses.index') }}" target="_blank">
                             <span class="menu-icon">
@@ -194,19 +194,19 @@
                             <span class="menu-title">Quản lý địa chỉ</span>
                         </a>
                         <!--end:Menu link-->
-                    </div>
+                    </div> --}}
                     <div class="menu-item">
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('admin.wishlists.index') }}" target="_blank">
                             <span class="menu-icon">
-                                <i class="fa-solid fa-location-dot fs-4"><span class="path1"></span><span
+                                <i class="fa-solid fa-heart fs-4"><span class="path1"></span><span
                                         class="path2"></span></i>
                             </span>
                             <span class="menu-title">Quản lý Yêu Thích
                         </a>
                         <!--end:Menu link-->
                     </div>
-                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                    {{-- <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                         <!--begin:Menu link--><span class="menu-link"><span class="menu-icon"><i
                                     class="fa-solid fa-wallet fs-4"><span class="path1"></span><span
                                         class="path2"></span><span class="path3"></span><span
@@ -230,7 +230,7 @@
 
                         </div>
                         <!--end:Menu sub-->
-                    </div>
+                    </div> --}}
                     <!--end:Menu item--><!--begin:Menu item-->
 
                     <!--end:Menu item--><!--begin:Menu item-->
@@ -260,7 +260,7 @@
 
                     <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.faq.index') }}"
-                            target="_blank"><span class="menu-icon"><i class="fa-regular fa-money-bill-1 fs-4"><span
+                            target="_blank"><span class="menu-icon"><i class="fa-solid fa-question fs-4"><span
                                         class="path1"></span><span class="path2"></span><span
                                         class="path3"></span><span class="path4"></span></i></span><span
                                 class="menu-title">FAQ</span></a><!--end:Menu link-->

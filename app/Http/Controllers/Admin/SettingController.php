@@ -34,6 +34,7 @@ class SettingController extends Controller
                     'address' => 'nullable|string',
                     'vat' => 'nullable|string',
                     'return_policy' => 'nullable|string',
+                    'noti_header' => 'nullable|string',
                 ];
                 break;
             case 'set_images':
@@ -47,6 +48,7 @@ class SettingController extends Controller
             case 'products':
                 $validationRules = [
                     'low_stock_alert' => 'required|integer|min:0',
+                     'time_request_order' => 'nullable',
                 ];
                 break;
             case 'integrations':
@@ -75,6 +77,10 @@ class SettingController extends Controller
                     // Gemini
                     'gemini_api_key' => 'nullable|string|max:255',
 
+                    // ghn
+                    'ghn_token' => 'nullable|string|max:255',
+                    'ghn_shop_id' => 'nullable|string|max:255',
+
                     // Telegram
                     'telegram_status' => 'nullable|in:0,1',
                     'telegram_token' => 'nullable|string|max:255',
@@ -97,6 +103,7 @@ class SettingController extends Controller
             case 'notifications':
                 $validationRules = [
                     'telegram_low_stock_template' => 'nullable',
+                   
                 ];
                 break;
         }

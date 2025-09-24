@@ -300,4 +300,41 @@ class ReturnRequestController extends Controller
 
         return back()->with('success', '✅ Đã cập nhật trạng thái yêu cầu.');
     }
+    public function finalizeReject($id)
+    {
+        $rr = ReturnRequest::with('items.actions', 'order')->findOrFail($id);
+
+        DB::transaction(function () use ($rr) {
+            $hasRefundOrExchange = false;
+            $hasReject = false;
+
+            foreach ($rr->items as $it) {
+                foreach ($it->actions as $ac) {
+                    if (in_array($ac->action, ['refund', 'exchange'])) {
+                        $hasRefundOrExchange = true;
+                    } elseif ($ac->action === 'reject') {
+                        $hasReject = true;
+                    }
+                }
+            }
+
+            if ($hasRefundOrExchange) {
+                // 👉 Có sản phẩm được xử lý hoàn/đổi → giữ trạng thái processing
+                // Chỉ ghi chú để dễ theo dõi
+                $rr->admin_note = trim(($rr->admin_note ? $rr->admin_note . "\n" : '') . 'Đã xác nhận từ chối 1 phần.');
+            } elseif ($hasReject) {
+                // 👉 Tất cả đều bị từ chối → chốt rejected
+                $rr->status = 'rejected';
+
+                if ($rr->order && $rr->order->status === 'return_requested') {
+                    $rr->order->status = 'completed';
+                    $rr->order->save();
+                }
+            }
+
+            $rr->save();
+        });
+
+        return back()->with('success', 'Đã chốt từ chối yêu cầu.');
+    }
 }

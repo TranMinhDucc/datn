@@ -79,6 +79,7 @@ use App\Http\Controllers\Admin\ShopSettingController;
 use App\Http\Controllers\Admin\WishlistController;
 use App\Http\Controllers\Client\ReturnRequestController;
 use App\Http\Controllers\Admin\ReturnRequestController as AdminReturnRequestController;
+
 use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Http\Controllers\Admin\ReturnRequestItemController;
 use App\Http\Controllers\Admin\ReturnRequestItemActionController;
@@ -421,10 +422,14 @@ Route::prefix('admin')
         Route::get('/ajax/users/{user}/addresses', [OrderController::class, 'addresses'])->name('ajax.user.addresses');
         Route::resource('users', UserController::class);
         Route::resource('faq', FaqController::class);
-Route::get('users/{id}/addresses', function ($id) {
-    $user = \App\Models\User::with('shippingAddresses')->findOrFail($id);
-    return response()->json($user->shippingAddresses);
-})->name('users.addresses');
+        Route::get('users/{id}/addresses', function ($id) {
+            $user = \App\Models\User::with('shippingAddresses')->findOrFail($id);
+            return response()->json($user->shippingAddresses);
+        })->name('users.addresses');
+        Route::post(
+            '/return-requests/{id}/finalize-reject',
+            [AdminReturnRequestController::class, 'finalizeReject']
+        )->name('return-requests.finalize-reject');
 
 
         Route::resource('coupons', CouponController::class);

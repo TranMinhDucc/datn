@@ -732,7 +732,7 @@
 <div class="card mt-4 shadow-sm">
     <div class="card-header border-0 pt-6 d-flex align-items-center">
         <i class="fas fa-undo-alt fs-3 text-info me-2"></i>
-        <h3 class="fw-bold text-gray-800 mb-0">Yêu cầu đổi / trả / hoàn</h3>
+        <h3 class="fw-bold text-gray-800 mb-0">Yêu cầu khiếu nại của khách hàng</h3>
     </div>
 
     <div class="card-body p-0">
@@ -745,8 +745,6 @@
                         <th>Lý do</th>
                         <th>Ảnh đính kèm</th>
                         <th>Ghi chú Admin</th>
-                        <th>Trạng thái</th>
-                        <th>Số tiền hoàn</th>
                         <th class="pe-4 text-end">Ngày tạo</th>
                     </tr>
                 </thead>
@@ -819,8 +817,6 @@
                             </td>
 
                             <td>{{ $rr->admin_note ?? '—' }}</td>
-                            <td><span class="badge badge-light">{{ $rr->status }}</span></td>
-                            <td class="fw-bold text-success">{{ number_format($rr->total_refund_amount, 0, ',', '.') }}đ</td>
                             <td class="text-end pe-4">{{ $rr->created_at->format('d/m/Y H:i') }}</td>
                         </tr>
                     @endforeach
@@ -958,9 +954,9 @@
                                                 ) > 0;
                                         @endphp
 
-                                       <span class="badge {{ $badge }} fs-7 fw-bold">
+                                       {{-- <span class="badge {{ $badge }} fs-7 fw-bold">
                 {{ $statusText }}
-            </span>
+            </span> --}}
 
                                         {{-- Nút tạo đơn đổi --}}
                                         @if ($canCreateExchange)
@@ -983,6 +979,18 @@
                                                 </button>
                                             </form>
                                         @endif
+                                        {{-- Nút chốt từ chối --}}
+@if ($rr->status === 'rejected_temp')
+    <form action="{{ route('admin.return-requests.finalize-reject', $rr->id) }}" 
+          method="POST" 
+          onsubmit="return confirm('Bạn có chắc muốn chốt từ chối yêu cầu này?');">
+        @csrf
+        <button type="submit" class="btn btn-sm btn-danger">
+            <i class="fas fa-ban me-1"></i> Hoàn tất từ chối
+        </button>
+    </form>
+@endif
+
                                     </div>
                                 </div>
                             </div>

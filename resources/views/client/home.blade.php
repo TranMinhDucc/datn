@@ -764,7 +764,7 @@
         </div>
     </section>
 @endif
-    <!-- Fashikart specials -->
+    {{-- <!-- Fashikart specials -->
     <section class="section-t-space">
         <div class="custom-container container product-contain">
             <div class="title">
@@ -1015,7 +1015,7 @@
                     <div class="swiper-button-next"></div>
                 </div>
             </div>
-    </section>
+    </section> --}}
     <section class="section-t-space">
         <div class="custom-container container">
             <div class="title">
@@ -1071,7 +1071,7 @@
         </div>
     </section>
     </section>
-    <section class="section-t-space instashop-section">
+    {{-- <section class="section-t-space instashop-section">
         <div class="container-fluid">
             <div class="row row-cols-xl-5 row-cols-md-4 row-cols-2 ratio_square-1">
                 <div class="col">
@@ -1225,7 +1225,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <section class="section-b-space">
         <div class="custom-container container">

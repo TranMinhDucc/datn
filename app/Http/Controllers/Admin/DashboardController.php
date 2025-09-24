@@ -207,6 +207,23 @@ class DashboardController extends Controller
             ->orderBy('quantity', 'asc')
             ->paginate(5, ['*'], 'low_stock_page');
 
+      $paymentMethods = Order::select('payment_method', DB::raw('COUNT(*) as total'))
+    ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('payment_method', ['momo', 'cod']) // chỉ lấy momo và cod
+    ->groupBy('payment_method')
+    ->pluck('total', 'payment_method')
+    ->toArray();
+
+// Chuẩn hóa dữ liệu
+$paymentLabels = [
+    'momo' => 'Ví MoMo',
+    'cod'  => 'Thanh toán khi nhận hàng',
+];
+
+$paymentCounts = [
+    $paymentMethods['momo'] ?? 0,
+    $paymentMethods['cod'] ?? 0,
+];
 
         return view('admin.dashboard', [
             'labels'       => $labels,
@@ -234,6 +251,8 @@ class DashboardController extends Controller
             'lowStockVariants' => $lowStockVariants,
             'totalUsersAll'   => $totalUsersAll,
             'totalOrdersAll'  => $totalOrdersAll,
+            'paymentLabels' => $paymentLabels,
+        'paymentCounts' => $paymentCounts,
         ]);
     }
 
