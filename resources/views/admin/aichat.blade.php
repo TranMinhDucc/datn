@@ -17,7 +17,7 @@
 
                 <div class="header-controls">
                     <!-- Model Selector -->
-                    <div class="control-item">
+                    {{-- <div class="control-item">
                         <div class="dropdown">
                             <button class="control-btn" type="button" id="modelDropdown" data-bs-toggle="dropdown">
                                 <i class="ri-cpu-line"></i>
@@ -36,15 +36,15 @@
                                     </a></li>
                             </ul>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <!-- Memory Toggle -->
-                    <div class="control-item">
+                    {{-- <div class="control-item">
                         <button id="memoryToggle" class="control-btn memory-active">
                             <i class="ri-brain-line"></i>
                             <span>Memory</span>
                         </button>
-                    </div>
+                    </div> --}}
 
                     <!-- Clear Chat -->
                     <div class="control-item">
@@ -89,12 +89,11 @@
                                                 <span class="feature-tag">lợi nhuận theo danh mục</span>
                                                 <span class="feature-tag">kpi performance</span>
                                                 <span class="feature-tag">so sánh cùng kỳ năm trước</span>
-                                                <span class="feature-tag">cash flow analysis</span>
                                             </div>
                                         </div>
 
                                         <!-- Predictive Analytics -->
-                                        <div class="feature-section">
+                                        {{-- <div class="feature-section">
                                             <h5><i class="ri-crystal-ball-line"></i> Dự báo thông minh</h5>
                                             <div class="feature-grid">
                                                 <span class="feature-tag">dự báo doanh thu tháng tới</span>
@@ -103,10 +102,10 @@
                                                 <span class="feature-tag">khách hàng có nguy cơ rời bỏ</span>
                                                 <span class="feature-tag">cơ hội tăng trưởng</span>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Smart Recommendations -->
-                                        <div class="feature-section">
+                                        {{-- <div class="feature-section">
                                             <h5><i class="ri-lightbulb-flash-line"></i> Gợi ý thông minh</h5>
                                             <div class="feature-grid">
                                                 <span class="feature-tag">tối ưu giá bán</span>
@@ -115,7 +114,7 @@
                                                 <span class="feature-tag">reorder inventory</span>
                                                 <span class="feature-tag">cross-selling opportunities</span>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Customer Analytics -->
                                         <div class="feature-section">
@@ -130,7 +129,7 @@
                                         </div>
 
                                         <!-- Inventory Intelligence -->
-                                        <div class="feature-section">
+                                        {{-- <div class="feature-section">
                                             <h5><i class="ri-box-3-line"></i> Quản lý kho thông minh</h5>
                                             <div class="feature-grid">
                                                 <span class="feature-tag">inventory turnover</span>
@@ -139,7 +138,7 @@
                                                 <span class="feature-tag">size distribution</span>
                                                 <span class="feature-tag">dead stock analysis</span>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <!-- Competitive Intelligence -->
                                         <div class="feature-section">

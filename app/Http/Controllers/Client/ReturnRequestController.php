@@ -33,6 +33,7 @@ class ReturnRequestController extends Controller
         }
 
         $returnRequest->load('items.orderItem.productVariant.product');
+        $returnRequest->load('items.orderItem.productVariant.product');
 
         return view('client.account.return_requests.show', compact('returnRequest'));
     }
@@ -95,7 +96,14 @@ class ReturnRequestController extends Controller
         $request->validate([
             'type' => 'required|in:return,exchange',
             'reason' => 'required|string|max:1000',
-            'attachments.*' => 'nullable|file|max:5120|mimetypes:image/jpeg,image/png,video/mp4,video/webm',
+
+            'attachments'   => 'required|array|min:1|max:5',
+            'attachments.0' => 'required|file|max:5120|mimetypes:image/jpeg,image/png,video/mp4,video/webm',
+            'attachments.*' => 'file|max:5120|mimetypes:image/jpeg,image/png,video/mp4,video/webm',
+        ], [
+            'attachments.required'   => 'Bạn phải tải lên ít nhất 1 ảnh hoặc video.',
+            'attachments.min'        => 'Bạn phải tải lên ít nhất 1 ảnh hoặc video.',
+            'attachments.0.required' => 'Bạn phải tải lên ít nhất 1 ảnh hoặc video.',
         ]);
 
         // Validate từng item

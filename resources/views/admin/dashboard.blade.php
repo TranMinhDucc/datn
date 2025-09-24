@@ -934,33 +934,32 @@
             }
         });
 
-        // Payment Methods Chart
-        new Chart(document.getElementById('paymentMethodsChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['VNPAY', 'COD'],
-                datasets: [{
-                    data: [66516490, 61680985],
-                    backgroundColor: ['#4e73df', '#36b9cc'],
-                    borderWidth: 0,
-                    cutout: '60%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 15,
-                            usePointStyle: true
-                        }
-                    }
+       new Chart(document.getElementById('paymentMethodsChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Ví MoMo', 'Thanh toán khi nhận hàng'],
+        datasets: [{
+            data: @json($paymentCounts),
+            backgroundColor: ['#4e73df', '#36b9cc'],
+            borderWidth: 0,
+            cutout: '60%'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth: 12,
+                    padding: 15,
+                    usePointStyle: true
                 }
             }
-        });
+        }
+    }
+});
 
         // Orders table functionality
         document.addEventListener('DOMContentLoaded', function() {

@@ -50,14 +50,41 @@
 
 
         <h5 class="fw-semibold">📋 Danh sách sản phẩm:</h5>
-        <ul class="list-group mb-4">
-            @foreach ($returnRequest->items as $item)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $item->orderItem->product_name ?? 'Sản phẩm' }}
-                    <span class="badge bg-primary">x{{ $item->quantity }}</span>
-                </li>
-            @endforeach
-        </ul>
+      <ul class="list-group mb-4">
+    @foreach ($returnRequest->items as $item)
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="fw-semibold">
+                        {{ $item->orderItem->product_name ?? 'Sản phẩm' }}
+                        @if ($item->orderItem->productVariant)
+                            <small class="text-muted">
+                                ({{ $item->orderItem->productVariant->sku ?? '' }})
+                            </small>
+                        @endif
+                    </div>
+                    {{-- Nếu có note reject --}}
+                    @php
+                        $rejectNotes = $item->actions->where('action', 'reject')->pluck('note')->filter()->all();
+                    @endphp
+
+                    @if (!empty($rejectNotes))
+                        <div class="mt-2">
+                            @foreach ($rejectNotes as $note)
+                                <div class="alert alert-danger d-flex align-items-center p-2 mb-2 shadow-sm rounded">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <span class="small">{{ $note }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+                <span class="badge bg-primary fs-7">x{{ $item->quantity }}</span>
+            </div>
+        </li>
+    @endforeach
+</ul>
+
 
         <h5 class="fw-semibold mb-3">📎 File đính kèm:</h5>
         @php

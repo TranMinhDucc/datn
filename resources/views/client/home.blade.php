@@ -763,6 +763,7 @@
             </div>
         </div>
     </section>
+
     @endif
 
 <!-- Fashikart specials -->
@@ -777,6 +778,7 @@
         <div class="swiper fashikart-slide">
             <div class="swiper-wrapper trending-products ratio_square">
                 @foreach ($specialOfferProducts as $prd)            
+
                     <div class="swiper-slide product-box">
                         <div class="img-wrapper">
                         @if ($product->labels->count())
@@ -891,10 +893,22 @@
                         <span>-{{ $product->sale_times }}%</span>
                         @endif
                     </div>
-                    </div>
-                @endforeach
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
+</div>
+@endforeach
+<div class="swiper-button-prev"></div>
+<div class="swiper-button-next"></div>
+</div>
+</div>
+</section> --}}
+<section class="section-t-space">
+    <div class="custom-container container">
+        <div class="title">
+            <h3>Blog Mới Nhất</h3>
+            <svg>
+                <use href="https://themes.pixelstrap.net/katie/assets/svg/icon-sprite.svg#main-line"></use>
+            </svg>
+        </div>
+
             </div>
         </div>
     </div>
@@ -951,10 +965,12 @@
                 @endforeach
             </div>
         </div>
+
     </div>
 </section>
 
     <section class="section-t-space instashop-section">
+
         <div class="container-fluid">
             <div class="row row-cols-xl-5 row-cols-md-4 row-cols-2 ratio_square-1">
                 <div class="col">
@@ -1108,7 +1124,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <section class="section-b-space">
         <div class="custom-container container">

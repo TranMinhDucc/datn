@@ -57,4 +57,5 @@ class Refund extends Model
     {
         return $q->where('return_request_id', $rrId);
     }
+    public function creator(){ return $this->belongsTo(\App\Models\User::class,'created_by'); }
 }

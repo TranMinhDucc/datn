@@ -8,10 +8,13 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Coupon;
+use App\Models\ProductVariant;
+use App\Models\Setting;
 use App\Models\ShippingAddress;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class AiChatService
 {
@@ -34,6 +37,160 @@ class AiChatService
                         "📈 Trung bình/đơn: " . number_format($avgOrder) . " VND";
                 }
             ],
+            [
+                'keywords' => ['dashboard tổng quan', 'dashboard overview'],
+                'action' => function () {
+                    $revenue = Order::whereIn('status', ['completed', 'delivered'])->sum('total_amount');
+                    $orders  = Order::count();
+                    $customers = User::count();
+                    $lowStock = ProductVariant::where('quantity', '<', 10)->count();
+
+                    return "📊 **Dashboard Tổng quan**:\n"
+                        . "💰 Doanh thu: " . number_format($revenue) . " VND\n"
+                        . "🛒 Đơn hàng: {$orders}\n"
+                        . "👥 Khách hàng: {$customers}\n"
+                        . "⚠️ Biến thể sắp hết: {$lowStock}";
+                }
+            ],
+
+            [
+                'keywords' => ['lợi nhuận theo danh mục', 'profit by category'],
+                'action' => function () {
+                    $categories = OrderItem::join('product_variants', 'order_items.product_variant_id', '=', 'product_variants.id')
+                        ->join('products', 'product_variants.product_id', '=', 'products.id')
+                        ->join('categories as c', 'products.category_id', '=', 'c.id')
+                        ->leftJoin('categories as parent', 'c.parent_id', '=', 'parent.id')
+                        ->selectRaw('
+                COALESCE(parent.name, c.name) as category_name,
+                SUM(order_items.quantity * (order_items.price - products.import_price)) as profit
+            ')
+                        ->groupBy('category_name')
+                        ->orderByDesc('profit')
+                        ->get();
+
+                    $result = "💹 **Lợi nhuận theo danh mục (gộp cha-con)**:\n";
+                    foreach ($categories as $cat) {
+                        $result .= "- {$cat->category_name}: " . number_format($cat->profit) . " VND\n";
+                    }
+                    return $result;
+                }
+            ],
+
+
+            [
+                'keywords' => ['so sánh cùng kỳ', 'cùng kỳ năm trước'],
+                'action' => function () {
+                    $thisMonth = Order::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                        ->sum('total_amount');
+                    $lastYearSame = Order::whereBetween('created_at', [
+                        now()->subYear()->startOfMonth(),
+                        now()->subYear()->endOfMonth()
+                    ])->sum('total_amount');
+                    $growth = $lastYearSame > 0 ? (($thisMonth - $lastYearSame) / $lastYearSame) * 100 : 0;
+
+                    return "📊 **So sánh cùng kỳ năm trước**:\n"
+                        . "📅 Tháng này: " . number_format($thisMonth) . " VND\n"
+                        . "📅 Cùng kỳ năm trước: " . number_format($lastYearSame) . " VND\n"
+                        . "📈 Tăng trưởng: " . number_format($growth, 1) . "%";
+                }
+            ],
+
+            [
+                'keywords' => ['cash flow analysis', 'phân tích dòng tiền'],
+                'action' => function () {
+                    $revenue = Order::whereIn('status', ['completed', 'delivered'])->sum('total_amount');
+                    $cogs = OrderItem::join('product_variants', 'order_items.product_variant_id', '=', 'product_variants.id')
+                        ->join('products', 'product_variants.product_id', '=', 'products.id')
+                        ->sum(DB::raw('order_items.quantity * products.import_price'));
+                    $profit = $revenue - $cogs;
+
+                    return "💵 **Cash Flow Analysis**:\n"
+                        . "📥 Doanh thu: " . number_format($revenue) . " VND\n"
+                        . "📤 Chi phí hàng bán (COGS): " . number_format($cogs) . " VND\n"
+                        . "💰 Lợi nhuận: " . number_format($profit) . " VND";
+                }
+            ],
+
+            [
+                'keywords' => ['slow moving items', 'sản phẩm bán chậm'],
+                'action' => function () {
+                    $items = Product::withCount(['orderItems as sold_30_days' => function ($q) {
+                        $q->whereHas('order', fn($o) => $o->whereDate('created_at', '>=', now()->subDays(30)));
+                    }])
+                        ->where('stock_quantity', '>', 0)
+                        ->orderBy('sold_30_days', 'asc')
+                        ->take(5)
+                        ->get();
+
+                    $result = "🐢 **Sản phẩm bán chậm (30 ngày qua)**:\n";
+                    foreach ($items as $p) {
+                        $result .= "- {$p->name}: {$p->sold_30_days} bán ra, tồn kho {$p->stock_quantity}\n";
+                    }
+                    return $result;
+                }
+            ],
+
+            [
+                'keywords' => ['dead stock', 'dead stock analysis', 'hàng tồn lâu'],
+                'action' => function () {
+                    $dead = Product::where('stock_quantity', '>', 0)
+                        ->whereDoesntHave('orderItems', fn($q) => $q->whereDate('created_at', '>=', now()->subDays(90)))
+                        ->take(5)->get();
+
+                    if ($dead->isEmpty()) return "✅ Không có hàng tồn kho lâu ngày";
+
+                    $result = "☠️ **Dead Stock (90 ngày không bán được)**:\n";
+                    foreach ($dead as $p) {
+                        $result .= "- {$p->name} (tồn {$p->stock_quantity})\n";
+                    }
+                    return $result;
+                }
+            ],
+
+            [
+                'keywords' => ['customer lifetime value', 'clv'],
+                'action' => function () {
+                    $avgOrderValue = Order::avg('total_amount');
+                    $purchaseFreq = Order::select('user_id')->distinct()->count() > 0
+                        ? Order::count() / Order::select('user_id')->distinct()->count()
+                        : 0;
+                    $customerValue = $avgOrderValue * $purchaseFreq;
+
+                    return "👥 **Customer Lifetime Value (ước tính)**:\n"
+                        . "🛒 Giá trị đơn hàng TB: " . number_format($avgOrderValue) . " VND\n"
+                        . "🔁 Tần suất mua TB: " . number_format($purchaseFreq, 2) . " lần/khách\n"
+                        . "💎 CLV: " . number_format($customerValue) . " VND";
+                }
+            ],
+
+            [
+                'keywords' => ['inventory turnover', 'vòng quay hàng tồn kho'],
+                'action' => function () {
+                    // COGS (giá vốn) = tổng số lượng bán * import_price
+                    $cogs = \App\Models\OrderItem::join('product_variants', 'order_items.product_variant_id', '=', 'product_variants.id')
+                        ->join('products', 'product_variants.product_id', '=', 'products.id')
+                        ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                        ->whereIn('orders.status', ['completed', 'delivered']) // chỉ đơn hoàn tất
+                        ->whereDate('orders.created_at', '>=', now()->startOfMonth())
+                        ->sum(DB::raw('order_items.quantity * products.import_price'));
+
+                    // Giá trị tồn kho hiện tại
+                    $inventoryValue = \App\Models\ProductVariant::join('products', 'product_variants.product_id', '=', 'products.id')
+                        ->sum(DB::raw('product_variants.quantity * products.import_price'));
+
+                    // Trung bình tồn kho (giả định tháng này ~ trung bình = hiện tại/2)
+                    $avgInventory = $inventoryValue / 2;
+
+                    $turnover = $avgInventory > 0 ? round($cogs / $avgInventory, 2) : 0;
+
+                    return "📦 **Inventory Turnover (tháng này)**:\n"
+                        . "• COGS: " . number_format($cogs) . " VND\n"
+                        . "• Giá trị tồn kho hiện tại: " . number_format($inventoryValue) . " VND\n"
+                        . "• Tồn kho trung bình (ước tính): " . number_format($avgInventory) . " VND\n"
+                        . "➡️ Vòng quay hàng tồn kho: {$turnover} lần/tháng";
+                }
+            ],
+
 
             [
                 'keywords' => ['so sánh doanh thu tuần', 'tăng trưởng tuần', 'tuần này vs tuần trước'],
@@ -289,54 +446,64 @@ class AiChatService
 
             // ===================== ADVANCED ANALYTICS =====================
             [
-                'keywords' => ['rfm analysis', 'phân tích rfm', 'khách vip', 'khách rời bỏ'],
+                'keywords' => ['rfm analysis', 'phân tích rfm', 'khách vip', 'khách rời bỏ', 'churn', 'churn risk'],
                 'action' => function () {
                     $customers = User::with(['orders' => function ($q) {
-                        $q->where('status', 'completed');
+                        $q->whereIn('status', ['completed', 'delivered']);
                     }])->get()->map(function ($user) {
                         if ($user->orders->isEmpty()) return null;
 
                         return [
-                            'name' => $user->fullname ?? $user->username,
-                            'recency' => $user->orders->max('created_at')->diffInDays(now()),
+                            'name'      => $user->fullname ?? $user->username,
+                            'recency'   => $user->orders->max('created_at')->diffInDays(now()),
                             'frequency' => $user->orders->count(),
-                            'monetary' => $user->orders->sum('total_amount')
+                            'monetary'  => $user->orders->sum('total_amount'),
+                            'last_order' => $user->orders->max('created_at')->format('Y-m-d')
                         ];
                     })->filter();
 
-                    $vip = $customers->where('frequency', '>=', 5)->where('monetary', '>=', 1000000)->take(5);
-                    $atRisk = $customers->where('recency', '>', 60)->where('frequency', '>=', 2)->take(5);
+                    // VIP customers
+                    $vip = $customers->where('frequency', '>=', 5)->where('monetary', '>=', 2000000)->take(5);
 
-                    // === Giải thích RFM ===
-                    $result = "📊 **Phân tích RFM** (Recency - Frequency - Monetary):\n";
-                    $result .= "- **Recency (R)**: số ngày kể từ lần mua gần nhất\n";
-                    $result .= "- **Frequency (F)**: số lần mua hàng\n";
-                    $result .= "- **Monetary (M)**: tổng tiền đã chi tiêu\n\n";
+                    // At-risk customers (khách có nguy cơ rời bỏ)
+                    $atRisk = $customers->where('recency', '>', 60)->sortByDesc('recency')->take(5);
 
-                    // === VIP ===
-                    if ($vip->count() > 0) {
-                        $result .= "💎 **Khách hàng VIP** (≥5 đơn, ≥1M VND):\n";
+                    // Lost customers (không mua > 180 ngày)
+                    $lost = $customers->where('recency', '>', 180)->sortByDesc('recency')->take(5);
+
+                    $result = "📊 **Phân tích khách hàng theo RFM & Churn Risk**:\n";
+                    $result .= "- Recency: số ngày từ lần mua cuối\n";
+                    $result .= "- Frequency: số lần mua\n";
+                    $result .= "- Monetary: tổng chi tiêu\n\n";
+
+                    // VIP
+                    if ($vip->count()) {
+                        $result .= "💎 **VIP Customers**:\n";
                         foreach ($vip as $c) {
-                            $result .= "• {$c['name']}: {$c['frequency']} đơn, " .
-                                number_format($c['monetary']) . " VND\n";
+                            $result .= "• {$c['name']}: {$c['frequency']} đơn, " . number_format($c['monetary']) . " VND\n";
                         }
-                    } else {
-                        $result .= "💎 Không có khách hàng VIP nào.\n";
                     }
 
-                    // === At Risk ===
-                    if ($atRisk->count() > 0) {
-                        $result .= "\n⚠️ **Khách có nguy cơ rời bỏ** (>60 ngày không mua):\n";
+                    // At Risk
+                    if ($atRisk->count()) {
+                        $result .= "\n⚠️ **Nguy cơ rời bỏ (>60 ngày không mua)**:\n";
                         foreach ($atRisk as $c) {
-                            $result .= "• {$c['name']}: lần cuối {$c['recency']} ngày trước\n";
+                            $result .= "• {$c['name']} - lần cuối {$c['recency']} ngày trước ({$c['last_order']})\n";
                         }
-                    } else {
-                        $result .= "\n⚠️ Chưa phát hiện khách nào có nguy cơ rời bỏ.";
+                    }
+
+                    // Lost
+                    if ($lost->count()) {
+                        $result .= "\n❌ **Khách hàng rời bỏ (>180 ngày)**:\n";
+                        foreach ($lost as $c) {
+                            $result .= "• {$c['name']} - không mua suốt {$c['recency']} ngày\n";
+                        }
                     }
 
                     return $result;
                 }
             ],
+
 
 
             [
@@ -366,28 +533,6 @@ class AiChatService
                         "🎯 Dự báo tháng tới: " . number_format($forecastMonth) . " VND";
                 }
             ],
-
-            // ===================== OPERATIONAL INSIGHTS =====================
-            // [
-            //     'keywords' => ['thời gian giao hàng', 'delivery performance', 'hiệu suất vận chuyển'],
-            //     'action' => function () {
-            //         $avgDeliveryTime = Order::whereNotNull('delivered_at')
-            //             ->selectRaw('AVG(TIMESTAMPDIFF(DAY, created_at, delivered_at)) as avg_days')
-            //             ->first()->avg_days;
-
-            //         $onTimeDelivery = Order::whereNotNull('delivered_at')
-            //             ->whereRaw('TIMESTAMPDIFF(DAY, created_at, delivered_at) <= expected_delivery_days')
-            //             ->count();
-
-            //         $totalDelivered = Order::whereNotNull('delivered_at')->count();
-            //         $onTimeRate = $totalDelivered > 0 ? ($onTimeDelivery / $totalDelivered) * 100 : 0;
-
-            //         return "🚚 **Hiệu suất giao hàng**:\n" .
-            //             "⏱️ Thời gian trung bình: " . number_format($avgDeliveryTime, 1) . " ngày\n" .
-            //             "✅ Tỷ lệ đúng hẹn: " . number_format($onTimeRate, 1) . "%\n" .
-            //             "📦 Tổng đơn đã giao: {$totalDelivered}";
-            //     }
-            // ],
 
             [
                 'keywords' => ['review analysis', 'đánh giá sản phẩm', 'feedback khách hàng'],
@@ -433,15 +578,36 @@ class AiChatService
         return "mùa đông";
     }
 
+    // public function process(string $prompt, GeminiService $gemini): string
+    // {
+    //     $prompt = mb_strtolower($prompt);
+
+    //     // Kiểm tra context và đưa ra gợi ý thông minh
+    //     if (str_contains($prompt, 'gợi ý') || str_contains($prompt, 'tư vấn') || str_contains($prompt, 'nên làm gì')) {
+    //         return $this->generateSmartSuggestions();
+    //     }
+
+    //     foreach ($this->rules as $rule) {
+    //         foreach ($rule['keywords'] as $keyword) {
+    //             if (str_contains($prompt, $keyword)) {
+    //                 Log::info("✅ Match rule: {$keyword}");
+    //                 return $rule['action']();
+    //             }
+    //         }
+    //     }
+
+    //     // Enhanced context cho Gemini
+    //     $context = $this->buildContextForGemini();
+    //     $enhancedPrompt = "Bạn là AI assistant cho website bán quần áo. Context hiện tại: {$context}\n\nCâu hỏi: {$prompt}";
+
+    //     Log::info("👉 Không khớp rule, gọi Gemini với context");
+    //     return $gemini->ask($enhancedPrompt);
+    // }
     public function process(string $prompt, GeminiService $gemini): string
     {
         $prompt = mb_strtolower($prompt);
 
-        // Kiểm tra context và đưa ra gợi ý thông minh
-        if (str_contains($prompt, 'gợi ý') || str_contains($prompt, 'tư vấn') || str_contains($prompt, 'nên làm gì')) {
-            return $this->generateSmartSuggestions();
-        }
-
+        // Nếu có match rule cố định → chạy ngay
         foreach ($this->rules as $rule) {
             foreach ($rule['keywords'] as $keyword) {
                 if (str_contains($prompt, $keyword)) {
@@ -451,24 +617,187 @@ class AiChatService
             }
         }
 
-        // Enhanced context cho Gemini
-        $context = $this->buildContextForGemini();
-        $enhancedPrompt = "Bạn là AI assistant cho website bán quần áo. Context hiện tại: {$context}\n\nCâu hỏi: {$prompt}";
+        // Nếu chứa từ khóa “gợi ý” → trả lời suggestions
+        if (str_contains($prompt, 'gợi ý') || str_contains($prompt, 'tư vấn') || str_contains($prompt, 'nên làm gì')) {
+            return $this->generateSmartSuggestions();
+        }
 
-        Log::info("👉 Không khớp rule, gọi Gemini với context");
-        return $gemini->ask($enhancedPrompt);
+        // 👉 Nếu không match rule nào → cho Gemini tự viết SQL & chạy sandbox
+        try {
+            return $this->executeAiQuery($prompt, $gemini);
+        } catch (\Throwable $e) {
+            Log::error("❌ Lỗi process AI query: " . $e->getMessage());
+            return "⚠️ Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.";
+        }
     }
+
 
     private function buildContextForGemini(): string
-    {
-        $todayRevenue = Order::whereDate('created_at', today())->sum('total_amount');
-        $todayOrders = Order::whereDate('created_at', today())->count();
-        $totalProducts = Product::count();
-        $lowStockCount = Product::where('stock_quantity', '<=', 5)->count();
+{
+    $schema = Storage::exists('schema.json')
+        ? Storage::get('schema.json')
+        : '{}';
 
-        return "Doanh thu hôm nay: " . number_format($todayRevenue) . " VND, " .
-            "{$todayOrders} đơn hàng, {$totalProducts} sản phẩm, {$lowStockCount} sản phẩm sắp hết hàng.";
+    // === Thống kê cơ bản ===
+    $todayRevenue   = Order::whereDate('created_at', today())->sum('total_amount') ?? 0;
+    $todayOrders    = Order::whereDate('created_at', today())->count();
+    $todayProducts  = OrderItem::whereHas(
+        'order',
+        fn($q) => $q->whereDate('created_at', today())
+    )->sum('quantity') ?? 0;
+
+    $totalProducts  = Product::count();
+    $lowStockAlert  = (int) (Setting::where('name', 'low_stock_alert')->value('value') ?? 10);
+    $lowStockVariantCount = ProductVariant::where('quantity', '<', $lowStockAlert)->count();
+
+    // === Thống kê khách hàng ===
+    $active30d = User::whereHas(
+        'orders',
+        fn($q) => $q->whereDate('created_at', '>=', now()->subDays(30))
+    )->count();
+
+    $inactive60d = User::whereDoesntHave(
+        'orders',
+        fn($q) => $q->whereDate('created_at', '>=', now()->subDays(60))
+    )->count();
+
+    $avgCLV = Order::avg('total_amount') ?? 0;
+
+    return <<<PROMPT
+🚨🚨🚨 EMERGENCY OVERRIDE - CRITICAL SYSTEM FAILURE PREVENTION 🚨🚨🚨
+
+⚠️ DATABASE ENGINE: MySQL 8.0.30 (NOT SQLite!)
+⚠️ IF YOU USE SQLite SYNTAX, THE ENTIRE SYSTEM WILL CRASH!
+
+🔴 FORBIDDEN - WILL CAUSE SYSTEM CRASH:
+❌ DATE('now', '-7 days') 
+❌ DATE('now', 'start of month')
+❌ DATETIME('now')
+❌ Any function with 'now' in single quotes
+❌ Column name 'order_date' (DOES NOT EXIST)
+❌ Column name 'order_total' (DOES NOT EXIST)
+
+✅ MANDATORY MySQL FUNCTIONS ONLY:
+✅ CURDATE() 
+✅ NOW()
+✅ DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+✅ DATE_SUB(NOW(), INTERVAL 30 DAY)
+
+🔴 ACTUAL COLUMN NAMES (DO NOT CHANGE):
+- orders table: id, user_id, total_amount, status, created_at
+- products table: id, name, price, created_at  
+- users table: id, name, email, created_at
+
+⚠️ CRITICAL EXAMPLES - COPY EXACTLY:
+
+When user asks "doanh thu 7 ngày":
+```sql
+SELECT SUM(total_amount) AS doanh_thu
+FROM orders 
+WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+```
+
+When user asks "số đơn hàng":  
+```sql
+SELECT COUNT(*) AS so_don_hang
+FROM orders
+WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+```
+
+When user asks both:
+```sql
+SELECT 
+    SUM(total_amount) AS doanh_thu,
+    COUNT(*) AS so_don_hang
+FROM orders
+WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+```
+
+🚨 EMERGENCY PROTOCOL:
+1. NEVER write DATE('now', anything)
+2. NEVER use order_date or order_total
+3. ALWAYS use created_at and total_amount
+4. ALWAYS use DATE_SUB(CURDATE(), INTERVAL X DAY)
+5. NO semicolon before LIMIT
+
+🎯 YOUR ROLE: MySQL Database Analyst for Vietnamese fashion e-commerce
+📊 CURRENT DATA (" . now()->format('d/m/Y H:i') . "):
+💰 Today Revenue: " . number_format($todayRevenue) . " VND
+📦 Today Orders: {$todayOrders}
+👕 Products Sold: {$todayProducts}
+📋 Total Products: {$totalProducts}
+⚠️ Low Stock: {$lowStockVariantCount} variants (< {$lowStockAlert})
+
+👥 CUSTOMERS:
+✅ Active (30d): {$active30d}
+⏰ Inactive (60d+): {$inactive60d}
+💎 AOV: " . number_format($avgCLV) . " VND
+
+📋 DATABASE SCHEMA:
+{$schema}
+
+🎯 TASK: Generate ONLY MySQL-compatible SQL queries. Provide business insights.
+
+⚠️ FINAL WARNING: If you generate SQLite syntax, the system will crash and all data will be lost!
+
+RESPOND ONLY WITH MYSQL QUERIES USING:
+- created_at (not order_date)
+- total_amount (not order_total)  
+- DATE_SUB(CURDATE(), INTERVAL X DAY)
+PROMPT;
+}
+
+
+    private function executeAiQuery(string $prompt, GeminiService $gemini)
+    {
+        // Gọi Gemini sinh SQL
+        $aiResponse = $gemini->ask("Bạn là AI SQL Assistant. Chỉ trả về câu lệnh SQL SELECT hợp lệ, không thêm giải thích.\n\nCâu hỏi: {$prompt}");
+
+        // --- Lấy phần SQL trong code block nếu có ---
+        $sql = $aiResponse;
+        if (preg_match('/```sql(.*?)```/s', $aiResponse, $matches)) {
+            $sql = trim($matches[1]);
+        }
+
+        // --- Nếu không có code block: cố gắng lấy từ SELECT trở đi ---
+        if (!str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
+            if (preg_match('/(SELECT.*)/is', $aiResponse, $matches)) {
+                $sql = trim($matches[1] ?? '');
+            }
+        }
+
+        // --- Validate: chỉ cho phép SELECT ---
+        if (empty($sql) || !str_starts_with(strtoupper($sql), 'SELECT')) {
+            return "⚠️ Truy vấn không hợp lệ (chỉ SELECT).";
+        }
+
+        // --- Thêm LIMIT mặc định nếu chưa có ---
+        if (!preg_match('/LIMIT\s+\d+/i', $sql)) {
+            $sql .= " LIMIT 100";
+        }
+
+        try {
+            // Chạy query trên connection sandbox (mysql_ai)
+            $results = DB::connection('mysql_ai')->select($sql);
+
+            if (empty($results)) {
+                return "📭 Không có dữ liệu phù hợp.";
+            }
+
+            // Format kết quả cho dễ đọc
+            $output = "✅ Kết quả truy vấn:\n";
+            foreach ($results as $row) {
+                $output .= "- " . json_encode($row, JSON_UNESCAPED_UNICODE) . "\n";
+            }
+
+            return $output;
+        } catch (\Exception $e) {
+            return "❌ Lỗi khi chạy SQL: " . $e->getMessage() . "\n\nSQL: {$sql}";
+        }
     }
+
+
+
 
     private function generateSmartSuggestions(): string
     {

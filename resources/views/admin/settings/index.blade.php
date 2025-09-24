@@ -97,20 +97,20 @@
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_products">
                                     <i class="fa-solid fa-cart-shopping fs-2 me-2"><span class="path1"></span><span
-                                            class="path2"></span><span class="path3"></span></i> Sản phẩm
+                                            class="path2"></span><span class="path3"></span></i> Sản phẩm & đơn hàng
                                 </a>
                             </li>
                             <!--end:::Tab item-->
 
                             <!--begin:::Tab item-->
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab"
                                     href="#kt_ecommerce_settings_customers">
                                     <i class="ki-duotone ki-people fs-2 me-2"><span class="path1"></span><span
                                             class="path2"></span><span class="path3"></span><span
                                             class="path4"></span><span class="path5"></span></i> Customers
                                 </a>
-                            </li>
+                            </li> --}}
                             <!--end:::Tab item-->
                         </ul>
                         <!--end:::Tabs-->
@@ -325,6 +325,26 @@
                                         <div class="col-md-3 text-md-end">
                                             <!--begin::Label-->
                                             <label class="fs-6 fw-semibold form-label mt-3">
+                                                <span class="required">Thông báo nổi bật đầu trang chủ</span>
+
+
+                                                <span class="ms-1" data-bs-toggle="tooltip"
+                                                    title="Set the store's full address.">
+                                                    <span class="path1"></span><span class="path2"></span><span
+                                                        class="path3"></span></i></span> </label>
+                                            <!--end::Label-->
+                                        </div>
+
+                                        <div class="col-md-9">
+                                            <!--begin::Input-->
+                                            <textarea class="form-control form-control-solid" name="noti_header">{{ $settings['noti_header']->value ?? '' }}</textarea>
+                                            <!--end::Input-->
+                                        </div>
+                                    </div>
+                                    <div class="row fv-row mb-7">
+                                        <div class="col-md-3 text-md-end">
+                                            <!--begin::Label-->
+                                            <label class="fs-6 fw-semibold form-label mt-3">
                                                 <span>Thuế</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Nếu bạn muốn thu thuế VAT thì nhập vào đây, nếu không có thì để trống.
@@ -510,7 +530,7 @@
                                     <!--begin::Card header-->
                                     <div class="card-header border-0 pt-6">
                                         <div class="card-title">
-                                            <h2 class="fw-bold">Third Party Integrations</h2>
+                                            <h2 class="fw-bold">Tích hợp kết nối</h2>
                                         </div>
                                     </div>
                                     <!--end::Card header-->
@@ -708,7 +728,7 @@
                                                 <!--end::Col-->
 
                                                 <!--begin::Col - Google Analytics-->
-                                                <div class="col-md-6">
+                                                {{-- <div class="col-md-6">
                                                     <!--begin::Card-->
                                                     <div class="card card-flush h-md-100">
                                                         <!--begin::Card header-->
@@ -758,9 +778,54 @@
                                                         <!--end::Card body-->
                                                     </div>
                                                     <!--end::Card-->
-                                                </div>
+                                                </div> --}}
                                                 <!--end::Col-->
+                                                <div class="col-md-6">
+                                                    <!--begin::Card-->
+                                                    <div class="card card-flush h-md-100">
+                                                        <!--begin::Card header-->
+                                                        <div class="card-header">
+                                                            <div class="card-title">
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Icon-->
+                                                                    <div class="symbol symbol-40px me-3">
+                                                                        <div class="symbol-label bg-light-success">
+                                                                            <i class="fab fa-google fs-2 text-success"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--end::Icon-->
+                                                                    <h3 class="mb-0">GHN</h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Card header-->
 
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body pt-0">
+                                                            <!--begin::Form group - Status-->
+                                                            <div class="mb-10">
+                                                                <label class="form-label fw-semibold">Token</label>
+                                                                <input type="text" name="ghn_token"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('ghn_token') }}"
+                                                                    placeholder="VD: 197084" />
+                                                            </div>
+                                                            <!--end::Form group-->
+
+                                                            <!--begin::Form group - Tracking ID-->
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Shop ID</label>
+                                                                <input type="text" name="ghn_shop_id"
+                                                                    class="form-control form-control-solid"
+                                                                    value="{{ setting('ghn_shop_id') }}"
+                                                                    placeholder="VD: e61d00b9-XXXX-XXXX-XXXX-XXXX" />
+                                                            </div>
+                                                            <!--end::Form group-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Card-->
+                                                </div>
                                                 <!--begin::Col - Google Ads-->
                                                 <div class="col-md-6">
                                                     <!--begin::Card-->
@@ -801,7 +866,7 @@
                                                 <!--end::Col-->
 
                                                 <!--begin::Col - ChatGPT-->
-                                                <div class="col-md-6">
+                                                {{-- <div class="col-md-6">
                                                     <!--begin::Card-->
                                                     <div class="card card-flush h-md-100">
                                                         <!--begin::Card header-->
@@ -836,7 +901,7 @@
                                                         <!--end::Card body-->
                                                     </div>
                                                     <!--end::Card-->
-                                                </div>
+                                                </div> --}}
                                                 <!--begin::Col - ChatGPT-->
                                                 <div class="col-md-6">
                                                     <!--begin::Card-->
@@ -877,7 +942,7 @@
                                                 <!--end::Col-->
 
                                                 <!--begin::Col - Gmail Check-->
-                                                <div class="col-md-6">
+                                                {{-- <div class="col-md-6">
                                                     <!--begin::Card-->
                                                     <div class="card card-flush h-md-100">
                                                         <!--begin::Card header-->
@@ -913,11 +978,11 @@
                                                         <!--end::Card body-->
                                                     </div>
                                                     <!--end::Card-->
-                                                </div>
+                                                </div> --}}
                                                 <!--end::Col-->
 
                                                 <!--begin::Col - Instagram Check-->
-                                                <div class="col-md-6">
+                                                {{-- <div class="col-md-6">
                                                     <!--begin::Card-->
                                                     <div class="card card-flush h-md-100">
                                                         <!--begin::Card header-->
@@ -954,7 +1019,7 @@
                                                         <!--end::Card body-->
                                                     </div>
                                                     <!--end::Card-->
-                                                </div>
+                                                </div> --}}
                                                 <!--end::Col-->
                                             </div>
                                             <!--end::Row-->
@@ -1089,7 +1154,7 @@
                                             <!--end::Notification Card 2-->
 
                                             <!--begin::Notification Card 3-->
-                                            <div class="col-12">
+                                            {{-- <div class="col-12">
                                                 <div class="card card-flush border-0 shadow-sm">
                                                     <div class="card-header bg-light-warning">
                                                         <div class="card-title">
@@ -1105,9 +1170,9 @@
                                                                 thông báo:</label>
                                                             <textarea class="form-control form-control-solid" rows="4" name="noti_action"
                                                                 placeholder="Nhập nội dung thông báo hành động...">[{time}] 
-                                            - <b>Username</b>: <code>{username}</code>
-                                            - <b>Action</b>: <code>{action}</code>
-                                            - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        - <b>Username</b>: <code>{username}</code>
+                                                        - <b>Action</b>: <code>{action}</code>
+                                                        - <b>IP</b>: <code>{ip}</code></textarea>
                                                         </div>
                                                         <!--end::Input group-->
 
@@ -1153,11 +1218,11 @@
                                                         <!--end::Variables-->
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <!--end::Notification Card 3-->
 
                                             <!--begin::Notification Card 4-->
-                                            <div class="col-12">
+                                            {{-- <div class="col-12">
                                                 <div class="card card-flush border-0 shadow-sm">
                                                     <div class="card-header bg-light-danger">
                                                         <div class="card-title">
@@ -1174,9 +1239,9 @@
                                                                 thông báo:</label>
                                                             <textarea class="form-control form-control-solid" rows="5" name="noti_affiliate_withdraw"
                                                                 placeholder="Nhập nội dung thông báo rút hoa hồng...">[{time}] 
-                                    - <b>Username</b>: <code>{username}</code>
-                                    - <b>Action</b>: <code>Tạo lệnh rút {amount} về ngân hàng {bank} | {account_number} | {account_name}</code>
-                                    - <b>IP</b>: <code>{ip}</code></textarea>
+                                                        - <b>Username</b>: <code>{username}</code>
+                                                        - <b>Action</b>: <code>Tạo lệnh rút {amount} về ngân hàng {bank} | {account_number} | {account_name}</code>
+                                                        - <b>IP</b>: <code>{ip}</code></textarea>
                                                         </div>
                                                         <!--end::Input group-->
 
@@ -1240,7 +1305,7 @@
                                                         <!--end::Variables-->
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <!--end::Notification Card 4-->
                                         </div>
                                         <div class="row py-5">
@@ -1291,46 +1356,7 @@
                                     </div>
                                     <!--end::Heading-->
 
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Category Product Count</span>
 
-
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Show the number of products inside the subcategories in the storefront header category menu. Be warned, this will cause an extreme performance hit for stores with a lot of subcategories!">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="d-flex mt-3">
-                                                <!--begin::Radio-->
-                                                <div class="form-check form-check-custom form-check-solid me-5">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="category_product_count" id="category_product_count_yes"
-                                                        checked />
-                                                    <label class="form-check-label" for="category_product_count_yes">
-                                                        Yes
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="category_product_count" id="category_product_count_no" />
-                                                    <label class="form-check-label" for="category_product_count_no">
-                                                        No
-                                                    </label>
-                                                </div>
-                                                <!--end::Radio-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
 
                                     <!--begin::Input group-->
                                     <div class="row fv-row mb-16">
@@ -1358,113 +1384,16 @@
                                         </div>
                                     </div>
                                     <!--end::Input group-->
-
-                                    <!--begin::Heading-->
-                                    <div class="row mb-7">
-                                        <div class="col-md-9 offset-md-3">
-                                            <h2>Reviews Settings</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Heading-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Allow Reviews</span>
-
-
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Enable/disable review entries for registered customers.">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="d-flex mt-3">
-                                                <!--begin::Radio-->
-                                                <div class="form-check form-check-custom form-check-solid me-5">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="allow_reviews" id="allow_reviews_yes" checked />
-                                                    <label class="form-check-label" for="allow_reviews_yes">
-                                                        Yes
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="allow_reviews" id="allow_reviews_no" />
-                                                    <label class="form-check-label" for="allow_reviews_no">
-                                                        No
-                                                    </label>
-                                                </div>
-                                                <!--end::Radio-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
                                     <!--begin::Input group-->
                                     <div class="row fv-row mb-16">
                                         <div class="col-md-3 text-md-end">
                                             <!--begin::Label-->
                                             <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Allow Guest Reviews</span>
+                                                <span class="required">Thời gian cho phép yêu cầu đổi trả hàng (Số ngày)</span>
 
 
                                                 <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Enable/disable review entries for public guest customers">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="d-flex mt-3">
-                                                <!--begin::Radio-->
-                                                <div class="form-check form-check-custom form-check-solid me-5">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="allow_guest_reviews" id="allow_guest_reviews_yes" />
-                                                    <label class="form-check-label" for="allow_guest_reviews_yes">
-                                                        Yes
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="allow_guest_reviews" id="allow_guest_reviews_no" checked />
-                                                    <label class="form-check-label" for="allow_guest_reviews_no">
-                                                        No
-                                                    </label>
-                                                </div>
-                                                <!--end::Radio-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Heading-->
-                                    <div class="row mb-7">
-                                        <div class="col-md-9 offset-md-3">
-                                            <h2>Vouchers Settings</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Heading-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Minimum Vouchers</span>
-
-
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Minimum number of vouchers customers can attach to an order">
+                                                    title="Kho hàng đến số lượng này sẽ báo cáo cho admin biết gần hết">
                                                     <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
                                                             class="path1"></span><span class="path2"></span><span
                                                             class="path3"></span></i></span> </label>
@@ -1473,104 +1402,19 @@
 
                                         <div class="col-md-9">
                                             <!--begin::Input-->
-                                            <input type="text" class="form-control form-control-solid"
-                                                name="products_min_voucher" value="1" />
+                                            <input type="number" class="form-control form-control-solid"
+                                                name="time_request_order"
+                                                value="{{ $settings['time_request_order']->value ?? 10 }}" />
+
                                             <!--end::Input-->
                                         </div>
                                     </div>
                                     <!--end::Input group-->
 
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-16">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Maximum Vouchers</span>
 
 
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Maximum number of vouchers customers can attach to an order">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <!--begin::Input-->
-                                            <input type="text" class="form-control form-control-solid"
-                                                name="products_max_voucher" value="10" />
-                                            <!--end::Input-->
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Heading-->
-                                    <div class="row mb-7">
-                                        <div class="col-md-9 offset-md-3">
-                                            <h2>Tax Settings</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Heading-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span>Display Prices with Tax</span>
-                                            </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <div class="d-flex mt-3">
-                                                <!--begin::Radio-->
-                                                <div class="form-check form-check-custom form-check-solid me-5">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="product_tax" id="product_tax_yes" checked />
-                                                    <label class="form-check-label" for="product_tax_yes">
-                                                        Yes
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="radio" value=""
-                                                        name="product_tax" id="product_tax_no" />
-                                                    <label class="form-check-label" for="product_tax_no">
-                                                        No
-                                                    </label>
-                                                </div>
-                                                <!--end::Radio-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
-
-                                    <!--begin::Input group-->
-                                    <div class="row fv-row mb-7">
-                                        <div class="col-md-3 text-md-end">
-                                            <!--begin::Label-->
-                                            <label class="fs-6 fw-semibold form-label mt-3">
-                                                <span class="required">Default Tax Rate</span>
 
 
-                                                <span class="ms-1" data-bs-toggle="tooltip"
-                                                    title="Determines the tax percentage (%) applied to orders">
-                                                    <i class="fa-solid fa-circle-info text-gray-500 fs-6"><span
-                                                            class="path1"></span><span class="path2"></span><span
-                                                            class="path3"></span></i></span> </label>
-                                            <!--end::Label-->
-                                        </div>
-
-                                        <div class="col-md-9">
-                                            <!--begin::Input-->
-                                            <input type="text" class="form-control form-control-solid"
-                                                name="products_tax_rate" value="15%" />
-                                            <!--end::Input-->
-                                        </div>
-                                    </div>
-                                    <!--end::Input group-->
 
                                     <!--begin::Action buttons-->
                                     <div class="row py-5">
@@ -1605,7 +1449,7 @@
                             <!--end:::Tab pane-->
 
                             <!--begin:::Tab pane-->
-                            <div class="tab-pane fade" id="kt_ecommerce_settings_customers" role="tabpanel">
+                            {{-- <div class="tab-pane fade" id="kt_ecommerce_settings_customers" role="tabpanel">
 
                                 <!--begin::Form-->
                                 <form id="kt_ecommerce_settings_general_customers" class="form" action="#">
@@ -1874,7 +1718,7 @@
                                     <!--end::Action buttons-->
                                 </form>
                                 <!--end::Form-->
-                            </div>
+                            </div> --}}
                             <!--end:::Tab pane-->
                         </div>
                         <!--end:::Tab content-->

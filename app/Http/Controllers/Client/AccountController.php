@@ -20,7 +20,9 @@ use App\Models\Refund;
 class AccountController extends Controller
 {
 
-    public function dashboard(Request $request)
+
+  public function dashboard(Request $request)
+
     {
 
         $user = Auth::user();
@@ -61,10 +63,11 @@ if ($request->filled('order_code')) {
         ->get();
 }
 
-$refunds = Refund::with(['order', 'rr'])
-    ->where('user_id', $user->id)
-    ->latest()
-    ->paginate(10);
+
+            $refunds = Refund::with(['order', 'rr'])
+        ->where('user_id', $user->id)
+        ->latest()
+        ->paginate(10);
 
 
         if (Auth::check()) {
@@ -77,8 +80,23 @@ $refunds = Refund::with(['order', 'rr'])
             ->take(10)
             ->get();
 
+                $ordersQuery = Order::with([
+                        'orderItems.product',
+                        'returnRequests',
+                        'adjustments' => function ($q) {
+                            $q->where('visible_to_customer', 1);
+                        }
+                    ])
+                    ->where('user_id', auth()->id())
+                    ->latest();
 
-        $provinces = Province::all();
+                if ($request->filled('order_code')) {
+                    $ordersQuery->where('order_code', 'like', '%' . $request->order_code . '%');
+                }
+
+                $orders = $ordersQuery->get();
+
+                        $provinces = Province::all();
 
         return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces','refunds'));
     }

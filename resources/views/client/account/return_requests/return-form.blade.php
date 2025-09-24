@@ -44,6 +44,9 @@
             <div class="mb-3">
                 <label class="form-label">Ảnh / Video đính kèm (tối đa 5 tệp)</label>
                 <input type="file" name="attachments[]" class="form-control" multiple accept="image/*,video/*">
+                @error('attachments.0')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
                 <small class="text-muted">Hỗ trợ ảnh và video (MP4, WEBM...). Mỗi file tối đa 5MB.</small>
             </div>
 

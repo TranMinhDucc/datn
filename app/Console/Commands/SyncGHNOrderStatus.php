@@ -157,55 +157,60 @@ class SyncGHNOrderStatus extends Command
     {
         Log::info('🔁 Bắt đầu sync đơn GHN');
 
-        // chỉ đồng bộ những đơn GHN chưa kết thúc phía GHN
-        $pendingOrders = ShippingOrder::whereNotIn('status', ['delivered', 'cancel', 'returned'])->get();
+        ShippingOrder::whereNotIn('status', ['delivered', 'cancel', 'returned'])
+            ->orderBy('id')
+            ->chunk(100, function ($shippingOrders) {
+                foreach ($shippingOrders as $shippingOrder) {
+                    $this->syncOne($shippingOrder); // gọi hàm xử lý riêng
+                }
+            });
+    }
+    private function syncOne(ShippingOrder $shippingOrder)
+    {
+        Log::info("➡️ Đang xử lý: {$shippingOrder->shipping_code}");
 
-        foreach ($pendingOrders as $shippingOrder) {
-            Log::info("➡️ Đang xử lý: {$shippingOrder->shipping_code}");
+        $resp = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Token' => config('services.ghn.token'),
+        ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail', [
+            'order_code' => $shippingOrder->shipping_code,
+        ]);
 
-            $resp = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Token' => config('services.ghn.token'),
-            ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail', [
-                'order_code' => $shippingOrder->shipping_code,
-            ]);
-
-            if (!$resp->successful()) {
-                Log::warning("❌ GHN lỗi: {$shippingOrder->shipping_code}", ['body' => $resp->body()]);
-                continue;
-            }
-
-            $ghnStatus = data_get($resp->json(), 'data.status');
-            if (!$ghnStatus) continue;
-
-            $oldGhn = $shippingOrder->status;
-
-            // Nếu có thay đổi status GHN → cập nhật + ghi log 1 lần
-            if ($oldGhn !== $ghnStatus) {
-                $shippingOrder->update(['status' => $ghnStatus]);
-
-                ShippingLog::create([
-                    'order_id'      => $shippingOrder->order_id,
-                    'provider'      => 'ghn',
-                    'tracking_code' => $shippingOrder->shipping_code,
-                    'status'        => $ghnStatus,
-                    'description'   => $this->statusDescriptions[$ghnStatus] ?? 'Cập nhật trạng thái từ GHN',
-                    'received_at'   => now(),
-                ]);
-            }
-
-            // Cập nhật bảng orders
-            $order = Order::find($shippingOrder->order_id);
-            if (!$order) continue;
-
-            $changed = $this->updateOrderFromGhnStatus($order, $ghnStatus);
-
-            // Nếu là đơn ĐỔI và đã hoàn tất → đánh dấu đơn gốc
-            if ($changed || in_array($order->status, ['delivered', 'completed'], true)) {
-                $this->markOriginExchangedIfNeeded($order);
-            }
-
-            Log::info("📦 Sync: GHN {$ghnStatus} → ORDER {$order->status} (order_id={$order->id})");
+        if (!$resp->successful()) {
+            Log::warning("❌ GHN lỗi: {$shippingOrder->shipping_code}", ['body' => $resp->body()]);
+            return;
         }
+
+        $ghnStatus = data_get($resp->json(), 'data.status');
+        if (!$ghnStatus) return;
+
+        $oldGhn = $shippingOrder->status;
+
+        if ($oldGhn !== $ghnStatus) {
+            $shippingOrder->update(['status' => $ghnStatus]);
+
+            ShippingLog::create([
+                'order_id'      => $shippingOrder->order_id,
+                'provider'      => 'ghn',
+                'tracking_code' => $shippingOrder->shipping_code,
+                'status'        => $ghnStatus,
+                'description'   => $this->statusDescriptions[$ghnStatus] ?? 'Cập nhật trạng thái từ GHN',
+                'received_at'   => now(),
+            ]);
+        }
+
+        $order = Order::find($shippingOrder->order_id);
+        if (!$order) return;
+
+        $changed = $this->updateOrderFromGhnStatus($order, $ghnStatus);
+
+        if ($changed || in_array($order->status, ['delivered', 'completed'], true)) {
+            $this->markOriginExchangedIfNeeded($order);
+        }
+
+        Log::info("📦 Sync: GHN {$ghnStatus} → ORDER {$order->status} (order_id={$order->id})");
+
+        // để tránh GHN chặn khi gọi quá nhiều request
+        usleep(100 * 1000); // nghỉ 100ms
     }
 }
