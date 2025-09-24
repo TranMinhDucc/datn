@@ -380,10 +380,10 @@
                                 : asset('assets/client/images/layout-4/1.png');
                         @endphp
 
-                        {{-- <img class="img-fluid" src="{{ $img }}" alt=""> --}}
+                        <img class="img-fluid" src="{{ $img }}" alt="">
 
                         <div class="main-images"></div>
-                        {{-- <img class="img-fluid" src="{{ $img }}" alt=""> --}}
+                        <img class="img-fluid" src="{{ $img }}" alt="">
                     </div>
 
 

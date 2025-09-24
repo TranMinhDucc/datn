@@ -44,7 +44,7 @@
 
     @yield('style')
     @if (Auth::check())
-        <meta name="user-id" content="{{ Auth::id() }}">
+    <meta name="user-id" content="{{ Auth::id() }}">
     @endif
 </head>
 <style>
@@ -70,7 +70,7 @@
     @auth
     localStorage.setItem('currentUser', '{{ auth()->user()->id }}');
     @else
-        localStorage.setItem('currentUser', 'guest');
+    localStorage.setItem('currentUser', 'guest');
     @endauth
     @auth
     const userId = '{{ auth()->user()->id }}';
@@ -280,48 +280,48 @@
                 <ul class="rapid-search">
 
                     @foreach ($popularSearches as $item)
-                        <li>
-                            <a href="{{ route('client.products.filterSidebar', ['keyword' => $item->keyword]) }}">
+                    <li>
+                        <a href="{{ route('client.products.filterSidebar', ['keyword' => $item->keyword]) }}">
 
-                                <i class="iconsax" data-icon="search-normal-2"></i>{{ ucfirst($item->keyword) }}
-                                ({{ $item->count }})
-                            </a>
-                        </li>
+                            <i class="iconsax" data-icon="search-normal-2"></i>{{ ucfirst($item->keyword) }}
+                            ({{ $item->count }})
+                        </a>
+                    </li>
                     @endforeach
                 </ul>
 
                 <h4>Có thể bạn sẽ thích</h4>
                 <div class="row gy-4 ratio_square-2 preemptive-search">
                     @foreach ($recommendedProducts as $item)
-                        <div class="col-xl-2 col-sm-4 col-6">
-                            <div class="product-box-6">
-                                <div class="img-wrapper">
-                                    <div class="product-image">
-                                        <a href="{{ route('client.products.show', $item->slug) }}">
-                                            <img class="bg-img" src="{{ asset('storage/' . $item->image) }}"
-                                                alt="{{ $item->name }}">
-                                        </a>
-                                    </div>
+                    <div class="col-xl-2 col-sm-4 col-6">
+                        <div class="product-box-6">
+                            <div class="img-wrapper">
+                                <div class="product-image">
+                                    <a href="{{ route('client.products.show', $item->slug) }}">
+                                        <img class="bg-img" src="{{ asset('storage/' . $item->image) }}"
+                                            alt="{{ $item->name }}">
+                                    </a>
                                 </div>
-                                <div class="product-detail">
-                                    <div>
-                                        <a href="{{ route('client.products.show', $item->slug) }}">
-                                            <h6>{{ $item->name }}</h6>
-                                        </a>
-                                        <p>{{ number_format($item->sale_price ?? $item->base_price, 0, ',', '.') }}₫
-                                        </p>
-                                        <ul class="rating">
-                                            <li><i class="fa-solid fa-star"></i></li>
-                                            <li><i class="fa-solid fa-star"></i></li>
-                                            <li><i class="fa-solid fa-star"></i></li>
-                                            <li><i class="fa-solid fa-star-half-stroke"></i></li>
-                                            <li><i class="fa-regular fa-star"></i></li>
-                                            <li>4+</li>
-                                        </ul>
-                                    </div>
+                            </div>
+                            <div class="product-detail">
+                                <div>
+                                    <a href="{{ route('client.products.show', $item->slug) }}">
+                                        <h6>{{ $item->name }}</h6>
+                                    </a>
+                                    <p>{{ number_format($item->sale_price ?? $item->base_price, 0, ',', '.') }}₫
+                                    </p>
+                                    <ul class="rating">
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star"></i></li>
+                                        <li><i class="fa-solid fa-star-half-stroke"></i></li>
+                                        <li><i class="fa-regular fa-star"></i></li>
+                                        <li>4+</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     @endforeach
                 </div>
 
@@ -519,9 +519,14 @@
 
         // Nút tăng giảm
         li.querySelector('.btn-control__add').addEventListener('click', () => {
-            item.quantity += 1;
-            saveAndRender();
+            if (item.quantity < item.max_quantity) {
+                item.quantity += 1;
+                saveAndRender();
+            } else {
+                showToast('Thông báo', `Sản phẩm "${item.name}" chỉ còn ${item.max_quantity} cái trong kho.`, 'warning');
+            }
         });
+
 
         li.querySelector('.btn-control__remove').addEventListener('click', () => {
             if (item.quantity > 1) {
@@ -616,21 +621,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
 
 <script>
-    @if (Auth::check())
-        const userIdd = '{{ Auth::id() }}';
+    @if(Auth::check())
+    const userIdd = '{{ Auth::id() }}';
 
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: '{{ env('VITE_PUSHER_APP_KEY') }}',
-            cluster: '{{ env('VITE_PUSHER_APP_CLUSTER') }}',
-            forceTLS: true
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: '{{ env('
+        VITE_PUSHER_APP_KEY ') }}',
+        cluster: '{{ env('
+        VITE_PUSHER_APP_CLUSTER ') }}',
+        forceTLS: true
+    });
+
+    window.Echo.private(`App.Models.User.${userIdd}`)
+        .notification((notification) => {
+            let message = notification.message || "Bạn có một thông báo mới";
+            showToast("🔔 Thông báo", message, "info");
         });
-
-        window.Echo.private(`App.Models.User.${userIdd}`)
-            .notification((notification) => {
-                let message = notification.message || "Bạn có một thông báo mới";
-                showToast("🔔 Thông báo", message, "info");
-            });
     @endif
 </script>
 
@@ -676,51 +683,51 @@
 </script>
 
 @if (Auth::check() && $unreadNotifications->count())
-    <script>
-        const unreadNotifications = @json($unreadNotifications);
+<script>
+    const unreadNotifications = @json($unreadNotifications);
 
-        unreadNotifications.forEach((notification) => {
-            const data = notification.data;
-            const message = `🔔 Đơn hàng #${data.order_id} đã chuyển sang trạng thái: ${data.status.toUpperCase()}`;
-            showToast("Thông báo đơn hàng", message, "info");
-        });
-    </script>
+    unreadNotifications.forEach((notification) => {
+        const data = notification.data;
+        const message = `🔔 Đơn hàng #${data.order_id} đã chuyển sang trạng thái: ${data.status.toUpperCase()}`;
+        showToast("Thông báo đơn hàng", message, "info");
+    });
+</script>
 @endif
 
 @if (session('success'))
-    <script>
-        showToast("Thành công", "{{ session('success') }}", "success");
-    </script>
+<script>
+    showToast("Thành công", "{{ session('success') }}", "success");
+</script>
 @endif
 
 @if (session('error'))
-    <script>
-        showToast("Lỗi", "{{ session('error') }}", "error");
-    </script>
+<script>
+    showToast("Lỗi", "{{ session('error') }}", "error");
+</script>
 @endif
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('offcanvas-checkout-btn');
-    if (!btn) return;
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('offcanvas-checkout-btn');
+        if (!btn) return;
 
-    btn.addEventListener('click', (e) => {
-      const currentUser = localStorage.getItem('currentUser') || 'guest';
-      const cart = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`) || '[]');
-      const totalQty = cart.reduce((s, i) => s + (parseInt(i.quantity) || 0), 0);
+        btn.addEventListener('click', (e) => {
+            const currentUser = localStorage.getItem('currentUser') || 'guest';
+            const cart = JSON.parse(localStorage.getItem(`cartItems_${currentUser}`) || '[]');
+            const totalQty = cart.reduce((s, i) => s + (parseInt(i.quantity) || 0), 0);
 
-      // Giỏ trống hoặc toàn quantity = 0 thì không cho đi
-      if (cart.length === 0 || totalQty === 0) {
-        e.preventDefault();
-        // dùng hàm showToast bạn đã có
-        showToast('Thông báo', 'Giỏ hàng đang trống. Vui lòng thêm sản phẩm.', 'warning');
-      }
+            // Giỏ trống hoặc toàn quantity = 0 thì không cho đi
+            if (cart.length === 0 || totalQty === 0) {
+                e.preventDefault();
+                // dùng hàm showToast bạn đã có
+                showToast('Thông báo', 'Giỏ hàng đang trống. Vui lòng thêm sản phẩm.', 'warning');
+            }
 
-      // Nếu bạn muốn chặn khi check-stock đang báo lỗi,
-      // có thể dùng cờ chung trong sessionStorage:
-      // if (sessionStorage.getItem('stockInvalid') === '1') { e.preventDefault(); ... }
+            // Nếu bạn muốn chặn khi check-stock đang báo lỗi,
+            // có thể dùng cờ chung trong sessionStorage:
+            // if (sessionStorage.getItem('stockInvalid') === '1') { e.preventDefault(); ... }
+        });
     });
-  });
 </script>
 
 <!-- Mirrored from themes.pixelstrap.net/katie/template/layout-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 08 Jun 2025 03:58:47 GMT -->

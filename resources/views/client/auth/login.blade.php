@@ -78,11 +78,11 @@
 
                                 <div class="col-12">
                                     <div class="forgot-box">
-                                        <div>
+                                        {{-- <div>
                                             <input class="custom-checkbox me-2" id="remember" type="checkbox"
                                                 name="remember">
                                             <label for="remember">Remember me</label>
-                                        </div>
+                                        </div> --}}
                                         <a href="{{ route('password.request') }}">Quên mật khẩu?</a>
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                             </form>
 
                         </div>
-                        <div class="other-log-in">
+                        {{-- <div class="other-log-in">
                             <h6>HOẶC</h6>
                         </div>
                         <div class="log-in-button">
@@ -104,7 +104,7 @@
                                             class="fa-brands fa-facebook-f me-2"></i>Facebook </a></li>
                             </ul>
                         </div>
-                        <div class="other-log-in"></div>
+                        <div class="other-log-in"></div> --}}
                         <div class="sign-up-box">
                             <p>Bạn chưa có tài khoản?</p><a href="{{ route('register') }}">Đăng ký</a>
 

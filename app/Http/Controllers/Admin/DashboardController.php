@@ -15,6 +15,7 @@ use App\Models\TrafficLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -31,10 +32,22 @@ class DashboardController extends Controller
             $endDate   = now()->endOfDay();
         }
 
-        // === CÁC THỐNG KÊ KHÁC (GIỮ NGUYÊN) ===
+        // === TRAFFIC DATA CẢI TIẾN ===
         $trafficData = TrafficLog::selectRaw('DATE(created_at) as date, source, COUNT(DISTINCT session_id) as total')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date', 'source')->orderBy('date')->get()->groupBy('source');
+            ->whereNotNull('source')           // Lọc source null
+            ->where('source', '!=', '')        // Lọc source empty  
+            ->whereNotNull('session_id')       // Lọc session null
+            ->where('session_id', '!=', '')    // Lọc session empty
+            ->groupBy('date', 'source')
+            ->orderBy('date')
+            ->get();
+
+        // Chuẩn hóa source names
+        $normalizedData = $trafficData->map(function ($item) {
+            $item->source = $this->normalizeTrafficSource($item->source);
+            return $item;
+        })->groupBy('source');
 
         $labels = collect();
         $referral = collect();
@@ -45,15 +58,24 @@ class DashboardController extends Controller
         foreach ($period as $date) {
             $day = $date->format('Y-m-d');
             $labels->push($day);
-            $direct->push(optional($trafficData->get('direct', collect())->firstWhere('date', $day))->total ?? 0);
-            $referral->push(optional($trafficData->get('referral', collect())->firstWhere('date', $day))->total ?? 0);
 
-            $socialCount = 0;
-            foreach (['facebook', 'zalo', 'tiktok', 'social'] as $socialSource) {
-                if (!empty($trafficData[$socialSource])) {
-                    $socialCount += optional($trafficData[$socialSource]->firstWhere('date', $day))->total ?? 0;
-                }
-            }
+            // Direct Traffic - cải tiến
+            $directCount = $this->getTrafficCountForDay($normalizedData, ['direct', 'none', 'bookmark'], $day);
+            $direct->push($directCount);
+
+            // Referral Traffic - cải tiến  
+            $referralCount = $this->getTrafficCountForDay($normalizedData, ['referral', 'website', 'blog'], $day);
+            $referral->push($referralCount);
+
+            // Social Media - cải tiến, không trùng lặp
+            $socialCount = $this->getTrafficCountForDay($normalizedData, [
+                'facebook',
+                'instagram',
+                'tiktok',
+                'youtube',
+                'zalo',
+                'telegram'
+            ], $day);
             $social->push($socialCount);
         }
 
@@ -127,8 +149,12 @@ class DashboardController extends Controller
             $q->select('id', 'order_id', 'product_name', 'price', 'quantity', 'total_price', 'image_url');
         }])->orderBy('created_at', 'desc')->take(7)->get();
 
-        $topProducts = OrderItem::select('product_name', DB::raw('SUM(quantity) as total_sold'),
-            DB::raw('SUM(total_price) as total_revenue'), DB::raw('MAX(image_url) as image_url'))
+        $topProducts = OrderItem::select(
+            'product_name',
+            DB::raw('SUM(quantity) as total_sold'),
+            DB::raw('SUM(total_price) as total_revenue'),
+            DB::raw('MAX(image_url) as image_url')
+        )
             ->groupBy('product_name')->orderByDesc('total_sold')->take(5)->get();
 
         $lowStockAlert = Setting::where('name', 'low_stock_alert')->value('value') ?? 10;
@@ -142,17 +168,35 @@ class DashboardController extends Controller
         $paymentCounts = [$paymentMethods['momo'] ?? 0, $paymentMethods['cod'] ?? 0];
 
         return view('admin.dashboard', [
-            'labels' => $labels, 'referral' => $referral, 'direct' => $direct, 'social' => $social,
-            'active' => $active, 'inactive' => $inactive, 'userLabels' => $userLabels, 'userCounts' => $userCounts,
-            'currentUsers' => $currentUsers, 'totalCustomerLabels' => $totalCustomerLabels, 
-            'totalCustomerCounts' => $totalCustomerCounts, 'newCustomers' => $newCustomers,
-            'newCustomerLabels' => $newCustomerLabels, 'newCustomerCounts' => $newCustomerCounts,
-            'startDate' => $startDate, 'orderLabels' => $orderLabels, 'orderCounts' => $orderCounts, 
-            'endDate' => $endDate, 'revenue' => $revenue, 'revenueInRange' => $revenue,
-            'revenueBreakdown' => $revenueBreakdown, 'dailyRevenueData' => $dailyRevenueData,
-            'recentOrders' => $recentOrders, 'topProducts' => $topProducts, 'lowStockVariants' => $lowStockVariants,
-            'totalUsersAll' => $totalUsersAll, 'totalOrdersAll' => $totalOrdersAll,
-            'paymentLabels' => $paymentLabels, 'paymentCounts' => $paymentCounts,
+            'labels' => $labels,
+            'referral' => $referral,
+            'direct' => $direct,
+            'social' => $social,
+            'active' => $active,
+            'inactive' => $inactive,
+            'userLabels' => $userLabels,
+            'userCounts' => $userCounts,
+            'currentUsers' => $currentUsers,
+            'totalCustomerLabels' => $totalCustomerLabels,
+            'totalCustomerCounts' => $totalCustomerCounts,
+            'newCustomers' => $newCustomers,
+            'newCustomerLabels' => $newCustomerLabels,
+            'newCustomerCounts' => $newCustomerCounts,
+            'startDate' => $startDate,
+            'orderLabels' => $orderLabels,
+            'orderCounts' => $orderCounts,
+            'endDate' => $endDate,
+            'revenue' => $revenue,
+            'revenueInRange' => $revenue,
+            'revenueBreakdown' => $revenueBreakdown,
+            'dailyRevenueData' => $dailyRevenueData,
+            'recentOrders' => $recentOrders,
+            'topProducts' => $topProducts,
+            'lowStockVariants' => $lowStockVariants,
+            'totalUsersAll' => $totalUsersAll,
+            'totalOrdersAll' => $totalOrdersAll,
+            'paymentLabels' => $paymentLabels,
+            'paymentCounts' => $paymentCounts,
         ]);
     }
 
@@ -185,9 +229,9 @@ class DashboardController extends Controller
 
         foreach ($orders as $order) {
             $orderAnalysis = $this->analyzeOrderWithPartials($order);
-            
+
             $totalRevenue += $orderAnalysis['net_amount'];
-            
+
             // Tổng hợp breakdown
             foreach ($orderAnalysis as $key => $value) {
                 if (isset($breakdown[$key])) {
@@ -197,7 +241,7 @@ class DashboardController extends Controller
         }
 
         $breakdown['net_revenue'] = $totalRevenue;
-        
+
         return [
             'net_revenue' => $totalRevenue,
             'breakdown' => $breakdown
@@ -296,7 +340,7 @@ class DashboardController extends Controller
                     $exchangeData = $operation['exchange_data'];
                     $itemDiff = $exchangeData['new_value'] - $exchangeData['old_value'];
                     $fees = $exchangeData['fees'];
-                    
+
                     $result['exchange_item_diff'] += $itemDiff;
                     $result['exchange_fees'] += $fees;
                     $result['partial_exchanges'] += ($itemDiff + $fees);
@@ -329,7 +373,7 @@ class DashboardController extends Controller
         if ($this->hasReturnRequestsTable()) {
             $operations = $this->getOperationsFromReturnRequests($order);
         }
-        
+
         // Phương pháp 2: Sử dụng metadata trong order
         if (empty($operations) && !empty($order->note)) {
             $operations = $this->getOperationsFromOrderNote($order);
@@ -354,7 +398,7 @@ class DashboardController extends Controller
     {
         $operations = [];
 
-        if (!\Schema::hasTable('return_requests')) {
+        if (!Schema::hasTable('return_requests')) {
             return $operations;
         }
 
@@ -399,10 +443,10 @@ class DashboardController extends Controller
 
         // Lấy giá trị items gốc được exchange
         $oldValue = $this->getOriginalItemsValueFromRequest($request, $originalOrder);
-        
+
         // Phân tích đơn exchange để tách items vs fees
         $exchangeBreakdown = $this->analyzeExchangeOrderBreakdown($exchangeOrder);
-        
+
         return [
             'old_value' => $oldValue,
             'new_value' => $exchangeBreakdown['items_value'],
@@ -426,7 +470,7 @@ class DashboardController extends Controller
 
         // Phương pháp 2: Sử dụng các trường phí riêng (nếu có)
         $fees = ($exchangeOrder->shipping_fee ?? 0);
-        
+
         // Ước tính phí xử lý (2-5% tổng đơn)
         $processingFee = $exchangeOrder->total_amount * 0.03;
         $fees += $processingFee;
@@ -483,7 +527,7 @@ class DashboardController extends Controller
             for ($i = 0; $i < count($matches[0]); $i++) {
                 $oldValue = (float)str_replace(',', '', $matches[1][$i]);
                 $newValue = (float)str_replace(',', '', $matches[2][$i]);
-                
+
                 $operations[] = [
                     'type' => 'partial_exchange',
                     'exchange_data' => [
@@ -547,7 +591,7 @@ class DashboardController extends Controller
     private function hasReturnRequestsTable()
     {
         try {
-            return \Schema::hasTable('return_requests');
+            return Schema::hasTable('return_requests');
         } catch (\Exception $e) {
             return false;
         }
@@ -562,7 +606,7 @@ class DashboardController extends Controller
     private function calculateRefundAmount($request)
     {
         // Logic tính amount từ return_request_items nếu có
-        if (\Schema::hasTable('return_request_items')) {
+        if (Schema::hasTable('return_request_items')) {
             return DB::table('return_request_items')
                 ->join('order_items', 'return_request_items.order_item_id', '=', 'order_items.id')
                 ->where('return_request_items.return_request_id', $request->id)
@@ -575,7 +619,7 @@ class DashboardController extends Controller
     private function getOriginalItemsValueFromRequest($request, $originalOrder)
     {
         // Tính từ return_request_items
-        if (\Schema::hasTable('return_request_items')) {
+        if (Schema::hasTable('return_request_items')) {
             return DB::table('return_request_items')
                 ->join('order_items', 'return_request_items.order_item_id', '=', 'order_items.id')
                 ->where('return_request_items.return_request_id', $request->id)
@@ -610,13 +654,13 @@ class DashboardController extends Controller
     {
         $dailyRevenue = [];
         $currentDate = $startDate->copy();
-        
+
         while ($currentDate->lte($endDate)) {
             $dayStart = $currentDate->copy()->startOfDay();
             $dayEnd = $currentDate->copy()->endOfDay();
-            
+
             $dayRevenueData = $this->calculateAdvancedRevenueWithPartials($dayStart, $dayEnd);
-            
+
             $dailyRevenue[] = [
                 'date' => $currentDate->format('Y-m-d'),
                 'revenue' => $dayRevenueData['net_revenue'],
@@ -625,7 +669,7 @@ class DashboardController extends Controller
                 'exchange_fees' => $dayRevenueData['breakdown']['exchange_fees'],
                 'net_revenue' => $dayRevenueData['breakdown']['net_revenue']
             ];
-            
+
             $currentDate->addDay();
         }
 
@@ -636,8 +680,11 @@ class DashboardController extends Controller
     {
         $start = $request->get('start', now()->subDays(30)->toDateString());
         $end = $request->get('end', now()->toDateString());
-        $data = TrafficLog::select(DB::raw('DATE(visited_at) as date'), DB::raw('source'),
-            DB::raw('COUNT(DISTINCT session_id) as total'))
+        $data = TrafficLog::select(
+            DB::raw('DATE(visited_at) as date'),
+            DB::raw('source'),
+            DB::raw('COUNT(DISTINCT session_id) as total')
+        )
             ->whereBetween('visited_at', [$start, $end])
             ->groupBy('date', 'source')
             ->orderBy('date')
@@ -684,14 +731,14 @@ class DashboardController extends Controller
     private function explainRevenueCalculation($order, $analysis, $partialOperations)
     {
         $steps = [];
-        
+
         $steps[] = "Bước 1: Đơn hàng gốc #{$order->order_code} - Tổng: " . number_format($order->total_amount) . " VND";
-        
+
         $currentRevenue = $order->total_amount;
-        
+
         if (in_array($order->status, ['delivered', 'completed'])) {
             $steps[] = "Bước 2: Đơn đã hoàn thành, bắt đầu với doanh thu = " . number_format($currentRevenue) . " VND";
-            
+
             foreach ($partialOperations as $operation) {
                 switch ($operation['type']) {
                     case 'partial_refund':
@@ -699,7 +746,7 @@ class DashboardController extends Controller
                         $currentRevenue -= $amount;
                         $steps[] = "Bước 3: Trừ partial refund: " . number_format($amount) . " VND → Còn: " . number_format($currentRevenue) . " VND";
                         break;
-                        
+
                     case 'partial_exchange':
                         $data = $operation['exchange_data'];
                         $itemDiff = $data['new_value'] - $data['old_value'];
@@ -717,9 +764,50 @@ class DashboardController extends Controller
             $steps[] = "Bước 2: Đơn có status '{$order->status}' → Doanh thu = 0 VND";
             $currentRevenue = 0;
         }
-        
+
         $steps[] = "Kết quả cuối: " . number_format($analysis['net_amount']) . " VND";
-        
+
         return $steps;
+    }
+    private function normalizeTrafficSource($source)
+    {
+        $source = strtolower(trim($source));
+
+        // Mapping các variants về tên chuẩn
+        $mappings = [
+            'direct' => ['direct', 'direct_traffic', 'none', '(direct)', 'bookmark'],
+            'facebook' => ['facebook', 'facebook.com', 'fb', 'fb.com', 'm.facebook.com'],
+            'instagram' => ['instagram', 'instagram.com', 'ig', 'instagr.am'],
+            'tiktok' => ['tiktok', 'tiktok.com', 'tik_tok', 'tt'],
+            'zalo' => ['zalo', 'zalo.me', 'chat.zalo.me'],
+            'youtube' => ['youtube', 'youtube.com', 'youtu.be', 'yt'],
+            'referral' => ['referral', 'ref', 'reference', 'website', 'blog'],
+            'google' => ['google', 'google.com', 'google.com.vn', 'www.google.com'],
+        ];
+
+        foreach ($mappings as $canonical => $variants) {
+            if (in_array($source, $variants)) {
+                return $canonical;
+            }
+        }
+
+        return $source;
+    }
+
+    /**
+     * Lấy số lượng traffic cho ngày cụ thể
+     */
+    private function getTrafficCountForDay($normalizedData, $sourceTypes, $day)
+    {
+        $total = 0;
+
+        foreach ($sourceTypes as $sourceType) {
+            if (isset($normalizedData[$sourceType])) {
+                $dayData = $normalizedData[$sourceType]->firstWhere('date', $day);
+                $total += $dayData->total ?? 0;
+            }
+        }
+
+        return $total;
     }
 }

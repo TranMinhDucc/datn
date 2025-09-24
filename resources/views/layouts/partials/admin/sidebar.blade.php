@@ -53,12 +53,12 @@
                                         class="path1"></span><span class="path2"></span></i></span><span
                                 class="menu-title">Dashboard</span></a><!--end:Menu link-->
                     </div>
-                    <div class="menu-item">
+                    {{-- <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.aichat') }}"><span
                                 class="menu-icon"><i class="fa-solid fa-message fs-4"><span class="path1"></span><span
                                         class="path2"></span></i></span><span class="menu-title">AI
                                 Chat</span></a><!--end:Menu link-->
-                    </div>
+                    </div> --}}
                     <!--end:Menu item--><!--begin:Menu item-->
                     <div class="menu-item pt-5">
                         <!--begin:Menu content-->
@@ -304,13 +304,22 @@
 
                         </div>
                         <div class="menu-item">
+                        <a class="menu-link" href="{{ route('admin.manual_refund.index') }}" target="_blank">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-rotate-left fs-4"></i> {{-- icon hủy/hoàn tiền --}}
+                            </span>
+                            <span class="menu-title">Hủy / Hoàn tiền</span>
+                        </a>
+                    </div>
+                        {{-- <div class="menu-item">
                             <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.contacts.index') }}"
                                 target="_blank"><span class="menu-icon"><i class="fa-solid fa-user fs-4"><span
                                             class="path1"></span><span class="path2"></span></i></span><span
                                     class="menu-title">Liên hệ </span></a><!--end:Menu link-->
-                        </div>
+                        </div> --}}
                         <!--end:Menu sub-->
                     </div>
+                    
                     {{-- <div class="menu-item">
                         <!--begin:Menu link--><a class="menu-link" href="{{ route('admin.shipping-fees.index') }}"
                             target="_blank"><span class="menu-icon"><i class="fa-solid fa-truck-fast fs-4"></i><span
