@@ -112,7 +112,7 @@ class UserController extends Controller
             'address'  => ['required', 'string', 'max:255'],
             'gender'   => ['nullable', 'in:Nam,Nữ,Khác'],
             'role'     => ['required', 'in:admin,user'],
-            'point'    => ['required', 'integer', 'min:0'],
+            
             'banned'   => ['required', 'in:0,1'],
             'avatar'   => ['nullable', 'image', 'max:2048'],
         ], [
@@ -140,7 +140,7 @@ class UserController extends Controller
 
             'address.required' => 'Vui lòng nhập địa chỉ.',
             'role.required' => 'Vai trò bắt buộc.',
-            'point.required' => 'Điểm không được để trống.',
+           
             'point.integer' => 'Điểm phải là số nguyên.',
             'banned.required' => 'Vui lòng chọn trạng thái.',
 
@@ -213,7 +213,7 @@ class UserController extends Controller
             'address'  => ['required', 'string', 'max:255'],
             'gender'   => ['nullable', 'in:Nam,Nữ,Khác'],
             'role'     => ['required', 'in:admin,user'],
-            'point'    => ['required', 'integer', 'min:0'],
+                
             'banned'   => ['required', 'in:0,1'],
             'password' => [
                 'nullable',
@@ -240,8 +240,7 @@ class UserController extends Controller
 
             'address.required'  => 'Vui lòng nhập địa chỉ.',
             'role.required'     => 'Vai trò bắt buộc.',
-            'point.required'    => 'Điểm không được để trống.',
-            'point.integer'     => 'Điểm phải là số nguyên.',
+           
             'banned.required'   => 'Vui lòng chọn trạng thái.',
 
             'password.min'      => 'Mật khẩu phải ít nhất 8 ký tự.',

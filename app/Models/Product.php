@@ -126,4 +126,8 @@ class Product extends Model
         return $q->whereHas('tags', fn($t) => $t->whereIn('tags.id', $tagIds), '>=', count($tagIds));
     }
     */
+    public function childrenRecursive()
+    {
+        return $this->hasMany(Category::class, 'parent_id')->with('childrenRecursive');
+    } 
 }

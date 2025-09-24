@@ -42,10 +42,10 @@
                 <div id="variant-result">
                     @include('admin.inventory._variant_table')
                 </div>
-                <h3>Sản phẩm không biến thể</h3>
+                {{-- <h3>Sản phẩm không biến thể</h3>
                 <div id="product-result" class="pt-10">
                     @include('admin.inventory._product_table')
-                </div>
+                </div> --}}
             </div>
             <!--end::Card body-->
         </div>

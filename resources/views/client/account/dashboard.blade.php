@@ -177,8 +177,8 @@
                                                             alt=""></div>
                                                     <div class="totle-detail">
                                                         <h6>Tổng số đơn hàng</h6>
-                                                        <h4>12</h4>
-                                                    </div>
+                                                        <h4>{{ number_format($totalOrders) }}</h4>
+                                                    </div> 
                                                 </div>
                                             </div>
                                         </div>

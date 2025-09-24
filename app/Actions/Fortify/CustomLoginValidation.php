@@ -4,6 +4,8 @@ namespace App\Actions\Fortify;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User; // nhớ import model User
+use Illuminate\Validation\ValidationException;
 
 class CustomLoginValidation
 {
@@ -50,5 +52,13 @@ class CustomLoginValidation
         ];
 
         Validator::make($request->all(), $rules, $messages)->validate();
+        // --- ✅ Thêm check tài khoản bị khóa ---
+        $user = User::where($loginField, $loginInput)->first();
+
+        if ($user && $user->banned == 1) {
+            throw ValidationException::withMessages([
+                'login' => 'Tài khoản của bạn đã bị khóa',
+            ]);
+        }
     }
 }

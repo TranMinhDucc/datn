@@ -110,13 +110,7 @@
 
 
                             <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label"><i class="fas fa-bullseye"></i> Điểm</label>
-                                    <input type="number" name="point"
-                                        class="form-control @error('point') is-invalid @enderror"
-                                        value="{{ old('point', $user->point) }}">
-                                    @error('point') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                </div>
+                                
                                 <div class="col-md-4">
                                     <label class="form-label"><i class="fas fa-wallet text-gray-600"></i> Số dư ví</label>
                                     <input type="text" class="form-control" value="{{ number_format($user->balance) }}đ"

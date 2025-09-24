@@ -36,7 +36,12 @@ class AccountController extends Controller
             ->where('is_active', 1)
             ->latest()
             ->get();
-
+ $orders = Order::with(['orderItems.product', 'returnRequests'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+        // ✅ Đếm tổng số đơn hàng của user
+        $totalOrders = $orders->count();
         $orders = Order::with([
             'orderItems.product',
             'returnRequests',
@@ -81,7 +86,7 @@ class AccountController extends Controller
 
                         $provinces = Province::all();
 
-        return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces','refunds'));
+        return view('client.account.dashboard', compact('notifications', 'addresses', 'user', 'wishlists', 'orders', 'provinces','refunds',  'totalOrders'));
     }
 
 

@@ -88,6 +88,7 @@ use App\Http\Controllers\Admin\ManualRefundController;
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Middleware\CheckIfBanned;
 
 use App\Http\Controllers\Admin\SupportTicketController as AdminTicket;
 
@@ -177,6 +178,8 @@ Route::post('/shipping-fee/calculate', [CheckoutController::class, 'calculateShi
 // });
 Route::middleware(['web', 'traffic'])->group(function () {
     Route::prefix('/')->name('client.')->group(function () {
+           Route::middleware(['auth', 'check.banned'])->group(function () {
+
         // Home
         Route::controller(HomeController::class)->group(function () {
             Route::get('/', 'index')->name('home');
@@ -262,6 +265,7 @@ Route::middleware(['web', 'traffic'])->group(function () {
             ->middleware('auth')
             ->name('orders.reorderData');
     });
+});
 });
 Route::get('/admin/sales-report/data', [DashboardController::class, 'salesReport'])
     ->middleware(['auth', AdminMiddleware::class])

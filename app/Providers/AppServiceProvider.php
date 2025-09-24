@@ -47,15 +47,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Setting::observe(SettingObserver::class);
+       Setting::observe(SettingObserver::class);
         Paginator::useBootstrapFive();
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
-
+        // Kiểm tra và đăng ký middleware vào các nơi cần thiết.
+        $this->app['router']->aliasMiddleware('check.banned', \App\Http\Middleware\CheckIfBanned::class);
         Fortify::loginView(fn() => view('client.auth.login'));
         Fortify::registerView(fn() => view('client.auth.register'));
         Fortify::requestPasswordResetLinkView(fn() => view('client.auth.request-reset-password'));
-        Fortify::verifyEmailView(fn() => view('client.auth.verify-email'));
-
+        Fortify::verifyEmailView(fn() => view('client.auth.verify-email')); 
         View::composer('*', function ($view) {
             $popularSearches = SearchHistory::orderByDesc('count')->limit(10)->get();
             $view->with('popularSearches', $popularSearches);
