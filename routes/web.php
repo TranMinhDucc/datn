@@ -84,7 +84,7 @@ use App\Http\Controllers\Webhook\GhnWebhookController;
 use App\Http\Controllers\Admin\ReturnRequestItemController;
 use App\Http\Controllers\Admin\ReturnRequestItemActionController;
 use App\Http\Controllers\Admin\BestSellerSectionController;
-
+use App\Http\Controllers\Admin\ManualRefundController;
 use App\Jobs\CheckLowStockJob;
 use App\Jobs\CheckTelegramJob;
 use Illuminate\Support\Facades\Artisan;
@@ -589,6 +589,16 @@ Route::prefix('admin')
         Route::get('ajax/users/search',              [UserController::class, 'ajaxSearch'])->name('ajax.users.search');
         // AJAX search orders
         Route::get('ajax/orders/search', [OrderController::class, 'ajaxSearch'])->name('ajax.orders.search');
+
+        // Refunds
+        Route::resource('manual_refund', \App\Http\Controllers\Admin\ManualRefundController::class);
+        // Tìm đơn đã thanh toán qua MoMo (cho Select2)
+        Route::get('ajax/orders/search', [\App\Http\Controllers\Admin\OrderAjaxController::class, 'searchAllWithRefundable'])
+            ->name('ajax.orders.search');
+
+        // Lấy tóm tắt 1 đơn để auto điền amount
+        Route::get('orders/ajax/lookup', [\App\Http\Controllers\Admin\OrderAjaxController::class, 'lookup'])
+            ->name('orders.ajax.lookup');
     });
 
 Route::get('/cron/sync-bank-transactions', function (Request $request) {
