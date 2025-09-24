@@ -35,6 +35,7 @@ class Product extends Model
         'width',
         'height',
         'size_chart',
+        'is_special_offer'
     ];
 
     // Danh mục

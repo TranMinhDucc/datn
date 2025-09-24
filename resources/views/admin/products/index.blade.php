@@ -134,6 +134,9 @@
                                     <th class="text-center min-w-100px">Giá KM</th>
                                     <th class="text-center min-w-90px">Kho hàng</th>
                                     <th class="text-center min-w-130px">Danh mục</th>
+                                    <th class="text-center min-w-120px">Đánh giá</th>
+                                    <th class="text-center min-w-100px">SP ưu đãi</th>
+
                                     <th class="text-center min-w-100px">Trạng thái</th>
                                     <th class="text-center min-w-120px">Thao tác</th>
                                 </tr>
@@ -214,6 +217,15 @@
                                         </td>
 
                                        
+
+                                        {{-- Sản phẩm ưu đãi đặc biệt --}}
+                                        <td class="text-center">
+                                            @if ($product->is_special_offer)
+                                                <span class="badge badge-light-primary">Có</span>
+                                            @else
+                                                <span class="badge badge-light-secondary">Không</span>
+                                            @endif
+                                        </td>
 
                                         {{-- Trạng thái --}}
                                         <td class="text-center">

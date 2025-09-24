@@ -272,6 +272,7 @@
                                             <div class="voucher-section product-discount">
                                                 <h6 class="text-muted fw-bold">Giảm Giá</h6>
 
+
                                                 @foreach ($availableCoupons->where('type', 'product_discount') as $coupon)
                                                 @php
                                                 $onlyNew = (int) ($coupon->only_for_new_users ?? 0);

@@ -356,7 +356,39 @@
                             </div>
                             <!--end::Card header-->
 
-                            <!--begin::Card body-->
+                        <!-- Sản phẩm ưu đãi đặc biệt -->
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Sản phẩm ưu đãi đặc biệt</h2>
+                                </div>
+                                <div class="card-toolbar">
+                                    <div class="rounded-circle bg-success w-15px h-15px"></div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0">
+                                <select name="is_special_offer" class="form-select mb-2">
+                                    <option value="1"
+                                        {{ old('is_special_offer', $product->is_special_offer ?? '1') == '1' ? 'selected' : '' }}>Có
+                                    </option>
+                                    <option value="0"
+                                        {{ old('is_special_offer', $product->is_special_offer ?? '1') == '0' ? 'selected' : '' }}>Không
+                                    </option>
+                                </select>
+                                @error('is_special_offer')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                <div class="text-muted fs-7">Set the product special offer.</div>
+                            </div>
+                        </div>
+
+                        <!-- Danh mục -->
+                        <div class="card card-flush py-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h2>Danh Mục Sản Phẩm</h2>
+                                </div>
+                            </div>
                             <div class="card-body pt-0">
                                 <!--begin::Select2-->
                                 <select name="status" class="form-select mb-2" data-control="select2"

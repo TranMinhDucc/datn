@@ -12,7 +12,7 @@ class ShippingAddressController extends Controller
     public function index()
     {
         $addresses = auth()->user()->shippingAddresses()->latest()->get();
-        return view('client.address.index', compact('addresses'));
+        return view('admin.shipping_addresses.index', compact('addresses'));
     }
     public function store(Request $request)
     {

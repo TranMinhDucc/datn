@@ -485,6 +485,9 @@
         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
     </form>
                                     </div>
+                                    <form action="{{ route('client.account.dashboard') }}" class="form_search_order mb-4">
+                                        <input name="order_code" type="text" class="form-control input_search_order" value="{{ request('order_code') }}" placeholder="Nhập mã đơn hàng cần tìm ...">
+                                    </form>
                                     <div class="row gy-4">
                                         <div class="col-12">
                                             @php
@@ -2291,34 +2294,6 @@
 
 @section('js')
     <script src="{{ asset('assets/client/js/dashboard-left-sidebar.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('update-profile-form');
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Ngăn reload
-
-                const formData = new FormData(form);
-                const url = '{{ route('client.account.profile.update') }}';
-
-                // Xóa lỗi cũ
-                form.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
-
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                        },
-                        body: formData
-                    })
-
-                    .catch(error => {
-                        console.error('Lỗi:', error);
-                    });
-            });
-        });
-    </script>
     {{-- EYE --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -2789,4 +2764,20 @@
             });
         });
     </script>
+
+    <script>
+        $('.input_search_order').on('change', function () {
+            $('.form_search_order').trigger('submit');
+        });
+    </script>
+
+    @if (request()->filled('order_code'))
+        <script>
+            $('#v-pills-tab .nav-link').removeClass('active');
+            $('#v-pills-tabContent .tab-pane').removeClass('show active')
+            $('#order-tab').addClass('active');
+            $('#order').addClass('show active');
+            $('#order-status-all').addClass('show active')
+        </script>
+    @endif
 @endsection

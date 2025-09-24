@@ -20,6 +20,7 @@ use App\Models\Refund;
 class AccountController extends Controller
 {
 
+
   public function dashboard(Request $request)
 
     {
@@ -37,21 +38,37 @@ class AccountController extends Controller
             ->latest()
             ->get();
 
-        $orders = Order::with([
-            'orderItems.product',
-            'returnRequests',
-            'adjustments' => function ($q) {
-                $q->where('visible_to_customer', 1);
-            }
-        ])
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
+if ($request->filled('order_code')) {
+    $orders = Order::with([
+        'orderItems.product',
+        'returnRequests',
+        'adjustments' => function ($q) {
+            $q->where('visible_to_customer', 1);
+        }
+    ])
+        ->where('user_id', auth()->id())
+        ->whereLike('order_code', '%' . $request->get('order_code') . '%')
+        ->latest()
+        ->get();
+} else {
+    $orders = Order::with([
+        'orderItems.product',
+        'returnRequests',
+        'adjustments' => function ($q) {
+            $q->where('visible_to_customer', 1);
+        }
+    ])
+        ->where('user_id', auth()->id())
+        ->latest()
+        ->get();
+}
+
 
             $refunds = Refund::with(['order', 'rr'])
         ->where('user_id', $user->id)
         ->latest()
         ->paginate(10);
+
 
         if (Auth::check()) {
             Auth::user()->unreadNotifications->markAsRead();
@@ -169,7 +186,7 @@ class AccountController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi cập nhật thông tin!',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ], 500);
         }
     }
